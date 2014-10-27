@@ -98,7 +98,7 @@ UNIX_TIMESTAMP(STR_TO_DATE(max(absence.activity_date_time), '%Y-%m-%d')) as abse
 FROM " . $civi_db_name . ".civicrm_activity request 
 INNER JOIN " . $civi_db_name . ".civicrm_activity absence ON (absence.source_record_id = request.id AND absence.activity_type_id = " . $activityTypeId . ") 
 INNER JOIN " . $civi_db_name . ".civicrm_activity_contact tgt ON tgt.activity_id = request.id AND tgt.record_type_id = " . $targetID . "
-LEFT JOIN hrdemocivi_qbuoh.civicrm_hrabsence_type absence_type_debit
+LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_debit
 ON request.activity_type_id = absence_type_debit.debit_activity_type_id
 LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_credit
 ON request.activity_type_id = absence_type_credit.credit_activity_type_id
