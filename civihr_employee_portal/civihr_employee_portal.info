@@ -1,0 +1,29 @@
+name = civiHR Employee Portal
+description = Provides civiHR employee portal functionality on Drupal build
+core = 7.x
+package = Compucorp
+dependencies[] = views
+dependencies[] = views_ui
+dependencies[] = tipsy
+dependencies[] = views_tooltip
+dependencies[] = xautoload
+dependencies[] = ctools
+dependencies[] = date
+dependencies[] = date_popup
+dependencies[] = calendar
+dependencies[] = panels
+dependencies[] = rules
+dependencies[] = rules_admin
+dependencies[] = entity
+dependencies[] = views_json_query
+dependencies[] = views_block_area
+dependencies[] = jquery_update
+
+; Views Handlers
+files[] = views/includes/civihr_employee_portal_handler_absence_duration.inc
+files[] = views/includes/civihr_employee_portal_handler_absence_entitlement.inc
+files[] = views/includes/civihr_employee_portal_handler_area_totals.inc
+files[] = views/includes/civihr_employee_portal_handler_absence_period.inc
+
+; Additional js
+scripts[] = js/scripts.js

@@ -1,0 +1,16 @@
+name = civiHR Employee Portal features
+core = 7.x
+package = Compucorp
+dependencies[] = civihr_employee_portal
+dependencies[] = ctools
+dependencies[] = entity
+dependencies[] = page_manager
+dependencies[] = rules
+dependencies[] = strongarm
+features[ctools][] = page_manager:pages_default:1
+features[ctools][] = strongarm:strongarm:1
+features[features_api][] = api:2
+features[page_manager_pages][] = dashboard
+features[rules_config][] = rules_absent_request_submit
+features[variable][] = calendar_legend_view_calendar_legend
+features[variable][] = jquery_update_jquery_version
