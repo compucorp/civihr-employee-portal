@@ -31,8 +31,82 @@ use Drupal\civihr_employee_portal\Blocks\Leave;
 
 function civihr_employee_portal_init() {
     
-    //global $user;
-    //print_r($_SESSION['CiviCRM']['userID']); die();
+    /**
+     * This should go to custom drush command
+     */
+    
+    
+    try {
+                
+                // Civi init
+                civicrm_initialize();
+
+                $res = civicrm_api3('HRAbsenceType', 'get', array());
+                $absenceTypes = $res['values'];
+ 
+                // Build the option values based on Absence types
+                $options = '';
+    
+                foreach ($absenceTypes as $absenceType) {
+
+                    if ($absenceType['allow_credits'] == '1') {
+
+                        // Default credit types
+                        $options .= $absenceType['credit_activity_type_id'] . ',';
+
+                    }
+
+                    if ($absenceType['allow_debits'] == '1') {
+
+                        // Default debit types
+                        $options .= $absenceType['debit_activity_type_id']. ',';
+
+                    }
+                }
+                
+                // Activity target contact ID (3 types of activity contacts -> source, assignee, target)
+                $activityContacts = CRM_Core_OptionGroup::values('activity_contacts', FALSE, FALSE, FALSE, NULL, 'name');
+                $targetID = CRM_Utils_Array::key('Activity Targets', $activityContacts);
+                
+                // Get the main "absence" activity ID
+                $activityTypes = CRM_Core_OptionGroup::values('activity_type', FALSE, FALSE, FALSE, NULL, 'name');
+                $activityTypeId = CRM_Utils_Array::key('Absence', $activityTypes);
+                watchdog('Rebuild view', 'ABSENCE VIEW');
+        }
+
+        catch (CiviCRM_API3_Exception $e) {
+                $error = $e->getMessage();
+        }
+            
+    // print_r(rtrim($options, ','));
+    
+    $civi_settings = parse_url(CIVICRM_DSN);
+    $civi_db_name = trim($civi_settings['path'], '/');
+    
+    // print $activityTypeId . '<br />';
+    // print($targetID);
+
+    $result = db_query('DROP view if exists absence_list');
+    $result = db_query("CREATE VIEW absence_list AS
+SELECT request.id, request.activity_type_id, absence_type_debit.title as debit_title, absence_type_credit.title as credit_title,
+	IF(absence_type_debit.title IS NOT NULL, absence_type_debit.title, absence_type_credit.title) as absence_title,
+    CASE absence_type_credit.credit_activity_type_id
+        WHEN request.activity_type_id THEN 1
+        ELSE 0 END AS is_credit, tgt.contact_id, tgt.record_type_id, min(absence.activity_date_time) as absence_start_date, max(absence.activity_date_time) as absence_end_date, drupal_contact.uf_id as drupal_uid, sum(absence.duration) as duration, request.status_id as absence_status,
+UNIX_TIMESTAMP(STR_TO_DATE(min(absence.activity_date_time), '%Y-%m-%d')) as absence_start_date_timestamp,
+UNIX_TIMESTAMP(STR_TO_DATE(max(absence.activity_date_time), '%Y-%m-%d')) as absence_end_date_timestamp        
+FROM " . $civi_db_name . ".civicrm_activity request 
+INNER JOIN " . $civi_db_name . ".civicrm_activity absence ON (absence.source_record_id = request.id AND absence.activity_type_id = " . $activityTypeId . ") 
+INNER JOIN " . $civi_db_name . ".civicrm_activity_contact tgt ON tgt.activity_id = request.id AND tgt.record_type_id = " . $targetID . "
+LEFT JOIN hrdemocivi_qbuoh.civicrm_hrabsence_type absence_type_debit
+ON request.activity_type_id = absence_type_debit.debit_activity_type_id
+LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_credit
+ON request.activity_type_id = absence_type_credit.credit_activity_type_id
+INNER JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
+ON tgt.contact_id = drupal_contact.contact_id
+WHERE (request.activity_type_id IN (" . rtrim($options, ',') . ")) 
+GROUP BY request.id");
+    
     
 }
 
