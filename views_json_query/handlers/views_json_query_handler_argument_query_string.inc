@@ -113,8 +113,8 @@ class views_json_query_handler_argument_query_string extends views_handler_argum
     
         $request_date = '';
     
-        if (isset($_REQUEST['absence_start_date_timestamp'])) {
-            $request_date = $_REQUEST['absence_start_date_timestamp'];
+        if (isset($_REQUEST['absence_start_date_period_filter'])) {
+            $request_date = $_REQUEST['absence_start_date_period_filter'];
         }
         else {
             // Set default period

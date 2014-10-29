@@ -16,8 +16,8 @@ class civihr_employee_portal_handler_area_totals extends views_handler_area {
     /**
      * Date filters
      */
-    if (isset($_REQUEST['absence_start_date_timestamp'])) {
-        $request_date = $_REQUEST['absence_start_date_timestamp'];
+    if (isset($_REQUEST['absence_start_date_period_filter'])) {
+        $request_date = $_REQUEST['absence_start_date_period_filter'];
     }
     else {
         // Set default period
