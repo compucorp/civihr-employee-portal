@@ -24,6 +24,7 @@ files[] = views/includes/civihr_employee_portal_handler_absence_duration.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_entitlement.inc
 files[] = views/includes/civihr_employee_portal_handler_area_totals.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_period.inc
+files[] = views/includes/civihr_employee_portal_filter_absence_period.inc
 
 ; Additional js
 scripts[] = js/scripts.js

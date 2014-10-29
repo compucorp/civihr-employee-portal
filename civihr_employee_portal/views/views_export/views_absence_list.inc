@@ -427,26 +427,6 @@ $handler->display->display_options['filters']['absence_start_date_timestamp']['g
       'max' => '2014-12-31 00:00:00',
     ),
   ),
-  2 => array(
-    'title' => '2015',
-    'operator' => 'between',
-    'value' => array(
-      'type' => 'date',
-      'value' => '',
-      'min' => '2015-01-01 00:00:00',
-      'max' => '2015-12-01 00:00:00',
-    ),
-  ),
-  3 => array(
-    'title' => '',
-    'operator' => '=',
-    'value' => array(
-      'type' => 'date',
-      'value' => '',
-      'min' => '',
-      'max' => '',
-    ),
-  ),
 );
 /* Filter criterion: Absence entity: Absence_title */
 $handler->display->display_options['filters']['absence_title']['id'] = 'absence_title';
@@ -458,6 +438,7 @@ $handler->display->display_options['path'] = 'absence-list';
 
 /* Display: Sickness report */
 $handler = $view->new_display('page', 'Sickness report', 'page_1');
+$handler->display->display_options['exposed_block'] = TRUE;
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Absence entity: Absence entity ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
@@ -514,7 +495,7 @@ $handler->display->display_options['filters']['absence_start_date_timestamp']['e
 $handler->display->display_options['filters']['absence_start_date_timestamp']['expose']['operator'] = 'absence_start_date_timestamp_op';
 $handler->display->display_options['filters']['absence_start_date_timestamp']['expose']['identifier'] = 'absence_start_date_timestamp';
 $handler->display->display_options['filters']['absence_start_date_timestamp']['is_grouped'] = TRUE;
-$handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['label'] = 'Period';
+$handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['label'] = 'My sickness report';
 $handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['identifier'] = 'absence_start_date_timestamp';
 $handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['optional'] = FALSE;
 $handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['default_group'] = '1';
@@ -527,26 +508,6 @@ $handler->display->display_options['filters']['absence_start_date_timestamp']['g
       'value' => '',
       'min' => '2014-01-01 00:00:00',
       'max' => '2014-12-31 00:00:00',
-    ),
-  ),
-  2 => array(
-    'title' => '2015',
-    'operator' => 'between',
-    'value' => array(
-      'type' => 'date',
-      'value' => '',
-      'min' => '2015-01-01 00:00:00',
-      'max' => '2015-12-01 00:00:00',
-    ),
-  ),
-  3 => array(
-    'title' => '',
-    'operator' => '=',
-    'value' => array(
-      'type' => 'date',
-      'value' => '',
-      'min' => '',
-      'max' => '',
     ),
   ),
 );

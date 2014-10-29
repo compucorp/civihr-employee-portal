@@ -4,11 +4,11 @@ package = Compucorp
 dependencies[] = civihr_employee_portal
 dependencies[] = ctools
 dependencies[] = entity
+dependencies[] = features
 dependencies[] = page_manager
+dependencies[] = radix_layouts
 dependencies[] = rules
 dependencies[] = strongarm
-dependencies[] = features
-
 features[ctools][] = page_manager:pages_default:1
 features[ctools][] = strongarm:strongarm:1
 features[features_api][] = api:2
