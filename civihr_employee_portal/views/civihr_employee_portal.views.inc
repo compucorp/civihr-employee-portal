@@ -45,7 +45,7 @@ function civihr_employee_portal_views_data_alter(&$data) {
     // Add custom date handler
     $data['absence_list']['absence_start_date_timestamp']['field']['handler'] = 'views_handler_field_date';
     $data['absence_list']['absence_start_date_timestamp']['sort']['handler'] = 'views_handler_sort_date';
-    $data['absence_list']['absence_start_date_timestamp']['filter']['handler'] = 'views_handler_filter_date';
+    $data['absence_list']['absence_start_date_timestamp']['filter']['handler'] = 'civihr_employee_portal_filter_absence_period';
     $data['absence_list']['absence_start_date_timestamp']['argument']['handler'] = 'views_handler_argument_date';
     
     $data['absence_list']['absence_end_date_timestamp']['field']['handler'] = 'views_handler_field_date';
@@ -82,35 +82,4 @@ function civihr_employee_portal_views_data_alter(&$data) {
     );
     
     return $data;
-}
-
-/**
-* Implements hook_views_pre_view().
-*/
-function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args){
-
-    if($view->name == 'absence_list') {
-         
-        // Get civi defined date periods
-        $civi_date_periods = get_civihr_date_periods();
-        
-        $filter_values = array();
-        
-        foreach ($civi_date_periods as $civi_date_period) {
-            
-            $filter_values[$civi_date_period['id']] = array('title' => $civi_date_period['title'], 'operator' => 'between', 'value' => array('type' => 'date', 'value' => '', 'min' => $civi_date_period['start_date'], 'max' => $civi_date_period['end_date']));
-            
-        }
-        
-        // Get the period date filters and modify them
-        $filters = $view->display_handler->get_option('filters');
-
-        // Overwrite default filter values
-        $filters['absence_start_date_timestamp']['group_info']['group_items'] = $filter_values;
-        
-        // Set the values
-        $view->display_handler->set_option('filters', $filters);
-               
-    }
-
 }
