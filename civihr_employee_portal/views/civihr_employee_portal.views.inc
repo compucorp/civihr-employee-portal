@@ -45,13 +45,33 @@ function civihr_employee_portal_views_data_alter(&$data) {
     // Add custom date handler
     $data['absence_list']['absence_start_date_timestamp']['field']['handler'] = 'views_handler_field_date';
     $data['absence_list']['absence_start_date_timestamp']['sort']['handler'] = 'views_handler_sort_date';
-    $data['absence_list']['absence_start_date_timestamp']['filter']['handler'] = 'civihr_employee_portal_filter_absence_period';
+    $data['absence_list']['absence_start_date_timestamp']['filter']['handler'] = 'views_handler_filter_date';
     $data['absence_list']['absence_start_date_timestamp']['argument']['handler'] = 'views_handler_argument_date';
     
     $data['absence_list']['absence_end_date_timestamp']['field']['handler'] = 'views_handler_field_date';
     $data['absence_list']['absence_end_date_timestamp']['sort']['handler'] = 'views_handler_sort_date';
     $data['absence_list']['absence_end_date_timestamp']['filter']['handler'] = 'views_handler_filter_date';
     $data['absence_list']['absence_end_date_timestamp']['argument']['handler'] = 'views_handler_argument_date';
+    
+    $data['absence_list']['absence_start_date_period_filter'] = array(
+        'title' => t('Absence date filter based on Civi date periods'),
+        'help' => t('Absence date filter based on Civi date periods.'),
+        'real field' => 'absence_start_date_timestamp',
+        'field' => array(
+            'handler' => 'views_handler_field_date',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_handler_argument_date',
+            'name_field' => 'title',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'civihr_employee_portal_filter_absence_period',
+            'help' => t('Filter absence list result based on Civi date periods'),
+        ),
+        'sort' => array('handler' => 'views_handler_sort_date'),
+    );
     
     $data['absence_list']['duration'] = array(
         'title' => t('Absence type row value (Duration)'),

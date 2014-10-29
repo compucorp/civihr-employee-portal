@@ -402,21 +402,22 @@ $handler->display->display_options['fields']['duration_5']['element_label_colon'
 $handler->display->display_options['fields']['duration_5']['duration_type'] = '6_58';
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
-/* Filter criterion: Absence entity: Absence_start_date_timestamp */
-$handler->display->display_options['filters']['absence_start_date_timestamp']['id'] = 'absence_start_date_timestamp';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['table'] = 'absence_list';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['field'] = 'absence_start_date_timestamp';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['exposed'] = TRUE;
-$handler->display->display_options['filters']['absence_start_date_timestamp']['expose']['operator_id'] = 'absence_start_date_timestamp_op';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['expose']['label'] = 'Absence_start_date_timestamp';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['expose']['operator'] = 'absence_start_date_timestamp_op';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['expose']['identifier'] = 'absence_start_date_timestamp';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['is_grouped'] = TRUE;
-$handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['label'] = 'My leave';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['identifier'] = 'absence_start_date_timestamp';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['optional'] = FALSE;
-$handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['default_group'] = '1';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['group_items'] = array(
+/* Filter criterion: Absence entity: Absence date filter based on Civi date periods */
+$handler->display->display_options['filters']['absence_start_date_period_filter']['id'] = 'absence_start_date_period_filter';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['table'] = 'absence_list';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['field'] = 'absence_start_date_period_filter';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['group'] = 1;
+$handler->display->display_options['filters']['absence_start_date_period_filter']['exposed'] = TRUE;
+$handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['operator_id'] = 'absence_start_date_period_filter_op';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['label'] = 'Absence date filter based on Civi date periods';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['operator'] = 'absence_start_date_period_filter_op';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['identifier'] = 'absence_start_date_period_filter';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['is_grouped'] = TRUE;
+$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['label'] = 'My leave';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['identifier'] = 'absence_start_date_period_filter';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['optional'] = FALSE;
+$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['default_group'] = '1';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['group_items'] = array(
   1 => array(
     'title' => '2014',
     'operator' => 'between',
@@ -424,7 +425,27 @@ $handler->display->display_options['filters']['absence_start_date_timestamp']['g
       'type' => 'date',
       'value' => '',
       'min' => '2014-01-01 00:00:00',
-      'max' => '2014-12-31 00:00:00',
+      'max' => '2014-12-31 23:59:59',
+    ),
+  ),
+  2 => array(
+    'title' => '',
+    'operator' => '=',
+    'value' => array(
+      'type' => 'date',
+      'value' => '',
+      'min' => '',
+      'max' => '',
+    ),
+  ),
+  3 => array(
+    'title' => '',
+    'operator' => '=',
+    'value' => array(
+      'type' => 'date',
+      'value' => '',
+      'min' => '',
+      'max' => '',
     ),
   ),
 );
@@ -434,6 +455,7 @@ $handler->display->display_options['filters']['absence_title']['table'] = 'absen
 $handler->display->display_options['filters']['absence_title']['field'] = 'absence_title';
 $handler->display->display_options['filters']['absence_title']['operator'] = '!=';
 $handler->display->display_options['filters']['absence_title']['value'] = 'Sick';
+$handler->display->display_options['filters']['absence_title']['group'] = 1;
 $handler->display->display_options['path'] = 'absence-list';
 
 /* Display: Sickness report */
@@ -485,21 +507,22 @@ $handler->display->display_options['fields']['nothing']['label'] = 'My sickness 
 $handler->display->display_options['fields']['nothing']['alter']['text'] = '[absence_title] ([absence_start_date_timestamp] - [absence_end_date_timestamp])';
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
-/* Filter criterion: Absence entity: Absence_start_date_timestamp */
-$handler->display->display_options['filters']['absence_start_date_timestamp']['id'] = 'absence_start_date_timestamp';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['table'] = 'absence_list';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['field'] = 'absence_start_date_timestamp';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['exposed'] = TRUE;
-$handler->display->display_options['filters']['absence_start_date_timestamp']['expose']['operator_id'] = 'absence_start_date_timestamp_op';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['expose']['label'] = 'Absence_start_date_timestamp';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['expose']['operator'] = 'absence_start_date_timestamp_op';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['expose']['identifier'] = 'absence_start_date_timestamp';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['is_grouped'] = TRUE;
-$handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['label'] = 'My sickness report';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['identifier'] = 'absence_start_date_timestamp';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['optional'] = FALSE;
-$handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['default_group'] = '1';
-$handler->display->display_options['filters']['absence_start_date_timestamp']['group_info']['group_items'] = array(
+/* Filter criterion: Absence entity: Absence date filter based on Civi date periods */
+$handler->display->display_options['filters']['absence_start_date_period_filter']['id'] = 'absence_start_date_period_filter';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['table'] = 'absence_list';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['field'] = 'absence_start_date_period_filter';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['group'] = 1;
+$handler->display->display_options['filters']['absence_start_date_period_filter']['exposed'] = TRUE;
+$handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['operator_id'] = 'absence_start_date_period_filter_op';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['label'] = 'Absence date filter based on Civi date periods';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['operator'] = 'absence_start_date_period_filter_op';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['identifier'] = 'absence_start_date_period_filter';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['is_grouped'] = TRUE;
+$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['label'] = 'My sickness report';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['identifier'] = 'absence_start_date_period_filter';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['optional'] = FALSE;
+$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['default_group'] = '1';
+$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['group_items'] = array(
   1 => array(
     'title' => '2014',
     'operator' => 'between',
@@ -507,7 +530,27 @@ $handler->display->display_options['filters']['absence_start_date_timestamp']['g
       'type' => 'date',
       'value' => '',
       'min' => '2014-01-01 00:00:00',
-      'max' => '2014-12-31 00:00:00',
+      'max' => '2014-12-31 23:59:59',
+    ),
+  ),
+  2 => array(
+    'title' => '',
+    'operator' => '=',
+    'value' => array(
+      'type' => 'date',
+      'value' => '',
+      'min' => '',
+      'max' => '',
+    ),
+  ),
+  3 => array(
+    'title' => '',
+    'operator' => '=',
+    'value' => array(
+      'type' => 'date',
+      'value' => '',
+      'min' => '',
+      'max' => '',
     ),
   ),
 );
@@ -516,6 +559,7 @@ $handler->display->display_options['filters']['absence_title']['id'] = 'absence_
 $handler->display->display_options['filters']['absence_title']['table'] = 'absence_list';
 $handler->display->display_options['filters']['absence_title']['field'] = 'absence_title';
 $handler->display->display_options['filters']['absence_title']['value'] = 'Sick';
+$handler->display->display_options['filters']['absence_title']['group'] = 1;
 $handler->display->display_options['path'] = 'sickness-report';
 $translatables['absence_list'] = array(
   t('Master'),
@@ -548,6 +592,7 @@ $translatables['absence_list'] = array(
   t('Leave report'),
   t('Activity type ID'),
   t('Is_credit'),
+  t('Absence date filter based on Civi date periods'),
   t('My leave'),
   t('Sickness report'),
   t('My sickness report'),
