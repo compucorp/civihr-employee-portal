@@ -48,7 +48,7 @@ class civihr_employee_portal_handler_area_totals extends views_handler_area {
         $result_output['data'][] = $record;
     }
     
-    $header[] = t('Your balance: ');
+    $header[] = t('Balance: ');
     $rows[0][] = '';
 
     if (isset($result_output['data'])) {
