@@ -1,7 +1,7 @@
 (function($) {
 Drupal.behaviors.civihr_employee_portal = {
     attach: function (context, settings) {
-
+        
         $("#edit-absence-request-date-from-datepicker-popup-0", context).change(function() {
       
             // Change min to-date to from-date the same as from date
