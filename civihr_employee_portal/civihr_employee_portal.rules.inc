@@ -75,7 +75,7 @@ function _new_absence_request_action($roles, $absence_type, $absence_details, $f
         'source_contact_id' => $_SESSION['CiviCRM']['userID'],
         'target_contact_id' => $_SESSION['CiviCRM']['userID'],
         // TODO --> For who to assign this task??
-        'assignee_contact_id' => 267,
+        'assignee_contact_id' => 262,
         'activity_type_id' => $form_values->absence_request_type,
         // TODO --> status ID should be dynamic??
         'status_id' => '2'
