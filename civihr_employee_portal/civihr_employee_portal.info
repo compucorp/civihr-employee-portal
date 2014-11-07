@@ -28,3 +28,4 @@ files[] = views/includes/civihr_employee_portal_filter_absence_period.inc
 
 ; Additional js
 scripts[] = js/scripts.js
+scripts[] = js/filters.js
