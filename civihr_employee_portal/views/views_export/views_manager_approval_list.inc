@@ -56,18 +56,55 @@ $handler->display->display_options['empty']['area']['field'] = 'area';
 $handler->display->display_options['empty']['area']['empty'] = TRUE;
 $handler->display->display_options['empty']['area']['content'] = 'Nothing to approve yet!';
 $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
-/* Field: Absence approval entity: Absence approval entity ID */
-$handler->display->display_options['fields']['id']['id'] = 'id';
-$handler->display->display_options['fields']['id']['table'] = 'absence_approval_list';
-$handler->display->display_options['fields']['id']['field'] = 'id';
-$handler->display->display_options['fields']['id']['label'] = 'ID';
-$handler->display->display_options['fields']['id']['separator'] = '';
+/* Field: Absence approval entity: Civi contact name - absence target contact */
+$handler->display->display_options['fields']['civi_target_contact_name']['id'] = 'civi_target_contact_name';
+$handler->display->display_options['fields']['civi_target_contact_name']['table'] = 'absence_approval_list';
+$handler->display->display_options['fields']['civi_target_contact_name']['field'] = 'civi_target_contact_name';
+$handler->display->display_options['fields']['civi_target_contact_name']['label'] = 'Employee name';
 /* Field: Absence approval entity: Absence_title */
 $handler->display->display_options['fields']['absence_title']['id'] = 'absence_title';
 $handler->display->display_options['fields']['absence_title']['table'] = 'absence_approval_list';
 $handler->display->display_options['fields']['absence_title']['field'] = 'absence_title';
 $handler->display->display_options['fields']['absence_title']['label'] = 'Type';
 $handler->display->display_options['fields']['absence_title']['element_class'] = '[absence_title]';
+/* Field: Absence approval entity: Absence type row value (Duration) */
+$handler->display->display_options['fields']['duration']['id'] = 'duration';
+$handler->display->display_options['fields']['duration']['table'] = 'absence_approval_list';
+$handler->display->display_options['fields']['duration']['field'] = 'duration';
+$handler->display->display_options['fields']['duration']['label'] = 'Duration';
+$handler->display->display_options['fields']['duration']['exclude'] = TRUE;
+$handler->display->display_options['fields']['duration']['duration_type'] = '2_53';
+/* Field: Absence approval entity: Absence_start_date_timestamp */
+$handler->display->display_options['fields']['absence_start_date_timestamp']['id'] = 'absence_start_date_timestamp';
+$handler->display->display_options['fields']['absence_start_date_timestamp']['table'] = 'absence_approval_list';
+$handler->display->display_options['fields']['absence_start_date_timestamp']['field'] = 'absence_start_date_timestamp';
+$handler->display->display_options['fields']['absence_start_date_timestamp']['label'] = '';
+$handler->display->display_options['fields']['absence_start_date_timestamp']['exclude'] = TRUE;
+$handler->display->display_options['fields']['absence_start_date_timestamp']['element_label_colon'] = FALSE;
+$handler->display->display_options['fields']['absence_start_date_timestamp']['date_format'] = 'custom';
+$handler->display->display_options['fields']['absence_start_date_timestamp']['custom_date_format'] = 'd M, Y';
+$handler->display->display_options['fields']['absence_start_date_timestamp']['timezone'] = 'Europe/London';
+/* Field: Absence approval entity: Absence_end_date_timestamp */
+$handler->display->display_options['fields']['absence_end_date_timestamp']['id'] = 'absence_end_date_timestamp';
+$handler->display->display_options['fields']['absence_end_date_timestamp']['table'] = 'absence_approval_list';
+$handler->display->display_options['fields']['absence_end_date_timestamp']['field'] = 'absence_end_date_timestamp';
+$handler->display->display_options['fields']['absence_end_date_timestamp']['label'] = '';
+$handler->display->display_options['fields']['absence_end_date_timestamp']['exclude'] = TRUE;
+$handler->display->display_options['fields']['absence_end_date_timestamp']['element_label_colon'] = FALSE;
+$handler->display->display_options['fields']['absence_end_date_timestamp']['date_format'] = 'custom';
+$handler->display->display_options['fields']['absence_end_date_timestamp']['custom_date_format'] = 'd M, Y';
+$handler->display->display_options['fields']['absence_end_date_timestamp']['timezone'] = 'Europe/London';
+/* Field: Global: Custom text */
+$handler->display->display_options['fields']['nothing']['id'] = 'nothing';
+$handler->display->display_options['fields']['nothing']['table'] = 'views';
+$handler->display->display_options['fields']['nothing']['field'] = 'nothing';
+$handler->display->display_options['fields']['nothing']['label'] = 'Dates';
+$handler->display->display_options['fields']['nothing']['alter']['text'] = '[absence_start_date_timestamp] - [absence_end_date_timestamp] ([duration])';
+/* Field: Absence approval entity: Absence status */
+$handler->display->display_options['fields']['absence_status']['id'] = 'absence_status';
+$handler->display->display_options['fields']['absence_status']['table'] = 'absence_approval_list';
+$handler->display->display_options['fields']['absence_status']['field'] = 'absence_status';
+$handler->display->display_options['fields']['absence_status']['label'] = 'Status';
 /* Sort criterion: Absence approval entity: Absence_start_date_timestamp */
 $handler->display->display_options['sorts']['absence_start_date_timestamp']['id'] = 'absence_start_date_timestamp';
 $handler->display->display_options['sorts']['absence_start_date_timestamp']['table'] = 'absence_approval_list';
@@ -98,9 +135,12 @@ $translatables['approvals'] = array(
   t('Asc'),
   t('Desc'),
   t('Nothing to approve yet!'),
-  t('ID'),
-  t('.'),
+  t('Employee name'),
   t('Type'),
+  t('Duration'),
+  t('Dates'),
+  t('[absence_start_date_timestamp] - [absence_end_date_timestamp] ([duration])'),
+  t('Status'),
   t('All'),
   t('Page'),
   t('Block'),
