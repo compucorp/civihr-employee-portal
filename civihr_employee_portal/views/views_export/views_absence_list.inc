@@ -19,7 +19,12 @@ $handler = $view->new_display('default', 'Master', 'default');
 $handler->display->display_options['title'] = 'Absence list';
 $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['use_more_always'] = FALSE;
-$handler->display->display_options['access']['type'] = 'none';
+$handler->display->display_options['access']['type'] = 'role';
+$handler->display->display_options['access']['role'] = array(
+  4 => '4',
+  6 => '6',
+  5 => '5',
+);
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
 $handler->display->display_options['exposed_form']['type'] = 'basic';
@@ -186,13 +191,29 @@ $handler->display->display_options['style_options']['columns'] = array(
   'drupal_uid' => 'drupal_uid',
   'absence_start_date_timestamp' => 'absence_start_date_timestamp',
   'absence_end_date_timestamp' => 'absence_end_date_timestamp',
-  'nothing' => 'nothing',
-  'duration_2' => 'duration_2',
-  'duration_1' => 'duration_1',
-  'duration_3' => 'duration_3',
-  'duration_4' => 'duration_4',
-  'duration_5' => 'duration_5',
+  'nothing' => 'nothing'
 );
+
+/**
+ * Dynamic field creation start - CiviHR
+**/
+
+foreach ($absenceTypes as $absenceType) {
+
+    if (isset($absenceType['id']) && $absenceType['is_active'] == 1) {
+        
+        // Should have a settings somewhere that the Sick type is our special case, which we need to display in different block
+        if ($absenceType['name'] != 'Sick') {
+            $handler->display->display_options['style_options']['columns']['duration_' . $absenceType['id']] = 'duration_' . $absenceType['id'];
+        }
+    }
+    
+}
+
+/**
+ * Dynamic field creation end - CiviHR
+**/
+
 $handler->display->display_options['style_options']['default'] = 'absence_start_date_timestamp';
 $handler->display->display_options['style_options']['info'] = array(
   'id' => array(
@@ -248,43 +269,36 @@ $handler->display->display_options['style_options']['info'] = array(
     'align' => '',
     'separator' => '',
     'empty_column' => 0,
-  ),
-  'duration_2' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'duration_1' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'duration_3' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'duration_4' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'duration_5' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
+  ) 
 );
+
+
+/**
+ * Dynamic field creation start - CiviHR
+**/
+
+foreach ($absenceTypes as $absenceType) {
+
+    if (isset($absenceType['id']) && $absenceType['is_active'] == 1) {
+        
+        // Should have a settings somewhere that the Sick type is our special case, which we need to display in different block
+        if ($absenceType['name'] != 'Sick') {
+            $handler->display->display_options['style_options']['info']['duration_' . $absenceType['id']] = array(
+                'sortable' => 0,
+                'default_sort_order' => 'asc',
+                'align' => '',
+                'separator' => '',
+                'empty_column' => 0,
+            );
+        }
+    }
+    
+}
+
+/**
+ * Dynamic field creation end - CiviHR
+**/
+
 $handler->display->display_options['defaults']['style_options'] = FALSE;
 $handler->display->display_options['defaults']['row_plugin'] = FALSE;
 $handler->display->display_options['defaults']['row_options'] = FALSE;
@@ -365,41 +379,53 @@ $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = '';
 $handler->display->display_options['fields']['nothing']['alter']['text'] = '[absence_title] ([absence_start_date_timestamp] - [absence_end_date_timestamp])';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
-/* Field: Absence entity: Absence type row value (Duration) */
-$handler->display->display_options['fields']['duration_2']['id'] = 'duration_2';
-$handler->display->display_options['fields']['duration_2']['table'] = 'absence_list';
-$handler->display->display_options['fields']['duration_2']['field'] = 'duration';
-$handler->display->display_options['fields']['duration_2']['label'] = '';
-$handler->display->display_options['fields']['duration_2']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['duration_2']['duration_type'] = '2_53';
-/* Field: Absence entity: Absence type row value (Duration) */
-$handler->display->display_options['fields']['duration_3']['id'] = 'duration_3';
-$handler->display->display_options['fields']['duration_3']['table'] = 'absence_list';
-$handler->display->display_options['fields']['duration_3']['field'] = 'duration';
-$handler->display->display_options['fields']['duration_3']['label'] = '';
-$handler->display->display_options['fields']['duration_3']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['duration_3']['duration_type'] = '3_54';
-/* Field: Absence entity: Absence type row value (Duration) */
-$handler->display->display_options['fields']['duration_4']['id'] = 'duration_4';
-$handler->display->display_options['fields']['duration_4']['table'] = 'absence_list';
-$handler->display->display_options['fields']['duration_4']['field'] = 'duration';
-$handler->display->display_options['fields']['duration_4']['label'] = '';
-$handler->display->display_options['fields']['duration_4']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['duration_4']['duration_type'] = '4_55';
-/* Field: Absence entity: Absence type row value (Duration) */
-$handler->display->display_options['fields']['duration_1']['id'] = 'duration_1';
-$handler->display->display_options['fields']['duration_1']['table'] = 'absence_list';
-$handler->display->display_options['fields']['duration_1']['field'] = 'duration';
-$handler->display->display_options['fields']['duration_1']['label'] = '';
-$handler->display->display_options['fields']['duration_1']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['duration_1']['duration_type'] = '5_56_57';
-/* Field: Absence entity: Absence type row value (Duration) */
-$handler->display->display_options['fields']['duration_5']['id'] = 'duration_5';
-$handler->display->display_options['fields']['duration_5']['table'] = 'absence_list';
-$handler->display->display_options['fields']['duration_5']['field'] = 'duration';
-$handler->display->display_options['fields']['duration_5']['label'] = '';
-$handler->display->display_options['fields']['duration_5']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['duration_5']['duration_type'] = '6_58';
+/* Field: Absence entity: Absence status */
+$handler->display->display_options['fields']['absence_status']['id'] = 'absence_status';
+$handler->display->display_options['fields']['absence_status']['table'] = 'absence_list';
+$handler->display->display_options['fields']['absence_status']['field'] = 'absence_status';
+$handler->display->display_options['fields']['absence_status']['label'] = '';
+$handler->display->display_options['fields']['absence_status']['element_label_colon'] = FALSE;
+
+/**
+ * Dynamic field creation start - CiviHR
+**/
+
+foreach ($absenceTypes as $absenceType) {
+
+    if (isset($absenceType['id']) && $absenceType['is_active'] == 1) {
+        
+        
+        // Store the debit / credit activity type IDs as well
+        $suffix = '';
+
+        if (isset($absenceType['allow_debits']) && $absenceType['allow_debits'] == '1') {
+            $suffix .= '_' . $absenceType['debit_activity_type_id'];
+        }
+
+        if (isset($absenceType['allow_credits']) && $absenceType['allow_credits'] == '1') {
+            $suffix .= '_' . $absenceType['credit_activity_type_id'];
+        }
+            
+
+        // Should have a settings somewhere that the Sick type is our special case, which we need to display in different block
+        if ($absenceType['name'] != 'Sick') {
+            /* Field: Absence entity: Absence type row value (Duration) */
+            $handler->display->display_options['fields']['duration_' . $absenceType['id']]['id'] = 'duration_' . $absenceType['id'];
+            $handler->display->display_options['fields']['duration_' . $absenceType['id']]['table'] = 'absence_list';
+            $handler->display->display_options['fields']['duration_' . $absenceType['id']]['field'] = 'duration';
+            $handler->display->display_options['fields']['duration_' . $absenceType['id']]['label'] = '';
+            $handler->display->display_options['fields']['duration_' . $absenceType['id']]['element_label_colon'] = FALSE;
+            $handler->display->display_options['fields']['duration_' . $absenceType['id']]['duration_type'] = $absenceType['id'] . $suffix;
+        }
+
+    }
+
+}
+
+/**
+ * Dynamic field creation end - CiviHR
+**/
+
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
 /* Filter criterion: Absence entity: Absence date filter based on Civi date periods */
@@ -503,8 +529,24 @@ $handler->display->display_options['fields']['absence_end_date_timestamp']['time
 $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
 $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
-$handler->display->display_options['fields']['nothing']['label'] = 'My sickness report';
+$handler->display->display_options['fields']['nothing']['label'] = 'Description';
 $handler->display->display_options['fields']['nothing']['alter']['text'] = '[absence_title] ([absence_start_date_timestamp] - [absence_end_date_timestamp])';
+/* Field: Absence entity: Absence status */
+$handler->display->display_options['fields']['absence_status']['id'] = 'absence_status';
+$handler->display->display_options['fields']['absence_status']['table'] = 'absence_list';
+$handler->display->display_options['fields']['absence_status']['field'] = 'absence_status';
+$handler->display->display_options['fields']['absence_status']['label'] = 'Status';
+/* Field: Absence entity: Absence type row value (Duration) */
+$handler->display->display_options['fields']['duration']['id'] = 'duration';
+$handler->display->display_options['fields']['duration']['table'] = 'absence_list';
+$handler->display->display_options['fields']['duration']['field'] = 'duration';
+$handler->display->display_options['fields']['duration']['label'] = 'Number of days';
+$handler->display->display_options['fields']['duration']['duration_type'] = '1_52';
+/* Field: Absence entity: Details */
+$handler->display->display_options['fields']['details']['id'] = 'details';
+$handler->display->display_options['fields']['details']['table'] = 'absence_list';
+$handler->display->display_options['fields']['details']['field'] = 'details';
+$handler->display->display_options['fields']['details']['label'] = 'Comments';
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
 /* Filter criterion: Absence entity: Absence date filter based on Civi date periods */
@@ -595,5 +637,9 @@ $translatables['absence_list'] = array(
   t('Absence date filter based on Civi date periods'),
   t('My leave'),
   t('Sickness report'),
+  t('Description'),
+  t('Status'),
+  t('Number of days'),
+  t('Comments'),
   t('My sickness report'),
 );

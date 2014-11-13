@@ -18,10 +18,15 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 $handler = $view->new_display('default', 'Master', 'default');
 $handler->display->display_options['title'] = 'Absence entitlement';
 $handler->display->display_options['use_more_always'] = FALSE;
-$handler->display->display_options['access']['type'] = 'none';
+$handler->display->display_options['access']['type'] = 'role';
+$handler->display->display_options['access']['role'] = array(
+  4 => '4',
+  6 => '6',
+  5 => '5',
+);
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
-$handler->display->display_options['query']['options']['json_file'] = 'http://178.79.132.53:8001/absence_entitlement_json/';
+$handler->display->display_options['query']['options']['json_file'] = 'http://localhost:8002/absence_entitlement_json/';
 $handler->display->display_options['query']['options']['row_apath'] = 'data';
 $handler->display->display_options['query']['options']['show_errors'] = 1;
 $handler->display->display_options['exposed_form']['type'] = 'basic';
@@ -72,41 +77,39 @@ $handler->display->display_options['fields']['period_html']['table'] = 'json';
 $handler->display->display_options['fields']['period_html']['field'] = 'period_html';
 $handler->display->display_options['fields']['period_html']['label'] = 'Description';
 $handler->display->display_options['fields']['period_html']['absence_period_settings'] = '2';
-/* Field: entitlement_type: Absence entitlement value */
-$handler->display->display_options['fields']['absence_entitlement_1']['id'] = 'absence_entitlement_1';
-$handler->display->display_options['fields']['absence_entitlement_1']['table'] = 'json';
-$handler->display->display_options['fields']['absence_entitlement_1']['field'] = 'absence_entitlement';
-$handler->display->display_options['fields']['absence_entitlement_1']['label'] = 'Vacation';
-$handler->display->display_options['fields']['absence_entitlement_1']['key'] = 'entitlement_type';
-$handler->display->display_options['fields']['absence_entitlement_1']['duration_type'] = '2';
-/* Field: entitlement_type: Absence entitlement value */
-$handler->display->display_options['fields']['absence_entitlement_4']['id'] = 'absence_entitlement_4';
-$handler->display->display_options['fields']['absence_entitlement_4']['table'] = 'json';
-$handler->display->display_options['fields']['absence_entitlement_4']['field'] = 'absence_entitlement';
-$handler->display->display_options['fields']['absence_entitlement_4']['label'] = 'MATERNITY';
-$handler->display->display_options['fields']['absence_entitlement_4']['key'] = 'entitlement_type';
-$handler->display->display_options['fields']['absence_entitlement_4']['duration_type'] = '3';
-/* Field: entitlement_type: Absence entitlement value */
-$handler->display->display_options['fields']['absence_entitlement_2']['id'] = 'absence_entitlement_2';
-$handler->display->display_options['fields']['absence_entitlement_2']['table'] = 'json';
-$handler->display->display_options['fields']['absence_entitlement_2']['field'] = 'absence_entitlement';
-$handler->display->display_options['fields']['absence_entitlement_2']['label'] = 'Paternity';
-$handler->display->display_options['fields']['absence_entitlement_2']['key'] = 'entitlement_type';
-$handler->display->display_options['fields']['absence_entitlement_2']['duration_type'] = '4';
-/* Field: entitlement_type: Absence entitlement value */
-$handler->display->display_options['fields']['absence_entitlement']['id'] = 'absence_entitlement';
-$handler->display->display_options['fields']['absence_entitlement']['table'] = 'json';
-$handler->display->display_options['fields']['absence_entitlement']['field'] = 'absence_entitlement';
-$handler->display->display_options['fields']['absence_entitlement']['label'] = 'TOIL';
-$handler->display->display_options['fields']['absence_entitlement']['key'] = 'entitlement_type';
-$handler->display->display_options['fields']['absence_entitlement']['duration_type'] = '5';
-/* Field: entitlement_type: Absence entitlement value */
-$handler->display->display_options['fields']['absence_entitlement_5']['id'] = 'absence_entitlement_5';
-$handler->display->display_options['fields']['absence_entitlement_5']['table'] = 'json';
-$handler->display->display_options['fields']['absence_entitlement_5']['field'] = 'absence_entitlement';
-$handler->display->display_options['fields']['absence_entitlement_5']['label'] = 'OTHER';
-$handler->display->display_options['fields']['absence_entitlement_5']['key'] = 'entitlement_type';
-$handler->display->display_options['fields']['absence_entitlement_5']['duration_type'] = '6';
+/* Field: Global: Custom text */
+$handler->display->display_options['fields']['nothing']['id'] = 'nothing';
+$handler->display->display_options['fields']['nothing']['table'] = 'views';
+$handler->display->display_options['fields']['nothing']['field'] = 'nothing';
+$handler->display->display_options['fields']['nothing']['label'] = 'Status';
+
+/**
+ * Dynamic field creation start - CiviHR
+**/
+
+foreach ($absenceTypes as $absenceType) {
+
+    if (isset($absenceType['id']) && $absenceType['is_active'] == 1) {
+
+        // Should have a settings somewhere that the Sick type is our special case, which we need to display in different block
+        if ($absenceType['name'] != 'Sick') {
+            /* Field: entitlement_type: Absence entitlement value */
+            $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['id'] = 'absence_entitlement_' . $absenceType['id'];
+            $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['table'] = 'json';
+            $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['field'] = 'absence_entitlement';
+            $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['label'] = $absenceType['name'];
+            $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['key'] = 'entitlement_type';
+            $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['duration_type'] = $absenceType['id'];
+        }
+
+    }
+
+}
+
+/**
+ * Dynamic field creation end - CiviHR
+**/
+
 /* Sort criterion: period_id: value */
 $handler->display->display_options['sorts']['value']['id'] = 'value';
 $handler->display->display_options['sorts']['value']['table'] = 'json';
@@ -154,6 +157,7 @@ $translatables['absence_entitlement'] = array(
   t('Contact ID'),
   t('Period ID'),
   t('Description'),
+  t('Status'),
   t('Vacation'),
   t('MATERNITY'),
   t('Paternity'),

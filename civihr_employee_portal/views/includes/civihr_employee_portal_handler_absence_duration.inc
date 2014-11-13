@@ -18,13 +18,25 @@ class civihr_employee_portal_handler_absence_duration extends views_handler_fiel
             $absence_type_ids[] = $absence_type_values[2];
         }
         
-        if (in_array($values->absence_list_activity_type_id, $absence_type_ids)) {
+        /**
+         * Special case for handling duration for absence_list block (Leave and Sickness block)
+         */
+        if (isset($values->absence_list_activity_type_id)) {
             
-            if (isset($values->absence_list_is_credit) && $values->absence_list_is_credit == '1') {
-                return '+' . ' ' . $values->absence_list_duration / (6 * 80);
+            if (in_array($values->absence_list_activity_type_id, $absence_type_ids)) {
+
+                if (isset($values->absence_list_is_credit) && $values->absence_list_is_credit == '1') {
+                    return '+' . ' ' . $values->absence_list_duration / (6 * 80);
+                }
+
+                return '-' . ' ' . $values->absence_list_duration / (6 * 80);
             }
+        }
+        
+        else {
+            $value = $this->get_value($values);
             
-            return '-' . ' ' . $values->absence_list_duration / (6 * 80);
+            return $value <= 480 ? $value / (6 * 80) . ' day' : $value / (6 * 80) . ' days';
         }
         
         // No match leave the field empty (empty columns will be hidden by views)
