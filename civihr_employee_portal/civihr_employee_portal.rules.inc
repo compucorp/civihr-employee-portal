@@ -71,6 +71,27 @@ function _new_absence_request_action($roles, $absence_type, $absence_details, $f
     
     // Civi init
     civicrm_initialize();
+    
+    // Get the main admin contact
+    $main_admin_contact = civicrm_api('uf_match', 'get', array(
+        'version' => 3,
+        'uf_id' => 1,
+    ));
+    
+    $main_admin_contact = array_shift($main_admin_contact['values']);
+    
+    // Set default manager ID
+    $main_manager_contact_id = $main_admin_contact['contact_id'];
+    
+    $res = civicrm_api3('Relationship', 'get', array('contact_id' => $_SESSION['CiviCRM']['userID']));
+    $contactRelationships = $res['values'];
+    
+    // If Leave approver is find, assign him as the manager (change the $main_manager_contact_id)
+    foreach ($contactRelationships as $key => $relation) {
+        if ($relation['relation'] == 'has Leave Approved by') {
+            $main_manager_contact_id = $relation['contact_id_b'];
+        }
+    }
                 
     // Create the main activity
     $activityParam = array(
@@ -78,8 +99,7 @@ function _new_absence_request_action($roles, $absence_type, $absence_details, $f
         'source_contact_id' => $_SESSION['CiviCRM']['userID'],
         'target_contact_id' => $_SESSION['CiviCRM']['userID'],
         'details' => $form_values->details,
-        // TODO --> For who to assign this task??
-        'assignee_contact_id' => 267,
+        'assignee_contact_id' => $main_manager_contact_id,
         'activity_type_id' => $form_values->absence_request_type,
         // TODO --> status ID should be dynamic??
         'status_id' => '1'
