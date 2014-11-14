@@ -31,17 +31,6 @@ use Drupal\civihr_employee_portal\Blocks\Leave;
 
 function civihr_employee_portal_init() {
     
-    /**
-     
-    $res = civicrm_api3('Relationship', 'get', array('contact_id' => 266));
-    $contactRelationships = $res['values'];
-
-    //print_r($contactRelationships); die();
-    ///////////////////////////////////////////////////
-
-     * 
-     */    
-    
     // Check the variable and decide if we need to rebuild the absence_list mysql view
     $rebuild_absence_list_view = variable_get('rebuild_absence_list_view', 'TRUE');
     
