@@ -4,6 +4,8 @@
  * Exported absence_entitlement view
  */
 
+global $base_url;
+
 $view = new view();
 $view->name = 'absence_entitlement';
 $view->description = '';
@@ -26,7 +28,7 @@ $handler->display->display_options['access']['role'] = array(
 );
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
-$handler->display->display_options['query']['options']['json_file'] = 'http://localhost:8002/absence_entitlement_json/';
+$handler->display->display_options['query']['options']['json_file'] = $base_url . '/absence_entitlement_json/';
 $handler->display->display_options['query']['options']['row_apath'] = 'data';
 $handler->display->display_options['query']['options']['show_errors'] = 1;
 $handler->display->display_options['exposed_form']['type'] = 'basic';
