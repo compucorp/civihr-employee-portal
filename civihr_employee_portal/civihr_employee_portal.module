@@ -161,6 +161,20 @@ function civihr_employee_portal_permission() {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function civihr_employee_portal_theme() {
+    return array(
+        'civihr_employee_portal_manager_calendar_block' => array(
+            'variables' => array(
+                'custom_data' => NULL
+            ),
+            'template' => 'templates/civihr-employee-portal-manager-calendar--block',
+        ),
+    );
+}
+
+/**
  * Implements hook_views_default_views().
  */
 function civihr_employee_portal_views_default_views() {
@@ -304,6 +318,14 @@ function get_civihr_absence_statuses($status_id = NULL) {
     // Get the status values based on the status_id
     $status_id_value = CRM_Utils_Array::value($status_id, $absenceStatuses);
     
+    // How we want to display the approved absences?
+    if ($status_id_value == 'Completed') {
+        $status_id_value = 'Approved';
+    }
+    if ($status_id_value == 'Scheduled') {
+        $status_id_value = 'Awaiting approval';
+    }
+        
     return $status_id_value;
     
 }
@@ -381,6 +403,20 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
+    
+    $items['manager_approval/%ctools_js/pick_days'] = array(
+        'page callback' => 'civihr_employee_portal_manager_approval_pick_days_callback',
+        'page arguments' => array(1, 2, 3, 4, 5),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    $items['manager_approval/%ctools_js/calendar/show'] = array(
+        'page callback' => 'civihr_employee_portal_manager_approval_show_calendar_callback',
+        'page arguments' => array(1),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
 
     return $items;
 }
@@ -417,7 +453,6 @@ function civihr_employee_portal_absence_calendar_callback($ajax) {
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
         
-        //ctools_modal_render('test', 'value');
         $output = array();        
         $output[] = ctools_modal_command_display('Calendar view', views_embed_view('calendar_absence_list', 'page_1'));
         
@@ -428,6 +463,295 @@ function civihr_employee_portal_absence_calendar_callback($ajax) {
         return '';
     } 
         
+}
+
+/**
+ * Manager calendar / employee list callback
+ */
+function civihr_employee_portal_manager_approval_show_calendar_callback($ajax) {
+    
+    if ($ajax) {
+        
+        ctools_include('ajax');
+        ctools_include('modal');
+        
+        drupal_add_js('misc/jquery.form.js');
+        // Add the responder javascript, required by ctools
+        ctools_add_js('ajax-responder');
+        
+        $block = module_invoke('civihr_employee_portal', 'block_view', 'manager_calendar');
+        
+        $output = array();        
+        $output[] = ctools_modal_command_display('Manager calendar view', render($block['content']));
+        
+        print ajax_render($output);
+        drupal_exit();
+    }
+    else {
+        return '';
+    } 
+    
+}
+
+/**
+ * Manager approval pick days callback function
+ */
+function civihr_employee_portal_manager_approval_pick_days_callback($ajax, $action = 'pick_days', $user = NULL, $main_absence_id = NULL, $activity_type_id = NULL) {
+    
+    if ($ajax) {
+        ctools_include('ajax');
+        ctools_include('modal');
+
+        $title = t('Manager approval modal window');
+        
+        // Get the contact data (cached or from CIVI)
+        $contact_data = get_civihr_contact_data($user);
+        
+        if ($action == 'pick_days') {
+            $title = t('Approve leave for: ' . $contact_data['display_name']);
+        }
+        
+        
+        $form_state = array(
+            'ajax' => TRUE,
+            'is_ajax_update' => TRUE,
+            'title' => $title,
+            'action' => $action,
+            'user_data' => $user,
+            'main_absence_id' => $main_absence_id,
+            'activity_type_id' => $activity_type_id
+        );
+        
+        // Use ctools to generate ajax instructions for the browser to create a form in a modal popup.
+        $output = ctools_modal_form_wrapper('civihr_employee_portal_manager_approval_pick_days_form', $form_state);
+
+        // If the form has been submitted, there may be additional instructions such as dismissing the modal popup.
+        if (!empty($form_state['executed'])) {
+            
+            drupal_add_js('misc/jquery.form.js');
+            
+            // Add the responder javascript, required by ctools
+            ctools_add_js('ajax-responder');
+            
+            $output[] = ctools_modal_command_dismiss();
+            $output[] = ctools_ajax_command_redirect('dashboard');
+            
+        }
+        
+        // Return the ajax instructions to the browser via ajax_render().
+        print ajax_render($output);
+        drupal_exit();
+        
+    }
+    else {
+        return drupal_get_form('civihr_employee_portal_manager_approval_pick_days_form');
+    }
+    
+}
+
+/**
+ * Drupal form to be put in a modal (manager approval pick days form).
+ */
+function civihr_employee_portal_manager_approval_pick_days_form($form, $form_state) {
+    
+    watchdog('state', print_r($form_state, TRUE));
+    
+    // Civi init
+    civicrm_initialize();
+    
+    $abesence_details = array(
+        'source_record_id' => $form_state['main_absence_id'],
+        // TODO --> Get the default absence type ID (not hardcode it!)
+        'activity_type_id' => '51',
+    );
+
+    $res = civicrm_api3('Activity', 'get', $abesence_details);
+    $absence_details = $res['values'];
+    
+    watchdog('test details', print_r($absence_details, TRUE));
+    
+    $disputes = array();
+    
+    // Calculate the whole duration
+    $all_duration = 0;
+    
+    // Build the checkbox table list from the child absence values
+    foreach ($absence_details as $absence_value) {
+        
+        $duration = $absence_value['duration'] / (6 * 80);
+        
+        $all_duration += $duration;
+        
+        $disputes[$absence_value['id']] = array($absence_value['activity_date_time'], $duration, get_civihr_absence_statuses($absence_value['status_id']));
+       
+    }
+    
+    $header = array(t('Date'), t('Absence duration'), t('Absence status'));
+    
+    $absenceTypes = get_civihr_absence_types();
+    
+    foreach ($absenceTypes as $absenceType) {
+        
+        if (isset($absenceType['credit_activity_type_id']) && $absenceType['credit_activity_type_id'] == $form_state['activity_type_id']) {
+            $leave_type = $absenceType['title'];
+        }
+        
+        if (isset($absenceType['debit_activity_type_id']) && $absenceType['debit_activity_type_id'] == $form_state['activity_type_id']) {
+            $leave_type = $absenceType['title'];
+        }
+    }
+    
+    $form['main_id'] = array(
+        '#type'     => 'hidden',
+        '#title' => 'Main absence ID',
+        '#default_value' => $form_state['main_absence_id'],
+    );
+    
+    $form['leave_type'] = array(
+        '#markup' => '<div class="approval-leave-type">' . t('Leave type:') . ' ' . $leave_type . '</div>',
+    );
+    
+    $form['pick_day_checkboxes'] = array(
+        '#type' => 'tableselect',
+        '#header' => $header,
+        '#options' => $disputes,
+        '#empty' => 'No users were found.'
+    );
+    
+    if ($all_duration <= 1) {
+        $day = t('day');
+    }
+    else {
+        $day = t('days');
+    }
+   
+    $form['whole_duration'] = array(
+        '#markup' => $absence_details[key($absence_details)]['activity_date_time'] . ' - ' .  $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'] . ' = ' . $all_duration . ' ' . $day . '<br /><br />',
+    );
+    
+    $form['#validate'][] = 'civihr_employee_portal_manager_approval_pick_days_form_validate';
+    $form['#submit'][] = "civihr_employee_portal_manager_approval_pick_days_form_submit";
+
+    $form['reject_all'] = array(
+        '#type' => 'submit',
+        '#value' => t('Reject all'),
+    );
+    
+    $form['approve_all'] = array(
+        '#type' => 'submit',
+        '#value' => t('Approve all'),
+    );
+    
+    $form['approve_selected'] = array(
+        '#type' => 'submit',
+        '#value' => t('Approve selected'),
+    );
+
+    return $form;
+    
+}
+
+function civihr_employee_portal_manager_approval_pick_days_form_validate($form, &$form_state) {
+    
+    /*
+    
+    if (isset($form_state['values']['pick_day_checkboxes']) && $form_state['values']['pick_day_checkboxes'][1] == 0) {
+        form_set_error('pick_day_checkboxes', t('Please select days to approve / reject'));
+    }
+     * 
+     */
+    
+    return TRUE;
+}
+
+function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$form_state) {
+    
+    watchdog('test submit', print_r($form_state['values'], TRUE));
+    
+    // @TODO -> move to custom rules action (so it will be configurable through UI)
+    if ($form_state['values']['op'] == 'Reject all') {
+        if (isset($form_state['values']['pick_day_checkboxes'])) {
+            
+            // Civi init
+            civicrm_initialize();
+            
+            foreach ($form_state['values']['pick_day_checkboxes'] as $act_key => $act_value) {
+                
+                $result = civicrm_api3('Activity', 'setvalue', array(
+                                                                    'id' => $act_key,
+                                                                    'field' => 'status_id',
+                                                                    'value' => 9
+                                                               ));
+                
+            }
+            
+            $result = civicrm_api3('Activity', 'setvalue', array(
+                                                                    'id' => $form_state['values']['main_id'],
+                                                                    'field' => 'status_id',
+                                                                    'value' => 9
+                                                               ));
+            
+            drupal_set_message(t('Leave successfully rejected for the whole duration'), 'success');
+        }
+        
+    }
+    
+    if ($form_state['values']['op'] == 'Approve all') {
+        if (isset($form_state['values']['pick_day_checkboxes'])) {
+            
+            // Civi init
+            civicrm_initialize();
+            
+            foreach ($form_state['values']['pick_day_checkboxes'] as $act_key => $act_value) {
+                
+                $result = civicrm_api3('Activity', 'setvalue', array(
+                                                                    'id' => $act_key,
+                                                                    'field' => 'status_id',
+                                                                    'value' => 2
+                                                               ));
+                
+            }
+            
+            $result = civicrm_api3('Activity', 'setvalue', array(
+                                                                    'id' => $form_state['values']['main_id'],
+                                                                    'field' => 'status_id',
+                                                                    'value' => 2
+                                                               ));
+            
+            drupal_set_message(t('Leave successfully approved for the whole duration'), 'success');
+        }
+        
+    }
+    
+    if ($form_state['values']['op'] == 'Approve selected') {
+        if (isset($form_state['values']['pick_day_checkboxes'])) {
+            
+            // Civi init
+            civicrm_initialize();
+            
+            foreach ($form_state['values']['pick_day_checkboxes'] as $act_key => $act_value) {
+                
+                if ($act_key == $act_value) {
+                    $result = civicrm_api3('Activity', 'setvalue', array(
+                                                                        'id' => $act_key,
+                                                                        'field' => 'status_id',
+                                                                        'value' => 2
+                                                                   ));
+                }
+                
+            }
+            
+            $result = civicrm_api3('Activity', 'setvalue', array(
+                                                                    'id' => $form_state['values']['main_id'],
+                                                                    'field' => 'status_id',
+                                                                    'value' => 2
+                                                               ));
+            
+            drupal_set_message(t('Leave successfully approved for the selected days'), 'success');
+        }
+        
+    }
+  
 }
 
 /**
@@ -840,6 +1164,11 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'type' => 'int',
         'not null' => TRUE,
         'description' => 'Drupal User ID.',
+    );
+    $schema['absence_approval_list']['fields']['employee_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Employee ID.',
     );
     $schema['absence_approval_list']['fields']['duration'] = array(
         'type' => 'int',

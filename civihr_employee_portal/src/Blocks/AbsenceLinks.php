@@ -13,12 +13,15 @@ class AbsenceLinks {
         ctools_include('modal');
         ctools_modal_add_js();
         
+        // Set the modal size (width) based on the available screen size of the user (passed from the jQuery on each page load)
+        $width = isset($_COOKIE['browser_width']) ? $_COOKIE['browser_width'] * 0.75 : 550;
+        
         // Create our own javascript that will be used to theme a modal.
         $civihr_style = array(
             'civihr-default-style' => array(
                 'modalSize' => array(
                     'type' => 'fixed',
-                    'width' => 550,
+                    'width' => $width,
                     'height' => 500,
                 ),
                 'modalOptions' => array(
