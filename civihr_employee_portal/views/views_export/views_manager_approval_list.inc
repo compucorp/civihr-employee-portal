@@ -49,6 +49,12 @@ $handler->display->display_options['style_options']['info'] = array(
     'empty_column' => 0,
   ),
 );
+/* Header: Global: Text area */
+$handler->display->display_options['header']['area']['id'] = 'area';
+$handler->display->display_options['header']['area']['table'] = 'views';
+$handler->display->display_options['header']['area']['field'] = 'area';
+$handler->display->display_options['header']['area']['content'] = '<a href="/manager_approval/nojs/calendar/show" class="ctools-use-modal ctools-modal-civihr-default-style">Open manager calendar</a>';
+$handler->display->display_options['header']['area']['format'] = 'filtered_html';
 /* No results behavior: Global: Text area */
 $handler->display->display_options['empty']['area']['id'] = 'area';
 $handler->display->display_options['empty']['area']['table'] = 'views';
@@ -56,6 +62,28 @@ $handler->display->display_options['empty']['area']['field'] = 'area';
 $handler->display->display_options['empty']['area']['empty'] = TRUE;
 $handler->display->display_options['empty']['area']['content'] = 'Nothing to approve yet!';
 $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
+/* Field: Absence approval entity: Employee_id */
+$handler->display->display_options['fields']['employee_id']['id'] = 'employee_id';
+$handler->display->display_options['fields']['employee_id']['table'] = 'absence_approval_list';
+$handler->display->display_options['fields']['employee_id']['field'] = 'employee_id';
+$handler->display->display_options['fields']['employee_id']['label'] = 'Employee CiviCRM Contact ID';
+$handler->display->display_options['fields']['employee_id']['exclude'] = TRUE;
+$handler->display->display_options['fields']['employee_id']['element_label_class'] = 'employee-id';
+$handler->display->display_options['fields']['employee_id']['separator'] = '';
+/* Field: Absence approval entity: Absence approval entity ID */
+$handler->display->display_options['fields']['id']['id'] = 'id';
+$handler->display->display_options['fields']['id']['table'] = 'absence_approval_list';
+$handler->display->display_options['fields']['id']['field'] = 'id';
+$handler->display->display_options['fields']['id']['label'] = 'Main Absence ID';
+$handler->display->display_options['fields']['id']['exclude'] = TRUE;
+$handler->display->display_options['fields']['id']['separator'] = '';
+/* Field: Absence approval entity: Activity_type_id */
+$handler->display->display_options['fields']['activity_type_id']['id'] = 'activity_type_id';
+$handler->display->display_options['fields']['activity_type_id']['table'] = 'absence_approval_list';
+$handler->display->display_options['fields']['activity_type_id']['field'] = 'activity_type_id';
+$handler->display->display_options['fields']['activity_type_id']['label'] = 'Activity type ID';
+$handler->display->display_options['fields']['activity_type_id']['exclude'] = TRUE;
+$handler->display->display_options['fields']['activity_type_id']['separator'] = '';
 /* Field: Absence approval entity: Civi contact name - absence target contact */
 $handler->display->display_options['fields']['civi_target_contact_name']['id'] = 'civi_target_contact_name';
 $handler->display->display_options['fields']['civi_target_contact_name']['table'] = 'absence_approval_list';
@@ -105,6 +133,14 @@ $handler->display->display_options['fields']['absence_status']['id'] = 'absence_
 $handler->display->display_options['fields']['absence_status']['table'] = 'absence_approval_list';
 $handler->display->display_options['fields']['absence_status']['field'] = 'absence_status';
 $handler->display->display_options['fields']['absence_status']['label'] = 'Status';
+/* Field: Global: Tooltip field */
+$handler->display->display_options['fields']['tooltip']['id'] = 'tooltip';
+$handler->display->display_options['fields']['tooltip']['table'] = 'views';
+$handler->display->display_options['fields']['tooltip']['field'] = 'tooltip';
+$handler->display->display_options['fields']['tooltip']['label'] = 'Action';
+$handler->display->display_options['fields']['tooltip']['alter']['text'] = '<a href="/manager_approval/nojs/pick_days/[employee_id]/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style">Pick days</a>';
+$handler->display->display_options['fields']['tooltip']['tooltip_text'] = 'Choose days';
+$handler->display->display_options['fields']['tooltip']['tooltip_hide_if_equal'] = 1;
 /* Sort criterion: Absence approval entity: Absence_start_date_timestamp */
 $handler->display->display_options['sorts']['absence_start_date_timestamp']['id'] = 'absence_start_date_timestamp';
 $handler->display->display_options['sorts']['absence_start_date_timestamp']['table'] = 'absence_approval_list';
@@ -134,13 +170,22 @@ $translatables['approvals'] = array(
   t('Sort by'),
   t('Asc'),
   t('Desc'),
+  t('<a href="/manager_approval/nojs/calendar/show" class="ctools-use-modal ctools-modal-civihr-default-style">Open manager calendar</a>'),
   t('Nothing to approve yet!'),
+  t('Employee CiviCRM Contact ID'),
+  t('.'),
+  t('Main Absence ID'),
+  t('Activity type ID'),
   t('Employee name'),
   t('Type'),
   t('Duration'),
   t('Dates'),
   t('[absence_start_date_timestamp] - [absence_end_date_timestamp] ([duration])'),
   t('Status'),
+  t('Action'),
+  t('<a href="/manager_approval/nojs/pick_days/[employee_id]/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style">Pick days</a>'),
+  t('Choose days'),
+  t('1'),
   t('All'),
   t('Page'),
   t('Block'),

@@ -21,6 +21,10 @@ class Base {
                 'absence_links' => array('info' => t('CiviHR modal absence links block'),
                                 'class_name' => 'AbsenceLinks',
                                 'title' => '<none>'),
+            
+                'manager_calendar' => array('info' => t('CiviHR manager calendar block'),
+                                'class_name' => 'ManagerCalendar',
+                                'title' => '<none>'),
                ];
     }
     

@@ -31,5 +31,6 @@ files[] = views/includes/civihr_employee_portal_handler_absence_status.inc
 ; Additional js
 scripts[] = js/scripts.js
 scripts[] = js/filters.js
-scripts[] = js/jquery.floatThead.min.js
+; scripts[] = js/jquery.floatThead.min.js
 scripts[] = js/jquery.tablesorter.min.js
+scripts[] = js/tablesaw/tablesaw.js
