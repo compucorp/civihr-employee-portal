@@ -25,6 +25,9 @@ class Base {
                 'manager_calendar' => array('info' => t('CiviHR manager calendar block'),
                                 'class_name' => 'ManagerCalendar',
                                 'title' => '<none>'),
+                'my_details' => array('info' => t('CiviHR my details block'),
+                                'class_name' => 'MyDetailsData',
+                                'title' => '<none>'),
                ];
     }
     
