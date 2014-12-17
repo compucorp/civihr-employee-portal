@@ -171,6 +171,14 @@ function civihr_employee_portal_theme() {
             ),
             'template' => 'templates/civihr-employee-portal-manager-calendar--block',
         ),
+        'civihr_employee_portal_my_details_block' => array(
+            'variables' => array(
+                'profile_image' => NULL,
+                'contact_details' => NULL,
+                'address_data' => NULL
+            ),
+            'template' => 'templates/civihr-employee-portal-my-details--block',
+        ),
     );
 }
 
@@ -417,6 +425,13 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
+    
+    $items['my_details/%ctools_js/view'] = array(
+        'page callback' => 'civihr_employee_portal_my_details_callback',
+        'page arguments' => array(1),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
 
     return $items;
 }
@@ -483,6 +498,33 @@ function civihr_employee_portal_manager_approval_show_calendar_callback($ajax) {
         
         $output = array();        
         $output[] = ctools_modal_command_display('Manager calendar view', render($block['content']));
+        
+        print ajax_render($output);
+        drupal_exit();
+    }
+    else {
+        return '';
+    } 
+    
+}
+
+/**
+ * Manager calendar / employee list callback
+ */
+function civihr_employee_portal_my_details_callback($ajax) {
+    
+    if ($ajax) {
+        
+        ctools_include('ajax');
+        ctools_include('modal');
+        
+        // Add the responder javascript, required by ctools
+        ctools_add_js('ajax-responder');
+        
+        $block = module_invoke('quicktabs', 'block_view', 'det_tab');
+        
+        $output = array();        
+        $output[] = ctools_modal_command_display('My details', render($block['content']));
         
         print ajax_render($output);
         drupal_exit();

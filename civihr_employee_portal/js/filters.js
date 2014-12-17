@@ -39,14 +39,19 @@ Drupal.behaviors.civihr_employee_portal_filters = {
         // Init the approval highlight search
         var approvalsearch = new ApprovalFilter();
         
-        // Set the the cookie for the actual available browser width size
-        $.cookie('browser_width', $(window).width());
-        console.log('size');
-        $(window).resize(function() {
-            // Set the the cookie for the actual available browser width size
-            $.cookie('browser_width', $(window).width());
-            console.log('re-size');
-        });
+        if (context == document) {
+            
+            if ($('table').hasClass('manager-approval-main-table') && $('div').hasClass('ctools-modal-dialog') == false) {
+                // Set the the cookie for the actual available browser width size
+                $.cookie('browser_width', $(window).width());
+                console.log('size');
+                $(window).resize(function() {
+                    // Set the the cookie for the actual available browser width size
+                    $.cookie('browser_width', $(window).width());
+                    console.log('re-size');
+                });
+            }
+        }
         
         $("#manager-approval-search").on("keyup", function() {
             var value = $(this).val();
