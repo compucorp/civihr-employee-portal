@@ -5,11 +5,15 @@
  */
 function civihr_employee_portal_install() { 
 
+    /**
     $t = get_t(); // runs in both the installer and runtime
 
+    */
+    
     /* Create and save a new content object */
     $webform = 'webform'; // machine name of the content type
 
+    /** 
     // define the node type
     $webform_node_type = array(
         'type' => $webform,
@@ -28,4 +32,6 @@ function civihr_employee_portal_install() {
 
     // save the content type
     node_type_save($content_type);
+     * 
+     */
 }
