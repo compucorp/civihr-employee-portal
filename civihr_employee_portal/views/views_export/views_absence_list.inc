@@ -443,38 +443,32 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['identifier'] = 'absence_start_date_period_filter';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['optional'] = FALSE;
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['default_group'] = '1';
+
+/**
+ * Dynamic field creation start - CiviHR
+**/
+
+$current_year = date("Y");
+
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['group_items'] = array(
   1 => array(
-    'title' => '2014',
+    'title' => 'Generated from code (Do not overwrite)',
     'operator' => 'between',
     'value' => array(
       'type' => 'date',
       'value' => '',
-      'min' => '2014-01-01 00:00:00',
-      'max' => '2014-12-31 23:59:59',
+      'min' => $current_year . '-01-01 00:00:00',
+      'max' => $current_year . '-12-31 23:59:59',
     ),
-  ),
-  2 => array(
-    'title' => '',
-    'operator' => '=',
-    'value' => array(
-      'type' => 'date',
-      'value' => '',
-      'min' => '',
-      'max' => '',
-    ),
-  ),
-  3 => array(
-    'title' => '',
-    'operator' => '=',
-    'value' => array(
-      'type' => 'date',
-      'value' => '',
-      'min' => '',
-      'max' => '',
-    ),
-  ),
+  )   
+    
 );
+
+/**
+ * Dynamic field creation end - CiviHR
+**/
+
+
 /* Filter criterion: Absence entity: Absence_title */
 $handler->display->display_options['filters']['absence_title']['id'] = 'absence_title';
 $handler->display->display_options['filters']['absence_title']['table'] = 'absence_list';
@@ -564,38 +558,31 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['identifier'] = 'absence_start_date_period_filter';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['optional'] = FALSE;
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['default_group'] = '1';
+
+/**
+ * Dynamic field creation start - CiviHR
+**/
+
+$current_year = date("Y");
+
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['group_items'] = array(
   1 => array(
-    'title' => '2014',
+    'title' => 'Generated from code (Do not overwrite)',
     'operator' => 'between',
     'value' => array(
       'type' => 'date',
       'value' => '',
-      'min' => '2014-01-01 00:00:00',
-      'max' => '2014-12-31 23:59:59',
+      'min' => $current_year . '-01-01 00:00:00',
+      'max' => $current_year . '-12-31 23:59:59',
     ),
-  ),
-  2 => array(
-    'title' => '',
-    'operator' => '=',
-    'value' => array(
-      'type' => 'date',
-      'value' => '',
-      'min' => '',
-      'max' => '',
-    ),
-  ),
-  3 => array(
-    'title' => '',
-    'operator' => '=',
-    'value' => array(
-      'type' => 'date',
-      'value' => '',
-      'min' => '',
-      'max' => '',
-    ),
-  ),
+  )   
+    
 );
+
+/**
+ * Dynamic field creation end - CiviHR
+**/
+
 /* Filter criterion: Absence entity: Absence_title */
 $handler->display->display_options['filters']['absence_title']['id'] = 'absence_title';
 $handler->display->display_options['filters']['absence_title']['table'] = 'absence_list';
