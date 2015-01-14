@@ -53,7 +53,7 @@ $handler->display->display_options['style_options']['info'] = array(
 $handler->display->display_options['header']['area']['id'] = 'area';
 $handler->display->display_options['header']['area']['table'] = 'views';
 $handler->display->display_options['header']['area']['field'] = 'area';
-$handler->display->display_options['header']['area']['content'] = '<a href="/manager_approval/nojs/calendar/show" class="ctools-use-modal ctools-modal-civihr-default-style">Open manager calendar</a>';
+$handler->display->display_options['header']['area']['content'] = '<a href="manager_approval/nojs/calendar/show" class="ctools-use-modal ctools-modal-civihr-default-style">Open manager calendar</a>';
 $handler->display->display_options['header']['area']['format'] = 'filtered_html';
 /* No results behavior: Global: Text area */
 $handler->display->display_options['empty']['area']['id'] = 'area';
@@ -138,7 +138,7 @@ $handler->display->display_options['fields']['tooltip']['id'] = 'tooltip';
 $handler->display->display_options['fields']['tooltip']['table'] = 'views';
 $handler->display->display_options['fields']['tooltip']['field'] = 'tooltip';
 $handler->display->display_options['fields']['tooltip']['label'] = 'Action';
-$handler->display->display_options['fields']['tooltip']['alter']['text'] = '<a href="/manager_approval/nojs/pick_days/[employee_id]/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style">Pick days</a>';
+$handler->display->display_options['fields']['tooltip']['alter']['text'] = '<a href="manager_approval/nojs/pick_days/[employee_id]/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style">Pick days</a>';
 $handler->display->display_options['fields']['tooltip']['tooltip_text'] = 'Choose days';
 $handler->display->display_options['fields']['tooltip']['tooltip_hide_if_equal'] = 1;
 /* Sort criterion: Absence approval entity: Absence_start_date_timestamp */

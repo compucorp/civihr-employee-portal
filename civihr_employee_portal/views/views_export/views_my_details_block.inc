@@ -38,7 +38,7 @@ $handler->display->display_options['footer']['area']['id'] = 'area';
 $handler->display->display_options['footer']['area']['table'] = 'views';
 $handler->display->display_options['footer']['area']['field'] = 'area';
 $handler->display->display_options['footer']['area']['empty'] = TRUE;
-$handler->display->display_options['footer']['area']['content'] = '<a href="/my_details/nojs/view" class="ctools-use-modal ctools-modal-civihr-default-style">Edit my details</a>';
+$handler->display->display_options['footer']['area']['content'] = '<a href="my_details/nojs/view" class="ctools-use-modal ctools-modal-civihr-default-style">Edit my details</a>';
 $handler->display->display_options['footer']['area']['format'] = 'filtered_html';
 /* Relationship: CiviCRM Contacts: Drupal ID */
 $handler->display->display_options['relationships']['drupal_id']['id'] = 'drupal_id';
@@ -144,7 +144,7 @@ $translatables['my_details_block'] = array(
   t('Sort by'),
   t('Asc'),
   t('Desc'),
-  t('<a href="/my_details/nojs/view" class="ctools-use-modal ctools-modal-civihr-default-style">Edit my details</a>'),
+  t('<a href="my_details/nojs/view" class="ctools-use-modal ctools-modal-civihr-default-style">Edit my details</a>'),
   t('Drupal User'),
   t('CiviCRM Relationship (starting from contact A)'),
   t('CiviCRM Contact B'),
