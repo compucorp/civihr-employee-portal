@@ -9,7 +9,7 @@ function civihr_employee_portal_install() {
     civicrm_initialize();
     
     // Setup default settings for the CiviCRM to work with the new CiviHR dashboard
-    function _civi_setup();
+    _civi_setup();
 
 }
 
