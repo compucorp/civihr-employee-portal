@@ -48,14 +48,12 @@ $handler->display->display_options['relationships']['drupal_id']['field'] = 'dru
 $handler->display->display_options['relationships']['relationship_id_a']['id'] = 'relationship_id_a';
 $handler->display->display_options['relationships']['relationship_id_a']['table'] = 'civicrm_contact';
 $handler->display->display_options['relationships']['relationship_id_a']['field'] = 'relationship_id_a';
-$handler->display->display_options['relationships']['relationship_id_a']['required'] = TRUE;
 $handler->display->display_options['relationships']['relationship_id_a']['relationship_type'] = '11';
 /* Relationship: CiviCRM Relationships: Contact ID B */
 $handler->display->display_options['relationships']['contact_id_b_']['id'] = 'contact_id_b_';
 $handler->display->display_options['relationships']['contact_id_b_']['table'] = 'civicrm_relationship';
 $handler->display->display_options['relationships']['contact_id_b_']['field'] = 'contact_id_b_';
 $handler->display->display_options['relationships']['contact_id_b_']['relationship'] = 'relationship_id_a';
-$handler->display->display_options['relationships']['contact_id_b_']['required'] = TRUE;
 /* Field: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'civicrm_contact';

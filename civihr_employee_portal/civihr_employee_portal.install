@@ -1,37 +1,34 @@
 <?php
 
 /**
- * Implements hook_install().
- */
-function civihr_employee_portal_install() { 
-
-    /**
-    $t = get_t(); // runs in both the installer and runtime
-
-    */
+* Implements hook_install().
+*/
+function civihr_employee_portal_install() {
     
-    /* Create and save a new content object */
-    $webform = 'webform'; // machine name of the content type
+    // Civi init
+    civicrm_initialize();
+    
+    // Setup default settings for the CiviCRM to work with the new CiviHR dashboard
+    function _civi_setup();
 
-    /** 
-    // define the node type
-    $webform_node_type = array(
-        'type' => $webform,
-        'name' => $t('Webform CiviHR'), // Display name of the content type
-        'base' => 'node_content',
-        'title_label' => $t('Title'),
-        'description' => $t('To add images and captions.'),
-        'custom' => TRUE,
-    );
+}
 
-    // set other node defaults not declared above
-    $content_type = node_type_set_defaults($webform_node_type);
+function _civi_setup() {
 
-    // add the body field
-    node_add_body_field($content_type, $t('Body'));
-
-    // save the content type
-    node_type_save($content_type);
-     * 
-     */
+    $result = civicrm_api3('ContactType', 'create', array(
+        'sequential' => 1,
+        'name' => 'Emergency contact',
+        'parent_id' => 1,
+            'label' => 'Emergency Contact',
+            'is_active' => 1
+    ));
+            
+    $result = civicrm_api3('RelationshipType', 'create', array(
+        'sequential' => 1,
+        'name_a_b' => "has Leave Approved by",
+        'name_b_a' => "is Leave Approver of",
+        'contact_type_a' => "individual",
+        'contact_type_b' => "individual",
+    ));
+            
 }
