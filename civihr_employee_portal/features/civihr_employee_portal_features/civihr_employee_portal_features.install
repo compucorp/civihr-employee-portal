@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function civihr_employee_portal_features_install() {
+
+    // Set up front page URLs based on Role IDs (if the site is update not new install this can cause problems)
+    // @TODO --> For site updates we will need to find the matching RID's first
+    $values = array(
+        array(
+            'rid' => 1,
+            'mode' => 'redirect',
+            'data' => 'welcome',
+            'filter_format' => '',
+            'weight' => 0
+        ),
+        array(
+            'rid' => 2,
+            'mode' => '',
+            'data' => '',
+            'filter_format' => '',
+            'weight' => 0
+        ) 
+    );
+
+    $query = db_insert('front_page')->fields(array('rid', 'mode', 'data', 'filter_format', 'weight'));
+    
+    foreach ($values as $record) {
+        $query->values($record);
+    }
+
+    $query->execute();
+    
+}

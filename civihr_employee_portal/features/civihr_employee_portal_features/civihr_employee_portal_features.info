@@ -104,4 +104,6 @@ features[variable][] = menu_parent_webform
 features[variable][] = node_options_webform
 features[variable][] = node_preview_webform
 features[variable][] = node_submitted_webform
+features[variable][] = front_page_enable
+features[variable][] = site_frontpage
 features_exclude[dependencies][node_export_features] = node_export_features

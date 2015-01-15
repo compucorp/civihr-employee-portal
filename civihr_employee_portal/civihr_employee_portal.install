@@ -1,8 +1,8 @@
 <?php
 
 /**
-* Implements hook_install().
-*/
+ * Implements hook_install().
+ */
 function civihr_employee_portal_install() {
     
     // Civi init
