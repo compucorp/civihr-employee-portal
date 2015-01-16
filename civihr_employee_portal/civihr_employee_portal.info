@@ -20,6 +20,7 @@ dependencies[] = views_block_area
 dependencies[] = jquery_update
 dependencies[] = webform
 dependencies[] = webform_civicrm
+dependencies[] = front_page
 
 ; Views Handlers
 files[] = views/includes/civihr_employee_portal_handler_absence_duration.inc

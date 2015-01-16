@@ -21,7 +21,35 @@ function civihr_employee_portal_features_install() {
             'data' => '',
             'filter_format' => '',
             'weight' => 0
-        ) 
+        ),
+        array(
+            'rid' => 3,
+            'mode' => '',
+            'data' => '',
+            'filter_format' => '',
+            'weight' => 0
+        ),
+        array(
+            'rid' => 4,
+            'mode' => 'redirect',
+            'data' => 'civicrm',
+            'filter_format' => '',
+            'weight' => 0
+        ),
+        array(
+            'rid' => 5,
+            'mode' => 'redirect',
+            'data' => 'dashboard',
+            'filter_format' => '',
+            'weight' => 0
+        ),
+        array(
+            'rid' => 6,
+            'mode' => 'redirect',
+            'data' => 'dashboard',
+            'filter_format' => '',
+            'weight' => 0
+        )      
     );
 
     $query = db_insert('front_page')->fields(array('rid', 'mode', 'data', 'filter_format', 'weight'));
