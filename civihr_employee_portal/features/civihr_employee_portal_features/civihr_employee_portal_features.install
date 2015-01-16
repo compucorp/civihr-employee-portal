@@ -11,7 +11,7 @@ function civihr_employee_portal_features_install() {
         array(
             'rid' => 1,
             'mode' => 'redirect',
-            'data' => 'welcome',
+            'data' => 'welcome-page',
             'filter_format' => '',
             'weight' => 0
         ),

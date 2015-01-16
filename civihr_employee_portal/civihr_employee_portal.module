@@ -179,6 +179,12 @@ function civihr_employee_portal_theme() {
             ),
             'template' => 'templates/civihr-employee-portal-my-details--block',
         ),
+        'civihr_employee_portal_login_block' => array(
+            'variables' => array(
+                'custom_data' => NULL
+            ),
+            'template' => 'templates/civihr-employee-portal-login-block--block',
+        ),
     );
 }
 

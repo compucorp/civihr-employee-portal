@@ -28,6 +28,9 @@ class Base {
                 'my_details' => array('info' => t('CiviHR my details block'),
                                 'class_name' => 'MyDetailsData',
                                 'title' => '<none>'),
+                'login_block' => array('info' => t('CiviHR custom login block'),
+                                    'class_name' => 'LoginBlock',
+                                    'title' => '<none>'),
                ];
     }
     
