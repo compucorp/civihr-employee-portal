@@ -607,11 +607,16 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
     // Civi init
     civicrm_initialize();
     
+    // Get the main "absence" activity ID
+    $activityTypes = CRM_Core_OptionGroup::values('activity_type', FALSE, FALSE, FALSE, NULL, 'name');
+    $activityTypeId = CRM_Utils_Array::key('Absence', $activityTypes);
+    
     $abesence_details = array(
         'source_record_id' => $form_state['main_absence_id'],
-        // TODO --> Get the default absence type ID (not hardcode it!)
-        'activity_type_id' => '51',
+        'activity_type_id' => $activityTypeId,
     );
+    
+    watchdog('test ID 1', print_r($activityTypeId, TRUE));
 
     $res = civicrm_api3('Activity', 'get', $abesence_details);
     $absence_details = $res['values'];

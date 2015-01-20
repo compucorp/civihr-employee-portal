@@ -106,13 +106,18 @@ function _new_absence_request_action($roles, $absence_type, $absence_details, $f
     );
     
     $result = civicrm_api3('Activity', 'create', $activityParam);
+        
+    // Get the main "absence" activity ID
+    $activityTypes = CRM_Core_OptionGroup::values('activity_type', FALSE, FALSE, FALSE, NULL, 'name');
+    $activityTypeId = CRM_Utils_Array::key('Absence', $activityTypes);
+    
+    watchdog('test ID 2', print_r($activityTypeId, TRUE));
     
     // Create sub-activities
     $activityLeavesParam = array(
         'sequential' => 1,
         'source_record_id' => $result['id'],
-        // TODO --> Get the default absence type ID (not hardcode it!)
-        'activity_type_id' => '51',
+        'activity_type_id' => $activityTypeId,
     );
     
     $absentDateDurations = array();
