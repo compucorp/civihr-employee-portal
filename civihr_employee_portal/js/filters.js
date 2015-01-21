@@ -4,6 +4,86 @@ Drupal.behaviors.civihr_employee_portal_filters = {
         
         // Load only when the context is front page (we don't want to load this script in modal windows or when requesting leave)
         if (context == document) {
+            
+            $( ".glyphicon-ok-sign" ).click(function() {
+                
+                console.log(this);
+                var clicked_object = $(this).attr('id');
+                swal({
+                    title: "Approve all leave",
+                    text: "Are you sure you want to approve this leave?",
+                    type: "info",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, approve all!",
+                    closeOnConfirm: false,
+                },
+                function() {
+
+                    console.log(clicked_object);
+                    
+                    CRM.api3('Activity', 'get', {
+                        "sequential": 1,
+                        "source_record_id": clicked_object,
+                    }).done(function(result) {
+                        console.log(result);
+                        for (index = 0; index < result.count; ++index) {
+                            
+                            // console.log(result.values[index].id);
+                            
+                            CRM.api3('Activity', 'setvalue', {
+                                "sequential": 1,
+                                "id": result.values[index].id,
+                                "field": "status_id",
+                                "value": 2
+                            }).done(function(result) {
+
+                            });
+                        }
+                    });
+                    
+                    CRM.api3('Activity', 'setvalue', {
+                        "sequential": 1,
+                        "id": clicked_object,
+                        "field": "status_id",
+                        "value": 2
+                    }).done(function(result) {
+                        
+                        if (result.is_error == 1) {
+                            // console.log(result);
+                            swal("Failed!", result.error_message, "error");
+                        }
+                        else {
+                            console.log(result);
+                            $( "#act-id-" + clicked_object).html('Approved');
+                            swal("Approved!", "The whole leave request has been Approved.", "success");
+                        }
+                            
+                        
+                    });
+
+                    
+                    
+                });
+            });
+            
+            $( ".glyphicon-remove-sign" ).click(function() {
+                swal({
+                    title: "Reject all leave",
+                    text: "Are you sure you want to reject this leave?",
+                    type: "info",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, reject all!",
+                    closeOnConfirm: false
+                  },
+                  function(){
+                    
+                    console.log('reject');
+                    $( ".tablesaw-priority-4" ).html('TEST REJ');
+                    swal("Rejected!", "The whole leave request has been Rejected.", "success");
+                  });
+            });
         
             if ($('table').hasClass('manager-approval-main-table') && $('div').hasClass('ctools-modal-dialog') == false) {
 

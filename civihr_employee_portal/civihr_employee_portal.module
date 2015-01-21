@@ -29,7 +29,21 @@ GROUP BY request.id;
 use Drupal\civihr_employee_portal\Blocks\Base;
 use Drupal\civihr_employee_portal\Blocks\Leave;
 
+function civihr_employee_portal_css_alter(&$css) {
+    
+    // Remove defaults system messages css file.
+    unset($css[drupal_get_path('module', 'system') . '/system.messages.css']);
+}
+
 function civihr_employee_portal_init() {
+    
+    
+    // Civi init + load the singleton needed for the AJAX calls
+    civicrm_initialize();
+    CRM_Core_Resources::singleton()->addCoreResources();
+    
+    // Add our additional css libraries
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweet-alert.css");
     
     // Check the variable and decide if we need to rebuild the absence_list mysql view
     $rebuild_absence_list_view = variable_get('rebuild_absence_list_view', 'TRUE');

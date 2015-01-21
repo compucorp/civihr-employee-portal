@@ -133,14 +133,24 @@ $handler->display->display_options['fields']['absence_status']['id'] = 'absence_
 $handler->display->display_options['fields']['absence_status']['table'] = 'absence_approval_list';
 $handler->display->display_options['fields']['absence_status']['field'] = 'absence_status';
 $handler->display->display_options['fields']['absence_status']['label'] = 'Status';
+$handler->display->display_options['fields']['absence_status']['alter']['alter_text'] = TRUE;
+$handler->display->display_options['fields']['absence_status']['alter']['text'] = '<div id="act-id-[id]">[absence_status]</div>';
 /* Field: Global: Tooltip field */
 $handler->display->display_options['fields']['tooltip']['id'] = 'tooltip';
 $handler->display->display_options['fields']['tooltip']['table'] = 'views';
 $handler->display->display_options['fields']['tooltip']['field'] = 'tooltip';
-$handler->display->display_options['fields']['tooltip']['label'] = 'Action';
+$handler->display->display_options['fields']['tooltip']['label'] = 'Pick days';
+$handler->display->display_options['fields']['tooltip']['exclude'] = TRUE;
 $handler->display->display_options['fields']['tooltip']['alter']['text'] = '<a href="manager_approval/nojs/pick_days/[employee_id]/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style">Pick days</a>';
 $handler->display->display_options['fields']['tooltip']['tooltip_text'] = 'Choose days';
 $handler->display->display_options['fields']['tooltip']['tooltip_hide_if_equal'] = 1;
+/* Field: Global: Custom text */
+$handler->display->display_options['fields']['nothing_1']['id'] = 'nothing_1';
+$handler->display->display_options['fields']['nothing_1']['table'] = 'views';
+$handler->display->display_options['fields']['nothing_1']['field'] = 'nothing';
+$handler->display->display_options['fields']['nothing_1']['label'] = 'Action';
+$handler->display->display_options['fields']['nothing_1']['alter']['text'] = '<div id="quick-approve"><span id="[id]" class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span><span  id="[id]" class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></div>
+[tooltip]';
 /* Sort criterion: Absence approval entity: Absence_start_date_timestamp */
 $handler->display->display_options['sorts']['absence_start_date_timestamp']['id'] = 'absence_start_date_timestamp';
 $handler->display->display_options['sorts']['absence_start_date_timestamp']['table'] = 'absence_approval_list';
@@ -170,7 +180,7 @@ $translatables['approvals'] = array(
   t('Sort by'),
   t('Asc'),
   t('Desc'),
-  t('<a href="/manager_approval/nojs/calendar/show" class="ctools-use-modal ctools-modal-civihr-default-style">Open manager calendar</a>'),
+  t('<a href="manager_approval/nojs/calendar/show" class="ctools-use-modal ctools-modal-civihr-default-style">Open manager calendar</a>'),
   t('Nothing to approve yet!'),
   t('Employee CiviCRM Contact ID'),
   t('.'),
@@ -182,10 +192,14 @@ $translatables['approvals'] = array(
   t('Dates'),
   t('[absence_start_date_timestamp] - [absence_end_date_timestamp] ([duration])'),
   t('Status'),
-  t('Action'),
-  t('<a href="/manager_approval/nojs/pick_days/[employee_id]/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style">Pick days</a>'),
+  t('<div id="act-id-[id]">[absence_status]</div>'),
+  t('Pick days'),
+  t('<a href="manager_approval/nojs/pick_days/[employee_id]/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style">Pick days</a>'),
   t('Choose days'),
   t('1'),
+  t('Action'),
+  t('<div id="quick-approve"><span id="[id]" class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span><span  id="[id]" class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></div>
+[tooltip]'),
   t('All'),
   t('Page'),
   t('Block'),

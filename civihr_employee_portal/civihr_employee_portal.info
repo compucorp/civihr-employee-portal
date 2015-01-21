@@ -32,9 +32,11 @@ files[] = views/includes/civihr_employee_portal_filter_absence_period.inc
 files[] = views/includes/civihr_employee_portal_handler_employee_id.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_status.inc
 
-; Additional js
+; Custom js
 scripts[] = js/scripts.js
 scripts[] = js/filters.js
-; scripts[] = js/jquery.floatThead.min.js
+
+; Additional js
 scripts[] = js/jquery.tablesorter.min.js
 scripts[] = js/tablesaw/tablesaw.js
+scripts[] = lib/sweetalert/sweet-alert.min.js
