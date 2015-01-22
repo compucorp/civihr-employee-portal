@@ -5,9 +5,66 @@ Drupal.behaviors.civihr_employee_portal_filters = {
         // Load only when the context is front page (we don't want to load this script in modal windows or when requesting leave)
         if (context == document) {
             
+            /**
+             * 
+             * @param {type} clicked_object
+             * @param {type} type
+             * Function for Quick approve / Quick reject the leave from the manager approval block
+             */
+            function civiUpdateActivity(clicked_object, type) {
+                
+                if (type == 'approve') {
+                    var status_value = 2;
+                    var status_type = 'Approved';
+                    var status_message = 'The whole leave request has been Approved.';
+                }
+                if (type == 'reject') {
+                    var status_value = 9;
+                    var status_type = 'Rejected';
+                    var status_message = 'The whole leave request has been Rejected.';
+                }
+                
+                CRM.api3('Activity', 'get', {
+                        "sequential": 1,
+                        "source_record_id": clicked_object,
+                    }).done(function(result) {
+                        console.log(result);
+                        for (index = 0; index < result.count; ++index) {
+                            
+                            CRM.api3('Activity', 'setvalue', {
+                                "sequential": 1,
+                                "id": result.values[index].id,
+                                "field": "status_id",
+                                "value": status_value
+                            }).done(function(result) {
+
+                            });
+                        }
+                    });
+                    
+                CRM.api3('Activity', 'setvalue', {
+                        "sequential": 1,
+                        "id": clicked_object,
+                        "field": "status_id",
+                        "value": status_value
+                    }).done(function(result) {
+                        
+                        if (result.is_error == 1) {
+                            swal("Failed!", result.error_message, "error");
+                        }
+                        else {
+                            console.log(result);
+                            $("#act-id-" + clicked_object).html(status_type);
+                            swal(status_type + "!", status_message, "success");
+                        }
+                            
+                        
+                    });
+                    
+            }
+            
             $( ".glyphicon-ok-sign" ).click(function() {
                 
-                console.log(this);
                 var clicked_object = $(this).attr('id');
                 swal({
                     title: "Approve all leave",
@@ -21,53 +78,14 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                 function() {
 
                     console.log(clicked_object);
-                    
-                    CRM.api3('Activity', 'get', {
-                        "sequential": 1,
-                        "source_record_id": clicked_object,
-                    }).done(function(result) {
-                        console.log(result);
-                        for (index = 0; index < result.count; ++index) {
-                            
-                            // console.log(result.values[index].id);
-                            
-                            CRM.api3('Activity', 'setvalue', {
-                                "sequential": 1,
-                                "id": result.values[index].id,
-                                "field": "status_id",
-                                "value": 2
-                            }).done(function(result) {
-
-                            });
-                        }
-                    });
-                    
-                    CRM.api3('Activity', 'setvalue', {
-                        "sequential": 1,
-                        "id": clicked_object,
-                        "field": "status_id",
-                        "value": 2
-                    }).done(function(result) {
-                        
-                        if (result.is_error == 1) {
-                            // console.log(result);
-                            swal("Failed!", result.error_message, "error");
-                        }
-                        else {
-                            console.log(result);
-                            $( "#act-id-" + clicked_object).html('Approved');
-                            swal("Approved!", "The whole leave request has been Approved.", "success");
-                        }
-                            
-                        
-                    });
-
-                    
+                    civiUpdateActivity(clicked_object, 'approve');
                     
                 });
             });
             
             $( ".glyphicon-remove-sign" ).click(function() {
+                
+                var clicked_object = $(this).attr('id');
                 swal({
                     title: "Reject all leave",
                     text: "Are you sure you want to reject this leave?",
@@ -80,8 +98,9 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                   function(){
                     
                     console.log('reject');
-                    $( ".tablesaw-priority-4" ).html('TEST REJ');
-                    swal("Rejected!", "The whole leave request has been Rejected.", "success");
+                    console.log(clicked_object);
+                    civiUpdateActivity(clicked_object, 'reject');
+                    
                   });
             });
         
@@ -182,7 +201,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
             
              // Map the classes for each item into a new array
              classes = $(".manager-approval-main-table > tbody tr").map(function() {
-                return $(this).attr("class").split(' ');
+                return $(this).attr("data").split('@');
             });
 
             // Create list of distinct items only
@@ -201,7 +220,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
             $.each(classList, function(index, value) {
                 
                 var index = index.replace("-", " ");
-                if(jQuery.inArray(index, allowed_values)!==-1) {
+                if($.inArray(index, allowed_values)!==-1) {
                     tagItem += '<button class="btn btn-custom" type="button">' + index + '&nbsp;<span class="badge">' + value + '</span></button>';
                 }
             });
@@ -221,7 +240,18 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     $(".manager-approval-main-table > tbody tr").fadeIn(10);
                 } else {
                     $(".manager-approval-main-table > tbody tr").fadeOut(10);
-                    $(".manager-approval-main-table > tbody tr." + string[0]).fadeIn(10);
+                    $(".manager-approval-main-table > tbody tr").each(function() {
+                        
+                        var data_array = $(this).attr('data').split("@");
+                        var index = string[0].replace("-", " ");
+                        
+                        // Filter
+                        if ($.inArray(index, data_array) !== -1) {
+                            console.log('match');
+                            $(this).fadeIn(10);
+                        }
+                        
+                    });
                 }
 
                 // Add class "active" to current filter item
