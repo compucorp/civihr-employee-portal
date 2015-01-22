@@ -214,24 +214,42 @@ Drupal.behaviors.civihr_employee_portal_filters = {
             tagItem = '<button class="btn btn-custom" type="button" class="active">all&nbsp;<span class="badge">' + classList['approvals-table'] + '</span></button>';
 
             // Check for the enabled absence types only
-            var allowed_values = ["Vacation", "Maternity", "TOIL", "Approved", "Rejected", "Cancelled", "Awaiting approval"];
+            var excluded_values = ["approvals table", "Approved", "Rejected"];
+            
+            // Check for the enabled approved / rejected only
+            var included_values = ["Approved", "Rejected"];
             
             // Loop through the list of classes & add link
             $.each(classList, function(index, value) {
                 
                 var index = index.replace("-", " ");
-                if($.inArray(index, allowed_values)!==-1) {
+                
+                // Build the approval filters
+                if($.inArray(index, excluded_values) == -1) {
                     tagItem += '<button class="btn btn-custom" type="button">' + index + '&nbsp;<span class="badge">' + value + '</span></button>';
                 }
+                
             });
-
+            
+            // Loop through the list of classes & add link
+            $.each(classList, function(index, value) {
+                
+                var index = index.replace("-", " ");
+                             
+                // Build the approved / rejected filters
+                if($.inArray(index, included_values) !== -1) {
+                    tagItem += '<button class="btn btn-custom" type="button">' + index + '&nbsp;<span class="badge">' + value + '</span></button>';
+                }
+                    
+            });
+            
             // Add the filter links before the list of items
             $( "div.approval-filters" ).html($(tagList).append(tagItem));
 
             $('#tag-list button').click(function(e) {
 
                 // allows filter categories using multiple words
-                var getText = $(this).text().replace(" ", "-");
+                var getText = $(this).text().replace(/ /g, "-");
                 
                 // Get the value name from the string (it includes the count value, so this removes it) -> similar to php explode function
                 var string = getText.match(/\S+/g);
@@ -243,8 +261,10 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     $(".manager-approval-main-table > tbody tr").each(function() {
                         
                         var data_array = $(this).attr('data').split("@");
-                        var index = string[0].replace("-", " ");
+                        var index = string[0].replace(/-/g, " ");
                         
+                        //console.log(data_array);
+                        //console.log(index);
                         // Filter
                         if ($.inArray(index, data_array) !== -1) {
                             console.log('match');
