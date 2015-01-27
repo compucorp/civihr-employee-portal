@@ -77,7 +77,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_attachment',
-    'label' => 'Attachment',
+    'label' => 'Attachments',
     'required' => 0,
     'settings' => array(
       'description_field' => 1,
@@ -112,7 +112,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'above',
+        'label' => 'hidden',
         'module' => 'download',
         'settings' => array(),
         'type' => 'download_link_formatter',
@@ -144,7 +144,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Attachment');
+  t('Attachments');
   t('Description');
   t('Download');
 

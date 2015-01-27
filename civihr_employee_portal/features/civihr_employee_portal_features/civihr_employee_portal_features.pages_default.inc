@@ -81,7 +81,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->pid = 'new-691f553c-d36d-474b-b89b-c75974eb3eb4';
     $pane->panel = 'footer';
     $pane->type = 'block';
-    $pane->subtype = 'views-hr_documents_block-block';
+    $pane->subtype = 'views-hr_documents-block';
     $pane->shown = TRUE;
     $pane->access = array();
     $pane->configuration = array(
