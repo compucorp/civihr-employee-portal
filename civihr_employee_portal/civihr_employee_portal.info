@@ -22,6 +22,7 @@ dependencies[] = webform
 dependencies[] = webform_civicrm
 dependencies[] = front_page
 dependencies[] = fancy_login
+dependencies[] = jcarousel
 
 ; Views Handlers
 files[] = views/includes/civihr_employee_portal_handler_absence_duration.inc

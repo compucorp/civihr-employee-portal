@@ -18,3 +18,21 @@ function civihr_employee_portal_features_ctools_plugin_api($module = NULL, $api 
     return array("version" => "1");
   }
 }
+
+/**
+ * Implements hook_node_info().
+ */
+function civihr_employee_portal_features_node_info() {
+  $items = array(
+    'hr_documents' => array(
+      'name' => t('HR documents'),
+      'base' => 'node_content',
+      'description' => '',
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'help' => '',
+    ),
+  );
+  drupal_alter('node_info', $items);
+  return $items;
+}

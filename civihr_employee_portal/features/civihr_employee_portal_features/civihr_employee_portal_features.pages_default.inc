@@ -78,6 +78,28 @@ function civihr_employee_portal_features_default_page_manager_pages() {
   $display->content = array();
   $display->panels = array();
     $pane = new stdClass();
+    $pane->pid = 'new-691f553c-d36d-474b-b89b-c75974eb3eb4';
+    $pane->panel = 'footer';
+    $pane->type = 'block';
+    $pane->subtype = 'views-hr_documents_block-block';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array(
+      'override_title' => 0,
+      'override_title_text' => '',
+    );
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array();
+    $pane->extras = array();
+    $pane->position = 0;
+    $pane->locks = array();
+    $pane->uuid = '691f553c-d36d-474b-b89b-c75974eb3eb4';
+    $display->content['new-691f553c-d36d-474b-b89b-c75974eb3eb4'] = $pane;
+    $display->panels['footer'][0] = 'new-691f553c-d36d-474b-b89b-c75974eb3eb4';
+    $pane = new stdClass();
     $pane->pid = 'new-48897dc2-d49e-4e72-b86a-7ec70b28da04';
     $pane->panel = 'header';
     $pane->type = 'block';
