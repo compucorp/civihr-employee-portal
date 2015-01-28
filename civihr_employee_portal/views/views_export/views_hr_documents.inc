@@ -152,19 +152,34 @@ $handler->display->display_options['fields']['body']['type'] = 'text_summary_or_
 $handler->display->display_options['fields']['body']['settings'] = array(
   'trim_length' => '100',
 );
-/* Field: Content: Attachment */
-$handler->display->display_options['fields']['field_attachment']['id'] = 'field_attachment';
-$handler->display->display_options['fields']['field_attachment']['table'] = 'field_data_field_attachment';
-$handler->display->display_options['fields']['field_attachment']['field'] = 'field_attachment';
-$handler->display->display_options['fields']['field_attachment']['click_sort_column'] = 'fid';
-$handler->display->display_options['fields']['field_attachment']['type'] = 'file_table';
-$handler->display->display_options['fields']['field_attachment']['delta_offset'] = '0';
 /* Field: Content: Download */
 $handler->display->display_options['fields']['field_download']['id'] = 'field_download';
 $handler->display->display_options['fields']['field_download']['table'] = 'field_data_field_download';
 $handler->display->display_options['fields']['field_download']['field'] = 'field_download';
-$handler->display->display_options['fields']['field_download']['label'] = 'Download all files';
+$handler->display->display_options['fields']['field_download']['label'] = '';
+$handler->display->display_options['fields']['field_download']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['field_download']['click_sort_column'] = 'download_fields';
+/* Field: Global: Fieldset */
+$handler->display->display_options['fields']['fieldset']['id'] = 'fieldset';
+$handler->display->display_options['fields']['fieldset']['table'] = 'views';
+$handler->display->display_options['fields']['fieldset']['field'] = 'fieldset';
+$handler->display->display_options['fields']['fieldset']['label'] = 'See resources';
+$handler->display->display_options['fields']['fieldset']['children'] = array(
+  0 => 'field_attachment',
+);
+$handler->display->display_options['fields']['fieldset']['fieldset']['id'] = '[nid]';
+$handler->display->display_options['fields']['fieldset']['fieldset']['collapsible'] = 1;
+$handler->display->display_options['fields']['fieldset']['fieldset']['collapsed'] = 1;
+/* Field: Content: Attachments */
+$handler->display->display_options['fields']['field_attachment']['id'] = 'field_attachment';
+$handler->display->display_options['fields']['field_attachment']['table'] = 'field_data_field_attachment';
+$handler->display->display_options['fields']['field_attachment']['field'] = 'field_attachment';
+$handler->display->display_options['fields']['field_attachment']['element_label_class'] = 'hr-doc-label';
+$handler->display->display_options['fields']['field_attachment']['element_label_colon'] = FALSE;
+$handler->display->display_options['fields']['field_attachment']['empty'] = 'No resource file attached!';
+$handler->display->display_options['fields']['field_attachment']['click_sort_column'] = 'fid';
+$handler->display->display_options['fields']['field_attachment']['type'] = 'file_table';
+$handler->display->display_options['fields']['field_attachment']['delta_offset'] = '0';
 $handler->display->display_options['path'] = 'hr-resources';
 $handler->display->display_options['menu']['type'] = 'normal';
 $handler->display->display_options['menu']['title'] = 'HR Resources';
@@ -172,7 +187,7 @@ $handler->display->display_options['menu']['weight'] = '5';
 $handler->display->display_options['menu']['name'] = 'main-menu';
 $handler->display->display_options['menu']['context'] = 0;
 $handler->display->display_options['menu']['context_only_inline'] = 0;
-$translatables['hr_documents_block'] = array(
+$translatables['hr_documents'] = array(
   t('Master'),
   t('HR Documents and Downloads'),
   t('more'),
@@ -192,6 +207,7 @@ $translatables['hr_documents_block'] = array(
   t('‹ previous'),
   t('next ›'),
   t('last »'),
-  t('Attachment'),
-  t('Download all files'),
+  t('See resources'),
+  t('Attachments'),
+  t('No resource file attached!'),
 );

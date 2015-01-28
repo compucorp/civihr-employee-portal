@@ -1,6 +1,8 @@
 name = civiHR Employee Portal features
 core = 7.x
 package = Compucorp
+version = 7.x-1.0-beta1
+project = civihr_employee_portal_features
 dependencies[] = civicrm
 dependencies[] = civihr_employee_portal
 dependencies[] = ctools
