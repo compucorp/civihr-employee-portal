@@ -22,6 +22,7 @@ $handler->display->display_options['access']['type'] = 'perm';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
 $handler->display->display_options['exposed_form']['type'] = 'basic';
+$handler->display->display_options['exposed_form']['options']['submit_button'] = 'Search';
 $handler->display->display_options['pager']['type'] = 'some';
 $handler->display->display_options['pager']['options']['items_per_page'] = '5';
 $handler->display->display_options['style_plugin'] = 'list';
@@ -117,12 +118,16 @@ $handler->display->display_options['pager']['type'] = 'mini';
 $handler->display->display_options['pager']['options']['items_per_page'] = '20';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['pager']['options']['id'] = '0';
+$handler->display->display_options['pager']['options']['expose']['items_per_page'] = TRUE;
+$handler->display->display_options['pager']['options']['expose']['items_per_page_options_all'] = TRUE;
 $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'default';
+$handler->display->display_options['style_options']['row_class'] = 'row-hr-resource';
 $handler->display->display_options['defaults']['style_options'] = FALSE;
 $handler->display->display_options['defaults']['row_plugin'] = FALSE;
 $handler->display->display_options['row_plugin'] = 'fields';
 $handler->display->display_options['defaults']['row_options'] = FALSE;
+$handler->display->display_options['defaults']['header'] = FALSE;
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Content: Nid */
 $handler->display->display_options['fields']['nid']['id'] = 'nid';
@@ -131,34 +136,58 @@ $handler->display->display_options['fields']['nid']['field'] = 'nid';
 $handler->display->display_options['fields']['nid']['label'] = '';
 $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
 $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
+/* Field: Content: Resource type */
+$handler->display->display_options['fields']['field_resource_type']['id'] = 'field_resource_type';
+$handler->display->display_options['fields']['field_resource_type']['table'] = 'field_data_field_resource_type';
+$handler->display->display_options['fields']['field_resource_type']['field'] = 'field_resource_type';
+$handler->display->display_options['fields']['field_resource_type']['label'] = '';
+$handler->display->display_options['fields']['field_resource_type']['exclude'] = TRUE;
+$handler->display->display_options['fields']['field_resource_type']['element_label_colon'] = FALSE;
+$handler->display->display_options['fields']['field_resource_type']['type'] = 'taxonomy_term_reference_plain';
 /* Field: Content: Title */
 $handler->display->display_options['fields']['title']['id'] = 'title';
 $handler->display->display_options['fields']['title']['table'] = 'node';
 $handler->display->display_options['fields']['title']['field'] = 'title';
 $handler->display->display_options['fields']['title']['label'] = '';
+$handler->display->display_options['fields']['title']['exclude'] = TRUE;
+$handler->display->display_options['fields']['title']['alter']['alter_text'] = TRUE;
+$handler->display->display_options['fields']['title']['alter']['text'] = '<strong><h4>[title]</h4></strong>
+';
 $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
 $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
 $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['title']['element_wrapper_class'] = 'hr-documents-title-block';
 $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
-/* Field: Content: Body */
-$handler->display->display_options['fields']['body']['id'] = 'body';
-$handler->display->display_options['fields']['body']['table'] = 'field_data_body';
-$handler->display->display_options['fields']['body']['field'] = 'body';
-$handler->display->display_options['fields']['body']['label'] = '';
-$handler->display->display_options['fields']['body']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['body']['element_wrapper_class'] = 'hr-documents-body-block';
-$handler->display->display_options['fields']['body']['type'] = 'text_summary_or_trimmed';
-$handler->display->display_options['fields']['body']['settings'] = array(
-  'trim_length' => '100',
-);
 /* Field: Content: Download */
 $handler->display->display_options['fields']['field_download']['id'] = 'field_download';
 $handler->display->display_options['fields']['field_download']['table'] = 'field_data_field_download';
 $handler->display->display_options['fields']['field_download']['field'] = 'field_download';
 $handler->display->display_options['fields']['field_download']['label'] = '';
+$handler->display->display_options['fields']['field_download']['exclude'] = TRUE;
 $handler->display->display_options['fields']['field_download']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['field_download']['click_sort_column'] = 'download_fields';
+/* Field: Global: Custom text */
+$handler->display->display_options['fields']['nothing']['id'] = 'nothing';
+$handler->display->display_options['fields']['nothing']['table'] = 'views';
+$handler->display->display_options['fields']['nothing']['field'] = 'nothing';
+$handler->display->display_options['fields']['nothing']['label'] = '';
+$handler->display->display_options['fields']['nothing']['alter']['text'] = '<span class="col-md-2"><blockquote>[field_resource_type]</blockquote></span>
+<span class="col-md-8">[title]</span>
+<span class="col-md-2">[field_download]</span>';
+$handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
+/* Field: Content: Body */
+$handler->display->display_options['fields']['body']['id'] = 'body';
+$handler->display->display_options['fields']['body']['table'] = 'field_data_body';
+$handler->display->display_options['fields']['body']['field'] = 'body';
+$handler->display->display_options['fields']['body']['label'] = '';
+$handler->display->display_options['fields']['body']['alter']['alter_text'] = TRUE;
+$handler->display->display_options['fields']['body']['alter']['text'] = '<div class="col-md-2"></div>
+<div class="col-md-10">[body]</div>';
+$handler->display->display_options['fields']['body']['element_label_colon'] = FALSE;
+$handler->display->display_options['fields']['body']['type'] = 'text_summary_or_trimmed';
+$handler->display->display_options['fields']['body']['settings'] = array(
+  'trim_length' => '100',
+);
 /* Field: Global: Fieldset */
 $handler->display->display_options['fields']['fieldset']['id'] = 'fieldset';
 $handler->display->display_options['fields']['fieldset']['table'] = 'views';
@@ -167,6 +196,7 @@ $handler->display->display_options['fields']['fieldset']['label'] = 'See resourc
 $handler->display->display_options['fields']['fieldset']['children'] = array(
   0 => 'field_attachment',
 );
+$handler->display->display_options['fields']['fieldset']['fieldset']['classes'] = 'col-md-12';
 $handler->display->display_options['fields']['fieldset']['fieldset']['id'] = '[nid]';
 $handler->display->display_options['fields']['fieldset']['fieldset']['collapsible'] = 1;
 $handler->display->display_options['fields']['fieldset']['fieldset']['collapsed'] = 1;
@@ -180,6 +210,66 @@ $handler->display->display_options['fields']['field_attachment']['empty'] = 'No 
 $handler->display->display_options['fields']['field_attachment']['click_sort_column'] = 'fid';
 $handler->display->display_options['fields']['field_attachment']['type'] = 'file_table';
 $handler->display->display_options['fields']['field_attachment']['delta_offset'] = '0';
+$handler->display->display_options['defaults']['filter_groups'] = FALSE;
+$handler->display->display_options['defaults']['filters'] = FALSE;
+/* Filter criterion: Content: Published */
+$handler->display->display_options['filters']['status']['id'] = 'status';
+$handler->display->display_options['filters']['status']['table'] = 'node';
+$handler->display->display_options['filters']['status']['field'] = 'status';
+$handler->display->display_options['filters']['status']['value'] = 1;
+$handler->display->display_options['filters']['status']['group'] = 1;
+$handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+/* Filter criterion: Content: Type */
+$handler->display->display_options['filters']['type']['id'] = 'type';
+$handler->display->display_options['filters']['type']['table'] = 'node';
+$handler->display->display_options['filters']['type']['field'] = 'type';
+$handler->display->display_options['filters']['type']['value'] = array(
+  'hr_documents' => 'hr_documents',
+);
+$handler->display->display_options['filters']['type']['group'] = 1;
+/* Filter criterion: Global: Combine fields filter */
+$handler->display->display_options['filters']['combine']['id'] = 'combine';
+$handler->display->display_options['filters']['combine']['table'] = 'views';
+$handler->display->display_options['filters']['combine']['field'] = 'combine';
+$handler->display->display_options['filters']['combine']['operator'] = 'word';
+$handler->display->display_options['filters']['combine']['group'] = 1;
+$handler->display->display_options['filters']['combine']['exposed'] = TRUE;
+$handler->display->display_options['filters']['combine']['expose']['operator_id'] = 'combine_op';
+$handler->display->display_options['filters']['combine']['expose']['label'] = 'Keywords';
+$handler->display->display_options['filters']['combine']['expose']['operator'] = 'combine_op';
+$handler->display->display_options['filters']['combine']['expose']['identifier'] = 'combine';
+$handler->display->display_options['filters']['combine']['expose']['remember_roles'] = array(
+  2 => '2',
+  1 => 0,
+  3 => 0,
+  4 => 0,
+  6 => 0,
+  5 => 0,
+);
+$handler->display->display_options['filters']['combine']['fields'] = array(
+  'title' => 'title',
+  'body' => 'body',
+);
+/* Filter criterion: Content: Resource type (field_resource_type) */
+$handler->display->display_options['filters']['field_resource_type_tid']['id'] = 'field_resource_type_tid';
+$handler->display->display_options['filters']['field_resource_type_tid']['table'] = 'field_data_field_resource_type';
+$handler->display->display_options['filters']['field_resource_type_tid']['field'] = 'field_resource_type_tid';
+$handler->display->display_options['filters']['field_resource_type_tid']['group'] = 1;
+$handler->display->display_options['filters']['field_resource_type_tid']['exposed'] = TRUE;
+$handler->display->display_options['filters']['field_resource_type_tid']['expose']['operator_id'] = 'field_resource_type_tid_op';
+$handler->display->display_options['filters']['field_resource_type_tid']['expose']['label'] = 'Resource type';
+$handler->display->display_options['filters']['field_resource_type_tid']['expose']['operator'] = 'field_resource_type_tid_op';
+$handler->display->display_options['filters']['field_resource_type_tid']['expose']['identifier'] = 'field_resource_type_tid';
+$handler->display->display_options['filters']['field_resource_type_tid']['expose']['remember_roles'] = array(
+  2 => '2',
+  1 => 0,
+  3 => 0,
+  4 => 0,
+  6 => 0,
+  5 => 0,
+);
+$handler->display->display_options['filters']['field_resource_type_tid']['type'] = 'select';
+$handler->display->display_options['filters']['field_resource_type_tid']['vocabulary'] = 'hr_resource_type';
 $handler->display->display_options['path'] = 'hr-resources';
 $handler->display->display_options['menu']['type'] = 'normal';
 $handler->display->display_options['menu']['title'] = 'HR Resources';
@@ -191,7 +281,7 @@ $translatables['hr_documents'] = array(
   t('Master'),
   t('HR Documents and Downloads'),
   t('more'),
-  t('Apply'),
+  t('Search'),
   t('Reset'),
   t('Sort by'),
   t('Asc'),
@@ -207,7 +297,16 @@ $translatables['hr_documents'] = array(
   t('‹ previous'),
   t('next ›'),
   t('last »'),
+  t('<strong><h4>[title]</h4></strong>
+'),
+  t('<span class="col-md-2"><blockquote>[field_resource_type]</blockquote></span>
+<span class="col-md-8">[title]</span>
+<span class="col-md-2">[field_download]</span>'),
+  t('<div class="col-md-2"></div>
+<div class="col-md-10">[body]</div>'),
   t('See resources'),
   t('Attachments'),
   t('No resource file attached!'),
+  t('Keywords'),
+  t('Resource type'),
 );

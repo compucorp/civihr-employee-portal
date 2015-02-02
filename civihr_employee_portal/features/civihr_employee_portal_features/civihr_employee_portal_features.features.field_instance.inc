@@ -51,7 +51,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => -4,
+      'weight' => 2,
     ),
   );
 
@@ -93,7 +93,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
         'progress_indicator' => 'throbber',
       ),
       'type' => 'file_generic',
-      'weight' => -3,
+      'weight' => 3,
     ),
   );
 
@@ -138,7 +138,44 @@ function civihr_employee_portal_features_field_default_field_instances() {
       'module' => 'download',
       'settings' => array(),
       'type' => 'download_link_widget',
-      'weight' => -2,
+      'weight' => 4,
+    ),
+  );
+
+  // Exported field_instance: 'node-hr_documents-field_resource_type'
+  $field_instances['node-hr_documents-field_resource_type'] = array(
+    'bundle' => 'hr_documents',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'taxonomy',
+        'settings' => array(),
+        'type' => 'taxonomy_term_reference_link',
+        'weight' => 3,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_resource_type',
+    'label' => 'Resource type',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_select',
+      'weight' => 1,
     ),
   );
 
@@ -147,6 +184,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
   t('Attachments');
   t('Description');
   t('Download');
+  t('Resource type');
 
   return $field_instances;
 }
