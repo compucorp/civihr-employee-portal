@@ -27,7 +27,7 @@
     
     $total_count = t('No attachments');
     
-    $resource_type = $row->field_field_resource_type[0]['rendered']['#markup'];
+    $resource_type = isset($row->field_field_resource_type[0])? $row->field_field_resource_type[0]['rendered']['#markup'] : t('No resource type selected!');
     $title = $row->node_title;
     
     // Get the total count of all attachments
@@ -39,7 +39,7 @@
     $download_link = isset($row->field_field_download[0])? l(' ' . $row->field_field_download[0]['rendered']['#text'] . ' (' . $total_count . ')', $row->field_field_download[0]['rendered']['#path'], array('attributes' => array('class' => 'hr-resouce-download-all glyphicon glyphicon-paperclip', 'aria-hidden' => 'true'))) : '';
     
     $custom_output = '<span class="col-md-2"><blockquote>' . $resource_type . '</blockquote></span>
-               <span class="col-md-8"><strong>' . $title . '</strong></span>
+               <span id="resource-modal" class="col-md-8"><strong>' . civihr_employee_portal_make_link($title, 'hr-resource', $row->nid) . '</strong></span>
                <span class="col-md-2">' . $download_link . '</span>';
     
 ?>

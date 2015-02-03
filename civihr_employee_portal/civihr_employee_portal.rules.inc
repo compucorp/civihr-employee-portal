@@ -66,9 +66,6 @@ function civihr_employee_portal_rules_action_info() {
 function _new_absence_request_action($roles, $absence_type, $absence_details, $form_values) {
     global $user;
     
-    watchdog('detail vals', print_r($absence_details, TRUE));
-    watchdog('form vals', print_r($form_values, TRUE));
-    
     // Civi init
     civicrm_initialize();
     
@@ -110,8 +107,6 @@ function _new_absence_request_action($roles, $absence_type, $absence_details, $f
     // Get the main "absence" activity ID
     $activityTypes = CRM_Core_OptionGroup::values('activity_type', FALSE, FALSE, FALSE, NULL, 'name');
     $activityTypeId = CRM_Utils_Array::key('Absence', $activityTypes);
-    
-    watchdog('test ID 2', print_r($activityTypeId, TRUE));
     
     // Create sub-activities
     $activityLeavesParam = array(
