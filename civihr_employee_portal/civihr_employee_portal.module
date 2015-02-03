@@ -1328,5 +1328,6 @@ function civihr_employee_portal_views_api() {
     return array(
         'api' => 3,
         'path' => drupal_get_path('module', 'civihr_employee_portal') . '/views',
+        'template path' => drupal_get_path('module', 'civihr_employee_portal') . '/views/templates',
     );
 }
