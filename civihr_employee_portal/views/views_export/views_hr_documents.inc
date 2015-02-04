@@ -305,6 +305,12 @@ $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FAL
 $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['title']['element_wrapper_class'] = 'hr-documents-title-block';
 $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
+/* Field: Content: Download */
+$handler->display->display_options['fields']['field_download']['id'] = 'field_download';
+$handler->display->display_options['fields']['field_download']['table'] = 'field_data_field_download';
+$handler->display->display_options['fields']['field_download']['field'] = 'field_download';
+$handler->display->display_options['fields']['field_download']['exclude'] = TRUE;
+$handler->display->display_options['fields']['field_download']['click_sort_column'] = 'download_fields';
 /* Field: Content: Body */
 $handler->display->display_options['fields']['body']['id'] = 'body';
 $handler->display->display_options['fields']['body']['table'] = 'field_data_body';
@@ -315,6 +321,14 @@ $handler->display->display_options['fields']['body']['element_wrapper_class'] = 
 $handler->display->display_options['fields']['body']['settings'] = array(
   'trim_length' => '100',
 );
+/* Field: Content: Attachments */
+$handler->display->display_options['fields']['field_attachment']['id'] = 'field_attachment';
+$handler->display->display_options['fields']['field_attachment']['table'] = 'field_data_field_attachment';
+$handler->display->display_options['fields']['field_attachment']['field'] = 'field_attachment';
+$handler->display->display_options['fields']['field_attachment']['exclude'] = TRUE;
+$handler->display->display_options['fields']['field_attachment']['click_sort_column'] = 'fid';
+$handler->display->display_options['fields']['field_attachment']['type'] = 'file_table';
+$handler->display->display_options['fields']['field_attachment']['delta_offset'] = '0';
 /* Field: Global: Custom text */
 $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
@@ -370,6 +384,7 @@ $translatables['hr_documents'] = array(
   t('Keywords'),
   t('Resource type'),
   t('HR Resources page modal details'),
+  t('Download'),
   t('<div class="btn">Download all</div>'),
   t('All'),
 );
