@@ -16,6 +16,7 @@ function civihr_employee_portal_features_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
     ),
     'module' => 'civicrm',
   );
@@ -26,6 +27,7 @@ function civihr_employee_portal_features_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
     ),
     'module' => 'civicrm',
   );
@@ -558,6 +560,7 @@ function civihr_employee_portal_features_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
     ),
     'module' => 'civicrm',
   );
