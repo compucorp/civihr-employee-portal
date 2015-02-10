@@ -33,7 +33,6 @@ files[] = views/includes/civihr_employee_portal_handler_absence_period.inc
 files[] = views/includes/civihr_employee_portal_filter_absence_period.inc
 files[] = views/includes/civihr_employee_portal_handler_employee_id.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_status.inc
-files[] = views/includes/views_json_query_handler_argument_query_string.inc
 
 ; Custom js
 scripts[] = js/scripts.js
