@@ -1,0 +1,60 @@
+commit 4c387af27baf7eea7492b0eacf7cf4b0fc9e6d30
+Author: gregmeszaros <meszaros275@gmail.com>
+Date:   Thu Feb 12 12:16:39 2015 +0000
+
+    More advanced cache + filter issues
+
+diff --git a/handlers/views_json_query_handler_filter.inc b/handlers/views_json_query_handler_filter.inc
+index f8f0358..f3238d9 100755
+--- a/handlers/views_json_query_handler_filter.inc
++++ b/handlers/views_json_query_handler_filter.inc
+@@ -116,7 +116,7 @@ class views_json_query_handler_filter extends views_handler_filter_string {
+   function generate() {
+     $operator = $this->options['operator'];
+     $key = $this->options['key'];
+-    $value = $this->options['value'];
++    $value = $this->value;
+ 
+     return array($key, $operator, $value);
+   }
+diff --git a/views_json_query_plugin_query_json.inc b/views_json_query_plugin_query_json.inc
+index 64d1182..de2b701 100755
+--- a/views_json_query_plugin_query_json.inc
++++ b/views_json_query_plugin_query_json.inc
+@@ -71,6 +71,14 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+         $headers['If-Modified-Since'] = $last_headers['last-modified'];
+       }
+     }
++    
++    /** 
++     * Do we have the local cached file? Return it and save us from the expensive drupal_http_request call
++     */
++    $cache_file_uri = "$destination/$cache_file";
++    if (file_exists($cache_file_uri)) {
++        return file_get_contents($cache_file_uri);
++    }
+ 
+     $result = drupal_http_request($uri, array('headers' => $headers));
+     if (isset($result->error)) {
+@@ -78,8 +86,7 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+       $message = t('HTTP response: %error. URI: %uri', $args);
+       throw new Exception($message);
+     }
+-    $cache_file_uri = "$destination/$cache_file";
+-
++    
+     if ($result->code == 304) {
+       if (file_exists($cache_file_uri)) {
+         return file_get_contents($cache_file_uri);
+@@ -226,7 +233,10 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+     foreach ($ret as $k => $row) {
+       $check = TRUE;
+       foreach ($view->build_info['query'] as $filter) {
+-        $l = $row[$filter[0]];
++        
++        // $l = $row[$filter[0]];
++        $l = $row->$filter[0];
++        
+         $check = $this->ops($filter[1], $l, $filter[2]);
+         if (!$check) {
+           break;

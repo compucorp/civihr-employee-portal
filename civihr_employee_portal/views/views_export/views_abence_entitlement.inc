@@ -122,20 +122,21 @@ $handler->display->display_options['sorts']['value']['key'] = 'period_id';
 $handler->display->display_options['arguments']['absence_entitlement_1']['id'] = 'absence_entitlement_1';
 $handler->display->display_options['arguments']['absence_entitlement_1']['table'] = 'json';
 $handler->display->display_options['arguments']['absence_entitlement_1']['field'] = 'absence_entitlement';
-$handler->display->display_options['arguments']['absence_entitlement_1']['default_argument_type'] = 'raw';
-$handler->display->display_options['arguments']['absence_entitlement_1']['default_argument_options']['index'] = '0';
+$handler->display->display_options['arguments']['absence_entitlement_1']['default_action'] = 'default';
+$handler->display->display_options['arguments']['absence_entitlement_1']['default_argument_type'] = 'current_user';
 $handler->display->display_options['arguments']['absence_entitlement_1']['summary']['format'] = 'default_summary';
-$handler->display->display_options['arguments']['absence_entitlement_1']['name'] = 'period_id';
-$handler->display->display_options['arguments']['absence_entitlement_1']['use_from_request'] = 'yes';
+$handler->display->display_options['arguments']['absence_entitlement_1']['name'] = 'uf_id';
+$handler->display->display_options['arguments']['absence_entitlement_1']['use_from_request'] = 'logged_in_user';
 /* Contextual filter: Json: Absence entitlement value */
 $handler->display->display_options['arguments']['absence_entitlement']['id'] = 'absence_entitlement';
 $handler->display->display_options['arguments']['absence_entitlement']['table'] = 'json';
 $handler->display->display_options['arguments']['absence_entitlement']['field'] = 'absence_entitlement';
 $handler->display->display_options['arguments']['absence_entitlement']['default_action'] = 'default';
-$handler->display->display_options['arguments']['absence_entitlement']['default_argument_type'] = 'current_user';
+$handler->display->display_options['arguments']['absence_entitlement']['default_argument_type'] = 'fixed';
+$handler->display->display_options['arguments']['absence_entitlement']['default_argument_options']['argument'] = '1';
 $handler->display->display_options['arguments']['absence_entitlement']['summary']['format'] = 'default_summary';
-$handler->display->display_options['arguments']['absence_entitlement']['name'] = 'uf_id';
-$handler->display->display_options['arguments']['absence_entitlement']['use_from_request'] = 'no';
+$handler->display->display_options['arguments']['absence_entitlement']['name'] = 'period_id';
+$handler->display->display_options['arguments']['absence_entitlement']['use_from_request'] = 'absence_start_date_period_filter';
 
 /* Display: Page */
 $handler = $view->new_display('page', 'Page', 'page');

@@ -20,7 +20,7 @@ function civihr_employee_portal_views_data_alter(&$data) {
             'click sortable' => TRUE,
         ),
         'argument' => array(
-            'handler' => 'views_json_query_handler_argument_query_string',
+            'handler' => 'views_json_query_argument_request_handler',
             'name_field' => 'title',
             'string' => TRUE
         ),
