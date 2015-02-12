@@ -211,7 +211,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
             var tagList = '<ul id="tag-list" class="list-group"></ul>';
             
             // All filter
-            tagItem = '<button class="btn btn-custom" type="button" class="active">all&nbsp;<span class="badge">' + classList['approvals-table'] + '</span></button>';
+            tagItem = '<button class="btn btn-custom btn-custom-block" type="button" class="active">all&nbsp;<span class="badge">' + classList['approvals-table'] + '</span></button>';
 
             // Check for the enabled absence types only
             var excluded_values = ["approvals table", "Approved", "Rejected"];
@@ -226,7 +226,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                 
                 // Build the approval filters
                 if($.inArray(index, excluded_values) == -1) {
-                    tagItem += '<button class="btn btn-custom" type="button">' + index + '&nbsp;<span class="badge">' + value + '</span></button>';
+                    tagItem += '<button class="btn btn-custom btn-custom-block" type="button">' + index + '&nbsp;<span class="badge">' + value + '</span></button>';
                 }
                 
             });
@@ -238,7 +238,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                              
                 // Build the approved / rejected filters
                 if($.inArray(index, included_values) !== -1) {
-                    tagItem += '<button class="btn btn-custom" type="button">' + index + '&nbsp;<span class="badge">' + value + '</span></button>';
+                    tagItem += '<button class="btn btn-custom btn-custom-block" type="button">' + index + '&nbsp;<span class="badge">' + value + '</span></button>';
                 }
                     
             });

@@ -1,58 +1,26 @@
 <?php
 
-/**
- * 
- * 
- * DROP VIEW hrdemocivi_3m49k.absence_list;
-CREATE VIEW hrdemocivi_3m49k.absence_list AS
-SELECT request.id, request.activity_type_id, absence_type_debit.title as debit_title, absence_type_credit.title as credit_title,
-	IF(absence_type_debit.title IS NOT NULL, absence_type_debit.title, absence_type_credit.title) as absence_title,
-    CASE absence_type_credit.credit_activity_type_id
-        WHEN request.activity_type_id THEN 1
-        ELSE 0 END AS is_credit, tgt.contact_id, tgt.record_type_id, min(absence.activity_date_time) as absence_start_date, max(absence.activity_date_time) as absence_end_date, drupal_contact.uf_id as drupal_uid, sum(absence.duration) as duration, request.status_id as absence_status,
-UNIX_TIMESTAMP(STR_TO_DATE(min(absence.activity_date_time), '%Y-%m-%d')) as absence_start_date_timestamp,
-UNIX_TIMESTAMP(STR_TO_DATE(max(absence.activity_date_time), '%Y-%m-%d')) as absence_end_date_timestamp        
-FROM civicrm_activity request 
-INNER JOIN civicrm_activity absence ON (absence.source_record_id = request.id AND absence.activity_type_id = 51) 
-INNER JOIN civicrm_activity_contact tgt ON tgt.activity_id = request.id AND tgt.record_type_id = 3
-LEFT JOIN civicrm_hrabsence_type absence_type_debit
-ON request.activity_type_id = absence_type_debit.debit_activity_type_id
-LEFT JOIN civicrm_hrabsence_type absence_type_credit
-ON request.activity_type_id = absence_type_credit.credit_activity_type_id
-INNER JOIN civicrm_uf_match drupal_contact
-ON tgt.contact_id = drupal_contact.contact_id
-WHERE (request.activity_type_id IN (52, 53, 54, 55, 57, 56, 58)) 
-GROUP BY request.id;
- * 
- */
-
 use Drupal\civihr_employee_portal\Blocks\Base;
 use Drupal\civihr_employee_portal\Blocks\Leave;
 
+/**
+ * Implements hook_css_alter().
+ */
 function civihr_employee_portal_css_alter(&$css) {
     
     // Remove defaults system messages css file.
     unset($css[drupal_get_path('module', 'system') . '/system.messages.css']);
 }
 
+/**
+ * Implements hook_init().
+ */
 function civihr_employee_portal_init() {
     
-    
+    // @TODO -> init civi only on pages where we need to (e.g. Dashboard)
     // Civi init + load the singleton needed for the AJAX calls
     civicrm_initialize();
     CRM_Core_Resources::singleton()->addCoreResources();
-    
-    /**
-    $result = civicrm_api3('HRVacancy', 'get', array(
-        'sequential' => 1,
-        'status_id' => 2, // Only open Vacancies
-        'return' => "id,start_date,end_date,status_id,description,position,salary",
-    ));
-    
-    print_r($result); die();
-    
-    * 
-    */
     
     // Add our additional css libraries
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweet-alert.css");
@@ -419,6 +387,13 @@ function civihr_employee_portal_menu() {
     $items['absence_entitlement_json'] = array(
         'title' => 'Absence Entitlement',
         'page callback' => 'civihr_employee_portal_get_absence_entitlement',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    $items['civihr_vacancies'] = array(
+        'title' => 'Vacancy list',
+        'page callback' => 'civihr_employee_portal_get_vacancy_list',
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
@@ -1134,7 +1109,13 @@ function civihr_employee_portal_absence_request_form_submit($form, &$form_state)
   
 }
 
+/**
+ * Returns the entitlements from CiviCRM in json format
+ * The json response will be cached in local file when the VIEWS requests to load data from this endpoint
+ */
 function civihr_employee_portal_get_absence_entitlement() {
+    
+    watchdog('not cached entitlement list', 'test');
    
     // Build the query
     $query = db_select('civicrm_hrabsence_entitlement', 'che')
@@ -1160,6 +1141,26 @@ function civihr_employee_portal_get_absence_entitlement() {
     // Output json
     drupal_json_output($result_output);
     drupal_exit();
+}
+
+/**
+ * Returns the vacancy list from CiviCRM in json format
+ * The json response will be cached in local file when the VIEWS requests to load data from this endpoint
+ */
+function civihr_employee_portal_get_vacancy_list() {
+    
+    watchdog('not cached vacancy list', 'test');
+    
+    $result_output = civicrm_api3('HRVacancy', 'get', array(
+        'sequential' => 1,
+        'status_id' => 2, // Only open Vacancies
+        'return' => "id,start_date,end_date,status_id,description,position,salary,location",
+    ));
+    
+    // Output json
+    drupal_json_output($result_output);
+    drupal_exit();
+    
 }
 
 /**
