@@ -27,43 +27,128 @@ $handler->display->display_options['query']['options']['json_file'] = $base_url 
 $handler->display->display_options['query']['options']['row_apath'] = 'values';
 $handler->display->display_options['query']['options']['show_errors'] = 1;
 $handler->display->display_options['exposed_form']['type'] = 'basic';
+$handler->display->display_options['exposed_form']['options']['submit_button'] = 'Search';
 $handler->display->display_options['pager']['type'] = 'full';
 $handler->display->display_options['pager']['options']['items_per_page'] = '5';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['pager']['options']['id'] = '0';
 $handler->display->display_options['pager']['options']['quantity'] = '9';
-$handler->display->display_options['style_plugin'] = 'table';
-$handler->display->display_options['style_options']['columns'] = array(
+$handler->display->display_options['style_plugin'] = 'default';
+$handler->display->display_options['style_options']['row_class'] = 'row-fluid';
+$handler->display->display_options['row_plugin'] = 'fields';
+$handler->display->display_options['row_options']['inline'] = array(
   'value' => 'value',
+  'value_2' => 'value_2',
+  'value_1' => 'value_1',
+  'nothing' => 'nothing',
 );
-$handler->display->display_options['style_options']['default'] = '-1';
-$handler->display->display_options['style_options']['info'] = array(
-  'value' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-);
+/* Field: id: value */
+$handler->display->display_options['fields']['value_8']['id'] = 'value_8';
+$handler->display->display_options['fields']['value_8']['table'] = 'json';
+$handler->display->display_options['fields']['value_8']['field'] = 'value';
+$handler->display->display_options['fields']['value_8']['label'] = 'Job ID';
+$handler->display->display_options['fields']['value_8']['exclude'] = TRUE;
+$handler->display->display_options['fields']['value_8']['key'] = 'id';
 /* Field: position: value */
 $handler->display->display_options['fields']['value']['id'] = 'value';
 $handler->display->display_options['fields']['value']['table'] = 'json';
 $handler->display->display_options['fields']['value']['field'] = 'value';
 $handler->display->display_options['fields']['value']['label'] = 'Job Position';
+$handler->display->display_options['fields']['value']['element_type'] = 'div';
+$handler->display->display_options['fields']['value']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['value']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['value']['element_wrapper_class'] = 'vacancy-wrapper';
 $handler->display->display_options['fields']['value']['key'] = 'position';
-/* Field: salary: value */
-$handler->display->display_options['fields']['value_1']['id'] = 'value_1';
-$handler->display->display_options['fields']['value_1']['table'] = 'json';
-$handler->display->display_options['fields']['value_1']['field'] = 'value';
-$handler->display->display_options['fields']['value_1']['label'] = 'Salary';
-$handler->display->display_options['fields']['value_1']['key'] = 'salary';
 /* Field: location: value */
 $handler->display->display_options['fields']['value_2']['id'] = 'value_2';
 $handler->display->display_options['fields']['value_2']['table'] = 'json';
 $handler->display->display_options['fields']['value_2']['field'] = 'value';
 $handler->display->display_options['fields']['value_2']['label'] = 'Location';
+$handler->display->display_options['fields']['value_2']['element_type'] = 'div';
+$handler->display->display_options['fields']['value_2']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['value_2']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['value_2']['element_wrapper_class'] = 'vacancy-wrapper';
 $handler->display->display_options['fields']['value_2']['key'] = 'location';
+/* Field: salary: value */
+$handler->display->display_options['fields']['value_1']['id'] = 'value_1';
+$handler->display->display_options['fields']['value_1']['table'] = 'json';
+$handler->display->display_options['fields']['value_1']['field'] = 'value';
+$handler->display->display_options['fields']['value_1']['label'] = 'Salary';
+$handler->display->display_options['fields']['value_1']['element_type'] = 'div';
+$handler->display->display_options['fields']['value_1']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['value_1']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['value_1']['element_wrapper_class'] = 'vacancy-wrapper';
+$handler->display->display_options['fields']['value_1']['key'] = 'salary';
+/* Field: start_date: value */
+$handler->display->display_options['fields']['value_3']['id'] = 'value_3';
+$handler->display->display_options['fields']['value_3']['table'] = 'json';
+$handler->display->display_options['fields']['value_3']['field'] = 'value';
+$handler->display->display_options['fields']['value_3']['label'] = 'Start date';
+$handler->display->display_options['fields']['value_3']['exclude'] = TRUE;
+$handler->display->display_options['fields']['value_3']['key'] = 'start_date';
+/* Field: end_date: value */
+$handler->display->display_options['fields']['value_4']['id'] = 'value_4';
+$handler->display->display_options['fields']['value_4']['table'] = 'json';
+$handler->display->display_options['fields']['value_4']['field'] = 'value';
+$handler->display->display_options['fields']['value_4']['label'] = 'End date';
+$handler->display->display_options['fields']['value_4']['exclude'] = TRUE;
+$handler->display->display_options['fields']['value_4']['key'] = 'end_date';
+/* Field: Global: Custom text */
+$handler->display->display_options['fields']['nothing']['id'] = 'nothing';
+$handler->display->display_options['fields']['nothing']['table'] = 'views';
+$handler->display->display_options['fields']['nothing']['field'] = 'nothing';
+$handler->display->display_options['fields']['nothing']['label'] = 'Application Dates';
+$handler->display->display_options['fields']['nothing']['alter']['text'] = '[value_3] - [value_4]';
+$handler->display->display_options['fields']['nothing']['element_type'] = 'div';
+$handler->display->display_options['fields']['nothing']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['nothing']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['nothing']['element_wrapper_class'] = 'vacancy-wrapper';
+/* Field: Global: Custom text */
+$handler->display->display_options['fields']['nothing_1']['id'] = 'nothing_1';
+$handler->display->display_options['fields']['nothing_1']['table'] = 'views';
+$handler->display->display_options['fields']['nothing_1']['field'] = 'nothing';
+$handler->display->display_options['fields']['nothing_1']['label'] = '';
+$handler->display->display_options['fields']['nothing_1']['alter']['text'] = '<a href="index.php?q=civicrm/vacancy/apply&reset=1&id=[value_8]" class="btn btn-custom">Apply now</a>';
+$handler->display->display_options['fields']['nothing_1']['element_type'] = 'div';
+$handler->display->display_options['fields']['nothing_1']['element_label_type'] = 'div';
+$handler->display->display_options['fields']['nothing_1']['element_label_colon'] = FALSE;
+$handler->display->display_options['fields']['nothing_1']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['nothing_1']['element_wrapper_class'] = 'vacancy-wrapper';
+/* Field: Global: Fieldset */
+$handler->display->display_options['fields']['fieldset']['id'] = 'fieldset';
+$handler->display->display_options['fields']['fieldset']['table'] = 'views';
+$handler->display->display_options['fields']['fieldset']['field'] = 'fieldset';
+$handler->display->display_options['fields']['fieldset']['label'] = 'More details';
+$handler->display->display_options['fields']['fieldset']['children'] = array(
+  0 => 'value_5',
+  1 => 'value_6',
+  2 => 'value_7',
+);
+$handler->display->display_options['fields']['fieldset']['fieldset']['classes'] = 'col-md-12 col-sm-12 col-xs-12';
+$handler->display->display_options['fields']['fieldset']['fieldset']['id'] = '[value_8]';
+$handler->display->display_options['fields']['fieldset']['fieldset']['collapsible'] = 1;
+$handler->display->display_options['fields']['fieldset']['fieldset']['collapsed'] = 1;
+/* Field: salary: value */
+$handler->display->display_options['fields']['value_5']['id'] = 'value_5';
+$handler->display->display_options['fields']['value_5']['table'] = 'json';
+$handler->display->display_options['fields']['value_5']['field'] = 'value';
+$handler->display->display_options['fields']['value_5']['label'] = 'Salary';
+$handler->display->display_options['fields']['value_5']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['value_5']['key'] = 'salary';
+/* Field: location: value */
+$handler->display->display_options['fields']['value_6']['id'] = 'value_6';
+$handler->display->display_options['fields']['value_6']['table'] = 'json';
+$handler->display->display_options['fields']['value_6']['field'] = 'value';
+$handler->display->display_options['fields']['value_6']['label'] = 'Location';
+$handler->display->display_options['fields']['value_6']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['value_6']['key'] = 'location';
+/* Field: description: value */
+$handler->display->display_options['fields']['value_7']['id'] = 'value_7';
+$handler->display->display_options['fields']['value_7']['table'] = 'json';
+$handler->display->display_options['fields']['value_7']['field'] = 'value';
+$handler->display->display_options['fields']['value_7']['label'] = 'Description';
+$handler->display->display_options['fields']['value_7']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['value_7']['key'] = 'description';
 /* Filter criterion: position: value */
 $handler->display->display_options['filters']['value']['id'] = 'value';
 $handler->display->display_options['filters']['value']['table'] = 'json';
@@ -83,6 +168,25 @@ $handler->display->display_options['filters']['value']['expose']['remember_roles
   5 => 0,
 );
 $handler->display->display_options['filters']['value']['key'] = 'position';
+/* Filter criterion: location: value */
+$handler->display->display_options['filters']['value_1']['id'] = 'value_1';
+$handler->display->display_options['filters']['value_1']['table'] = 'json';
+$handler->display->display_options['filters']['value_1']['field'] = 'value';
+$handler->display->display_options['filters']['value_1']['operator'] = 'contains';
+$handler->display->display_options['filters']['value_1']['exposed'] = TRUE;
+$handler->display->display_options['filters']['value_1']['expose']['operator_id'] = 'value_1_op';
+$handler->display->display_options['filters']['value_1']['expose']['label'] = 'Location';
+$handler->display->display_options['filters']['value_1']['expose']['operator'] = 'value_1_op';
+$handler->display->display_options['filters']['value_1']['expose']['identifier'] = 'value_1';
+$handler->display->display_options['filters']['value_1']['expose']['remember_roles'] = array(
+  2 => '2',
+  1 => 0,
+  3 => 0,
+  4 => 0,
+  6 => 0,
+  5 => 0,
+);
+$handler->display->display_options['filters']['value_1']['key'] = 'location';
 
 /* Display: HR Vacancies list */
 $handler = $view->new_display('page', 'HR Vacancies list', 'hr_vacancies_list');
@@ -97,7 +201,7 @@ $translatables['hr_vacancies'] = array(
   t('Master'),
   t('HR Vacancies'),
   t('more'),
-  t('Apply'),
+  t('Search'),
   t('Reset'),
   t('Sort by'),
   t('Asc'),
@@ -109,8 +213,16 @@ $translatables['hr_vacancies'] = array(
   t('‹ previous'),
   t('next ›'),
   t('last »'),
+  t('Job ID'),
   t('Job Position'),
-  t('Salary'),
   t('Location'),
+  t('Salary'),
+  t('Start date'),
+  t('End date'),
+  t('Application Dates'),
+  t('[value_3] - [value_4]'),
+  t('<a href="index.php?q=civicrm/vacancy/apply&reset=1&id=[value_8]" class="btn btn-custom">Apply now</a>'),
+  t('More details'),
+  t('Description'),
   t('HR Vacancies list'),
 );
