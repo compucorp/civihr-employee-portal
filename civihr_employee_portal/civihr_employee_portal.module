@@ -453,6 +453,13 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
+    
+    $items['civihr_reports'] = array(
+        'title' => 'CiviHR reports',
+        'page callback' => 'civihr_employee_portal_get_reports',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
 
     return $items;
 }
@@ -1184,7 +1191,7 @@ function civihr_employee_portal_get_contact_list() {
             'limit' => 10000000,
         ),
         
-        'return' => "display_name,email,job_title",
+        'return' => "display_name,email,job_title,contact_type",
     ));
     
     // Output json
@@ -1425,4 +1432,16 @@ function civihr_employee_portal_views_pre_render(&$view) {
             
         }
     }
+}
+
+/**
+ * Show reports for the CiviHR 
+ */
+function civihr_employee_portal_get_reports() {
+    
+    // Add the javascript library for D3
+    drupal_add_js('http://d3js.org/d3.v3.min.js', 'external');
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
+    
+    return '<div id="custom-report"></div><div id="custom-report-details"></div><div id="relationship-report"></div>';
 }
