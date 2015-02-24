@@ -1,8 +1,8 @@
-commit 4c387af27baf7eea7492b0eacf7cf4b0fc9e6d30
+commit fd87169fe0f762f12d8bfa9b9bd23592e4d1871b
 Author: gregmeszaros <meszaros275@gmail.com>
-Date:   Thu Feb 12 12:16:39 2015 +0000
+Date:   Tue Feb 24 18:00:57 2015 +0000
 
-    More advanced cache + filter issues
+    Changes to patch v1
 
 diff --git a/handlers/views_json_query_handler_filter.inc b/handlers/views_json_query_handler_filter.inc
 index f8f0358..f3238d9 100755
@@ -17,11 +17,77 @@ index f8f0358..f3238d9 100755
  
      return array($key, $operator, $value);
    }
+diff --git a/views_json_query.info b/views_json_query.info
+index b3f3418..1b5d804 100755
+--- a/views_json_query.info
++++ b/views_json_query.info
+@@ -8,4 +8,4 @@ files[] = views_json_query_plugin_query_json.inc
+ ; Handlers
+ files[] = handlers/views_json_query_handler_field.inc
+ files[] = handlers/views_json_query_handler_filter.inc
+-files[] = handlers/views_json_query_handler_sort.inc
++files[] = handlers/views_json_query_handler_sort.inc
+\ No newline at end of file
 diff --git a/views_json_query_plugin_query_json.inc b/views_json_query_plugin_query_json.inc
-index 64d1182..de2b701 100755
+index 64d1182..25d2747 100755
 --- a/views_json_query_plugin_query_json.inc
 +++ b/views_json_query_plugin_query_json.inc
-@@ -71,6 +71,14 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+@@ -4,6 +4,45 @@
+  * Query plugin for views_json_query.
+  */
+ 
++class CountQuery {
++    
++    /**
++     * Count
++     * @var int
++     */
++    private $total_count = 0;
++    
++    public function __construct($total_count = 0) {
++        $this->total_count = $total_count;
++    }
++    
++    public function getTotalCount() {
++        return $this->total_count;
++    }
++    
++    public function countQuery() {
++        return new CountQueryExecute($this->getTotalCount());    
++    }
++    
++}
++
++class CountQueryExecute extends CountQuery {
++    
++    public function execute() {
++        return new CountQueryExecuteFetchField($this->getTotalCount());
++    }
++}
++
++class CountQueryExecuteFetchField extends CountQueryExecute {
++
++    public function fetchField() {
++        
++        watchdog('test count', print_r($this->getTotalCount(), TRUE));
++        return $this->getTotalCount();
++    }
++}
++
++
+ class views_json_query_plugin_query_json extends views_plugin_query {
+ 
+   /**
+@@ -32,7 +71,7 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+ 
+     // Let the pager modify the query to add limits.
+     $this->pager->query();
+-
++    
+     $view->build_info['query'] = $this->query();
+ 
+     $view->build_info['query_args'] = array();
+@@ -71,6 +110,14 @@ class views_json_query_plugin_query_json extends views_plugin_query {
          $headers['If-Modified-Since'] = $last_headers['last-modified'];
        }
      }
@@ -36,7 +102,7 @@ index 64d1182..de2b701 100755
  
      $result = drupal_http_request($uri, array('headers' => $headers));
      if (isset($result->error)) {
-@@ -78,8 +86,7 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+@@ -78,8 +125,7 @@ class views_json_query_plugin_query_json extends views_plugin_query {
        $message = t('HTTP response: %error. URI: %uri', $args);
        throw new Exception($message);
      }
@@ -46,7 +112,7 @@ index 64d1182..de2b701 100755
      if ($result->code == 304) {
        if (file_exists($cache_file_uri)) {
          return file_get_contents($cache_file_uri);
-@@ -226,7 +233,10 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+@@ -226,7 +272,10 @@ class views_json_query_plugin_query_json extends views_plugin_query {
      foreach ($ret as $k => $row) {
        $check = TRUE;
        foreach ($view->build_info['query'] as $filter) {
@@ -58,3 +124,15 @@ index 64d1182..de2b701 100755
          $check = $this->ops($filter[1], $l, $filter[2]);
          if (!$check) {
            break;
+@@ -268,7 +317,10 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+       }
+       $view->result = $result;
+       $view->total_rows = count($result);
+-
++      
++      // Prepare the views json count results
++      $view->build_info['count_query'] = new CountQuery($view->total_rows);
++      
+       $this->pager->post_execute($view->result);
+ 
+       return TRUE;
