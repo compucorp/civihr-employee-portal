@@ -69,7 +69,12 @@ function civihr_employee_portal_features_default_page_manager_pages() {
       'column2' => NULL,
       'secondcolumn1' => NULL,
       'secondcolumn2' => NULL,
-      'footer' => NULL,
+      'footer' => array(
+        'list_type' => 'ul',
+      ),
+    ),
+    'footer' => array(
+      'style' => 'list',
     ),
   );
   $display->cache = array();
@@ -77,6 +82,31 @@ function civihr_employee_portal_features_default_page_manager_pages() {
   $display->uuid = '091af8a4-cb6d-45b4-8946-1016cd5fb4d8';
   $display->content = array();
   $display->panels = array();
+    $pane = new stdClass();
+    $pane->pid = 'new-b1c02e0a-90d6-490f-8134-69dc9205bc21';
+    $pane->panel = 'footer';
+    $pane->type = 'block';
+    $pane->subtype = 'views-1e6267274b5d19d456da8db2cd22ac5a';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array(
+      'override_title' => 0,
+      'override_title_text' => '',
+    );
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array(
+      'css_id' => '',
+      'css_class' => 'footer-slider-block',
+    );
+    $pane->extras = array();
+    $pane->position = 0;
+    $pane->locks = array();
+    $pane->uuid = 'b1c02e0a-90d6-490f-8134-69dc9205bc21';
+    $display->content['new-b1c02e0a-90d6-490f-8134-69dc9205bc21'] = $pane;
+    $display->panels['footer'][0] = 'new-b1c02e0a-90d6-490f-8134-69dc9205bc21';
     $pane = new stdClass();
     $pane->pid = 'new-691f553c-d36d-474b-b89b-c75974eb3eb4';
     $pane->panel = 'footer';
@@ -92,13 +122,16 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->style = array(
       'settings' => NULL,
     );
-    $pane->css = array();
+    $pane->css = array(
+      'css_id' => '',
+      'css_class' => 'footer-slider-block',
+    );
     $pane->extras = array();
-    $pane->position = 0;
+    $pane->position = 1;
     $pane->locks = array();
     $pane->uuid = '691f553c-d36d-474b-b89b-c75974eb3eb4';
     $display->content['new-691f553c-d36d-474b-b89b-c75974eb3eb4'] = $pane;
-    $display->panels['footer'][0] = 'new-691f553c-d36d-474b-b89b-c75974eb3eb4';
+    $display->panels['footer'][1] = 'new-691f553c-d36d-474b-b89b-c75974eb3eb4';
     $pane = new stdClass();
     $pane->pid = 'new-48897dc2-d49e-4e72-b86a-7ec70b28da04';
     $pane->panel = 'header';
@@ -231,6 +264,28 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->uuid = '73347ee0-93bf-40ac-b270-9e9a46792cf0';
     $display->content['new-73347ee0-93bf-40ac-b270-9e9a46792cf0'] = $pane;
     $display->panels['secondcolumn2'][1] = 'new-73347ee0-93bf-40ac-b270-9e9a46792cf0';
+    $pane = new stdClass();
+    $pane->pid = 'new-91c23893-858f-4a81-9708-e143fa11724b';
+    $pane->panel = 'secondcolumn2';
+    $pane->type = 'block';
+    $pane->subtype = 'civihr_employee_portal-staff_directory_block';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array(
+      'override_title' => 0,
+      'override_title_text' => '',
+    );
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array();
+    $pane->extras = array();
+    $pane->position = 2;
+    $pane->locks = array();
+    $pane->uuid = '91c23893-858f-4a81-9708-e143fa11724b';
+    $display->content['new-91c23893-858f-4a81-9708-e143fa11724b'] = $pane;
+    $display->panels['secondcolumn2'][2] = 'new-91c23893-858f-4a81-9708-e143fa11724b';
   $display->hide_title = PANELS_TITLE_FIXED;
   $display->title_pane = 'new-ea7ad282-bc5e-4de0-876e-d856b3803460';
   $handler->conf['display'] = $display;

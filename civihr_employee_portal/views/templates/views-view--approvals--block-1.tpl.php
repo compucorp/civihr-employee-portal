@@ -72,7 +72,7 @@
     
     <div class="view-content col-md-10-no-padding column2 panel-panel">
         
-        <div class ="approval-overflow-content" style="overflow: scroll; height: 250px;">
+        <div class ="approval-overflow-content" style="overflow: scroll; height: 220px;">
             <?php print $rows; ?>
         </div>
       

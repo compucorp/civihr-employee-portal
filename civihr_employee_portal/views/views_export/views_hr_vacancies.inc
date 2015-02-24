@@ -188,8 +188,80 @@ $handler->display->display_options['filters']['value_1']['expose']['remember_rol
 );
 $handler->display->display_options['filters']['value_1']['key'] = 'location';
 
+/* Display: HR Vacancies Dashboard block */
+$handler = $view->new_display('block', 'HR Vacancies Dashboard block', 'hr_vacancies_dashboard_block');
+$handler->display->display_options['defaults']['title'] = FALSE;
+$handler->display->display_options['title'] = 'Current Vacancies';
+$handler->display->display_options['defaults']['pager'] = FALSE;
+$handler->display->display_options['pager']['type'] = 'none';
+$handler->display->display_options['pager']['options']['offset'] = '0';
+$handler->display->display_options['defaults']['style_plugin'] = FALSE;
+$handler->display->display_options['style_plugin'] = 'jcarousel';
+$handler->display->display_options['style_options']['wrap'] = '0';
+$handler->display->display_options['style_options']['visible'] = '';
+$handler->display->display_options['style_options']['responsive'] = 1;
+$handler->display->display_options['style_options']['auto'] = '0';
+$handler->display->display_options['style_options']['autoPause'] = 1;
+$handler->display->display_options['style_options']['easing'] = '';
+$handler->display->display_options['style_options']['vertical'] = 0;
+$handler->display->display_options['style_options']['ajax'] = 1;
+$handler->display->display_options['defaults']['style_options'] = FALSE;
+$handler->display->display_options['defaults']['row_plugin'] = FALSE;
+$handler->display->display_options['row_plugin'] = 'fields';
+$handler->display->display_options['defaults']['row_options'] = FALSE;
+$handler->display->display_options['defaults']['fields'] = FALSE;
+/* Field: id: value */
+$handler->display->display_options['fields']['value_8']['id'] = 'value_8';
+$handler->display->display_options['fields']['value_8']['table'] = 'json';
+$handler->display->display_options['fields']['value_8']['field'] = 'value';
+$handler->display->display_options['fields']['value_8']['label'] = 'Job ID';
+$handler->display->display_options['fields']['value_8']['exclude'] = TRUE;
+$handler->display->display_options['fields']['value_8']['key'] = 'id';
+/* Field: position: value */
+$handler->display->display_options['fields']['value']['id'] = 'value';
+$handler->display->display_options['fields']['value']['table'] = 'json';
+$handler->display->display_options['fields']['value']['field'] = 'value';
+$handler->display->display_options['fields']['value']['label'] = 'Job Position';
+$handler->display->display_options['fields']['value']['element_type'] = 'div';
+$handler->display->display_options['fields']['value']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['value']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['value']['key'] = 'position';
+/* Field: location: value */
+$handler->display->display_options['fields']['value_2']['id'] = 'value_2';
+$handler->display->display_options['fields']['value_2']['table'] = 'json';
+$handler->display->display_options['fields']['value_2']['field'] = 'value';
+$handler->display->display_options['fields']['value_2']['label'] = 'Location';
+$handler->display->display_options['fields']['value_2']['element_type'] = 'div';
+$handler->display->display_options['fields']['value_2']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['value_2']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['value_2']['key'] = 'location';
+/* Field: salary: value */
+$handler->display->display_options['fields']['value_1']['id'] = 'value_1';
+$handler->display->display_options['fields']['value_1']['table'] = 'json';
+$handler->display->display_options['fields']['value_1']['field'] = 'value';
+$handler->display->display_options['fields']['value_1']['label'] = 'Salary';
+$handler->display->display_options['fields']['value_1']['element_type'] = 'div';
+$handler->display->display_options['fields']['value_1']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['value_1']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['value_1']['key'] = 'salary';
+/* Field: start_date: value */
+$handler->display->display_options['fields']['value_3']['id'] = 'value_3';
+$handler->display->display_options['fields']['value_3']['table'] = 'json';
+$handler->display->display_options['fields']['value_3']['field'] = 'value';
+$handler->display->display_options['fields']['value_3']['label'] = 'Start date';
+$handler->display->display_options['fields']['value_3']['exclude'] = TRUE;
+$handler->display->display_options['fields']['value_3']['key'] = 'start_date';
+$handler->display->display_options['defaults']['filter_groups'] = FALSE;
+$handler->display->display_options['defaults']['filters'] = FALSE;
+
 /* Display: HR Vacancies list */
 $handler = $view->new_display('page', 'HR Vacancies list', 'hr_vacancies_list');
+$handler->display->display_options['defaults']['pager'] = FALSE;
+$handler->display->display_options['pager']['type'] = 'full';
+$handler->display->display_options['pager']['options']['items_per_page'] = '10';
+$handler->display->display_options['pager']['options']['offset'] = '0';
+$handler->display->display_options['pager']['options']['id'] = '0';
+$handler->display->display_options['pager']['options']['quantity'] = '9';
 $handler->display->display_options['path'] = 'hr-vacancies';
 $handler->display->display_options['menu']['type'] = 'normal';
 $handler->display->display_options['menu']['title'] = 'Vacancies';
@@ -224,5 +296,7 @@ $translatables['hr_vacancies'] = array(
   t('<a href="index.php?q=civicrm/vacancy/apply&reset=1&id=[value_8]" class="btn btn-custom">Apply now</a>'),
   t('More details'),
   t('Description'),
+  t('HR Vacancies Dashboard block'),
+  t('Current Vacancies'),
   t('HR Vacancies list'),
 );

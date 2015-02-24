@@ -31,6 +31,9 @@ class Base {
                 'login_block' => array('info' => t('CiviHR custom login block'),
                                     'class_name' => 'LoginBlock',
                                     'title' => '<none>'),
+                'staff_directory_block' => array('info' => t('CiviHR Staff Directory dashboard block'),
+                                    'class_name' => 'StaffDirectoryBlock',
+                                    'title' => 'Staff Directory'),
                ];
     }
     

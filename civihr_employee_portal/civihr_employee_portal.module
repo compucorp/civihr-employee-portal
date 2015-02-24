@@ -2,6 +2,7 @@
 
 use Drupal\civihr_employee_portal\Blocks\Base;
 use Drupal\civihr_employee_portal\Blocks\Leave;
+use Drupal\civihr_employee_portal\Helpers\HelperClass;
 
 /**
  * Implements hook_css_alter().
@@ -1185,16 +1186,37 @@ function civihr_employee_portal_get_contact_list() {
     
     watchdog('not cached contact list', 'test1');
     
-    $result_output = civicrm_api3('Contact', 'get', array(
+    $result_contacts = civicrm_api3('Contact', 'get', array(
         'sequential' => 1,
         'options' => array(
             'limit' => 10000000,
         ),
         
-        'return' => "display_name,email,job_title,contact_type",
+        'return' => "contact_id,display_name,email,phone,contact_type",
+    ));
+   
+    $result_contracts = civicrm_api3('HRJobContract', 'get', array(
+        'sequential' => 1,
+        'options' => array(
+            'limit' => 10000000,
+        ),
+        'return' => 'title,location,contract_type,period_type,contact_id'
     ));
     
-    // Output json
+    // Merge contacts with contracts (if contract doesn't exist still return the contact data)
+    $merged_output = HelperClass::array_merge_callback($result_contacts['values'], $result_contracts['values'], function ($contact_array, $job_contract_array) {
+        
+        // Merge only for the primary contracts
+        if ($job_contract_array['is_primary'] == 1) {
+            return $contact_array['contact_id'] == $job_contract_array['contact_id'];
+        }
+    });
+    
+    // Build the results
+    $result_output = Array();
+    $result_output['values'] = $merged_output;
+
+    // Output json results
     drupal_json_output($result_output);
     drupal_exit();
     
@@ -1444,4 +1466,75 @@ function civihr_employee_portal_get_reports() {
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
     
     return '<div id="custom-report"></div><div id="custom-report-details"></div><div id="relationship-report"></div>';
+}
+
+/**
+ * Custom Staff Directory dashboard block form.
+ */
+function civihr_employee_portal_directory_block_form($form, &$form_state) {
+    
+    $form['display_name'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Name'),
+        '#attributes' => array('placeholder' => t('Enter name'))
+    );
+    
+    $form['job_title'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Job title'),
+        '#attributes' => array('placeholder' => t('Job title'))
+    );
+    
+    $form['phone'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Phone'),
+        '#attributes' => array('placeholder' => t('Phone'))
+    );
+    
+    $form['email_value'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Email'),
+        '#attributes' => array('placeholder' => t('Email'))
+    );
+
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Go!'),
+    );
+    
+    // Add the validation function
+    $form['#validate'][] = 'civihr_employee_portal_directory_block_form_validate';
+    
+    // Add the submit function
+    $form['#submit'][] = 'civihr_employee_portal_directory_block_form_submit';
+    
+    return $form;
+}
+
+/**
+ * Custom Staff Directory dashboard block form validate function.
+ */
+function civihr_employee_portal_directory_block_form_validate($form, &$form_state) {
+    
+    // No name selected, throw an error
+    if ($form_state['values']['display_name'] == '') {
+        form_set_error('display_name', 'Name cannot be blank!');
+    }
+}
+
+/**
+ * Custom Staff Directory dashboard block form submit function.
+ */
+function civihr_employee_portal_directory_block_form_submit($form, &$form_state) {
+    
+    // Redirect to the staff directory views list page passing parameters to filter the viewß
+    drupal_goto('hr-staff-directory', array('query'=> array(
+                                                        'display_name' => $form_state['values']['display_name'],
+                                                        'job_title' => $form_state['values']['job_title'],
+                                                        'phone' => $form_state['values']['phone'],
+                                                        'email_value' => $form_state['values']['email_value'],
+                                                        
+                                                        
+        
+    )));
 }

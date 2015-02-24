@@ -53,17 +53,102 @@ $handler->display->display_options['fields']['value']['table'] = 'json';
 $handler->display->display_options['fields']['value']['field'] = 'value';
 $handler->display->display_options['fields']['value']['label'] = 'Name';
 $handler->display->display_options['fields']['value']['key'] = 'display_name';
+/* Field: phone: value */
+$handler->display->display_options['fields']['value_3']['id'] = 'value_3';
+$handler->display->display_options['fields']['value_3']['table'] = 'json';
+$handler->display->display_options['fields']['value_3']['field'] = 'value';
+$handler->display->display_options['fields']['value_3']['label'] = 'Work Phone';
+$handler->display->display_options['fields']['value_3']['key'] = 'phone';
+/* Field: title: value */
+$handler->display->display_options['fields']['value_2']['id'] = 'value_2';
+$handler->display->display_options['fields']['value_2']['table'] = 'json';
+$handler->display->display_options['fields']['value_2']['field'] = 'value';
+$handler->display->display_options['fields']['value_2']['label'] = 'Job title';
+$handler->display->display_options['fields']['value_2']['key'] = 'title';
 /* Field: email: value */
 $handler->display->display_options['fields']['value_1']['id'] = 'value_1';
 $handler->display->display_options['fields']['value_1']['table'] = 'json';
 $handler->display->display_options['fields']['value_1']['field'] = 'value';
 $handler->display->display_options['fields']['value_1']['label'] = 'Email';
 $handler->display->display_options['fields']['value_1']['key'] = 'email';
+/* Field: location: value */
+$handler->display->display_options['fields']['value_4']['id'] = 'value_4';
+$handler->display->display_options['fields']['value_4']['table'] = 'json';
+$handler->display->display_options['fields']['value_4']['field'] = 'value';
+$handler->display->display_options['fields']['value_4']['label'] = 'Location / Place of Work';
+$handler->display->display_options['fields']['value_4']['key'] = 'location';
+/* Field: contract_type: value */
+$handler->display->display_options['fields']['value_5']['id'] = 'value_5';
+$handler->display->display_options['fields']['value_5']['table'] = 'json';
+$handler->display->display_options['fields']['value_5']['field'] = 'value';
+$handler->display->display_options['fields']['value_5']['label'] = 'Contract Type';
+$handler->display->display_options['fields']['value_5']['key'] = 'contract_type';
+/* Filter criterion: display_name: value */
+$handler->display->display_options['filters']['value_1']['id'] = 'value_1';
+$handler->display->display_options['filters']['value_1']['table'] = 'json';
+$handler->display->display_options['filters']['value_1']['field'] = 'value';
+$handler->display->display_options['filters']['value_1']['operator'] = 'contains';
+$handler->display->display_options['filters']['value_1']['group'] = 1;
+$handler->display->display_options['filters']['value_1']['exposed'] = TRUE;
+$handler->display->display_options['filters']['value_1']['expose']['operator_id'] = 'value_1_op';
+$handler->display->display_options['filters']['value_1']['expose']['label'] = 'Name';
+$handler->display->display_options['filters']['value_1']['expose']['operator'] = 'value_1_op';
+$handler->display->display_options['filters']['value_1']['expose']['identifier'] = 'display_name';
+$handler->display->display_options['filters']['value_1']['expose']['remember_roles'] = array(
+  2 => '2',
+  1 => 0,
+  3 => 0,
+  4 => 0,
+  6 => 0,
+  5 => 0,
+);
+$handler->display->display_options['filters']['value_1']['key'] = 'display_name';
+/* Filter criterion: title: value */
+$handler->display->display_options['filters']['value_2']['id'] = 'value_2';
+$handler->display->display_options['filters']['value_2']['table'] = 'json';
+$handler->display->display_options['filters']['value_2']['field'] = 'value';
+$handler->display->display_options['filters']['value_2']['operator'] = 'contains';
+$handler->display->display_options['filters']['value_2']['group'] = 1;
+$handler->display->display_options['filters']['value_2']['exposed'] = TRUE;
+$handler->display->display_options['filters']['value_2']['expose']['operator_id'] = 'value_2_op';
+$handler->display->display_options['filters']['value_2']['expose']['label'] = 'Job title';
+$handler->display->display_options['filters']['value_2']['expose']['operator'] = 'value_2_op';
+$handler->display->display_options['filters']['value_2']['expose']['identifier'] = 'job_title';
+$handler->display->display_options['filters']['value_2']['expose']['remember_roles'] = array(
+  2 => '2',
+  1 => 0,
+  3 => 0,
+  4 => 0,
+  6 => 0,
+  5 => 0,
+);
+$handler->display->display_options['filters']['value_2']['key'] = 'title';
+/* Filter criterion: phone: value */
+$handler->display->display_options['filters']['value_3']['id'] = 'value_3';
+$handler->display->display_options['filters']['value_3']['table'] = 'json';
+$handler->display->display_options['filters']['value_3']['field'] = 'value';
+$handler->display->display_options['filters']['value_3']['operator'] = 'contains';
+$handler->display->display_options['filters']['value_3']['group'] = 1;
+$handler->display->display_options['filters']['value_3']['exposed'] = TRUE;
+$handler->display->display_options['filters']['value_3']['expose']['operator_id'] = 'value_3_op';
+$handler->display->display_options['filters']['value_3']['expose']['label'] = 'Phone';
+$handler->display->display_options['filters']['value_3']['expose']['operator'] = 'value_3_op';
+$handler->display->display_options['filters']['value_3']['expose']['identifier'] = 'phone';
+$handler->display->display_options['filters']['value_3']['expose']['remember_roles'] = array(
+  2 => '2',
+  1 => 0,
+  3 => 0,
+  4 => 0,
+  6 => 0,
+  5 => 0,
+);
+$handler->display->display_options['filters']['value_3']['key'] = 'phone';
 /* Filter criterion: email: value */
 $handler->display->display_options['filters']['value']['id'] = 'value';
 $handler->display->display_options['filters']['value']['table'] = 'json';
 $handler->display->display_options['filters']['value']['field'] = 'value';
 $handler->display->display_options['filters']['value']['operator'] = 'contains';
+$handler->display->display_options['filters']['value']['group'] = 1;
 $handler->display->display_options['filters']['value']['exposed'] = TRUE;
 $handler->display->display_options['filters']['value']['expose']['operator_id'] = 'value_op';
 $handler->display->display_options['filters']['value']['expose']['label'] = 'Email';
@@ -105,6 +190,11 @@ $translatables['hr_staff_directory'] = array(
   t('next ›'),
   t('last »'),
   t('Name'),
+  t('Work Phone'),
+  t('Job title'),
   t('Email'),
+  t('Location / Place of Work'),
+  t('Contract Type'),
+  t('Phone'),
   t('HR Staff Directory list'),
 );
