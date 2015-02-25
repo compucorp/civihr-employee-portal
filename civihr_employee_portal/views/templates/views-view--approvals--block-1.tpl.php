@@ -53,11 +53,11 @@
 
   <?php if ($rows): ?>
     
-    <div class="approval-filters col-sm-2-no-padding column1 panel-panel">
+    <div class="approval-filters col-sm-3 column1 panel-panel">
         
     </div>
     
-    <div class="view-content col-md-10-no-padding column2 panel-panel">
+    <div class="view-content col-md-9 column2 panel-panel">
         <div class="well-small">
             
             <div class="form-group">
@@ -70,7 +70,7 @@
         </div>
     </div>
     
-    <div class="view-content col-md-10-no-padding column2 panel-panel">
+    <div class="view-content col-md-9 column2 panel-panel">
         
         <div class ="approval-overflow-content" style="overflow: scroll; height: 220px;">
             <?php print $rows; ?>
