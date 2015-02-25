@@ -24,6 +24,7 @@ function civihr_employee_portal_init() {
     CRM_Core_Resources::singleton()->addCoreResources();
     
     // Add our additional css libraries
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/custom.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweet-alert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/tablesaw/tablesaw.css");
     
