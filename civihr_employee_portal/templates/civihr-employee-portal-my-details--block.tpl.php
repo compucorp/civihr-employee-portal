@@ -54,7 +54,16 @@
 
     <div class="col-md-2 column1 panel-panel">
         <div class="well">
-            <img src="http://blogdailyherald.com/wp-content/uploads/2014/10/wallpaper-for-facebook-profile-photo.jpg" width="100" height="80" />
+            
+            <?php if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) { ?>
+            
+                <img src="<?php print $contact_data['image_URL']; ?>" width="100" height="100" class="custom-scale-image img-circle" />
+            
+            <?php } else { ?>
+                
+                <img src="http://blogdailyherald.com/wp-content/uploads/2014/10/wallpaper-for-facebook-profile-photo.jpg" width="100" height="80" />
+            
+            <?php } ?>
         </div>
     </div>
 

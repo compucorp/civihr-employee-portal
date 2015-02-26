@@ -363,7 +363,7 @@ function get_civihr_contact_data($contact_id = NULL) {
                 
                 $contact_data = civicrm_api('Contact', 'getsingle', array(
                     'version' => 3,
-                    'return' => array('display_name', 'nick_name'),
+                    'return' => array('display_name', 'nick_name', 'image_URL'),
                     'id' => $contact_id
                 ));
                 watchdog('DB hit contact data', print_r($contact_id, TRUE));
