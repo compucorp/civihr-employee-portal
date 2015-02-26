@@ -57,12 +57,12 @@
         
     </div>
     
-    <div class="view-content col-md-9 column2 panel-panel">
+    <div class="view-content col-sm-9 column2 panel-panel">
         <div class="well-small">
             
             <div class="form-group">
                 <div class="input-group">
-                    <div class="btn input-group-addon"><img src="http://findicons.com/files/icons/1389/g5_system/32/toolbar_find.png" height="16px" width="16px" class="img-rounded" /></div>
+                    <div class="btn input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
                     <input class="form-control" id="manager-approval-search" placeholder="Enter name">
                 </div>
             </div>
@@ -70,7 +70,7 @@
         </div>
     </div>
     
-    <div class="view-content col-md-9 column2 panel-panel">
+    <div class="view-content col-sm-9 column2 panel-panel">
         
         <div class ="approval-overflow-content" style="overflow: scroll; height: 220px;">
             <?php print $rows; ?>
