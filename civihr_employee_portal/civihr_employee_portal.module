@@ -26,7 +26,7 @@ function civihr_employee_portal_init() {
     // Add our additional css libraries
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/custom.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweet-alert.css");
-    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/tablesaw/tablesaw.css");
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
     
     // Check the variable and decide if we need to rebuild the absence_list mysql view
     $rebuild_absence_list_view = variable_get('rebuild_absence_list_view', 'TRUE');
