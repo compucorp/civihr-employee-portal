@@ -1535,8 +1535,58 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
                                                         'job_title' => $form_state['values']['job_title'],
                                                         'phone' => $form_state['values']['phone'],
                                                         'email_value' => $form_state['values']['email_value'],
-                                                        
-                                                        
-        
+                                                                                                                      
     )));
+}
+
+// Note: Under "Redirection location" NO redirect option should be select to get the confirmation message with ajax.
+// We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
+function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
+    
+    // Do ajax submit generic for all the webform those have no redirect option enabled.
+    if(isset($form['#node']) && $form['#node']->webform['redirect_url'] == "<none>") {
+        $matches = array();
+        
+        // Check whether the form id have nid at the end like _nid
+        preg_match('/[\d]+$/', $form_id, $matches);
+        $nid_match = $matches[0];
+        
+        if(strpos($form_id, 'webform_client_form_') !== false && !empty($nid_match)) {
+            
+            $form['actions']['submit'] = array(
+                '#type' => 'submit',
+                '#ajax' => array(
+                    'callback' => 'webform_client_form_ajax_callback',
+                    'wrapper' => str_replace('_','-',$form['#form_id']),
+                    'effect' => 'fade',
+                ),
+                '#value' => t('Submit'),
+            );
+        }
+        
+    }
+ }
+ 
+function webform_client_form_ajax_callback($form, &$form_state) {
+    
+    if (form_get_errors()) {
+        return $form;
+    }
+    else {
+        
+        ctools_include('ajax');
+        ctools_include('modal');
+        ctools_add_js('ajax-responder');
+            
+        $commands = array();
+
+        $commands[] = ctools_modal_command_dismiss();
+        $commands[] = ctools_ajax_command_redirect('dashboard');
+        $commands[] = ajax_command_prepend('#content', '<div id="messages">' . theme('status_messages') . '</div>');
+        
+        print ajax_render($commands);
+        exit;
+        
+    }
+    
 }
