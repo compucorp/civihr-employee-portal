@@ -25,6 +25,10 @@ class HelperClass {
             // This will make sure all the contacts are added to the result set, even if they don't have the job contract defined yet
             // Job contracts without contact records are however not added
             if ($result_contact === FALSE) {
+                
+                // Put empty job titles to avoid warnings
+                $contact_array['title'] = '';
+                
                 $result[] = $contact_array;
             }
 
