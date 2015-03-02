@@ -140,6 +140,35 @@ function civihr_employee_portal_init() {
  */
 function civihr_employee_portal_flush_caches() {
     
+    // If we running from drush
+    // @ TODO -> add json file removal when we run from UI
+    // @ TODO -> move the json cache to the private file folder
+    // @ TODO -> get the sites/default/files location from proper drupal function
+    if (drupal_is_cli()) {
+        
+        // Get the drupal root
+        $drupal_root = drush_get_context('DRUSH_DRUPAL_ROOT');
+
+        // Views Json Query directory for the cached files
+        $folder_path = $drupal_root . '/sites/default/files/views_json_query/';
+
+        $dirHandle = opendir($folder_path);
+
+        // Loop over all of the files in the folder
+        while ($file = readdir($dirHandle)) {
+
+            // If $file is NOT a directory remove it
+            if (!is_dir($file)) {
+                unlink ($folder_path . $file); // unlink() delete the file
+                drush_log($file . ' deleted');
+            }
+        }
+
+        // Close the directory
+        closedir($dirHandle);
+    }
+
+    // Set variable to TRUE so the mysql database views will be refreshed
     variable_set('rebuild_absence_list_view', 'TRUE');
     watchdog('Rebuild view REQUEST', 'ABSENCE LIST MYSQL VIEW');
 
@@ -1577,6 +1606,9 @@ function webform_client_form_ajax_callback($form, &$form_state) {
         ctools_include('ajax');
         ctools_include('modal');
         ctools_add_js('ajax-responder');
+        
+        // Get the contact ID and create the cache identifier value
+        $contact_value = 'civihr_contact_data_' . $_SESSION['CiviCRM']['userID'];
             
         $commands = array();
 
@@ -1584,7 +1616,11 @@ function webform_client_form_ajax_callback($form, &$form_state) {
         $commands[] = ctools_ajax_command_redirect('dashboard');
         $commands[] = ajax_command_prepend('#content', '<div id="messages">' . theme('status_messages') . '</div>');
         
+        // Try to remove the cached data for this contact as the values were updated
+        cache_clear_all($contact_value, 'cache');
+        
         print ajax_render($commands);
+        
         exit;
         
     }
