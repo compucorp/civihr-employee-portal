@@ -19,11 +19,6 @@ class AbsenceLinks {
         // Create our own javascript that will be used to theme a modal.
         $civihr_style = array(
             'civihr-default-style' => array(
-                'modalSize' => array(
-                    'type' => 'fixed',
-                    'width' => $width,
-                    'height' => 500,
-                ),
                 'modalOptions' => array(
                     'opacity' => .5,
                     'background-color' => '#000',

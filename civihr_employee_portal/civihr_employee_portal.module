@@ -1231,7 +1231,7 @@ function civihr_employee_portal_get_contact_list() {
         'options' => array(
             'limit' => 10000000,
         ),
-        'return' => 'title,location,contract_type,period_type,contact_id'
+        'return' => 'is_primary,title,location,contract_type,period_type,contact_id'
     ));
     
     // Merge contacts with contracts (if contract doesn't exist still return the contact data)
