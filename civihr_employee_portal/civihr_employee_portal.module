@@ -485,6 +485,13 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
+
+    $items['emergency_contacts/%ctools_js/view'] = array(
+        'page callback' => 'civihr_employee_portal_emergency_contacts_callback',
+        'page arguments' => array(1),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
     
     $items['civihr_reports'] = array(
         'title' => 'CiviHR reports',
@@ -605,7 +612,7 @@ function civihr_employee_portal_hr_resource_load_callback($ajax, $nid) {
 }
 
 /**
- * Manager calendar / employee list callback
+ * My details / Edit my details callback
  */
 function civihr_employee_portal_my_details_callback($ajax) {
     
@@ -616,11 +623,13 @@ function civihr_employee_portal_my_details_callback($ajax) {
         
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
-        
-        $block = module_invoke('quicktabs', 'block_view', 'det_tab');
+
+        // Load the my details node - @TODO -> not hardcode node ID
+        $node = node_load(2);
+        $contents = render(node_view($node, 'full', NULL));
         
         $output = array();        
-        $output[] = ctools_modal_command_display('My details', render($block['content']));
+        $output[] = ctools_modal_command_display('My details', render($contents));
         
         print ajax_render($output);
         drupal_exit();
@@ -629,6 +638,35 @@ function civihr_employee_portal_my_details_callback($ajax) {
         return '';
     } 
     
+}
+
+/**
+ * My details / Edit emergency contacts callback
+ */
+function civihr_employee_portal_emergency_contacts_callback($ajax) {
+
+    if ($ajax) {
+
+        ctools_include('ajax');
+        ctools_include('modal');
+
+        // Add the responder javascript, required by ctools
+        ctools_add_js('ajax-responder');
+
+        // Load the emergency contacts node - @TODO -> not hardcode node ID
+        $node = node_load(3);
+        $contents = render(node_view($node, 'full', NULL));
+
+        $output = array();
+        $output[] = ctools_modal_command_display('Emergency contacts', render($contents));
+
+        print ajax_render($output);
+        drupal_exit();
+    }
+    else {
+        return '';
+    }
+
 }
 
 /**
