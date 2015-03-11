@@ -46,6 +46,13 @@
 
 ?>
 
+<?php
+
+    // Show only if we have the logged in user
+    global $user;
+    if ($user->uid) {
+?>
+
 <div class="<?php print $classes; ?>"<?php print $attributes; ?>>
 
     <?php print render($title_prefix); ?>
@@ -81,22 +88,14 @@
     </div>
 
     <div>
-
-        <?php
-
-            global $user;
-            if ($user->uid) {
-
-        ?>
-
         <?php print l(t('Edit Account'), 'user/' . $user->uid . '/edit', array('attributes' => array('class' => array('btn btn-custom')))); ?>
         <?php print l(t('Edit my details'), 'my_details/nojs/view', array('attributes' => array('class' => array('btn btn-custom ctools-use-modal ctools-modal-civihr-default-style')))); ?>
         <?php print l(t('Edit emergency contact'), 'emergency_contacts/nojs/view', array('attributes' => array('class' => array('btn btn-custom ctools-use-modal ctools-modal-civihr-default-style')))); ?>
-
-        <?php
-
-            }
-
-        ?>
     </div>
 </div>
+
+<?php
+
+    }
+
+?>

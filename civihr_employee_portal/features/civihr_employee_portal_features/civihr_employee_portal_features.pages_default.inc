@@ -138,7 +138,23 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->type = 'block';
     $pane->subtype = 'civihr_employee_portal-my_details';
     $pane->shown = TRUE;
-    $pane->access = array();
+    $pane->access = array(
+      'plugins' => array(
+        0 => array(
+          'name' => 'role',
+          'settings' => array(
+            'rids' => array(
+              0 => 2,
+              1 => 4,
+              2 => 6,
+              3 => 5,
+            ),
+          ),
+          'context' => 'logged-in-user',
+          'not' => FALSE,
+        ),
+      ),
+    );
     $pane->configuration = array(
       'override_title' => 1,
       'override_title_text' => 'My details',
@@ -270,7 +286,23 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->type = 'block';
     $pane->subtype = 'civihr_employee_portal-staff_directory_block';
     $pane->shown = TRUE;
-    $pane->access = array();
+    $pane->access = array(
+      'plugins' => array(
+        0 => array(
+          'name' => 'role',
+          'settings' => array(
+            'rids' => array(
+              0 => 2,
+              1 => 4,
+              2 => 6,
+              3 => 5,
+            ),
+          ),
+          'context' => 'logged-in-user',
+          'not' => FALSE,
+        ),
+      ),
+    );
     $pane->configuration = array(
       'override_title' => 0,
       'override_title_text' => '',
