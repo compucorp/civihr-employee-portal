@@ -26,8 +26,11 @@ function civihr_employee_portal_features_user_default_permissions() {
     'name' => 'access CiviCRM',
     'roles' => array(
       'administrator' => 'administrator',
+      'anonymous user' => 'anonymous user',
+      'authenticated user' => 'authenticated user',
       'civihr_admin' => 'civihr_admin',
       'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
     ),
     'module' => 'civicrm',
   );
@@ -55,9 +58,7 @@ function civihr_employee_portal_features_user_default_permissions() {
   // Exported permission: 'access HRJobs'.
   $permissions['access HRJobs'] = array(
     'name' => 'access HRJobs',
-    'roles' => array(
-      'civihr_admin' => 'civihr_admin',
-    ),
+    'roles' => array(),
     'module' => 'civicrm',
   );
 
@@ -99,7 +100,6 @@ function civihr_employee_portal_features_user_default_permissions() {
     'name' => 'access all custom data',
     'roles' => array(
       'administrator' => 'administrator',
-      'anonymous user' => 'anonymous user',
       'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'civicrm',
@@ -155,8 +155,9 @@ function civihr_employee_portal_features_user_default_permissions() {
     'name' => 'access uploaded files',
     'roles' => array(
       'administrator' => 'administrator',
-      'anonymous user' => 'anonymous user',
       'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
     ),
     'module' => 'civicrm',
   );
@@ -352,9 +353,7 @@ function civihr_employee_portal_features_user_default_permissions() {
   // Exported permission: 'edit HRJobs'.
   $permissions['edit HRJobs'] = array(
     'name' => 'edit HRJobs',
-    'roles' => array(
-      'civihr_admin' => 'civihr_admin',
-    ),
+    'roles' => array(),
     'module' => 'civicrm',
   );
 
@@ -474,7 +473,6 @@ function civihr_employee_portal_features_user_default_permissions() {
     'name' => 'profile create',
     'roles' => array(
       'administrator' => 'administrator',
-      'anonymous user' => 'anonymous user',
       'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'civicrm',
@@ -505,7 +503,11 @@ function civihr_employee_portal_features_user_default_permissions() {
     'name' => 'profile listings and forms',
     'roles' => array(
       'administrator' => 'administrator',
+      'anonymous user' => 'anonymous user',
+      'authenticated user' => 'authenticated user',
       'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
     ),
     'module' => 'civicrm',
   );
@@ -515,7 +517,6 @@ function civihr_employee_portal_features_user_default_permissions() {
     'name' => 'profile view',
     'roles' => array(
       'administrator' => 'administrator',
-      'anonymous user' => 'anonymous user',
       'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'civicrm',
@@ -528,6 +529,18 @@ function civihr_employee_portal_features_user_default_permissions() {
       'administrator' => 'administrator',
     ),
     'module' => 'search',
+  );
+
+  // Exported permission: 'see download link'.
+  $permissions['see download link'] = array(
+    'name' => 'see download link',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
+    ),
+    'module' => 'download',
   );
 
   // Exported permission: 'translate CiviCRM'.

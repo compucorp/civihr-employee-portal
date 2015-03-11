@@ -93,6 +93,7 @@ features[user_permission][] = profile listings
 features[user_permission][] = profile listings and forms
 features[user_permission][] = profile view
 features[user_permission][] = search content
+features[user_permission][] = see download link
 features[user_permission][] = translate CiviCRM
 features[user_permission][] = view Applicants
 features[user_permission][] = view HRAbsences
