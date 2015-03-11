@@ -37,10 +37,10 @@ $handler->display->display_options['style_plugin'] = 'default';
 $handler->display->display_options['style_options']['row_class'] = 'row-fluid';
 $handler->display->display_options['row_plugin'] = 'fields';
 $handler->display->display_options['row_options']['inline'] = array(
-  'value' => 'value',
-  'value_2' => 'value_2',
-  'value_1' => 'value_1',
-  'nothing' => 'nothing',
+    'value' => 'value',
+    'value_2' => 'value_2',
+    'value_1' => 'value_1',
+    'nothing' => 'nothing',
 );
 /* Field: id: value */
 $handler->display->display_options['fields']['value_8']['id'] = 'value_8';
@@ -120,9 +120,9 @@ $handler->display->display_options['fields']['fieldset']['table'] = 'views';
 $handler->display->display_options['fields']['fieldset']['field'] = 'fieldset';
 $handler->display->display_options['fields']['fieldset']['label'] = 'More details';
 $handler->display->display_options['fields']['fieldset']['children'] = array(
-  0 => 'value_5',
-  1 => 'value_6',
-  2 => 'value_7',
+    0 => 'value_5',
+    1 => 'value_6',
+    2 => 'value_7',
 );
 $handler->display->display_options['fields']['fieldset']['fieldset']['classes'] = 'col-md-12 col-sm-12 col-xs-12';
 $handler->display->display_options['fields']['fieldset']['fieldset']['id'] = '[value_8]';
@@ -160,12 +160,12 @@ $handler->display->display_options['filters']['value']['expose']['label'] = 'Job
 $handler->display->display_options['filters']['value']['expose']['operator'] = 'value_op';
 $handler->display->display_options['filters']['value']['expose']['identifier'] = 'job_position';
 $handler->display->display_options['filters']['value']['expose']['remember_roles'] = array(
-  2 => '2',
-  1 => 0,
-  3 => 0,
-  4 => 0,
-  6 => 0,
-  5 => 0,
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    4 => 0,
+    6 => 0,
+    5 => 0,
 );
 $handler->display->display_options['filters']['value']['key'] = 'position';
 /* Filter criterion: location: value */
@@ -179,12 +179,12 @@ $handler->display->display_options['filters']['value_1']['expose']['label'] = 'L
 $handler->display->display_options['filters']['value_1']['expose']['operator'] = 'value_1_op';
 $handler->display->display_options['filters']['value_1']['expose']['identifier'] = 'value_1';
 $handler->display->display_options['filters']['value_1']['expose']['remember_roles'] = array(
-  2 => '2',
-  1 => 0,
-  3 => 0,
-  4 => 0,
-  6 => 0,
-  5 => 0,
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    4 => 0,
+    6 => 0,
+    5 => 0,
 );
 $handler->display->display_options['filters']['value_1']['key'] = 'location';
 
@@ -209,6 +209,14 @@ $handler->display->display_options['defaults']['style_options'] = FALSE;
 $handler->display->display_options['defaults']['row_plugin'] = FALSE;
 $handler->display->display_options['row_plugin'] = 'fields';
 $handler->display->display_options['defaults']['row_options'] = FALSE;
+$handler->display->display_options['defaults']['header'] = FALSE;
+/* Header: Global: Text area */
+$handler->display->display_options['header']['area']['id'] = 'area';
+$handler->display->display_options['header']['area']['table'] = 'views';
+$handler->display->display_options['header']['area']['field'] = 'area';
+$handler->display->display_options['header']['area']['empty'] = TRUE;
+$handler->display->display_options['header']['area']['content'] = '<a href="hr-vacancies">View all vacancies</a>';
+$handler->display->display_options['header']['area']['format'] = 'filtered_html';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: id: value */
 $handler->display->display_options['fields']['value_8']['id'] = 'value_8';
@@ -244,13 +252,13 @@ $handler->display->display_options['fields']['value_1']['element_type'] = 'div';
 $handler->display->display_options['fields']['value_1']['element_label_type'] = 'strong';
 $handler->display->display_options['fields']['value_1']['element_wrapper_type'] = 'div';
 $handler->display->display_options['fields']['value_1']['key'] = 'salary';
-/* Field: start_date: value */
-$handler->display->display_options['fields']['value_3']['id'] = 'value_3';
-$handler->display->display_options['fields']['value_3']['table'] = 'json';
-$handler->display->display_options['fields']['value_3']['field'] = 'value';
-$handler->display->display_options['fields']['value_3']['label'] = 'Start date';
-$handler->display->display_options['fields']['value_3']['exclude'] = TRUE;
-$handler->display->display_options['fields']['value_3']['key'] = 'start_date';
+/* Field: Global: Custom text */
+$handler->display->display_options['fields']['nothing']['id'] = 'nothing';
+$handler->display->display_options['fields']['nothing']['table'] = 'views';
+$handler->display->display_options['fields']['nothing']['field'] = 'nothing';
+$handler->display->display_options['fields']['nothing']['label'] = '';
+$handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="index.php?q=civicrm/vacancy/apply&reset=1&id=[value_8]" class="btn btn-custom">Apply now</a>';
+$handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
 
@@ -270,33 +278,34 @@ $handler->display->display_options['menu']['name'] = 'main-menu';
 $handler->display->display_options['menu']['context'] = 0;
 $handler->display->display_options['menu']['context_only_inline'] = 0;
 $translatables['hr_vacancies'] = array(
-  t('Master'),
-  t('HR Vacancies'),
-  t('more'),
-  t('Search'),
-  t('Reset'),
-  t('Sort by'),
-  t('Asc'),
-  t('Desc'),
-  t('Items per page'),
-  t('- All -'),
-  t('Offset'),
-  t('« first'),
-  t('‹ previous'),
-  t('next ›'),
-  t('last »'),
-  t('Job ID'),
-  t('Job Position'),
-  t('Location'),
-  t('Salary'),
-  t('Start date'),
-  t('End date'),
-  t('Application Dates'),
-  t('[value_3] - [value_4]'),
-  t('<a href="index.php?q=civicrm/vacancy/apply&reset=1&id=[value_8]" class="btn btn-custom">Apply now</a>'),
-  t('More details'),
-  t('Description'),
-  t('HR Vacancies Dashboard block'),
-  t('Current Vacancies'),
-  t('HR Vacancies list'),
+    t('Master'),
+    t('HR Vacancies'),
+    t('more'),
+    t('Search'),
+    t('Reset'),
+    t('Sort by'),
+    t('Asc'),
+    t('Desc'),
+    t('Items per page'),
+    t('- All -'),
+    t('Offset'),
+    t('« first'),
+    t('‹ previous'),
+    t('next ›'),
+    t('last »'),
+    t('Job ID'),
+    t('Job Position'),
+    t('Location'),
+    t('Salary'),
+    t('Start date'),
+    t('End date'),
+    t('Application Dates'),
+    t('[value_3] - [value_4]'),
+    t('<a href="index.php?q=civicrm/vacancy/apply&reset=1&id=[value_8]" class="btn btn-custom">Apply now</a>'),
+    t('More details'),
+    t('Description'),
+    t('HR Vacancies Dashboard block'),
+    t('Current Vacancies'),
+    t('<a href="hr-vacancies">View all vacancies</a>'),
+    t('HR Vacancies list'),
 );
