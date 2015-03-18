@@ -1,0 +1,130 @@
+<?php
+
+/**
+ * Implements hook_init()
+ */
+function civihr_contact_summary_init() {
+
+    // Data you want to pass to the angular app
+    drupal_add_js(array(
+        'myapp' => array(
+        'title' => t('contact summary from php to js'),
+    ),
+    ), 'setting');
+
+    // Init angularJS
+    drupal_add_js('https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js');
+
+    // civiHR contact summary angularJS
+    drupal_add_js(drupal_get_path('module', 'civihr_contact_summary') . "/js/contact-summary.js");
+
+}
+
+/**
+ * Implements hook_theme().
+ */
+function civihr_contact_summary_theme() {
+    return array(
+        'civihr_employee_portal_contact_summary' => array(
+            'variables' => array(
+                'custom_data' => NULL
+            ),
+            'template' => 'templates/civihr-employee-portal-contact-summary',
+        ),
+    );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function civihr_contact_summary_menu() {
+
+    $items = array();
+
+    $items['civihr_contact_summary/%user'] = array(
+        'title' => 'CiviHR Contact Summary',
+        'page callback' => 'civihr_contact_summary_callback',
+        'page arguments'   => array(1, 2),
+        'access arguments' => array('administer CiviCRM'),
+        'type'             => MENU_CALLBACK,
+    );
+
+    return $items;
+
+}
+
+/**
+ * Implements hook_civicrm_tabs().
+ */
+function civihr_contact_summary_civicrm_tabs(&$tabs, $cid) {
+
+    if (!civicrm_initialize()) {
+        return;
+    }
+
+    $uid = CRM_Core_BAO_UFMatch::getUFId($cid);
+
+    // User doesn't exist on Drupal / do not show the tab
+    if (empty($uid)) {
+        return;
+    }
+
+    $url = CRM_Utils_System::url('civihr_contact_summary/' . $uid . '/civicrm_ajax');
+    $tabs[] = array(
+        'id' => 'hrcontactsummary',
+        'url' => $url,
+        'title' => 'Contact Summary',
+        'count' => $uid,
+        'weight' => -9999
+    );
+
+}
+
+/**
+ * Display civiHR contact summary infomration in a CiviCRM tab.
+ *
+ * @param $user
+ *   Drupal user object
+ * @param $render
+ *   If true, render the output and print it to the screen.
+ */
+function civihr_contact_summary_callback($user, $render = 'drupal') {
+    if (!civicrm_initialize()) {
+        return;
+    }
+
+    // Generate the absence views block (example)
+    //$view = views_get_view('absence_list');
+    //$output2 =  $view->execute_display('page', array($user->uid));
+
+    // Include panels
+    module_load_include("inc", "page_manager", "plugins/tasks/page");
+
+    // Load the panels page.
+    $output = page_manager_page_execute('contact_summary_civicrm_tab');
+
+    if ($render == 'civicrm_ajax') {
+
+        // Render the Drupal page specifically for civi -> so it will work in civicrm ajaxified tabs
+        CRM_Core_Page_AJAX::returnJsonResponse(
+            theme('civihr_employee_portal_contact_summary',
+                array(
+                    'custom_data' => render($output)
+                )
+            )
+        );
+
+    }
+    else {
+
+        // Regular Drupal page response
+        return
+            theme('civihr_employee_portal_contact_summary',
+                array(
+                    'custom_data' => render($output)
+                )
+            );
+    }
+
+    return;
+}

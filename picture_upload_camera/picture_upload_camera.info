@@ -1,0 +1,5 @@
+name = Take User Picture from your Camera stream
+description = Provides functionality to take user profile picture from the device Camera stream
+core = 7.x
+package = Compucorp
+dependencies[] = canvas_field

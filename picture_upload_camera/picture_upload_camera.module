@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * Implements hook_form_alter()
+ */
+function picture_upload_camera_form_alter(&$form, &$form_state, $form_id) {
+    
+    // Alter the user/*/edit form
+    if($form_id == 'user_profile_form') {
+
+        // Load the slider library
+        drupal_add_library('system','ui.slider');
+        
+        $buttons = '<div id="buttons">
+                        <button id="loadCameraButton">Take picture with your Camera!</button>
+
+                        <button id="inverseType" style="display: none;">Inverse filter</button>
+                        <button id="grayscaleType" style="display: none;">Grayscale filter</button>
+                        <button id="sobelType" style="display: none;">Sobel filter</button>
+            
+                        <button id="takePhotoButton" style="display: none;">Take photo</button>
+
+                    </div>';
+        
+        $canvas = '<video id="video-stream" autoplay style="display: none"></video>
+            
+                    <!-- This will hold our captured image from the video stream and then it will be outputted to the output div -->
+                    <canvas id="canvas" style="display: none"></canvas>
+                    <canvas id="modified-image" style="display: none;"></canvas>
+            
+                    <!-- Output the image and customize if we want to -->
+                    <div class="output" style="display: inline;">
+                        <img id="photo" />
+
+                        <p id="slider-label" style="display: none; float: right; width: 120px;">
+                            <label for="amount">Volume:</label>
+                            <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+                        </p>
+                        <div id="slider" style="display: none; float: right; height: 240px;"></div>
+                    </div>';
+        
+        $form['picture']['picture_upload_camera_value']['#type'] = 'hidden';
+        $form['picture']['picture_upload_camera']['#markup'] = $canvas . $buttons . t("Take picture using the device's camera!");
+        
+        // Attach our custom javascript
+        $form['picture']['picture_upload_camera']['#attached']['js'] = array(
+            drupal_get_path('module', 'picture_upload_camera') . '/js/custom.js',
+        );
+        
+        $form['#validate'][] = 'mymodule_mysubmit_handler';
+        
+    }
+}
+
+function mymodule_mysubmit_handler($form, &$form_state) {
+    
+    // Check if we have custom camera snapshot (if yes use the picture from there and update the profile picture)
+    if (isset($form_state['values']['picture_upload_camera_value']) && !empty($form_state['values']['picture_upload_camera_value'])) {
+        
+        // Save the new camera snapshot
+        $file = canvas_field_save_data($form_state['values']['picture_upload_camera_value'], 'public://pictures/');
+        
+        if ($file) {
+            $file->status = 0;
+            file_save($file);
+            
+            watchdog('returned hopefully save', print_r($file, TRUE));
+            
+            // Assign the camera picture for this user profile
+            $form_state['values']['picture_upload'] = $file;
+        }
+               
+    }
+    
+}

@@ -1,0 +1,4 @@
+name = civiHR Contact Summary
+description = Provides civiHR Contact Summary functionality as a CiviCRM custom tab
+core = 7.x
+package = Compucorp
