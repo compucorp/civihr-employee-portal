@@ -500,6 +500,15 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
+    $items['hr-details'] = array(
+        'title' => 'My Details',
+        'page callback' => 'civihr_employee_portal_my_details',
+        'access callback' => TRUE,
+        'type' => MENU_NORMAL_ITEM,
+        'menu_name' => 'main-menu',
+        'weight' => 4
+    );
+
     return $items;
 }
 
@@ -1663,4 +1672,18 @@ function webform_client_form_ajax_callback($form, &$form_state) {
         
     }
     
+}
+
+/**
+ * Implement custom my details page, which loads the my details block, to edit the employee data
+ */
+function civihr_employee_portal_my_details() {
+
+    ctools_include('modal');
+    ctools_modal_add_js();
+
+    // This will render the same block as on the dashboard page
+    $block = module_invoke('civihr_employee_portal', 'block_view', 'my_details');
+
+    return render($block['content']);
 }

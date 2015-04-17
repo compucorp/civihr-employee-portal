@@ -13,9 +13,22 @@ class MyDetailsData {
             $contact_data = get_civihr_contact_data($_SESSION['CiviCRM']['userID']);
 
         }
-             
-        // Get the contact details view
-        $contact_details = views_embed_view('my_details_block', 'default');
+
+        // @TODO -> show different view with all the data available
+        // If we are on the HR details full list page, show different view with all the data
+        if (isset($_GET['q']) && $_GET['q'] == 'hr-details') {
+
+            // Get the contact details view
+            $contact_details = views_embed_view('my_details_block', 'default');
+
+        }
+        else {
+
+            // Get the contact details view
+            $contact_details = views_embed_view('my_details_block', 'default');
+
+        }
+
         
         // Get the address details view
         $address_data = views_embed_view('my_details_block', 'my_address_block');
