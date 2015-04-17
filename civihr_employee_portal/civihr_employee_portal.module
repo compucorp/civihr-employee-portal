@@ -1687,3 +1687,21 @@ function civihr_employee_portal_my_details() {
 
     return render($block['content']);
 }
+
+/**
+ * @param $form
+ * @param $form_state
+ * Implement form_views_exposed_form_alter()
+ */
+function civihr_employee_portal_form_views_exposed_form_alter(&$form, $form_state) {
+    
+    // Show the open calendar button in the my leave block next to the date filters select list
+    if (isset($form['#id']) && $form['#id'] == 'views-exposed-form-absence-list-page') {
+
+        $form['open_calendar'] = array(
+            '#markup' => civihr_employee_portal_make_link('Open calendar', 'calendar')
+        );
+
+    }
+
+}

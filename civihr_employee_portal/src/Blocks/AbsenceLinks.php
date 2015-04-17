@@ -33,8 +33,7 @@ class AbsenceLinks {
         $links .= '<div id="absence-links" class="list-group" style="height: 50px;">';
         $links .= civihr_employee_portal_make_link('Request leave', 'debit');
         $links .= civihr_employee_portal_make_link('Apply for credits', 'credit');
-        $links .= civihr_employee_portal_make_link('Open calendar', 'calendar');
-        
+
         $links .= '</div>';
         
         return $links;
