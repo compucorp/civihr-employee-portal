@@ -458,6 +458,13 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
+    $items['absence_request/%ctools_js/sick'] = array(
+        'page callback' => 'civihr_employee_portal_absence_request_callback',
+        'page arguments' => array(1, 2),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
     $items['absence_calendar/%ctools_js/show'] = array(
         'page callback' => 'civihr_employee_portal_absence_calendar_callback',
         'page arguments' => array(1),
@@ -962,6 +969,10 @@ function civihr_employee_portal_absence_request_callback($ajax, $absence_type = 
             $title = t('Use TOIL');
         }
 
+        if ($absence_type == 'sick') {
+            $title = t('Report new sickness');
+        }
+
         $form_state = array(
             'ajax' => TRUE,
             'is_ajax_update' => TRUE,
@@ -1049,6 +1060,14 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
 
             // If Use TOIL is clicked show only debit types, which has credit type allowed too
             if ($absenceType['allow_debits'] == '1' && $absenceType['allow_credits'] == '1' && $absence_type == 'credit_use' && $absenceType['title'] != 'Sick') {
+
+                // Default debit types which has credit type too
+                $options[$absenceType['debit_activity_type_id']] = $absenceType['title'];
+
+            }
+
+            // If Report New Sickness is clicked, show the debit types which are selected as the Sickness Absence Type @TODO -> currently hardcoded based on absence title
+            if ($absenceType['allow_debits'] == '1' && $absence_type == 'sick' && $absenceType['title'] == 'Sick') {
 
                 // Default debit types which has credit type too
                 $options[$absenceType['debit_activity_type_id']] = $absenceType['title'];
