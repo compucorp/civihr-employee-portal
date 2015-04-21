@@ -8,7 +8,7 @@ use Drupal\civihr_employee_portal\Helpers\HelperClass;
  * Implements hook_css_alter().
  */
 function civihr_employee_portal_css_alter(&$css) {
-    
+
     // Remove defaults system messages css file.
     unset($css[drupal_get_path('module', 'system') . '/system.messages.css']);
 }
@@ -17,24 +17,24 @@ function civihr_employee_portal_css_alter(&$css) {
  * Implements hook_init().
  */
 function civihr_employee_portal_init() {
-    
+
     // @TODO -> init civi only on pages where we need to (e.g. Dashboard)
     // Civi init + load the singleton needed for the AJAX calls
     civicrm_initialize();
     CRM_Core_Resources::singleton()->addCoreResources();
-    
+
     // Add our additional css libraries
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/custom.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweet-alert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
-    
+
     // Check the variable and decide if we need to rebuild the absence_list mysql view
     $rebuild_absence_list_view = variable_get('rebuild_absence_list_view', 'TRUE');
-    
+
     if (isset($rebuild_absence_list_view) && $rebuild_absence_list_view == 'TRUE') {
-        
+
         try {
-                
+
             // Civi init
             civicrm_initialize();
 
@@ -75,7 +75,7 @@ function civihr_employee_portal_init() {
         catch (CiviCRM_API3_Exception $e) {
             $error = $e->getMessage();
         }
-            
+
         $civi_settings = parse_url(CIVICRM_DSN);
         $civi_db_name = trim($civi_settings['path'], '/');
 
@@ -90,9 +90,9 @@ function civihr_employee_portal_init() {
                                     WHEN request.activity_type_id THEN 1
                                     ELSE 0 END AS is_credit, tgt.contact_id, tgt.record_type_id, min(absence.activity_date_time) as absence_start_date, max(absence.activity_date_time) as absence_end_date, drupal_contact.uf_id as drupal_uid, sum(absence.duration) as duration, request.status_id as absence_status,
                             UNIX_TIMESTAMP(STR_TO_DATE(min(absence.activity_date_time), '%Y-%m-%d')) as absence_start_date_timestamp,
-                            UNIX_TIMESTAMP(STR_TO_DATE(max(absence.activity_date_time), '%Y-%m-%d')) as absence_end_date_timestamp        
-                            FROM " . $civi_db_name . ".civicrm_activity request 
-                            INNER JOIN " . $civi_db_name . ".civicrm_activity absence ON (absence.source_record_id = request.id AND absence.activity_type_id = " . $activityTypeId . ") 
+                            UNIX_TIMESTAMP(STR_TO_DATE(max(absence.activity_date_time), '%Y-%m-%d')) as absence_end_date_timestamp
+                            FROM " . $civi_db_name . ".civicrm_activity request
+                            INNER JOIN " . $civi_db_name . ".civicrm_activity absence ON (absence.source_record_id = request.id AND absence.activity_type_id = " . $activityTypeId . ")
                             INNER JOIN " . $civi_db_name . ".civicrm_activity_contact tgt ON tgt.activity_id = request.id AND tgt.record_type_id = " . $targetID . "
                             LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_debit
                             ON request.activity_type_id = absence_type_debit.debit_activity_type_id
@@ -100,9 +100,9 @@ function civihr_employee_portal_init() {
                             ON request.activity_type_id = absence_type_credit.credit_activity_type_id
                             INNER JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
                             ON tgt.contact_id = drupal_contact.contact_id
-                            WHERE (request.activity_type_id IN (" . rtrim($options, ',') . ")) 
+                            WHERE (request.activity_type_id IN (" . rtrim($options, ',') . "))
                             GROUP BY request.id");
-        
+
         /**
          * Manager approval view
          */
@@ -114,9 +114,9 @@ function civihr_employee_portal_init() {
                                     WHEN request.activity_type_id THEN 1
                                     ELSE 0 END AS is_credit, tgt.contact_id AS manager_id, tgt_contact.contact_id AS employee_id, tgt.record_type_id, min(absence.activity_date_time) as absence_start_date, max(absence.activity_date_time) as absence_end_date, drupal_contact.uf_id as drupal_uid, sum(absence.duration) as duration, request.status_id as absence_status,
                             UNIX_TIMESTAMP(STR_TO_DATE(min(absence.activity_date_time), '%Y-%m-%d')) as absence_start_date_timestamp,
-                            UNIX_TIMESTAMP(STR_TO_DATE(max(absence.activity_date_time), '%Y-%m-%d')) as absence_end_date_timestamp        
-                            FROM " . $civi_db_name . ".civicrm_activity request 
-                            INNER JOIN " . $civi_db_name . ".civicrm_activity absence ON (absence.source_record_id = request.id AND absence.activity_type_id = " . $activityTypeId . ") 
+                            UNIX_TIMESTAMP(STR_TO_DATE(max(absence.activity_date_time), '%Y-%m-%d')) as absence_end_date_timestamp
+                            FROM " . $civi_db_name . ".civicrm_activity request
+                            INNER JOIN " . $civi_db_name . ".civicrm_activity absence ON (absence.source_record_id = request.id AND absence.activity_type_id = " . $activityTypeId . ")
                             INNER JOIN " . $civi_db_name . ".civicrm_activity_contact tgt ON tgt.activity_id = request.id AND tgt.record_type_id = " . $assigneeID . "
                             INNER JOIN " . $civi_db_name . ".civicrm_activity_contact tgt_contact ON tgt_contact.activity_id = request.id AND tgt_contact.record_type_id = " . $targetID . "
                             LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_debit
@@ -125,27 +125,27 @@ function civihr_employee_portal_init() {
                             ON request.activity_type_id = absence_type_credit.credit_activity_type_id
                             INNER JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
                             ON tgt.contact_id = drupal_contact.contact_id
-                            WHERE (request.activity_type_id IN (" . rtrim($options, ',') . ")) 
+                            WHERE (request.activity_type_id IN (" . rtrim($options, ',') . "))
                             GROUP BY request.id");
-        
-        
+
+
         // Set to false so it will not rebuild until not asked to rebuild
         variable_set('rebuild_absence_list_view', 'FALSE');
     }
-    
+
 }
 
 /**
  * When caches are cleared rebuild the helper mysql views
  */
 function civihr_employee_portal_flush_caches() {
-    
+
     // If we running from drush
     // @ TODO -> add json file removal when we run from UI
     // @ TODO -> move the json cache to the private file folder
     // @ TODO -> get the sites/default/files location from proper drupal function
     if (drupal_is_cli()) {
-        
+
         // Get the drupal root
         $drupal_root = drush_get_context('DRUSH_DRUPAL_ROOT');
 
@@ -218,17 +218,17 @@ function civihr_employee_portal_theme() {
  * Implements hook_views_default_views().
  */
 function civihr_employee_portal_views_default_views() {
-  
+
     // Get the absence types
     $absenceTypes = get_civihr_absence_types();
-    
+
     // Check for all view files in views directory
     $files = file_scan_directory(drupal_get_path('module', 'civihr_employee_portal') . '/views/views_export', '/.*\.inc$/');
 
     // Add view to list of views
     foreach ($files as $filepath => $file) {
         require $filepath;
-       
+
         // Check if the view object is set
         if (isset($view)) {
             $views[$view->name] = $view;
@@ -243,36 +243,36 @@ function civihr_employee_portal_views_default_views() {
  * Function for caching date periods returned from CiviCRM (avoiding expensive DB calls for each dashboard page hit)
  */
 function get_civihr_date_periods() {
-    
+
     $periods_data = &drupal_static(__FUNCTION__);
-    
+
     if (!isset($periods_data)) {
         if ($cache = cache_get('civihr_date_periods')) {
             $periods_data = $cache->data;
             watchdog('cache hit', 'cache');
         }
         else {
-            
+
             try {
 
                 // Civi init
                 civicrm_initialize();
-                
+
                 $res = civicrm_api3('HRAbsencePeriod', 'get', array('options' => array('sort' => "start_date DESC")));
                 $periods_data = $res['values'];
                 watchdog('DB hit', 'DB');
-            
+
             }
 
             catch (CiviCRM_API3_Exception $e) {
                 $error = $e->getMessage();
             }
-            
+
             // Cache the date periods for 5 minutes
             cache_set('civihr_date_periods', $periods_data, 'cache', time() + 360);
-        }   
+        }
     }
-  
+
     return $periods_data;
 }
 
@@ -280,19 +280,19 @@ function get_civihr_date_periods() {
  * Function for caching absence types returned from CiviCRM (avoiding expensive DB calls for each dashboard page hit)
  */
 function get_civihr_absence_types() {
-    
+
     $absenceTypes = &drupal_static(__FUNCTION__);
-    
+
     if (!isset($absenceTypes)) {
-        
+
         if ($cache = cache_get('civihr_absence_types')) {
             $absenceTypes = $cache->data;
             watchdog('cache hit absence types', 'cache');
         }
         else {
-            
+
             try {
-                
+
                 // Civi init
                 civicrm_initialize();
 
@@ -305,41 +305,41 @@ function get_civihr_absence_types() {
             catch (CiviCRM_API3_Exception $e) {
                 $error = $e->getMessage();
             }
-            
+
             // Cache the absence types for 5 minutes
             cache_set('civihr_absence_types', $absenceTypes, 'cache', time() + 360);
 
         }
-    
+
     }
-    
+
     return $absenceTypes;
-    
+
 }
 
 /**
  * Function for caching absence statuses returned from CiviCRM (avoiding expensive DB calls for each dashboard page hit)
  */
 function get_civihr_absence_statuses($status_id = NULL) {
-    
+
     $absenceStatuses = &drupal_static(__FUNCTION__);
-    
+
     if (!isset($absenceStatuses)) {
-        
+
         if ($cache = cache_get('civihr_absence_statuses')) {
             $absenceStatuses = $cache->data;
             watchdog('cache hit absence statuses', 'cache');
         }
         else {
-            
+
             try {
-                
+
                 // Civi init
                 civicrm_initialize();
 
                 // Activity absence statuses array
                 $absenceStatuses = CRM_Core_OptionGroup::values('activity_status', FALSE, FALSE, FALSE, NULL, 'name');
-    
+
                 watchdog('DB hit absence statuses', 'DB');
 
             }
@@ -347,17 +347,17 @@ function get_civihr_absence_statuses($status_id = NULL) {
             catch (CiviCRM_API3_Exception $e) {
                 $error = $e->getMessage();
             }
-            
+
             // Cache the absence statuses for 5 minutes
             cache_set('civihr_absence_statuses', $absenceStatuses, 'cache', time() + 360);
 
         }
-    
+
     }
-    
+
     // Get the status values based on the status_id
     $status_id_value = CRM_Utils_Array::value($status_id, $absenceStatuses);
-    
+
     // How we want to display the approved absences?
     if ($status_id_value == 'Completed') {
         $status_id_value = 'Approved';
@@ -365,49 +365,49 @@ function get_civihr_absence_statuses($status_id = NULL) {
     if ($status_id_value == 'Scheduled') {
         $status_id_value = 'Awaiting approval';
     }
-        
+
     return $status_id_value;
-    
+
 }
 
 /**
  * Function for caching contact data returned from CiviCRM
  */
 function get_civihr_contact_data($contact_id = NULL) {
-    
+
     // Generate unique static callable / contact
     $contact_data = &drupal_static(__FUNCTION__ . '_' . $contact_id);
-    
+
     if (!isset($contact_data)) {
         if ($cache = cache_get('civihr_contact_data_' . $contact_id)) {
             $contact_data = $cache->data;
             watchdog('cache hit contact data', print_r($contact_id, TRUE));
         }
         else {
-            
+
             try {
 
                 // Civi init
                 civicrm_initialize();
-                
+
                 $contact_data = civicrm_api('Contact', 'getsingle', array(
                     'version' => 3,
                     'return' => array('display_name', 'nick_name', 'image_URL'),
                     'id' => $contact_id
                 ));
                 watchdog('DB hit contact data', print_r($contact_id, TRUE));
-            
+
             }
 
             catch (CiviCRM_API3_Exception $e) {
                 $error = $e->getMessage();
             }
-            
+
             // Cache the contact data for 5 minutes
             cache_set('civihr_contact_data_' . $contact_id, $contact_data, 'cache', time() + 360);
-        }   
+        }
     }
-  
+
     return $contact_data;
 }
 
@@ -422,63 +422,63 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['civihr_vacancies'] = array(
         'title' => 'Vacancy list',
         'page callback' => 'civihr_employee_portal_get_vacancy_list',
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['civihr_contacts'] = array(
         'title' => 'Vacancy list',
         'page callback' => 'civihr_employee_portal_get_contact_list',
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['absence_request/%ctools_js/debit'] = array(
         'page callback' => 'civihr_employee_portal_absence_request_callback',
         'page arguments' => array(1, 2),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['absence_request/%ctools_js/credit'] = array(
         'page callback' => 'civihr_employee_portal_absence_request_callback',
         'page arguments' => array(1, 2),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['absence_calendar/%ctools_js/show'] = array(
         'page callback' => 'civihr_employee_portal_absence_calendar_callback',
         'page arguments' => array(1),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['manager_approval/%ctools_js/pick_days'] = array(
         'page callback' => 'civihr_employee_portal_manager_approval_pick_days_callback',
         'page arguments' => array(1, 2, 3, 4, 5),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['manager_approval/%ctools_js/calendar/show'] = array(
         'page callback' => 'civihr_employee_portal_manager_approval_show_calendar_callback',
         'page arguments' => array(1),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['hr_resources/%ctools_js/resource/%'] = array(
         'page callback' => 'civihr_employee_portal_hr_resource_load_callback',
         'page arguments' => array(1, 3),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['my_details/%ctools_js/view'] = array(
         'page callback' => 'civihr_employee_portal_my_details_callback',
         'page arguments' => array(1),
@@ -492,7 +492,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['civihr_reports'] = array(
         'title' => 'CiviHR reports',
         'page callback' => 'civihr_employee_portal_get_reports',
@@ -516,137 +516,137 @@ function civihr_employee_portal_menu() {
 * Helper function to make a link.
 */
 function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid = '') {
-    
+
     // Set a default value if no text in supplied.
     if (empty($link_text)) {
         $link_text = t('Modal');
     }
-    
+
     if ($link_type == 'calendar') {
         return '' . l($link_text, 'absence_calendar/nojs/show', array('attributes' => array('class' => 'btn btn-custom ctools-use-modal ctools-modal-civihr-default-style'))) . '';
     }
-    
+
     if ($link_type == 'hr-resource') {
         return '' . l($link_text, 'hr_resources/nojs/resource/' . $nid, array('attributes' => array('class' => 'ctools-use-modal ctools-modal-civihr-default-style'))) . '';
     }
-    
+
     return '' . l($link_text, 'absence_request/nojs/' . $link_type, array('attributes' => array('class' => 'btn btn-custom ctools-use-modal ctools-modal-civihr-default-style'))) . '';
-    
+
 }
 
 /**
  * Absence calendar callback
  */
 function civihr_employee_portal_absence_calendar_callback($ajax) {
-    
+
     if ($ajax) {
-        
+
         ctools_include('ajax');
         ctools_include('modal');
-        
+
         drupal_add_js('misc/jquery.form.js');
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
-        
-        $output = array();        
+
+        $output = array();
         $output[] = ctools_modal_command_display('Calendar view', views_embed_view('calendar_absence_list', 'page_1'));
-        
+
         print ajax_render($output);
         drupal_exit();
     }
     else {
         return '';
-    } 
-        
+    }
+
 }
 
 /**
  * Manager calendar / employee list callback
  */
 function civihr_employee_portal_manager_approval_show_calendar_callback($ajax) {
-    
+
     if ($ajax) {
-        
+
         ctools_include('ajax');
         ctools_include('modal');
-        
+
         drupal_add_js('misc/jquery.form.js');
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
-        
+
         $block = module_invoke('civihr_employee_portal', 'block_view', 'manager_calendar');
-        
-        $output = array();        
+
+        $output = array();
         $output[] = ctools_modal_command_display('Manager calendar view', render($block['content']));
-        
+
         print ajax_render($output);
         drupal_exit();
     }
     else {
         return '';
-    } 
-    
+    }
+
 }
 
 /**
  * HR resource modal display callback
  */
 function civihr_employee_portal_hr_resource_load_callback($ajax, $nid) {
-    
+
     if ($ajax) {
-        
+
         // Get the node data, based on the passed NODE ID
         $node = node_load($nid);
-        
+
         ctools_include('ajax');
         ctools_include('modal');
-        
+
         drupal_add_js('misc/jquery.form.js');
-        
+
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
-        
-        $output = array();     
-        
+
+        $output = array();
+
         // Get the view, filter by the passed NODE ID and Display
         $output[] = ctools_modal_command_display($node->title, views_embed_view('hr_documents', 'hr_resources_modal', array($nid)));
-        
+
         print ajax_render($output);
         drupal_exit();
     }
     else {
         return '';
     }
-    
+
 }
 
 /**
  * My details / Edit my details callback
  */
 function civihr_employee_portal_my_details_callback($ajax) {
-    
+
     if ($ajax) {
-        
+
         ctools_include('ajax');
         ctools_include('modal');
-        
+
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
 
         // Load the my details node - @TODO -> not hardcode node ID
         $node = node_load(2);
         $contents = render(node_view($node, 'full', NULL));
-        
-        $output = array();        
+
+        $output = array();
         $output[] = ctools_modal_command_display('My details', render($contents));
-        
+
         print ajax_render($output);
         drupal_exit();
     }
     else {
         return '';
-    } 
-    
+    }
+
 }
 
 /**
@@ -682,21 +682,21 @@ function civihr_employee_portal_emergency_contacts_callback($ajax) {
  * Manager approval pick days callback function
  */
 function civihr_employee_portal_manager_approval_pick_days_callback($ajax, $action = 'pick_days', $user = NULL, $main_absence_id = NULL, $activity_type_id = NULL) {
-    
+
     if ($ajax) {
         ctools_include('ajax');
         ctools_include('modal');
 
         $title = t('Manager approval modal window');
-        
+
         // Get the contact data (cached or from CIVI)
         $contact_data = get_civihr_contact_data($user);
-        
+
         if ($action == 'pick_days') {
             $title = t('Approve leave for: ' . $contact_data['display_name']);
         }
-        
-        
+
+
         $form_state = array(
             'ajax' => TRUE,
             'is_ajax_update' => TRUE,
@@ -706,113 +706,113 @@ function civihr_employee_portal_manager_approval_pick_days_callback($ajax, $acti
             'main_absence_id' => $main_absence_id,
             'activity_type_id' => $activity_type_id
         );
-        
+
         // Use ctools to generate ajax instructions for the browser to create a form in a modal popup.
         $output = ctools_modal_form_wrapper('civihr_employee_portal_manager_approval_pick_days_form', $form_state);
 
         // If the form has been submitted, there may be additional instructions such as dismissing the modal popup.
         if (!empty($form_state['executed'])) {
-            
+
             drupal_add_js('misc/jquery.form.js');
-            
+
             // Add the responder javascript, required by ctools
             ctools_add_js('ajax-responder');
-            
+
             $output[] = ctools_modal_command_dismiss();
             $output[] = ctools_ajax_command_redirect('dashboard');
-            
+
         }
-        
+
         // Return the ajax instructions to the browser via ajax_render().
         print ajax_render($output);
         drupal_exit();
-        
+
     }
     else {
         return drupal_get_form('civihr_employee_portal_manager_approval_pick_days_form');
     }
-    
+
 }
 
 /**
  * Drupal form to be put in a modal (manager approval pick days form).
  */
 function civihr_employee_portal_manager_approval_pick_days_form($form, $form_state) {
-    
+
     // Civi init
     civicrm_initialize();
-    
+
     // Get the main "absence" activity ID
     $activityTypes = CRM_Core_OptionGroup::values('activity_type', FALSE, FALSE, FALSE, NULL, 'name');
     $activityTypeId = CRM_Utils_Array::key('Absence', $activityTypes);
-    
+
     $abesence_details = array(
         'source_record_id' => $form_state['main_absence_id'],
         'activity_type_id' => $activityTypeId,
     );
-    
+
     $res = civicrm_api3('Activity', 'get', $abesence_details);
     $absence_details = $res['values'];
-    
+
     $disputes = array();
-    
+
     // Calculate the whole duration
     $all_duration = 0;
-    
+
     // Build the checkbox table list from the child absence values
     foreach ($absence_details as $absence_value) {
-        
+
         $duration = $absence_value['duration'] / (6 * 80);
-        
+
         $all_duration += $duration;
-        
+
         $disputes[$absence_value['id']] = array($absence_value['activity_date_time'], $duration, get_civihr_absence_statuses($absence_value['status_id']));
-       
+
     }
-    
+
     $header = array(t('Date'), t('Absence duration'), t('Absence status'));
-    
+
     $absenceTypes = get_civihr_absence_types();
-    
+
     foreach ($absenceTypes as $absenceType) {
-        
+
         if (isset($absenceType['credit_activity_type_id']) && $absenceType['credit_activity_type_id'] == $form_state['activity_type_id']) {
             $leave_type = $absenceType['title'];
         }
-        
+
         if (isset($absenceType['debit_activity_type_id']) && $absenceType['debit_activity_type_id'] == $form_state['activity_type_id']) {
             $leave_type = $absenceType['title'];
         }
     }
-    
+
     $form['main_id'] = array(
         '#type'     => 'hidden',
         '#title' => 'Main absence ID',
         '#default_value' => $form_state['main_absence_id'],
     );
-    
+
     $form['leave_type'] = array(
         '#markup' => '<div class="approval-leave-type">' . t('Leave type:') . ' ' . $leave_type . '</div>',
     );
-    
+
     $form['pick_day_checkboxes'] = array(
         '#type' => 'tableselect',
         '#header' => $header,
         '#options' => $disputes,
         '#empty' => 'No users were found.'
     );
-    
+
     if ($all_duration <= 1) {
         $day = t('day');
     }
     else {
         $day = t('days');
     }
-   
+
     $form['whole_duration'] = array(
         '#markup' => $absence_details[key($absence_details)]['activity_date_time'] . ' - ' .  $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'] . ' = ' . $all_duration . ' ' . $day . '<br /><br />',
     );
-    
+
     $form['#validate'][] = 'civihr_employee_portal_manager_approval_pick_days_form_validate';
     $form['#submit'][] = "civihr_employee_portal_manager_approval_pick_days_form_submit";
 
@@ -820,99 +820,99 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
         '#type' => 'submit',
         '#value' => t('Reject all'),
     );
-    
+
     $form['approve_all'] = array(
         '#type' => 'submit',
         '#value' => t('Approve all'),
     );
-    
+
     $form['approve_selected'] = array(
         '#type' => 'submit',
         '#value' => t('Approve selected'),
     );
 
     return $form;
-    
+
 }
 
 function civihr_employee_portal_manager_approval_pick_days_form_validate($form, &$form_state) {
-    
+
     /*
-    
+
     if (isset($form_state['values']['pick_day_checkboxes']) && $form_state['values']['pick_day_checkboxes'][1] == 0) {
         form_set_error('pick_day_checkboxes', t('Please select days to approve / reject'));
     }
-     * 
+     *
      */
-    
+
     return TRUE;
 }
 
 function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$form_state) {
-    
+
     // @TODO -> move to custom rules action (so it will be configurable through UI)
     if ($form_state['values']['op'] == 'Reject all') {
         if (isset($form_state['values']['pick_day_checkboxes'])) {
-            
+
             // Civi init
             civicrm_initialize();
-            
+
             foreach ($form_state['values']['pick_day_checkboxes'] as $act_key => $act_value) {
-                
+
                 $result = civicrm_api3('Activity', 'setvalue', array(
                                                                     'id' => $act_key,
                                                                     'field' => 'status_id',
                                                                     'value' => 9
                                                                ));
-                
+
             }
-            
+
             $result = civicrm_api3('Activity', 'setvalue', array(
                                                                     'id' => $form_state['values']['main_id'],
                                                                     'field' => 'status_id',
                                                                     'value' => 9
                                                                ));
-            
+
             drupal_set_message(t('Leave successfully rejected for the whole duration'), 'success');
         }
-        
+
     }
-    
+
     if ($form_state['values']['op'] == 'Approve all') {
         if (isset($form_state['values']['pick_day_checkboxes'])) {
-            
+
             // Civi init
             civicrm_initialize();
-            
+
             foreach ($form_state['values']['pick_day_checkboxes'] as $act_key => $act_value) {
-                
+
                 $result = civicrm_api3('Activity', 'setvalue', array(
                                                                     'id' => $act_key,
                                                                     'field' => 'status_id',
                                                                     'value' => 2
                                                                ));
-                
+
             }
-            
+
             $result = civicrm_api3('Activity', 'setvalue', array(
                                                                     'id' => $form_state['values']['main_id'],
                                                                     'field' => 'status_id',
                                                                     'value' => 2
                                                                ));
-            
+
             drupal_set_message(t('Leave successfully approved for the whole duration'), 'success');
         }
-        
+
     }
-    
+
     if ($form_state['values']['op'] == 'Approve selected') {
         if (isset($form_state['values']['pick_day_checkboxes'])) {
-            
+
             // Civi init
             civicrm_initialize();
-            
+
             foreach ($form_state['values']['pick_day_checkboxes'] as $act_key => $act_value) {
-                
+
                 if ($act_key == $act_value) {
                     $result = civicrm_api3('Activity', 'setvalue', array(
                                                                         'id' => $act_key,
@@ -920,51 +920,51 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
                                                                         'value' => 2
                                                                    ));
                 }
-                
+
             }
-            
+
             $result = civicrm_api3('Activity', 'setvalue', array(
                                                                     'id' => $form_state['values']['main_id'],
                                                                     'field' => 'status_id',
                                                                     'value' => 2
                                                                ));
-            
+
             drupal_set_message(t('Leave successfully approved for the selected days'), 'success');
         }
-        
+
     }
-  
+
 }
 
 /**
 * Ajax menu callback.
 */
 function civihr_employee_portal_absence_request_callback($ajax, $absence_type = 'debit') {
-    
+
     if ($ajax) {
         ctools_include('ajax');
         ctools_include('modal');
 
         $title = t('Request leave');
-        
+
         if ($absence_type == 'credit') {
             $title = t('Apply for credits');
         }
-        
+
         $form_state = array(
             'ajax' => TRUE,
             'is_ajax_update' => TRUE,
             'title' => $title,
             'absence_type' => $absence_type,
         );
-        
+
         // Since this will run again on form rebuild while still in the modal, prevent
         // form IDs from being incremented.
         // @todo https://drupal.org/node/1305882
         if (!empty($_POST['ajax_html_ids'])) {
             unset($_POST['ajax_html_ids']);
         }
-        
+
         // Use ctools to generate ajax instructions for the browser to create
         // a form in a modal popup.
         $output = ctools_modal_form_wrapper('civihr_employee_portal_absence_request_form', $form_state);
@@ -972,16 +972,16 @@ function civihr_employee_portal_absence_request_callback($ajax, $absence_type = 
         // If the form has been submitted, there may be additional instructions
         // such as dismissing the modal popup.
         if (!empty($form_state['executed'])) {
-            
+
             drupal_add_js('misc/jquery.form.js');
             // Add the responder javascript, required by ctools
             ctools_add_js('ajax-responder');
-            
+
             $output[] = ajax_command_replace('.messages', 'all good');
             $output[] = ctools_modal_command_dismiss();
             $output[] = ctools_ajax_command_redirect('dashboard');
-            
-            
+
+
             //$output[] = ctools_modal_command_display('Success', 'Something added!');
             //$output[] = array($form_state['values']['new_link_text']);
         }
@@ -989,40 +989,40 @@ function civihr_employee_portal_absence_request_callback($ajax, $absence_type = 
         // Return the ajax instructions to the browser via ajax_render().
         print ajax_render($output);
         drupal_exit();
-    
+
     }
-    
+
     else {
         return drupal_get_form('civihr_employee_portal_absence_request_form');
     }
-    
+
 }
 
 /**
  * Drupal form to be put in a modal.
  */
 function civihr_employee_portal_absence_request_form($form, $form_state) {
-    
+
     $absence_type = 'debit';
-    
+
     if (isset($form_state['absence_type']) && $form_state['absence_type'] != '') {
         $absence_type = $form_state['absence_type'];
     }
-    
+
     // Javascript probably disabled - use the value from arg()
     else {
         $absence_type = arg(2);
     }
-    
+
     $absenceTypes = get_civihr_absence_types();
-    
+
     // Absence types select list
     $options = array();
-    
+
     foreach ($absenceTypes as $absenceType) {
-        
+
         if (isset($absenceType['id']) && $absenceType['is_active'] == 1) {
-            
+
             // If credit type is allowed show credit types (only if the employee clicked -> apply for credits)
             if ($absenceType['allow_credits'] == '1' && $absence_type == 'credit') {
 
@@ -1038,16 +1038,16 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
                 $options[$absenceType['debit_activity_type_id']] = $absenceType['title'];
 
             }
-        
+
         }
     }
-    
+
     $form['absence_request_type'] = array(
         '#title' => t('Type:'),
         '#type' => 'select',
         '#options' => $options,
     );
-    
+
     $form['absence_request_date_from'] = array(
         '#title' => t('From:'),
         '#type' => 'date_popup',
@@ -1055,7 +1055,7 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
         '#date_format' => 'Y-m-d',
         '#date_year_range' => '-10:+10',
     );
-    
+
     $form['absence_request_date_to'] = array(
         '#title' => t('To:'),
         '#type' => 'date_popup',
@@ -1070,7 +1070,7 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
         '#prefix'   => '<div id="absence-request-from-date-selected">',
         '#suffix'=> '</div>'
     );
-    
+
     $form['absence_request_dates_selected'] = array(
         '#type'     => 'fieldset',
         '#title'    => t('Selected dates'),
@@ -1080,49 +1080,49 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
         '#prefix'   => '<div id="absence-request-dates-selected">',
         '#suffix'=> '</div>'
     );
-    
+
     $form['absence_request_dates_selected']['dates_counter'] = array(
         '#type'     => 'hidden',
         '#title' => 'Counter',
         '#default_value' => 'null',
     );
-    
+
     if (isset($form_state['values']['absence_request_date_from'])) {
-        
+
         $from = $form_state['values']['absence_request_date_from'];
         $to = $form_state['values']['absence_request_date_to'];
         $i = 0;
-        
+
         while ($from <= $to) {
-             
+
             $form['absence_request_dates_selected']['_requested_day_' . $i] = array(
                 '#type'     => 'select',
                 '#title' => $from,
                 '#options' => array('480' => t('All day'), '240' => t('Half day')),
             );
-            
+
             $from = strtotime($from);
             $from = $from + (60 * 60 * 24);
             $from = date('Y-m-d', $from);
-            
+
             $i++;
-        
+
         }
 
-    }       
-    
+    }
+
     $form['absence_type'] = array(
         '#type' => 'hidden',
         '#value' => $absence_type,
     );
-    
+
     $form['details'] = array(
         '#type' => 'textarea',
         '#title' => t('Details:'),
         '#rows' => 10,
         '#cols' => 100,
     );
-    
+
     $form['#validate'][] = 'civihr_employee_portal_absence_request_form_validate';
     $form['#submit'][] = "civihr_employee_portal_absence_request_form_submit";
 
@@ -1138,68 +1138,68 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
  * Ajax callback to change the rendered industry lens taxonomy term
  */
 function jms_industry_lens_form_ajax(&$form, &$form_state) {
-    
+
     $form['absence_request_dates_selected']['#title'] = t('Dates selected:') . ' ' . $form_state['values']['absence_request_date_from'] . " - " . $form_state['values']['absence_request_date_to'];
-    
+
     $from = $form_state['values']['absence_request_date_from'];
     $to = $form_state['values']['absence_request_date_to'];
     $i = 0;
-    
+
     while ($from <= $to) {
-             
+
         $from = strtotime($from);
         $from = $from + (60 * 60 * 24);
         $from = date('Y-m-d', $from);
-        
+
         $i++;
-        
+
     }
-    
+
     $form['absence_request_dates_selected']['dates_counter']['#value'] = $i;
-    
-    
+
+
     return $form['absence_request_dates_selected'];
 }
 
 function civihr_employee_portal_absence_request_form_validate($form, &$form_state) {
-    
+
     if (isset($form_state['values']['absence_request_date_from']) && isset($form_state['values']['absence_request_date_to'])) {
-        
+
         if ($form_state['values']['absence_request_date_to'] < $form_state['values']['absence_request_date_from'])
         form_set_error('absence_request_date_to', t('End date must be bigger than the start date!'));
     }
-    
+
     if (isset($form_state['values']['details']) && $form_state['values']['details'] == '') {
         form_set_error('details', t('Please fill in absence details text'));
     }
-    
+
     return TRUE;
 }
 
 function civihr_employee_portal_absence_request_form_submit($form, &$form_state) {
-    
+
     global $user;
-    
+
     // Set absence type
     $absence_type = 'debit';
-    
+
     if (isset($form_state['values']['absence_type']) && $form_state['values']['absence_type'] != '') {
         $absence_type = $form_state['values']['absence_type'];
     }
-    
+
     // Set absence details
     $absence_details = '';
-    
+
     if (isset($form_state['values']['details']) && $form_state['values']['details'] != '') {
         $absence_details = $form_state['values']['details'];
     }
-    
+
     // Send the form submitted values
     $form_object = (object) $form_state['values'];
-    
+
     // Fire rules events
     rules_invoke_event('absence_request_add', $user, $absence_type, $absence_details, $form_object);
-  
+
 }
 
 /**
@@ -1207,30 +1207,30 @@ function civihr_employee_portal_absence_request_form_submit($form, &$form_state)
  * The json response will be cached in local file when the VIEWS requests to load data from this endpoint
  */
 function civihr_employee_portal_get_absence_entitlement() {
-    
+
     watchdog('not cached entitlement list', 'test');
-   
+
     // Build the query
     $query = db_select('civicrm_hrabsence_entitlement', 'che')
         ->fields('che', array('contact_id', 'period_id'))
         ->fields('cufm', array('uf_id'))
         ->orderBy('che.contact_id');
-    
+
     $query->join('civicrm_uf_match', 'cufm', 'cufm.contact_id = che.contact_id');
-    
+
     // Add the group by
     $query->groupBy('che.contact_id, che.period_id');
-    
+
     // Add the concat
     $query->addExpression("CONCAT_WS('||', GROUP_CONCAT(amount SEPARATOR '@@'), GROUP_CONCAT(type_id SEPARATOR '@@'))", "entitlement_type");
-     
+
     $result = $query->execute();
-    
+
     // Loop and prepare the array
     while($record = $result->fetchAssoc()) {
         $result_output['data'][] = $record;
     }
-    
+
     // Output json
     drupal_json_output($result_output);
     drupal_exit();
@@ -1241,19 +1241,19 @@ function civihr_employee_portal_get_absence_entitlement() {
  * The json response will be cached in local file when the VIEWS requests to load data from this endpoint
  */
 function civihr_employee_portal_get_vacancy_list() {
-    
+
     watchdog('not cached vacancy list', 'test');
-    
+
     $result_output = civicrm_api3('HRVacancy', 'get', array(
         'sequential' => 1,
         'status_id' => 2, // Only open Vacancies
         'return' => "id,start_date,end_date,status_id,description,position,salary,location",
     ));
-    
+
     // Output json
     drupal_json_output($result_output);
     drupal_exit();
-    
+
 }
 
 /**
@@ -1261,18 +1261,18 @@ function civihr_employee_portal_get_vacancy_list() {
  * The json response will be cached in local file when the VIEWS requests to load data from this endpoint
  */
 function civihr_employee_portal_get_contact_list() {
-    
+
     watchdog('not cached contact list', 'test1');
-    
+
     $result_contacts = civicrm_api3('Contact', 'get', array(
         'sequential' => 1,
         'options' => array(
             'limit' => 10000000,
         ),
-        
+
         'return' => "contact_id,display_name,email,phone,contact_type",
     ));
-   
+
     $result_contracts = civicrm_api3('HRJobContract', 'get', array(
         'sequential' => 1,
         'options' => array(
@@ -1280,16 +1280,16 @@ function civihr_employee_portal_get_contact_list() {
         ),
         'return' => 'is_primary,title,location,contract_type,period_type,contact_id'
     ));
-    
+
     // Merge contacts with contracts (if contract doesn't exist still return the contact data)
     $merged_output = HelperClass::array_merge_callback($result_contacts['values'], $result_contracts['values'], function ($contact_array, $job_contract_array) {
-        
+
         // Merge only for the primary contracts
         if ($job_contract_array['is_primary'] == 1) {
             return $contact_array['contact_id'] == $job_contract_array['contact_id'];
         }
     });
-    
+
     // Build the results
     $result_output = Array();
     $result_output['values'] = $merged_output;
@@ -1297,57 +1297,57 @@ function civihr_employee_portal_get_contact_list() {
     // Output json results
     drupal_json_output($result_output);
     drupal_exit();
-    
+
 }
 
 /**
  * Implements hook_block_info().
  */
 function civihr_employee_portal_block_info() {
-    
+
     // Call the Base class
     $blocks = new Base;
-    
+
     // Generate the block and return
     return $blocks->generateBlockInfo();
-    
+
 }
 
 /**
  * Implements hook_block_view().
  */
 function civihr_employee_portal_block_view($delta = '') {
-    
+
     $blocktypes = Base::returnBlockTypes();
-    
+
     if (array_key_exists($delta, $blocktypes)) {
         $block = array();
-        
+
         $block['subject'] = $blocktypes[$delta]['title'];
         $block['content'] = _civihr_employee_portal_block_generate_content($blocktypes[$delta]['class_name']);
-       
+
         return $block;
     }
-    
+
 }
 
 /**
  * Block content generated based on Block class
  */
 function _civihr_employee_portal_block_generate_content($class_name = '') {
-    
+
     $class_name = 'Drupal\civihr_employee_portal\Blocks' . '\\' . $class_name;
-   
+
     $block = new $class_name;
-    
-    return $block->generateBlock(); 
+
+    return $block->generateBlock();
 }
 
 /**
  * Implements hook_schema_alter().
  */
 function civihr_employee_portal_schema_alter(&$schema) {
-    
+
     $schema['absence_list']['description'] = 'Views data associated with absence_list';
     $schema['absence_list']['fields']['id'] = array(
         'type' => 'serial',
@@ -1398,7 +1398,7 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'not null' => TRUE,
         'description' => 'Activity details text.',
     );
-    
+
     $schema['absence_approval_list']['description'] = 'Views data associated with absence_approval_list';
     $schema['absence_approval_list']['fields']['id'] = array(
         'type' => 'serial',
@@ -1449,8 +1449,8 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'not null' => FALSE,
         'description' => 'Absence end date.',
     );
-    
-    
+
+
 }
 
 /**
@@ -1458,7 +1458,7 @@ function civihr_employee_portal_schema_alter(&$schema) {
  */
 function civihr_employee_portal_entity_info() {
     $info = array();
-    
+
     $info['civihr_absences'] = array(
         'label' => t('Absence entity'),
         'plural label' => t('Absences entity'),
@@ -1480,7 +1480,7 @@ function civihr_employee_portal_entity_info() {
         'module' => 'civihr_employee_portal',
 
     );
-    
+
     $info['civihr_absence_approvals'] = array(
         'label' => t('Absence approval entity'),
         'plural label' => t('Absence approvals entity'),
@@ -1502,7 +1502,7 @@ function civihr_employee_portal_entity_info() {
         'module' => 'civihr_employee_portal',
 
     );
-    
+
     return $info;
 }
 
@@ -1522,27 +1522,27 @@ function civihr_employee_portal_views_api() {
  * Adding required js for the modal window
  */
 function civihr_employee_portal_views_pre_render(&$view) {
-    
+
     if ($view->name == 'hr_documents') {
-        
+
         if ($view->current_display == 'hr_resources') {
-            
+
             ctools_include('modal');
             ctools_modal_add_js();
-            
+
         }
     }
 }
 
 /**
- * Show reports for the CiviHR 
+ * Show reports for the CiviHR
  */
 function civihr_employee_portal_get_reports() {
-    
+
     // Add the javascript library for D3
     drupal_add_js('http://d3js.org/d3.v3.min.js', 'external');
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
-    
+
     return '<div id="custom-report"></div><div id="custom-report-details"></div><div id="relationship-report"></div>';
 }
 
@@ -1550,42 +1550,51 @@ function civihr_employee_portal_get_reports() {
  * Custom Staff Directory dashboard block form.
  */
 function civihr_employee_portal_directory_block_form($form, &$form_state) {
-    
+
     $form['display_name'] = array(
         '#type' => 'textfield',
         '#title' => t('Name'),
-        '#attributes' => array('placeholder' => t('Enter name'))
+        '#attributes' => array('placeholder' => t('Enter name')),
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div>'
     );
-    
+
     $form['job_title'] = array(
         '#type' => 'textfield',
         '#title' => t('Job title'),
-        '#attributes' => array('placeholder' => t('Job title'))
+        '#attributes' => array('placeholder' => t('Job title')),
+        '#prefix' => '<div class="col-md-6">',
+        '#suffix' => '</div>'
     );
-    
+
     $form['phone'] = array(
         '#type' => 'textfield',
         '#title' => t('Phone'),
-        '#attributes' => array('placeholder' => t('Phone'))
+        '#attributes' => array('placeholder' => t('Phone')),
+        '#prefix' => '<div class="col-md-6">',
+        '#suffix' => '</div>'
     );
-    
+
     $form['email_value'] = array(
         '#type' => 'textfield',
         '#title' => t('Email'),
-        '#attributes' => array('placeholder' => t('Email'))
+        '#attributes' => array('placeholder' => t('Email')),
+        '#prefix' => '<div class="col-md-12">',
+        '#suffix' => '</div></div>'
     );
 
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => t('Go!'),
+        '#prefix' => '<hr>'
     );
-    
+
     // Add the validation function
     $form['#validate'][] = 'civihr_employee_portal_directory_block_form_validate';
-    
+
     // Add the submit function
     $form['#submit'][] = 'civihr_employee_portal_directory_block_form_submit';
-    
+
     return $form;
 }
 
@@ -1593,7 +1602,7 @@ function civihr_employee_portal_directory_block_form($form, &$form_state) {
  * Custom Staff Directory dashboard block form validate function.
  */
 function civihr_employee_portal_directory_block_form_validate($form, &$form_state) {
-    
+
     // No name selected, throw an error
     if ($form_state['values']['display_name'] == '') {
         form_set_error('display_name', 'Name cannot be blank!');
@@ -1604,31 +1613,31 @@ function civihr_employee_portal_directory_block_form_validate($form, &$form_stat
  * Custom Staff Directory dashboard block form submit function.
  */
 function civihr_employee_portal_directory_block_form_submit($form, &$form_state) {
-    
+
     // Redirect to the staff directory views list page passing parameters to filter the viewß
     drupal_goto('hr-staff-directory', array('query'=> array(
                                                         'display_name' => $form_state['values']['display_name'],
                                                         'job_title' => $form_state['values']['job_title'],
                                                         'phone' => $form_state['values']['phone'],
                                                         'email_value' => $form_state['values']['email_value'],
-                                                                                                                      
+
     )));
 }
 
 // Note: Under "Redirection location" NO redirect option should be select to get the confirmation message with ajax.
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
-    
+
     // Do ajax submit generic for all the webform those have no redirect option enabled.
     if(isset($form['#node']) && $form['#node']->webform['redirect_url'] == "<none>") {
         $matches = array();
-        
+
         // Check whether the form id have nid at the end like _nid
         preg_match('/[\d]+$/', $form_id, $matches);
         $nid_match = $matches[0];
-        
+
         if(strpos($form_id, 'webform_client_form_') !== false && !empty($nid_match)) {
-            
+
             $form['actions']['submit'] = array(
                 '#type' => 'submit',
                 '#ajax' => array(
@@ -1639,39 +1648,39 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
                 '#value' => t('Submit'),
             );
         }
-        
+
     }
  }
- 
+
 function webform_client_form_ajax_callback($form, &$form_state) {
-    
+
     if (form_get_errors()) {
         return $form;
     }
     else {
-        
+
         ctools_include('ajax');
         ctools_include('modal');
         ctools_add_js('ajax-responder');
-        
+
         // Get the contact ID and create the cache identifier value
         $contact_value = 'civihr_contact_data_' . $_SESSION['CiviCRM']['userID'];
-            
+
         $commands = array();
 
         $commands[] = ctools_modal_command_dismiss();
         $commands[] = ctools_ajax_command_redirect('dashboard');
         $commands[] = ajax_command_prepend('#content', '<div id="messages">' . theme('status_messages') . '</div>');
-        
+
         // Try to remove the cached data for this contact as the values were updated
         cache_clear_all($contact_value, 'cache');
-        
+
         print ajax_render($commands);
-        
+
         exit;
-        
+
     }
-    
+
 }
 
 /**
@@ -1694,7 +1703,7 @@ function civihr_employee_portal_my_details() {
  * Implement form_views_exposed_form_alter()
  */
 function civihr_employee_portal_form_views_exposed_form_alter(&$form, $form_state) {
-    
+
     // Show the open calendar button in the my leave block next to the date filters select list
     if (isset($form['#id']) && $form['#id'] == 'views-exposed-form-absence-list-page') {
 

@@ -55,43 +55,56 @@
 
 <div class="<?php print $classes; ?>"<?php print $attributes; ?>>
 
-    <?php print render($title_prefix); ?>
-        <h2<?php print $title_attributes; ?>></h2>
-    <?php print render($title_suffix); ?>
+    <div class="row relative">
+<!--
+        <?php print render($title_prefix); ?>
+            <h2<?php print $title_attributes; ?>></h2>
+        <?php print render($title_suffix); ?>
+ -->
+        <div class="col-md-2 column1 panel-panel">
+            <div class="well">
+                <div class="profile-image">
+                    <?php if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) { ?>
+                        <img src="<?php print $contact_data['image_URL']; ?>" class="custom-scale-image" />
+                    <?php } else { ?>
+                        <img src="http://blogdailyherald.com/wp-content/uploads/2014/10/wallpaper-for-facebook-profile-photo.jpg"/>
+                    <?php } ?>
+                </div>
 
-    <div class="col-md-2 column1 panel-panel">
-        <div class="well">
-            
-            <?php if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) { ?>
-            
-                <img src="<?php print $contact_data['image_URL']; ?>" width="100" height="100" class="custom-scale-image img-circle" />
-            
-            <?php } else { ?>
-                
-                <img src="http://blogdailyherald.com/wp-content/uploads/2014/10/wallpaper-for-facebook-profile-photo.jpg" width="100" height="80" />
-            
-            <?php } ?>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-5 column2 panel-panel">
-        <div class="well">
-            <?php print $contact_details; ?>
+        <div class="col-md-5 column2 panel-panel">
+            <div class="well">
+                <h5>My details</h5>
+                <?php print $contact_details; ?>
+            </div>
+
         </div>
-        
-    </div>
 
-    <div class="col-md-5 column3 panel-panel">
-        <div class="well">
-            <?php print $address_data; ?>
+        <div class="col-md-offset-7 vertical-splitter"></div>
+
+        <div class="col-md-5 column3 panel-panel">
+            <div class="well">
+                <h5>Contact information</h5>
+                <?php print $address_data; ?>
+            </div>
         </div>
+
     </div>
 
-    <div>
-        <?php print l(t('Edit Account'), 'user/' . $user->uid . '/edit', array('attributes' => array('class' => array('btn btn-custom')))); ?>
-        <?php print l(t('Edit my details'), 'my_details/nojs/view', array('attributes' => array('class' => array('btn btn-custom ctools-use-modal ctools-modal-civihr-default-style')))); ?>
-        <?php print l(t('Edit emergency contact'), 'emergency_contacts/nojs/view', array('attributes' => array('class' => array('btn btn-custom ctools-use-modal ctools-modal-civihr-default-style')))); ?>
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="splitter-top text-right actions">
+                <?php print l(t('Edit Account'), 'user/' . $user->uid . '/edit', array('attributes' => array('class' => array('btn btn-custom')))); ?>
+                <?php print l(t('Edit my details'), 'my_details/nojs/view', array('attributes' => array('class' => array('btn btn-custom ctools-use-modal ctools-modal-civihr-default-style')))); ?>
+                <?php print l(t('Edit emergency contact'), 'emergency_contacts/nojs/view', array('attributes' => array('class' => array('btn btn-custom ctools-use-modal ctools-modal-civihr-default-style')))); ?>
+            </div>
+        </div>
+
     </div>
+
 </div>
 
 <?php

@@ -34,9 +34,29 @@
   <?php endif; ?>
   <?php print render($title_suffix); ?>
   <?php if ($header): ?>
-    <div class="view-header">
-      <?php print $header; ?>
+    <div class="absence-approval-actions">
+
+      <div class="view-header">
+        <?php print $header; ?>
+      </div>
+
+      <?php if ($rows): ?>
+        <div class="view-content panel-panel">
+            <div class="well-small">
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="btn input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+                        <input class="form-control" id="manager-approval-search" placeholder="Enter name">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+      <?php endif; ?>
+
     </div>
+
   <?php endif; ?>
 
   <?php if ($exposed): ?>
@@ -52,30 +72,21 @@
   <?php endif; ?>
 
   <?php if ($rows): ?>
-    
-    <div class="approval-filters col-sm-3 column1 panel-panel">
-        
-    </div>
-    
-    <div class="view-content col-sm-9 column2 panel-panel">
-        <div class="well-small">
-            
-            <div class="form-group">
-                <div class="input-group">
-                    <div class="btn input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
-                    <input class="form-control" id="manager-approval-search" placeholder="Enter name">
-                </div>
-            </div>
-            
-        </div>
-    </div>
-    
-    <div class="view-content col-sm-9 column2 panel-panel">
-        
-        <div class ="approval-overflow-content" style="overflow-y: scroll; height: 220px;">
-            <?php print $rows; ?>
-        </div>
-      
+
+    <div class="row">
+
+      <div class="approval-filters col-sm-3 column1 panel-panel">
+
+      </div>
+
+      <div class="view-content col-sm-9 column2 panel-panel">
+
+          <div class ="approval-overflow-content" style="overflow-y: scroll; height: 220px;">
+              <?php print $rows; ?>
+          </div>
+
+      </div>
+
     </div>
   <?php elseif ($empty): ?>
     <div class="view-empty">
