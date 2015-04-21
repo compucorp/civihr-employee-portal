@@ -451,6 +451,13 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
+    $items['absence_request/%ctools_js/credit_use'] = array(
+        'page callback' => 'civihr_employee_portal_absence_request_callback',
+        'page arguments' => array(1, 2),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
     $items['absence_calendar/%ctools_js/show'] = array(
         'page callback' => 'civihr_employee_portal_absence_calendar_callback',
         'page arguments' => array(1),
@@ -948,7 +955,11 @@ function civihr_employee_portal_absence_request_callback($ajax, $absence_type = 
         $title = t('Request leave');
 
         if ($absence_type == 'credit') {
-            $title = t('Apply for credits');
+            $title = t('Request TOIL');
+        }
+
+        if ($absence_type == 'credit_use') {
+            $title = t('Use TOIL');
         }
 
         $form_state = array(
@@ -981,9 +992,6 @@ function civihr_employee_portal_absence_request_callback($ajax, $absence_type = 
             $output[] = ctools_modal_command_dismiss();
             $output[] = ctools_ajax_command_redirect('dashboard');
 
-
-            //$output[] = ctools_modal_command_display('Success', 'Something added!');
-            //$output[] = array($form_state['values']['new_link_text']);
         }
 
         // Return the ajax instructions to the browser via ajax_render().
@@ -1023,7 +1031,7 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
 
         if (isset($absenceType['id']) && $absenceType['is_active'] == 1) {
 
-            // If credit type is allowed show credit types (only if the employee clicked -> apply for credits)
+            // If credit type is allowed show credit types (only if the employee clicked -> Request TOIL)
             if ($absenceType['allow_credits'] == '1' && $absence_type == 'credit') {
 
                 // Default credit types
@@ -1031,10 +1039,18 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
 
             }
 
-            // If debit type is allowed show debit types (only if the employee clicked -> request leave)
-            if ($absenceType['allow_debits'] == '1' && $absence_type == 'debit') {
+            // If debit type is allowed show debit types (only if the employee clicked -> Request Leave)
+            if ($absenceType['allow_debits'] == '1' && $absence_type == 'debit' && $absenceType['allow_credits'] !== '1' && $absenceType['title'] != 'Sick') {
 
                 // Default debit types
+                $options[$absenceType['debit_activity_type_id']] = $absenceType['title'];
+
+            }
+
+            // If Use TOIL is clicked show only debit types, which has credit type allowed too
+            if ($absenceType['allow_debits'] == '1' && $absenceType['allow_credits'] == '1' && $absence_type == 'credit_use' && $absenceType['title'] != 'Sick') {
+
+                // Default debit types which has credit type too
                 $options[$absenceType['debit_activity_type_id']] = $absenceType['title'];
 
             }
