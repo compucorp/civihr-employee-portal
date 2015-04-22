@@ -1749,3 +1749,37 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, $form_stat
     }
 
 }
+
+/**
+ * Implement hook_preprocess_page
+ * @param $vars
+ */
+function civihr_employee_portal_preprocess_page(&$vars) {
+
+    global $user;
+
+    $contact_data['display_name'] = t('Anonymus');
+
+    // Set empty image URL
+    $vars['image_url'] = '';
+
+    if (isset($_SESSION['CiviCRM'])) {
+
+        // Get the contact data
+        $contact_data = get_civihr_contact_data($_SESSION['CiviCRM']['userID']);
+
+        if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) {
+
+            // Set the profile image URL
+            $vars['image_url'] = $contact_data['image_URL'];
+
+        }
+
+    }
+
+    // This values will be used in the template by Drupal
+    $vars['user_name'] = $contact_data['display_name'];
+    $vars['edit_account'] = l(t('Edit Account'), 'user/' . $user->uid . '/edit', array('attributes' => array('class' => array('fa fa-edit'))));;
+    $vars['logout_link'] = l(t('Log Out'), 'user/logout', array('attributes' => array('class' => array('fa fa-sign-out'))));
+
+}
