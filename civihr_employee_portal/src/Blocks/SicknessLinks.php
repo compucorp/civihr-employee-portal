@@ -5,7 +5,7 @@ namespace Drupal\civihr_employee_portal\Blocks;
 class SicknessLinks {
 
     /**
-     * Absence request html modal links
+     * Sickness request html modal links
      * @return string
      */
     public function generateBlock() {
