@@ -1779,7 +1779,7 @@ function civihr_employee_portal_preprocess_page(&$vars) {
 
     // This values will be used in the template by Drupal
     $vars['user_name'] = $contact_data['display_name'];
-    $vars['edit_account'] = l(t('Edit Account'), 'user/' . $user->uid . '/edit', array('attributes' => array('class' => array('fa fa-edit'))));;
-    $vars['logout_link'] = l(t('Log Out'), 'user/logout', array('attributes' => array('class' => array('fa fa-sign-out'))));
+    $vars['edit_account'] = l('<i class="fa fa-edit"></i>' . t('Edit Account'), 'user/' . $user->uid . '/edit', array('html' => true));
+    $vars['logout_link'] = l('<i class="fa fa-sign-out"></i>' . t('Log Out'), 'user/logout', array('html' => true));
 
 }
