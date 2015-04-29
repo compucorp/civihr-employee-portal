@@ -198,6 +198,7 @@ $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'jcarousel';
 $handler->display->display_options['style_options']['wrap'] = '0';
+$handler->display->display_options['style_options']['skin'] = '';
 $handler->display->display_options['style_options']['visible'] = '';
 $handler->display->display_options['style_options']['responsive'] = 1;
 $handler->display->display_options['style_options']['auto'] = '0';

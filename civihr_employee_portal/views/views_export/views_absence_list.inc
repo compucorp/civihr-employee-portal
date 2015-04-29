@@ -481,6 +481,13 @@ $handler->display->display_options['path'] = 'absence-list';
 /* Display: Sickness report */
 $handler = $view->new_display('page', 'Sickness report', 'page_1');
 $handler->display->display_options['exposed_block'] = TRUE;
+$handler->display->display_options['defaults']['footer'] = FALSE;
+/* Footer: Global: Block area */
+$handler->display->display_options['footer']['block']['id'] = 'block';
+$handler->display->display_options['footer']['block']['table'] = 'views';
+$handler->display->display_options['footer']['block']['field'] = 'block';
+$handler->display->display_options['footer']['block']['empty'] = TRUE;
+$handler->display->display_options['footer']['block']['block_to_insert'] = 'civihr_employee_portal:sickness_links';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Absence entity: Absence entity ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
