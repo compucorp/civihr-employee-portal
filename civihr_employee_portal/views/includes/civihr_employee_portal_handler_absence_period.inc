@@ -14,7 +14,7 @@ class civihr_employee_portal_handler_absence_period extends views_handler_field 
         foreach ($civi_date_periods as $civi_date_period) {
             
             if ($civi_date_period['id'] == $values->period_id) {
-                return '<div>' . t('Absence entitlement from') . '</div><div>' . $civi_date_period['title'] . '</div>';
+                return '<div class="entitlement-date">' . $civi_date_period['title'] . '</div><div class="entitlement-label">' . t('Entitlement:') . '</div>';
             }
             
         }
