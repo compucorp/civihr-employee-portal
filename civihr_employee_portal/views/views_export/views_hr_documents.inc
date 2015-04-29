@@ -20,10 +20,10 @@ $handler->display->display_options['title'] = 'HR Documents and Downloads';
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
 $handler->display->display_options['access']['role'] = array(
-    3 => '3',
-    4 => '4',
-    5 => '5',
-    6 => '6',
+  3 => '3',
+  4 => '4',
+  5 => '5',
+  6 => '6',
 );
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
@@ -98,6 +98,7 @@ $handler = $view->new_display('block', 'HR Documents and Downloads dashboard blo
 $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'jcarousel';
 $handler->display->display_options['style_options']['wrap'] = '0';
+$handler->display->display_options['style_options']['skin'] = '';
 $handler->display->display_options['style_options']['visible'] = '';
 $handler->display->display_options['style_options']['responsive'] = 1;
 $handler->display->display_options['style_options']['auto'] = '0';
@@ -321,7 +322,7 @@ $handler->display->display_options['fields']['field_download']['click_sort_colum
 $handler->display->display_options['fields']['body']['id'] = 'body';
 $handler->display->display_options['fields']['body']['table'] = 'field_data_body';
 $handler->display->display_options['fields']['body']['field'] = 'body';
-$handler->display->display_options['fields']['body']['label'] = '';
+$handler->display->display_options['fields']['body']['label'] = 'Details:';
 $handler->display->display_options['fields']['body']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['body']['element_wrapper_class'] = 'hr-documents-body-block';
 $handler->display->display_options['fields']['body']['settings'] = array(
@@ -347,6 +348,14 @@ $handler->display->display_options['fields']['nothing']['alter']['alt'] = 'Read 
 $handler->display->display_options['fields']['nothing']['alter']['link_class'] = 'btn btn-custom';
 $handler->display->display_options['fields']['nothing']['alter']['target'] = '_blank';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
+/* Field: Content: Post date */
+$handler->display->display_options['fields']['created']['id'] = 'created';
+$handler->display->display_options['fields']['created']['table'] = 'node';
+$handler->display->display_options['fields']['created']['field'] = 'created';
+$handler->display->display_options['fields']['created']['exclude'] = TRUE;
+$handler->display->display_options['fields']['created']['date_format'] = 'custom';
+$handler->display->display_options['fields']['created']['custom_date_format'] = 'd/m/Y';
+$handler->display->display_options['fields']['created']['second_date_format'] = 'long';
 $handler->display->display_options['defaults']['arguments'] = FALSE;
 /* Contextual filter: Content: Nid */
 $handler->display->display_options['arguments']['nid']['id'] = 'nid';
@@ -391,6 +400,8 @@ $translatables['hr_documents'] = array(
   t('Resource type'),
   t('HR Resources page modal details'),
   t('Download'),
+  t('Details:'),
   t('<div class="btn">Download all</div>'),
+  t('Post date'),
   t('All'),
 );
