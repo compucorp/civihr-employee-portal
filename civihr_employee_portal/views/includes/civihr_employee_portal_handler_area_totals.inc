@@ -49,9 +49,7 @@ class civihr_employee_portal_handler_area_totals extends views_handler_area {
     }
     
     $header[] = t('Balance: ');
-    $rows[0][] = '';
     $header[] = t('');
-    $rows[0][] = '';
 
     if (isset($result_output['data'])) {
         
@@ -102,13 +100,13 @@ class civihr_employee_portal_handler_area_totals extends views_handler_area {
                 /**
                  * Populate the table
                  */
-                $header[] = $absenceType['title'];
-                $rows[0][] = $results[$absenceType['id']];
+                $header[] = $results[$absenceType['id']]; //$absenceType['title'];
+                
             }
         }
     }
     
-    return theme('table', array('header' => $header, 'rows' => $rows));
+    return theme('table', array('header' => $header));
     
   }
 }
