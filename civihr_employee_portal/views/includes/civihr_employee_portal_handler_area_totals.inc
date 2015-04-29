@@ -59,8 +59,6 @@ class civihr_employee_portal_handler_area_totals extends views_handler_area {
         $absence_ids = explode("@@", $value_explode[1]);
         $absence_values = explode("@@", $value_explode[0]);
 
-
-
         foreach ($absenceTypes as $absenceType) {
 
             $results[$absenceType['id']] = 0;
@@ -78,7 +76,6 @@ class civihr_employee_portal_handler_area_totals extends views_handler_area {
                 }
 
                 foreach ($this->view->result as $row) {
-
 
                     if (isset($row->absence_list_is_credit) && $row->absence_list_is_credit == '1' && isset($absenceType['credit_activity_type_id']) && $row->absence_list_activity_type_id == $absenceType['credit_activity_type_id']) {
 
@@ -100,7 +97,7 @@ class civihr_employee_portal_handler_area_totals extends views_handler_area {
                 /**
                  * Populate the table
                  */
-                $header[] = $results[$absenceType['id']]; //$absenceType['title'];
+                $header[] = $results[$absenceType['id']];
                 
             }
         }
