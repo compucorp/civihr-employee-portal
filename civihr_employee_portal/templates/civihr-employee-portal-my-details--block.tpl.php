@@ -86,7 +86,7 @@
 
         <div class="col-md-5 column3 panel-panel">
             <div class="well">
-                <h5><?php print t('Contact Information') ?></h5>
+                <h5><?php print t('Contact Information'); ?></h5>
                 <?php print $address_data; ?>
             </div>
         </div>

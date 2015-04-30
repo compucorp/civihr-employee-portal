@@ -14,7 +14,19 @@ class civihr_employee_portal_handler_absence_period extends views_handler_field 
         foreach ($civi_date_periods as $civi_date_period) {
             
             if ($civi_date_period['id'] == $values->period_id) {
-                return '<div class="entitlement-date">' . $civi_date_period['title'] . '</div><div class="entitlement-label">' . t('Entitlement:') . '</div>';
+                if (isset($this->options['absence_period_settings'])) {
+                    
+                    if ($this->options['absence_period_settings'] == 'entitlement_label') {
+                        return '<div class="entitlement-label">' . t('Entitlement:') . '</div>';
+                    }
+                    
+                    if ($this->options['absence_period_settings'] == 'entitlement_date') {
+                        return '<div class="entitlement-date">' . $civi_date_period['title'] . '</div>';
+                    }
+                }
+                else {
+                    return '';
+                }
             }
             
         }
@@ -36,8 +48,8 @@ class civihr_employee_portal_handler_absence_period extends views_handler_field 
     function options_form(&$form, &$form_state) {    
         
         $options = array();
-        $options['1'] = 'test1';
-        $options['2'] = 'test2';
+        $options['entitlement_label'] = t('Show Entitlement Label');
+        $options['entitlement_date'] = t('Show Entitlement Date');
 
         $form['absence_period_settings'] = array(
             '#type' => 'select',

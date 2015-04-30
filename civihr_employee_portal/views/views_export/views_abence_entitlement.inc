@@ -78,7 +78,13 @@ $handler->display->display_options['fields']['period_html']['id'] = 'period_html
 $handler->display->display_options['fields']['period_html']['table'] = 'json';
 $handler->display->display_options['fields']['period_html']['field'] = 'period_html';
 $handler->display->display_options['fields']['period_html']['label'] = 'Description';
-$handler->display->display_options['fields']['period_html']['absence_period_settings'] = '2';
+$handler->display->display_options['fields']['period_html']['absence_period_settings'] = 'entitlement_label';
+/* Field: Json: Html field for period date */
+$handler->display->display_options['fields']['period_html_1']['id'] = 'period_html_1';
+$handler->display->display_options['fields']['period_html_1']['table'] = 'json';
+$handler->display->display_options['fields']['period_html_1']['field'] = 'period_html';
+$handler->display->display_options['fields']['period_html_1']['label'] = 'Description';
+$handler->display->display_options['fields']['period_html_1']['absence_period_settings'] = 'entitlement_date';
 /* Field: Global: Custom text */
 $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
