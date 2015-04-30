@@ -24,18 +24,18 @@
 ?>
 
 <?php
-    
+
     $total_count = t('No attachments');
-    
+
     // Get the total count of all attachments
     if (isset($row->field_field_attachment) && !empty($row->field_field_attachment[0]['rendered']['#items'])) {
         $total_count = count($row->field_field_attachment[0]['rendered']['#items']);
     }
-    
+
     // Get the download link if we have anything to download
     $download_link = isset($row->field_field_download[0])? l(' ' . $row->field_field_download[0]['rendered']['#text'] . ' (' . $total_count . ')', $row->field_field_download[0]['rendered']['#path'], array('attributes' => array('class' => 'hr-resouce-download-all btn btn-custom glyphicon glyphicon-paperclip', 'aria-hidden' => 'true'))) : '';
-    $custom_output = '<span class="col-xs-4 resource-uploaded-date">' . t('Uploaded on: ') . format_date($row->node_created, 'custom', t('d/m/Y', array(), array('context' => 'php date format'))) . '</span><span class="resource-download-all">' . $download_link . '</span>';
-    
+    $custom_output = '<div class="row"><div class="col-xs-6 resource-uploaded-date text-left">' . t('Uploaded on: ') . format_date($row->node_created, 'custom', t('d/m/Y', array(), array('context' => 'php date format'))) . '</div><div class="col-xs-6 resource-download-all text-right">' . $download_link . '</div></div>';
+
 ?>
 
 <?php print $custom_output; ?>
