@@ -652,7 +652,7 @@ function civihr_employee_portal_my_details_callback($ajax) {
         $contents = render(node_view($node, 'full', NULL));
 
         $output = array();
-        $output[] = ctools_modal_command_display('My details', render($contents));
+        $output[] = ctools_modal_command_display(t('My Details'), render($contents));
 
         print ajax_render($output);
         drupal_exit();

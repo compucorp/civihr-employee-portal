@@ -76,7 +76,7 @@
 
         <div class="col-md-5 column2 panel-panel">
             <div class="well">
-                <h5>My details</h5>
+                <h5><?php print t('My Details'); ?></h5>
                 <?php print $contact_details; ?>
             </div>
 
@@ -86,7 +86,7 @@
 
         <div class="col-md-5 column3 panel-panel">
             <div class="well">
-                <h5>Contact information</h5>
+                <h5><?php print t('Contact Information') ?></h5>
                 <?php print $address_data; ?>
             </div>
         </div>

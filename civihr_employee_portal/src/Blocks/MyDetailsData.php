@@ -19,13 +19,13 @@ class MyDetailsData {
         if (isset($_GET['q']) && $_GET['q'] == 'hr-details') {
 
             // Get the contact details view
-            $contact_details = views_embed_view('my_details_block', 'default');
+            $contact_details = views_embed_view('my_details_block', 'my_details_block');
 
         }
         else {
 
             // Get the contact details view
-            $contact_details = views_embed_view('my_details_block', 'default');
+            $contact_details = views_embed_view('my_details_block', 'my_details_block');
 
         }
 

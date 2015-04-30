@@ -20,9 +20,9 @@ $handler->display->display_options['title'] = 'My details block';
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
 $handler->display->display_options['access']['role'] = array(
-    4 => '4',
-    6 => '6',
-    5 => '5',
+  4 => '4',
+  6 => '6',
+  5 => '5',
 );
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
@@ -65,10 +65,13 @@ $handler->display->display_options['defaults']['fields'] = FALSE;
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'civicrm_contact';
 $handler->display->display_options['fields']['id']['field'] = 'id';
+$handler->display->display_options['fields']['id']['exclude'] = TRUE;
+$handler->display->display_options['fields']['id']['separator'] = '';
 /* Field: CiviCRM Contacts: Display Name */
 $handler->display->display_options['fields']['display_name']['id'] = 'display_name';
 $handler->display->display_options['fields']['display_name']['table'] = 'civicrm_contact';
 $handler->display->display_options['fields']['display_name']['field'] = 'display_name';
+$handler->display->display_options['fields']['display_name']['label'] = 'Name';
 $handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 0;
 /* Field: CiviCRM Custom: Emergency Contacts: Name */
 $handler->display->display_options['fields']['name_80']['id'] = 'name_80';
@@ -81,8 +84,30 @@ $handler->display->display_options['fields']['name_80']['label'] = 'Emergency Co
 $handler = $view->new_display('block', 'My address', 'my_address_block');
 $handler->display->display_options['defaults']['title'] = FALSE;
 $handler->display->display_options['title'] = 'My address block';
+$handler->display->display_options['defaults']['pager'] = FALSE;
+$handler->display->display_options['pager']['type'] = 'some';
+$handler->display->display_options['pager']['options']['items_per_page'] = '1';
+$handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['defaults']['footer'] = FALSE;
 $handler->display->display_options['defaults']['fields'] = FALSE;
+/* Field: CiviCRM Phone Details: Phone Number */
+$handler->display->display_options['fields']['phone']['id'] = 'phone';
+$handler->display->display_options['fields']['phone']['table'] = 'civicrm_phone';
+$handler->display->display_options['fields']['phone']['field'] = 'phone';
+$handler->display->display_options['fields']['phone']['relationship'] = 'drupal_id';
+$handler->display->display_options['fields']['phone']['label'] = 'Primary Phone';
+$handler->display->display_options['fields']['phone']['location_type'] = '1';
+$handler->display->display_options['fields']['phone']['location_op'] = '1';
+$handler->display->display_options['fields']['phone']['is_primary'] = 0;
+$handler->display->display_options['fields']['phone']['phone_type'] = '1';
+/* Field: CiviCRM Email: Email Address */
+$handler->display->display_options['fields']['email']['id'] = 'email';
+$handler->display->display_options['fields']['email']['table'] = 'civicrm_email';
+$handler->display->display_options['fields']['email']['field'] = 'email';
+$handler->display->display_options['fields']['email']['label'] = 'Primary Email';
+$handler->display->display_options['fields']['email']['location_type'] = '0';
+$handler->display->display_options['fields']['email']['location_op'] = '1';
+$handler->display->display_options['fields']['email']['is_primary'] = 1;
 /* Field: CiviCRM Address: Full Street Address */
 $handler->display->display_options['fields']['street_address']['id'] = 'street_address';
 $handler->display->display_options['fields']['street_address']['table'] = 'civicrm_address';
@@ -131,25 +156,28 @@ $handler->display->display_options['fields']['country']['location_op'] = '0';
 $handler->display->display_options['fields']['country']['is_primary'] = 0;
 $handler->display->display_options['fields']['country']['is_billing'] = 0;
 $translatables['my_details_block'] = array(
-    t('Master'),
-    t('My details block'),
-    t('more'),
-    t('Apply'),
-    t('Reset'),
-    t('Sort by'),
-    t('Asc'),
-    t('Desc'),
-    t('Drupal User'),
-    t('Contact ID'),
-    t('.'),
-    t(','),
-    t('Display Name'),
-    t('Emergency Contact'),
-    t('My details'),
-    t('My address'),
-    t('My address block'),
-    t('Address'),
-    t('City / Suburb'),
-    t('ZIP / Postal Code'),
-    t('Country'),
+  t('Master'),
+  t('My details block'),
+  t('more'),
+  t('Apply'),
+  t('Reset'),
+  t('Sort by'),
+  t('Asc'),
+  t('Desc'),
+  t('Drupal User'),
+  t('Contact ID'),
+  t('.'),
+  t(','),
+  t('Display Name'),
+  t('Emergency Contact'),
+  t('My details'),
+  t('Name'),
+  t('My address'),
+  t('My address block'),
+  t('Primary Phone'),
+  t('Primary Email'),
+  t('Address'),
+  t('City / Suburb'),
+  t('ZIP / Postal Code'),
+  t('Country'),
 );

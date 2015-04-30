@@ -157,7 +157,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     );
     $pane->configuration = array(
       'override_title' => 1,
-      'override_title_text' => 'My details',
+      'override_title_text' => 'My Details',
     );
     $pane->cache = array();
     $pane->style = array(
