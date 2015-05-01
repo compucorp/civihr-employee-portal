@@ -202,7 +202,7 @@ function civihr_hrjobcontract_entities_init() {
         db_query("CREATE OR REPLACE VIEW hrjc_role AS
                     SELECT
                     c.contact_id,
-                    r.jobcontract_id,
+                    t.job_contract_id,
                     t.title,
                     t.description,
                     t.hours,
@@ -216,34 +216,26 @@ function civihr_hrjobcontract_entities_init() {
                     t.cost_center,
                     t.funder,
                     t.percent_pay_funder,
-                    t.percent_pay_role,
+                    t.percent_pay_cost_center,
                     ov_location.label AS location
-                    FROM {$civi_db_name}.civicrm_hrjobcontract_role AS t
-                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.id
-                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
+                    FROM {$civi_db_name}.civicrm_hrjobroles AS t
+                        
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON t.job_contract_id = c.id
                     
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_region ON og_region.name = 'hrjc_region'
-                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_region ON og_region.id = ov_region.option_group_id AND ov_region.value = t.region
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_region ON og_region.id = ov_region.option_group_id AND ov_region.id = t.region
                     
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_department ON og_department.name = 'hrjc_department'
-                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_department ON og_department.id = ov_department.option_group_id AND ov_department.value = t.department
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_department ON og_department.id = ov_department.option_group_id AND ov_department.id = t.department
                     
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_level_type ON og_level_type.name = 'hrjc_level_type'
-                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_level_type ON og_level_type.id = ov_level_type.option_group_id AND ov_level_type.value = t.level_type
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_level_type ON og_level_type.id = ov_level_type.option_group_id AND ov_level_type.id = t.level_type
                     
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_location ON og_location.name = 'hrjc_location'
-                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_location ON og_location.id = ov_location.option_group_id AND ov_location.value = t.location
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_location ON og_location.id = ov_location.option_group_id AND ov_location.id = t.location
                     
-                    WHERE r.id = ( 
-                        SELECT r2.id
-                        FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
-                        WHERE r2.effective_date <= NOW( ) 
-                        AND r2.jobcontract_id = r.jobcontract_id
-                        ORDER BY r2.effective_date DESC 
-                        LIMIT 1
-                    )
-                    GROUP BY r.jobcontract_id");
-        
+                    ORDER BY t.job_contract_id");
+                    
         variable_set('rebuild_hrjobcontract_entities_view', 'FALSE');
     }
 }
