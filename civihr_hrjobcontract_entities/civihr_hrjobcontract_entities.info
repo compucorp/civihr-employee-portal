@@ -1,0 +1,10 @@
+name = CiviHR HRJobContract Entities
+description = Integrate CiviHR HRJobContract Entities with Drupal
+core = 7.x
+package = Compucorp
+dependencies[] = views
+dependencies[] = views_ui
+dependencies[] = civicrm
+;dependencies[] = civihr
+dependencies[] = entity
+version = 4.4

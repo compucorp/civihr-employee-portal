@@ -1,0 +1,889 @@
+<?php
+
+function civihr_hrjobcontract_entities_init() {
+    
+    $rebuild_hrjobcontract_entities_view = variable_get('rebuild_hrjobcontract_entities_view', 'TRUE');
+    if (isset($rebuild_hrjobcontract_entities_view) && $rebuild_hrjobcontract_entities_view == 'TRUE') {
+        civicrm_initialize();
+        $civi_settings = parse_url(CIVICRM_DSN);
+        $civi_db_name = trim($civi_settings['path'], '/');
+        
+        db_query('DROP VIEW IF EXISTS hrjc_details');
+        db_query("CREATE OR REPLACE VIEW hrjc_details AS
+                    SELECT
+                    c.contact_id,
+                    r.jobcontract_id,
+                    t.id,
+                    t.position,
+                    t.title,
+                    t.funding_notes,
+                    ov_contract_type.label AS contract_type,
+                    t.period_start_date,
+                    t.period_end_date,
+                    t.notice_amount,
+                    t.notice_unit,
+                    t.notice_amount_employee,
+                    t.notice_unit_employee,
+                    ov_location.label AS location,
+                    c.is_primary
+                    FROM {$civi_db_name}.civicrm_hrjobcontract_details AS t
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.id
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_option_group og_contract_type ON og_contract_type.name = 'hrjc_contract_type'
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_contract_type ON og_contract_type.id = ov_contract_type.option_group_id AND ov_contract_type.value = t.contract_type
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_option_group og_location ON og_location.name = 'hrjc_location'
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_location ON og_location.id = ov_location.option_group_id AND ov_location.value = t.location
+                    
+                    WHERE r.id = ( 
+                        SELECT r2.id
+                        FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
+                        WHERE r2.effective_date <= NOW( ) 
+                        AND r2.jobcontract_id = r.jobcontract_id
+                        ORDER BY r2.effective_date DESC 
+                        LIMIT 1
+                    )
+                    GROUP BY r.jobcontract_id");
+        
+        db_query('DROP VIEW IF EXISTS hrjc_health');
+        db_query("CREATE OR REPLACE VIEW hrjc_health AS
+                    SELECT
+                    c.contact_id,
+                    r.jobcontract_id,
+                    t.id,
+                    t.provider,
+                    t.plan_type,
+                    t.description,
+                    t.dependents,
+                    t.provider_life_insurance,
+                    t.plan_type_life_insurance,
+                    t.description_life_insurance,
+                    t.dependents_life_insurance
+                    FROM {$civi_db_name}.civicrm_hrjobcontract_health AS t
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.id
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
+                    
+                    WHERE r.id = ( 
+                        SELECT r2.id
+                        FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
+                        WHERE r2.effective_date <= NOW( ) 
+                        AND r2.jobcontract_id = r.jobcontract_id
+                        ORDER BY r2.effective_date DESC 
+                        LIMIT 1
+                    )
+                    GROUP BY r.jobcontract_id");
+        
+        db_query('DROP VIEW IF EXISTS hrjc_hour');
+        db_query("CREATE OR REPLACE VIEW hrjc_hour AS
+                    SELECT
+                    c.contact_id,
+                    r.jobcontract_id,
+                    t.id,
+                    t.location_standard_hours,
+                    ov_hours_type.label AS hours_type,
+                    t.hours_amount,
+                    t.hours_unit,
+                    t.hours_fte,
+                    t.fte_num,
+                    t.fte_denom
+                    FROM {$civi_db_name}.civicrm_hrjobcontract_hour AS t
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.id
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_option_group og_hours_type ON og_hours_type.name = 'hrjc_hours_type'
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_hours_type ON og_hours_type.id = ov_hours_type.option_group_id AND ov_hours_type.value = t.hours_type
+                    
+                    WHERE r.id = ( 
+                        SELECT r2.id
+                        FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
+                        WHERE r2.effective_date <= NOW( ) 
+                        AND r2.jobcontract_id = r.jobcontract_id
+                        ORDER BY r2.effective_date DESC 
+                        LIMIT 1
+                    )
+                    GROUP BY r.jobcontract_id");
+        
+        db_query('DROP VIEW IF EXISTS hrjc_leave');
+        db_query("CREATE OR REPLACE VIEW hrjc_leave AS
+                    SELECT
+                    c.contact_id,
+                    r.jobcontract_id,
+                    t.id,
+                    at.name AS leave_type,
+                    t.leave_amount
+                    FROM {$civi_db_name}.civicrm_hrjobcontract_leave AS t
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.id
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_hrabsence_type at ON t.leave_type = at.id
+                    
+                    WHERE r.id = ( 
+                        SELECT r2.id
+                        FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
+                        WHERE r2.effective_date <= NOW( ) 
+                        AND r2.jobcontract_id = r.jobcontract_id
+                        ORDER BY r2.effective_date DESC 
+                        LIMIT 1
+                    )
+                    GROUP BY r.jobcontract_id");
+        
+        db_query('DROP VIEW IF EXISTS hrjc_pay');
+        db_query("CREATE OR REPLACE VIEW hrjc_pay AS
+                    SELECT
+                    c.contact_id,
+                    r.jobcontract_id,
+                    t.id,
+                    t.pay_scale,
+                    ov_is_paid.label AS is_paid,
+                    t.pay_amount,
+                    t.pay_unit,
+                    ov_pay_currency.label AS pay_currency,
+                    t.pay_annualized_est,
+                    t.pay_is_auto_est,
+                    t.annual_benefits,
+                    t.annual_deductions,
+                    ov_pay_cycle.label AS pay_cycle,
+                    t.pay_per_cycle_gross,
+                    t.pay_per_cycle_net
+                    FROM {$civi_db_name}.civicrm_hrjobcontract_pay AS t
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.id
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_option_group og_is_paid ON og_is_paid.name = 'hrjc_pay_grade'
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_is_paid ON og_is_paid.id = ov_is_paid.option_group_id AND ov_is_paid.value = t.is_paid
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_option_group og_pay_currency ON og_pay_currency.name = 'currencies_enabled'
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_pay_currency ON og_pay_currency.id = ov_pay_currency.option_group_id AND ov_pay_currency.value = t.pay_currency
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_option_group og_pay_cycle ON og_pay_cycle.name = 'hrjc_pay_cycle'
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_pay_cycle ON og_pay_cycle.id = ov_pay_cycle.option_group_id AND ov_pay_cycle.value = t.pay_cycle
+                    
+                    WHERE r.id = ( 
+                        SELECT r2.id
+                        FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
+                        WHERE r2.effective_date <= NOW( ) 
+                        AND r2.jobcontract_id = r.jobcontract_id
+                        ORDER BY r2.effective_date DESC 
+                        LIMIT 1
+                    )
+                    GROUP BY r.jobcontract_id");
+        
+        db_query('DROP VIEW IF EXISTS hrjc_pension');
+        db_query("CREATE OR REPLACE VIEW hrjc_pension AS
+                    SELECT
+                    c.contact_id,
+                    r.jobcontract_id,
+                    t.id,
+                    t.is_enrolled,
+                    t.ee_contrib_pct,
+                    t.er_contrib_pct,
+                    ov_pension_type.label AS pension_type,
+                    t.ee_contrib_abs,
+                    t.ee_evidence_note
+                    FROM {$civi_db_name}.civicrm_hrjobcontract_pension AS t
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.id
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_option_group og_pension_type ON og_pension_type.name = 'hrjc_pension_type'
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_pension_type ON og_pension_type.id = ov_pension_type.option_group_id AND ov_pension_type.value = t.pension_type
+                    
+                    WHERE r.id = ( 
+                        SELECT r2.id
+                        FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
+                        WHERE r2.effective_date <= NOW( ) 
+                        AND r2.jobcontract_id = r.jobcontract_id
+                        ORDER BY r2.effective_date DESC 
+                        LIMIT 1
+                    )
+                    GROUP BY r.jobcontract_id");
+        
+        db_query('DROP VIEW IF EXISTS hrjc_role');
+        db_query("CREATE OR REPLACE VIEW hrjc_role AS
+                    SELECT
+                    c.contact_id,
+                    r.jobcontract_id,
+                    t.title,
+                    t.description,
+                    t.hours,
+                    t.role_hours_unit,
+                    ov_region.label AS region,
+                    ov_department.label AS department,
+                    ov_level_type.label AS level_type,
+                    t.manager_contact_id,
+                    t.functional_area,
+                    t.organization,
+                    t.cost_center,
+                    t.funder,
+                    t.percent_pay_funder,
+                    t.percent_pay_role,
+                    ov_location.label AS location
+                    FROM {$civi_db_name}.civicrm_hrjobcontract_role AS t
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.id
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_option_group og_region ON og_region.name = 'hrjc_region'
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_region ON og_region.id = ov_region.option_group_id AND ov_region.value = t.region
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_option_group og_department ON og_department.name = 'hrjc_department'
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_department ON og_department.id = ov_department.option_group_id AND ov_department.value = t.department
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_option_group og_level_type ON og_level_type.name = 'hrjc_level_type'
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_level_type ON og_level_type.id = ov_level_type.option_group_id AND ov_level_type.value = t.level_type
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_option_group og_location ON og_location.name = 'hrjc_location'
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_location ON og_location.id = ov_location.option_group_id AND ov_location.value = t.location
+                    
+                    WHERE r.id = ( 
+                        SELECT r2.id
+                        FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
+                        WHERE r2.effective_date <= NOW( ) 
+                        AND r2.jobcontract_id = r.jobcontract_id
+                        ORDER BY r2.effective_date DESC 
+                        LIMIT 1
+                    )
+                    GROUP BY r.jobcontract_id");
+        
+        variable_set('rebuild_hrjobcontract_entities_view', 'FALSE');
+    }
+}
+
+/**
+ * When caches are cleared rebuild the helper mysql views
+ */
+function civihr_hrjobcontract_entities_flush_caches() {
+    variable_set('rebuild_hrjobcontract_entities_view', 'TRUE');
+}
+
+/**
+ * Implements hook_schema_alter().
+ */
+function civihr_hrjobcontract_entities_schema_alter(&$schema) {
+    
+    // Details:
+    $schema['hrjc_details']['description'] = 'Views data associated with Job Contract Details';
+    $schema['hrjc_details']['fields']['contact_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Contact ID.',
+    );
+    $schema['hrjc_details']['fields']['jobcontract_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Job Contract ID.',
+    );
+    /*$schema['hrjc_details']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Details ID.',
+    );*/
+    $schema['hrjc_details']['fields']['position'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Position.',
+    );
+    $schema['hrjc_details']['fields']['title'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Title.',
+    );
+    $schema['hrjc_details']['fields']['funding_notes'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Funding notes.',
+    );
+    $schema['hrjc_details']['fields']['contract_type'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Contract type.',
+    );
+    $schema['hrjc_details']['fields']['period_start_date'] = array(
+        'type' => 'varchar',
+        'mysql_type' => 'DATETIME',
+        'not null' => FALSE,
+        'description' => 'Period start date.',
+    );
+    $schema['hrjc_details']['fields']['period_end_date'] = array(
+        'type' => 'varchar',
+        'mysql_type' => 'DATETIME',
+        'not null' => FALSE,
+        'description' => 'Period end date.',
+    );
+    $schema['hrjc_details']['fields']['notice_amount'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Notice amount.',
+    );
+    $schema['hrjc_details']['fields']['notice_unit'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Notice unit.',
+    );
+    $schema['hrjc_details']['fields']['notice_amount_employee'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Notice amount employee.',
+    );
+    $schema['hrjc_details']['fields']['notice_unit_employee'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Notice unit employee.',
+    );
+    $schema['hrjc_details']['fields']['location'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Location.',
+    );
+    $schema['hrjc_details']['fields']['is_primary'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Is primary?',
+    );
+    
+    
+    // Health:
+    $schema['hrjc_health']['description'] = 'Views data associated with Job Contract Health';
+    $schema['hrjc_health']['fields']['contact_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Contact ID.',
+    );
+    $schema['hrjc_health']['fields']['jobcontract_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Job Contract ID.',
+    );
+    /*$schema['hrjc_health']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Health ID.',
+    );*/
+    $schema['hrjc_health']['fields']['provider'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Provider.',
+    );
+    $schema['hrjc_health']['fields']['plan_type'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Plan type.',
+    );
+    $schema['hrjc_health']['fields']['description'] = array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'description' => 'Description.',
+    );
+    $schema['hrjc_health']['fields']['dependents'] = array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'description' => 'Dependents.',
+    );
+    $schema['hrjc_health']['fields']['provider_life_insurance'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Provider life insurance.',
+    );
+    $schema['hrjc_health']['fields']['plan_type_life_insurance'] = array(
+        'type' => 'varchar',
+        'mysql_type' => 'DATETIME',
+        'not null' => FALSE,
+        'description' => 'Plan type life insurance.',
+    );
+    $schema['hrjc_health']['fields']['period_end_date'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Period end date.',
+    );
+    $schema['hrjc_health']['fields']['description_life_insurance'] = array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'description' => 'Description life insurance.',
+    );
+    $schema['hrjc_health']['fields']['dependents_life_insurance'] = array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'description' => 'Dependents life insurance.',
+    );
+    
+    
+    // Hour:
+    $schema['hrjc_hour']['description'] = 'Views data associated with Job Contract Hour';
+    $schema['hrjc_hour']['fields']['contact_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Contact ID.',
+    );
+    $schema['hrjc_hour']['fields']['jobcontract_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Job Contract ID.',
+    );
+    /*$schema['hrjc_hour']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Hour ID.',
+    );*/
+    $schema['hrjc_hour']['fields']['location_standard_hours'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Location standard hours.',
+    );
+    $schema['hrjc_hour']['fields']['hours_type'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Hours type.',
+    );
+    $schema['hrjc_hour']['fields']['hours_amount'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Hours amount.',
+    );
+    $schema['hrjc_hour']['fields']['hours_unit'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Hours unit.',
+    );
+    $schema['hrjc_hour']['fields']['hours_fte'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Hours FTE.',
+    );
+    $schema['hrjc_hour']['fields']['fte_num'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'FTE num.',
+    );
+    $schema['hrjc_hour']['fields']['fte_denom'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'FTE denom.',
+    );
+    
+    
+    // Leave:
+    $schema['hrjc_leave']['description'] = 'Views data associated with Job Contract Leave';
+    $schema['hrjc_leave']['fields']['contact_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Contact ID.',
+    );
+    $schema['hrjc_leave']['fields']['jobcontract_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Job Contract ID.',
+    );
+    /*$schema['hrjc_leave']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Leave ID.',
+    );*/
+    $schema['hrjc_leave']['fields']['leave_type'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Leave type.',
+    );
+    $schema['hrjc_leave']['fields']['leave_amount'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Leave amount.',
+    );
+    
+    
+    // Pay:
+    $schema['hrjc_pay']['description'] = 'Views data associated with Job Contract Pay';
+    $schema['hrjc_pay']['fields']['contact_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Contact ID.',
+    );
+    $schema['hrjc_pay']['fields']['jobcontract_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Job Contract ID.',
+    );
+    /*$schema['hrjc_pay']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Pay ID.',
+    );*/
+    $schema['hrjc_pay']['fields']['pay_scale'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Pay scale.',
+    );
+    $schema['hrjc_pay']['fields']['is_paid'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Is paid?',
+    );
+    $schema['hrjc_pay']['fields']['pay_amount'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Pay amount.',
+    );
+    $schema['hrjc_pay']['fields']['pay_unit'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Pay unit.',
+    );
+    $schema['hrjc_pay']['fields']['pay_currency'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Pay currency.',
+    );
+    $schema['hrjc_pay']['fields']['pay_annualized_est'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Pay annualized est.',
+    );
+    $schema['hrjc_pay']['fields']['pay_is_auto_est'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Pay is auto est?  ',
+    );
+    $schema['hrjc_pay']['fields']['annual_benefits'] = array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'description' => 'Annual benefits.',
+    );
+    $schema['hrjc_pay']['fields']['annual_deductions'] = array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'description' => 'Annual deductions.',
+    );
+    $schema['hrjc_pay']['fields']['pay_cycle'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Pay cycle.',
+    );
+    $schema['hrjc_pay']['fields']['pay_per_cycle_gross'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Pay per cycle gross.',
+    );
+    $schema['hrjc_pay']['fields']['pay_per_cycle_net'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Pay per cycle net.',
+    );
+    
+    
+    // Pension:
+    $schema['hrjc_pension']['description'] = 'Views data associated with Job Contract Pension';
+    $schema['hrjc_pension']['fields']['contact_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Contact ID.',
+    );
+    $schema['hrjc_pension']['fields']['jobcontract_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Job Contract ID.',
+    );
+    /*$schema['hrjc_pension']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Pension ID.',
+    );*/
+    $schema['hrjc_pension']['fields']['is_enrolled'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Is enrolled?',
+    );
+    $schema['hrjc_pension']['fields']['ee_contrib_pct'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'EE contrib pct.',
+    );
+    $schema['hrjc_pension']['fields']['er_contrib_pct'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'ER contrib pct.',
+    );
+    $schema['hrjc_pension']['fields']['pension_type'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Pension type.',
+    );
+    $schema['hrjc_pension']['fields']['ee_contrib_abs'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'EE contrib abs.',
+    );
+    $schema['hrjc_pension']['fields']['ee_evidence_note'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'EE evidence note.',
+    );
+    
+    
+    // Role:
+    $schema['hrjc_role']['description'] = 'Views data associated with Job Contract Role';
+    $schema['hrjc_role']['fields']['contact_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Contact ID.',
+    );
+    $schema['hrjc_role']['fields']['jobcontract_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Job Contract ID.',
+    );
+    /*$schema['hrjc_role']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Role ID.',
+    );*/
+    $schema['hrjc_role']['fields']['title'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Title',
+    );
+    $schema['hrjc_role']['fields']['description'] = array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'description' => 'Description.',
+    );
+    $schema['hrjc_role']['fields']['hours'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Hours.',
+    );
+    $schema['hrjc_role']['fields']['role_hours_unit'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Role hours unit.',
+    );
+    $schema['hrjc_role']['fields']['region'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Region.',
+    );
+    $schema['hrjc_role']['fields']['department'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Department.',
+    );
+    $schema['hrjc_role']['fields']['level_type'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Level type.',
+    );
+    $schema['hrjc_role']['fields']['manager_contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Manager contact ID.',
+    );
+    $schema['hrjc_role']['fields']['functional_area'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Functional area.',
+    );
+    $schema['hrjc_role']['fields']['organization'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Organization.',
+    );
+    $schema['hrjc_role']['fields']['cost_center'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Cost center.',
+    );
+    $schema['hrjc_role']['fields']['funder'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Funder.',
+    );
+    $schema['hrjc_role']['fields']['percent_pay_funder'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Percent pay funder.',
+    );
+    $schema['hrjc_role']['fields']['percent_pay_role'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Percent pay funder.',
+    );
+    $schema['hrjc_role']['fields']['location'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Location.',
+    );
+    
+}
+
+/**
+ * Implements hook_entity_info().
+ */
+function civihr_hrjobcontract_entities_entity_info() {
+    $info = array();
+    
+    $info['hrjobcontract_details'] = array(
+        'label' => t('HRJobContract Details entity'),
+        'plural label' => t('HRJobContract Details entity'),
+        'description' => t('HRJobContract Details entity definition.'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'hrjc_details',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Job Contract Details ID'
+        ),
+        'bundles' => array(),
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
+        /*'properties' => array(
+            'nid' => array('type' => 'node'),
+            'uid' => array('type' => 'user'),
+        ),*/
+    );
+    
+    $info['hrjobcontract_health'] = array(
+        'label' => t('HRJobContract Health entity'),
+        'plural label' => t('HRJobContract Health entity'),
+        'description' => t('HRJobContract Health entity definition.'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'hrjc_health',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Job Contract Health ID'
+        ),
+        'bundles' => array(),
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
+    );
+    
+    $info['hrjobcontract_hour'] = array(
+        'label' => t('HRJobContract Hour entity'),
+        'plural label' => t('HRJobContract Hour entity'),
+        'description' => t('HRJobContract Hour entity definition.'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'hrjc_hour',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Job Contract Hour ID'
+        ),
+        'bundles' => array(),
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
+    );
+    
+    $info['hrjobcontract_leave'] = array(
+        'label' => t('HRJobContract Leave entity'),
+        'plural label' => t('HRJobContract Leave entity'),
+        'description' => t('HRJobContract Leave entity definition.'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'hrjc_leave',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Job Contract Leave ID'
+        ),
+        'bundles' => array(),
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
+    );
+    
+    $info['hrjobcontract_pay'] = array(
+        'label' => t('HRJobContract Pay entity'),
+        'plural label' => t('HRJobContract Pay entity'),
+        'description' => t('HRJobContract Pay entity definition.'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'hrjc_pay',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Job Contract Pay ID'
+        ),
+        'bundles' => array(),
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
+    );
+    
+    $info['hrjobcontract_pension'] = array(
+        'label' => t('HRJobContract Pension entity'),
+        'plural label' => t('HRJobContract Pension entity'),
+        'description' => t('HRJobContract Pension entity definition.'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'hrjc_pension',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Job Contract Pension ID'
+        ),
+        'bundles' => array(),
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
+    );
+    
+    $info['hrjobcontract_role'] = array(
+        'label' => t('HRJobContract Role entity'),
+        'plural label' => t('HRJobContract Role entity'),
+        'description' => t('HRJobContract Role entity definition.'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'hrjc_role',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Job Contract Role ID'
+        ),
+        'bundles' => array(),
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
+    );
+    
+    return $info;
+}
+
+/**
+ * Implements hook_entity_property_info_alter().
+ */
+function civihr_hrjobcontract_entities_entity_property_info_alter(&$info) {
+    $info['hrjobcontract_details']['properties']['contact_id']['type'] = 'civicrm_contact';
+    $info['hrjobcontract_health']['properties']['contact_id']['type'] = 'civicrm_contact';
+    $info['hrjobcontract_hour']['properties']['contact_id']['type'] = 'civicrm_contact';
+    $info['hrjobcontract_leave']['properties']['contact_id']['type'] = 'civicrm_contact';
+    $info['hrjobcontract_pay']['properties']['contact_id']['type'] = 'civicrm_contact';
+    $info['hrjobcontract_pension']['properties']['contact_id']['type'] = 'civicrm_contact';
+    $info['hrjobcontract_role']['properties']['contact_id']['type'] = 'civicrm_contact';
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function civihr_hrjobcontract_entities_views_api() {
+    return array(
+        'api' => 3,
+        'path' => drupal_get_path('module', 'civihr_hrjobcontract_entities') . '/views',
+    );
+}
