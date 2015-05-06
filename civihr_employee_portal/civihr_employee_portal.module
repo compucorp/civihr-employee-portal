@@ -211,6 +211,12 @@ function civihr_employee_portal_theme() {
             ),
             'template' => 'templates/civihr-employee-portal-login-block--block',
         ),
+        'civihr_employee_portal_print_leave_report' => array(
+            'variables' => array(
+                'custom_data' => NULL
+            ),
+            'template' => 'templates/civihr-employee-portal-print-leave-report',
+        ),
     );
 }
 
@@ -521,6 +527,14 @@ function civihr_employee_portal_menu() {
         'type' => MENU_NORMAL_ITEM,
         'menu_name' => 'main-menu',
         'weight' => 4
+    );
+
+    $items['print_leave_report'] = array(
+        'title' => 'Print Leave Report',
+        'page callback' => 'print_leave_report_callback',
+        'page arguments' => array(1),
+        'access callback' => TRUE,
+        'type' => MENU_NORMAL_ITEM,
     );
 
     return $items;
@@ -1782,4 +1796,11 @@ function civihr_employee_portal_preprocess_page(&$vars) {
     $vars['edit_account'] = l('<i class="fa fa-edit"></i>' . t('Edit Account'), 'user/' . $user->uid . '/edit', array('html' => true));
     $vars['logout_link'] = l('<i class="fa fa-sign-out"></i>' . t('Log Out'), 'user/logout', array('html' => true));
 
+}
+
+function print_leave_report_callback($user) {
+
+  // Return the print leave report custom theme
+  return theme('civihr_employee_portal_print_leave_report', array('custom_data' => views_embed_view('absence_list', 'page')));
+  
 }
