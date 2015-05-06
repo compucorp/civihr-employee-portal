@@ -6,10 +6,10 @@
 function picture_upload_camera_form_alter(&$form, &$form_state, $form_id) {
     
     // Alter the user/*/edit form
-    if($form_id == 'user_profile_form') {
+    if ($form_id == 'user_profile_form') {
 
         // Load the slider library
-        drupal_add_library('system','ui.slider');
+        drupal_add_library('system', 'ui.slider');
         
         $buttons = '<div id="buttons">
                         <button id="loadCameraButton">Take picture with your Camera!</button>
