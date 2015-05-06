@@ -47,24 +47,32 @@ function picture_upload_camera_form_alter(&$form, &$form_state, $form_id) {
             drupal_get_path('module', 'picture_upload_camera') . '/js/custom.js',
         );
         
-        $form['#validate'][] = 'mymodule_mysubmit_handler';
+        $form['#validate'][] = 'picture_upload_camera_validate';
         
     }
 }
 
-function mymodule_mysubmit_handler($form, &$form_state) {
+function picture_upload_camera_validate($form, &$form_state) {
     
     // Check if we have custom camera snapshot (if yes use the picture from there and update the profile picture)
     if (isset($form_state['values']['picture_upload_camera_value']) && !empty($form_state['values']['picture_upload_camera_value'])) {
-        
+
+        // User pictures file location
+        $user_picture_path = variable_get('user_picture_path', 'pictures');
+
+        // Check if the directory exists if not, try to create it
+        if (!is_dir('public://' . $user_picture_path)) {
+            drupal_mkdir('public://' . $user_picture_path);
+        }
+
         // Save the new camera snapshot
-        $file = canvas_field_save_data($form_state['values']['picture_upload_camera_value'], 'public://pictures/');
+        $file = canvas_field_save_data($form_state['values']['picture_upload_camera_value'], 'public://' . $user_picture_path);
         
         if ($file) {
             $file->status = 0;
             file_save($file);
             
-            watchdog('returned hopefully save', print_r($file, TRUE));
+            watchdog('PICTURE UPLOAD CAMERA - SAVED INFO', print_r($file, TRUE));
             
             // Assign the camera picture for this user profile
             $form_state['values']['picture_upload'] = $file;

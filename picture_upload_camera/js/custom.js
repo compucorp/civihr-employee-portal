@@ -92,18 +92,18 @@
                 if (brightness) {
 
                     // Set the brightness if needed
-                    final_image = Filters.brightness(imgData, brightness);
+                    final_image = Filter.brightness(imgData, brightness);
 
                 }
                 if (filter_type == 'sobel') {
 
                     // get the grayscale filter first as we need it for the sobel filter
                     var grayscale = Filter['grayscale'](imgData);
-                    var vertical = Filters.convoluteFloat32(grayscale,
+                    var vertical = Filter.convoluteFloat32(grayscale,
                         [-1, 0, 1,
                          -2, 0, 2,
                          -1, 0, 1]);
-                    var horizontal = Filters.convoluteFloat32(grayscale,
+                    var horizontal = Filter.convoluteFloat32(grayscale,
                         [-1, -2, -1,
                          0, 0, 0,
                          1, 2, 1]);
@@ -171,7 +171,7 @@
                     max: 100,
                     value: brightness,
                     change: function(event, ui) {
-                        console.log('changed');
+                        console.log('slider changed');
                     },
                     slide: function(event, ui) {
 
@@ -264,6 +264,8 @@
             
             Filter = {};
 
+            if (!window.Float32Array) Float32Array = Array;
+
             Filter.grayscale = function (pixels, args) {
                 var d = pixels.data;
                 for (var i = 0; i < d.length; i += 4) {
@@ -289,11 +291,7 @@
                 return pixels;
             };
 
-            Filters = {};
-
-            if (!window.Float32Array) Float32Array = Array;
-
-            Filters.brightness = function(pixels, adjustment) {
+            Filter.brightness = function(pixels, adjustment) {
                 var ptr = pixels.data;
                 var len = ptr.length;
                 for (var i = 0; i < len; i += 4)  {
@@ -304,7 +302,7 @@
                 return pixels;
             };
 
-            Filters.convoluteFloat32 = function(pixels, weights, opaque) {
+            Filter.convoluteFloat32 = function(pixels, weights, opaque) {
                 var side = Math.round(Math.sqrt(weights.length));
                 var halfSide = Math.floor(side / 2);
 
