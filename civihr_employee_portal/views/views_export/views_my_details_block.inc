@@ -51,7 +51,7 @@ $handler->display->display_options['fields']['display_name']['id'] = 'display_na
 $handler->display->display_options['fields']['display_name']['table'] = 'civicrm_contact';
 $handler->display->display_options['fields']['display_name']['field'] = 'display_name';
 $handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 0;
-/* Field: Broken/missing handler */
+/* Field: CiviCRM Custom: Emergency Contacts: Name */
 $handler->display->display_options['fields']['name_80']['id'] = 'name_80';
 $handler->display->display_options['fields']['name_80']['table'] = 'civicrm_value_emergency_contacts_21';
 $handler->display->display_options['fields']['name_80']['field'] = 'name_80';
@@ -119,6 +119,11 @@ $handler->display->display_options['fields']['department']['table'] = 'hrjc_role
 $handler->display->display_options['fields']['department']['field'] = 'department';
 $handler->display->display_options['fields']['department']['relationship'] = 'hrjc_role';
 $handler->display->display_options['fields']['department']['label'] = 'Role Department';
+/* Field: CiviCRM Custom: Emergency Contacts: Name */
+$handler->display->display_options['fields']['name_80']['id'] = 'name_80';
+$handler->display->display_options['fields']['name_80']['table'] = 'civicrm_value_emergency_contacts_21';
+$handler->display->display_options['fields']['name_80']['field'] = 'name_80';
+$handler->display->display_options['fields']['name_80']['label'] = 'Emergency Contact';
 
 /* Display: My address */
 $handler = $view->new_display('block', 'My address', 'my_address_block');
