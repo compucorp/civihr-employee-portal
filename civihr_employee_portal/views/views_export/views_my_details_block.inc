@@ -20,9 +20,9 @@ $handler->display->display_options['title'] = 'My details block';
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
 $handler->display->display_options['access']['role'] = array(
-  4 => '4',
-  6 => '6',
-  5 => '5',
+    4 => '4',
+    6 => '6',
+    5 => '5',
 );
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
@@ -37,6 +37,11 @@ $handler->display->display_options['row_plugin'] = 'fields';
 $handler->display->display_options['relationships']['drupal_id']['id'] = 'drupal_id';
 $handler->display->display_options['relationships']['drupal_id']['table'] = 'civicrm_contact';
 $handler->display->display_options['relationships']['drupal_id']['field'] = 'drupal_id';
+/* Relationship: CiviCRM Contacts: HRJobContract Details entity */
+$handler->display->display_options['relationships']['hrjc_details']['id'] = 'hrjc_details';
+$handler->display->display_options['relationships']['hrjc_details']['table'] = 'civicrm_contact';
+$handler->display->display_options['relationships']['hrjc_details']['field'] = 'hrjc_details';
+$handler->display->display_options['relationships']['hrjc_details']['relationship'] = 'drupal_id';
 /* Field: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'civicrm_contact';
@@ -46,7 +51,7 @@ $handler->display->display_options['fields']['display_name']['id'] = 'display_na
 $handler->display->display_options['fields']['display_name']['table'] = 'civicrm_contact';
 $handler->display->display_options['fields']['display_name']['field'] = 'display_name';
 $handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 0;
-/* Field: CiviCRM Custom: Emergency Contacts: Name */
+/* Field: Broken/missing handler */
 $handler->display->display_options['fields']['name_80']['id'] = 'name_80';
 $handler->display->display_options['fields']['name_80']['table'] = 'civicrm_value_emergency_contacts_21';
 $handler->display->display_options['fields']['name_80']['field'] = 'name_80';
@@ -60,6 +65,24 @@ $handler->display->display_options['filters']['uid_current']['value'] = '1';
 
 /* Display: My details */
 $handler = $view->new_display('block', 'My details', 'my_details_block');
+$handler->display->display_options['defaults']['pager'] = FALSE;
+$handler->display->display_options['pager']['type'] = 'some';
+$handler->display->display_options['pager']['options']['items_per_page'] = '1';
+$handler->display->display_options['pager']['options']['offset'] = '0';
+$handler->display->display_options['defaults']['relationships'] = FALSE;
+/* Relationship: CiviCRM Contacts: Drupal ID */
+$handler->display->display_options['relationships']['drupal_id']['id'] = 'drupal_id';
+$handler->display->display_options['relationships']['drupal_id']['table'] = 'civicrm_contact';
+$handler->display->display_options['relationships']['drupal_id']['field'] = 'drupal_id';
+/* Relationship: CiviCRM Contacts: HRJobContract Details entity */
+$handler->display->display_options['relationships']['hrjc_details']['id'] = 'hrjc_details';
+$handler->display->display_options['relationships']['hrjc_details']['table'] = 'civicrm_contact';
+$handler->display->display_options['relationships']['hrjc_details']['field'] = 'hrjc_details';
+$handler->display->display_options['relationships']['hrjc_details']['relationship'] = 'drupal_id';
+/* Relationship: CiviCRM Contacts: HRJobContract Role entity */
+$handler->display->display_options['relationships']['hrjc_role']['id'] = 'hrjc_role';
+$handler->display->display_options['relationships']['hrjc_role']['table'] = 'civicrm_contact';
+$handler->display->display_options['relationships']['hrjc_role']['field'] = 'hrjc_role';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
@@ -73,12 +96,29 @@ $handler->display->display_options['fields']['display_name']['table'] = 'civicrm
 $handler->display->display_options['fields']['display_name']['field'] = 'display_name';
 $handler->display->display_options['fields']['display_name']['label'] = 'Name';
 $handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 0;
-/* Field: CiviCRM Custom: Emergency Contacts: Name */
-$handler->display->display_options['fields']['name_80']['id'] = 'name_80';
-$handler->display->display_options['fields']['name_80']['table'] = 'civicrm_value_emergency_contacts_21';
-$handler->display->display_options['fields']['name_80']['field'] = 'name_80';
-$handler->display->display_options['fields']['name_80']['relationship'] = 'drupal_id';
-$handler->display->display_options['fields']['name_80']['label'] = 'Emergency Contact';
+/* Field: HRJobContract Details entity: Title */
+$handler->display->display_options['fields']['title']['id'] = 'title';
+$handler->display->display_options['fields']['title']['table'] = 'hrjc_details';
+$handler->display->display_options['fields']['title']['field'] = 'title';
+$handler->display->display_options['fields']['title']['relationship'] = 'hrjc_details';
+$handler->display->display_options['fields']['title']['label'] = 'Designation';
+/* Field: HRJobContract Details entity: Location */
+$handler->display->display_options['fields']['location']['id'] = 'location';
+$handler->display->display_options['fields']['location']['table'] = 'hrjc_details';
+$handler->display->display_options['fields']['location']['field'] = 'location';
+$handler->display->display_options['fields']['location']['relationship'] = 'hrjc_details';
+/* Field: HRJobContract Role entity: Title */
+$handler->display->display_options['fields']['title_1']['id'] = 'title_1';
+$handler->display->display_options['fields']['title_1']['table'] = 'hrjc_role';
+$handler->display->display_options['fields']['title_1']['field'] = 'title';
+$handler->display->display_options['fields']['title_1']['relationship'] = 'hrjc_role';
+$handler->display->display_options['fields']['title_1']['label'] = 'Role title';
+/* Field: HRJobContract Role entity: Department */
+$handler->display->display_options['fields']['department']['id'] = 'department';
+$handler->display->display_options['fields']['department']['table'] = 'hrjc_role';
+$handler->display->display_options['fields']['department']['field'] = 'department';
+$handler->display->display_options['fields']['department']['relationship'] = 'hrjc_role';
+$handler->display->display_options['fields']['department']['label'] = 'Role Department';
 
 /* Display: My address */
 $handler = $view->new_display('block', 'My address', 'my_address_block');
@@ -89,6 +129,11 @@ $handler->display->display_options['pager']['type'] = 'some';
 $handler->display->display_options['pager']['options']['items_per_page'] = '1';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['defaults']['footer'] = FALSE;
+$handler->display->display_options['defaults']['relationships'] = FALSE;
+/* Relationship: CiviCRM Contacts: Drupal ID */
+$handler->display->display_options['relationships']['drupal_id']['id'] = 'drupal_id';
+$handler->display->display_options['relationships']['drupal_id']['table'] = 'civicrm_contact';
+$handler->display->display_options['relationships']['drupal_id']['field'] = 'drupal_id';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: CiviCRM Phone Details: Phone Number */
 $handler->display->display_options['fields']['phone']['id'] = 'phone';
@@ -156,28 +201,34 @@ $handler->display->display_options['fields']['country']['location_op'] = '0';
 $handler->display->display_options['fields']['country']['is_primary'] = 0;
 $handler->display->display_options['fields']['country']['is_billing'] = 0;
 $translatables['my_details_block'] = array(
-  t('Master'),
-  t('My details block'),
-  t('more'),
-  t('Apply'),
-  t('Reset'),
-  t('Sort by'),
-  t('Asc'),
-  t('Desc'),
-  t('Drupal User'),
-  t('Contact ID'),
-  t('.'),
-  t(','),
-  t('Display Name'),
-  t('Emergency Contact'),
-  t('My details'),
-  t('Name'),
-  t('My address'),
-  t('My address block'),
-  t('Primary Phone'),
-  t('Primary Email'),
-  t('Address'),
-  t('City / Suburb'),
-  t('ZIP / Postal Code'),
-  t('Country'),
+    t('Master'),
+    t('My details block'),
+    t('more'),
+    t('Apply'),
+    t('Reset'),
+    t('Sort by'),
+    t('Asc'),
+    t('Desc'),
+    t('Drupal User'),
+    t('HRJobContract Details entity'),
+    t('Contact ID'),
+    t('.'),
+    t(','),
+    t('Display Name'),
+    t('Emergency Contact'),
+    t('My details'),
+    t('HRJobContract Role entity'),
+    t('Name'),
+    t('Designation'),
+    t('Location'),
+    t('Role title'),
+    t('Role Department'),
+    t('My address'),
+    t('My address block'),
+    t('Primary Phone'),
+    t('Primary Email'),
+    t('Address'),
+    t('City / Suburb'),
+    t('ZIP / Postal Code'),
+    t('Country'),
 );

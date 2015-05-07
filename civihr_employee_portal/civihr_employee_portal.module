@@ -530,7 +530,7 @@ function civihr_employee_portal_menu() {
     );
 
     $items['print_leave_report'] = array(
-        'title' => 'Print Leave Report',
+        'title' => 'My Leave Report',
         'page callback' => 'print_leave_report_callback',
         'page arguments' => array(1),
         'access callback' => TRUE,
@@ -552,6 +552,16 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
 
     if ($link_type == 'calendar') {
         return '' . l($link_text, 'absence_calendar/nojs/show', array('attributes' => array('class' => 'btn btn-custom ctools-use-modal ctools-modal-civihr-default-style'))) . '';
+    }
+
+    if ($link_type == 'leave_report') {
+        return '' . l($link_text, 'print_leave_report/', array(
+                                                                    'query' =>
+                                                                        array('absence_start_date_period_filter' => $nid),
+                                                                    'attributes' =>
+                                                                        array('class' => 'btn btn-custom')
+                                                                    )
+        ) . '';
     }
 
     if ($link_type == 'hr-resource') {
@@ -1756,8 +1766,20 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, $form_stat
     // Show the open calendar button in the my leave block next to the date filters select list
     if (isset($form['#id']) && $form['#id'] == 'views-exposed-form-absence-list-page') {
 
+        if (isset($_REQUEST['absence_start_date_period_filter'])) {
+            $request_date = $_REQUEST['absence_start_date_period_filter'];
+        }
+        else {
+            // Set default period
+            $request_date = '1';
+        }
+
+        $form['leave_report'] = array(
+            '#markup' => civihr_employee_portal_make_link(t('Print leave report'), 'leave_report', $request_date)
+        );
+
         $form['open_calendar'] = array(
-            '#markup' => civihr_employee_portal_make_link('Open calendar', 'calendar')
+            '#markup' => civihr_employee_portal_make_link(t('Open calendar'), 'calendar')
         );
 
     }
