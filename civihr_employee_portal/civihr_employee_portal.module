@@ -559,7 +559,7 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
                                                                     'query' =>
                                                                         array('absence_start_date_period_filter' => $nid),
                                                                     'attributes' =>
-                                                                        array('class' => 'btn btn-custom')
+                                                                        array('class' => 'btn btn-custom', 'target'=>'_blank')
                                                                     )
         ) . '';
     }
@@ -1761,10 +1761,11 @@ function civihr_employee_portal_my_details() {
  * @param $form_state
  * Implement form_views_exposed_form_alter()
  */
-function civihr_employee_portal_form_views_exposed_form_alter(&$form, $form_state) {
+function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {
 
     // Show the open calendar button in the my leave block next to the date filters select list
     if (isset($form['#id']) && $form['#id'] == 'views-exposed-form-absence-list-page') {
+
 
         if (isset($_REQUEST['absence_start_date_period_filter'])) {
             $request_date = $_REQUEST['absence_start_date_period_filter'];
@@ -1774,15 +1775,50 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, $form_stat
             $request_date = '1';
         }
 
-        $form['leave_report'] = array(
-            '#markup' => civihr_employee_portal_make_link(t('Print leave report'), 'leave_report', $request_date)
-        );
-
         $form['open_calendar'] = array(
             '#markup' => civihr_employee_portal_make_link(t('Open calendar'), 'calendar')
         );
 
+        $form['leave_report'] = array(
+            '#markup' => civihr_employee_portal_make_link(t('Print leave report'), 'leave_report', $request_date),
+            '#prefix' => '<div id="report-replace-div">',
+            '#suffix' => '</div>',
+        );
+
+        // Replace the print leave report URL with the selected date period URL
+        $form['absence_start_date_period_filter']['#ajax'] =
+        array(
+            'callback' => '_absence_start_date_period_change_submit',
+            'wrapper' => 'report-replace-div',
+            'method' => 'replace',
+            'effect' => 'fade',
+            'progress' => array('type' => 'none')
+        );
+
+        // Autosubmit the form after date_period select change
+        $form['absence_start_date_period_filter']['#attributes'] = array('onchange' => "jQuery('#edit-submit-absence-list').click()");
+
     }
+
+}
+
+function _absence_start_date_period_change_submit(&$form, &$form_state) {
+
+    if (isset($_REQUEST['absence_start_date_period_filter'])) {
+        $request_date = $_REQUEST['absence_start_date_period_filter'];
+    }
+    else {
+        // Set default period
+        $request_date = '1';
+    }
+
+    $form['leave_report'] = array(
+        '#markup' => civihr_employee_portal_make_link(t('Print leave report'), 'leave_report', $request_date),
+        '#prefix' => '<div id="report-replace-div">',
+        '#suffix' => '</div>',
+    );
+
+    return $form['leave_report'];
 
 }
 
