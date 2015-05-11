@@ -529,14 +529,6 @@ function civihr_employee_portal_menu() {
         'weight' => 4
     );
 
-    $items['print_leave_report'] = array(
-        'title' => 'My Leave Report',
-        'page callback' => 'print_leave_report_callback',
-        'page arguments' => array(1),
-        'access callback' => TRUE,
-        'type' => MENU_NORMAL_ITEM,
-    );
-
     return $items;
 }
 
@@ -555,7 +547,7 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
     }
 
     if ($link_type == 'leave_report') {
-        return '' . l($link_text, 'print_leave_report/', array(
+        return '' . l($link_text, 'print-leave-report/', array(
                                                                     'query' =>
                                                                         array('absence_start_date_period_filter' => $nid),
                                                                     'attributes' =>
@@ -1854,11 +1846,4 @@ function civihr_employee_portal_preprocess_page(&$vars) {
     $vars['edit_account'] = l('<i class="fa fa-edit"></i>' . t('Edit Account'), 'user/' . $user->uid . '/edit', array('html' => true));
     $vars['logout_link'] = l('<i class="fa fa-sign-out"></i>' . t('Log Out'), 'user/logout', array('html' => true));
 
-}
-
-function print_leave_report_callback($user) {
-
-  // Return the print leave report custom theme
-  return theme('civihr_employee_portal_print_leave_report', array('custom_data' => views_embed_view('absence_list', 'page')));
-  
 }
