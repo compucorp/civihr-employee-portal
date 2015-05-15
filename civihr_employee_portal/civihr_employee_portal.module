@@ -1592,6 +1592,9 @@ function civihr_employee_portal_get_reports() {
 
     // Add the javascript library for D3
     drupal_add_js('http://d3js.org/d3.v3.min.js', 'external');
+
+    views_add_js('ajax_view');
+
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
 
     return '<div id="custom-report"></div><div id="custom-report-details"></div><div id="relationship-report"></div>';

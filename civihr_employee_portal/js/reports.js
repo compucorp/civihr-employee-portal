@@ -1,120 +1,180 @@
 (function($) {
 Drupal.behaviors.civihr_employee_portal_reports = {
     attach: function (context, settings) {
-        
-        var gender_dataset = [
-                    ['male', 78], ['female', 27], ['not specified', 97]
-                
-        ];
-        
+
+
         // Round UP to the nearest five -> helper function
         function roundUp5(x) {
             return Math.ceil(x / 5) * 5;
         }
-        
-        // Width and height for the SVG area
-        var w = window.innerWidth / 3;
-        var h = window.innerHeight / 3;
-        var barPadding = 2;
-        
-        // Set number of ticks
-        var setTicks = 20;
-        
-        // Start x padding, when using axes
-        var padding = 25;
-        
-        // Start y / height padding, when using axes
-        var hpadding = 5;
-        
-        // Create SVG element
-        var svg = d3.select("#custom-report")
-            .append("svg")
-            .attr("width", w + padding)
-            .attr("height", h);
-    
-        // Set up scales
-        var scaleY = d3.scale.linear()
-            .range([h - hpadding, hpadding])
-            .domain([0, d3.max(gender_dataset, function(d) { return roundUp5(d[1]); })]);
-        
-        var yAxis = d3.svg.axis()
-            .scale(scaleY)
-            .orient("left")
-            .ticks(setTicks);
-    
-        svg.selectAll("rect")
-            .data(gender_dataset)
-            .enter()
-            .append("rect")
-            .attr("fill", function(d, i) {
-                
-                if (d[0] == 'male') {
-                    return 'green';
-                }
-                else {
-                    return 'teal';
-                }
-                
-            })
-            .on("mouseover", function() {
-                d3.select(this)
-                    .attr("cursor", "pointer")
-                    .attr("fill", "orange");
-            })
-            .on("mouseout", function(d) {
-                d3.select(this)
-                    .transition()
-                    .duration(250)
-                    .attr("fill", "teal");
-            })
-            .on("click", function(d, i) {
-                
-                // console.log(d[0]);
-        
-                $('#custom-report-details table').remove();
-                $('#custom-report-details').append('<table></table>');
-                
-                // Build the custom table with details
-                var table = $('#custom-report-details').children();
-                for(i=0; i < d[1]; i++){
-                    var val = i+1;
-                    table.append( '<tr><td>' + d[0] + ' ' +  val + '</td></tr>' );
-                }
-            })
-            .attr("x", function(d, i) {
-                return padding + i * (w / gender_dataset.length);
-            })
-            .attr("y", function(d) {
-                return scaleY(d[1]);
-            })
-            .attr("width", w / gender_dataset.length - barPadding)
-            .attr("height", function(d) {
-                return h - hpadding - scaleY(d[1]);  // Just the data value
-            }); 
-            
-        svg.selectAll("text")
-            .data(gender_dataset)
-            .enter()
-            .append("text")
-            .attr("font-family", "sans-serif")
-            .attr("font-size", "9px")
-            .attr("fill", "black")
-            .attr("text-anchor", "middle")
-            .text(function(d) {
-                return d[0];
-            })
-            .attr("x", function(d, i) {
-                return i * (w / gender_dataset.length) + (w / gender_dataset.length - barPadding) / 2;
-            })
-            .attr("y", function(d) {
-                return h - 10;
-            });
-            
-        // Append the axes
-        svg.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(" + padding + ",0)")
-            .call(yAxis);
+
+        var data; // Holds our loaded data
+
+        d3.json("http://localhost:8900/all-roles", function(error, json) {
+            if (error) return console.warn(error);
+
+            console.log(json);
+
+            // Prepare our data
+            data = json.results;
+            var settings = [];
+
+            // Width and height for the SVG area
+            settings.innerWidth = window.innerWidth / 3;
+            settings.innerHeight = window.innerHeight / 3;
+            settings.barPadding = 2;
+
+            // Set number of ticks
+            settings.setTicks = 5;
+
+            // Start x padding, when using axes
+            settings.padding = 25;
+
+            // Start y / height padding, when using axes
+            settings.hpadding = 5;
+
+            // Duration
+            settings.duration = 250;
+
+            // Draw the report
+            visualize(settings);
+        });
+
+        function visualize(settings) {
+
+            console.log(data);
+
+            $('#custom-report').empty();
+
+            // Create SVG element
+            var svg = d3.select("#custom-report")
+                .append("svg")
+                .attr("width", settings.innerWidth + settings.padding)
+                .attr("height", settings.innerHeight);
+
+            // Set up scales
+            var scaleY = d3.scale.linear()
+                .range([settings.innerHeight - settings.hpadding, settings.hpadding])
+                .domain([0, d3.max(data, function(d) { return roundUp5(d.data.count); })]);
+
+            var yAxis = d3.svg.axis()
+                .scale(scaleY)
+                .orient("left")
+                .ticks(settings.setTicks);
+
+            svg.selectAll("rect")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("fill", function(d, i) {
+
+                    if (d.data.department == 'HR') {
+                        return 'green';
+                    }
+                    else {
+                        return 'teal';
+                    }
+
+                })
+                .on("mouseover", function() {
+                    d3.select(this)
+                        .attr("cursor", "pointer")
+                        .attr("fill", "orange");
+                })
+                .on("mouseout", function(d) {
+                    d3.select(this)
+                        .transition()
+                        .duration(settings.duration)
+                        .attr("fill", "teal");
+                })
+                .on("click", function(d, i) {
+
+                    console.log(d.data);
+
+                    $('#custom-report-details table').remove();
+                    $('#custom-report-details').append('<table></table>');
+
+                    // Build the custom table with details
+                    var target = $('#custom-report-details');
+                    var viewName = 'all_roles';
+                    var viewDisplay = 'role_contacts';
+
+                    var viewArgument = d.data.department;
+
+                    $.ajax({
+                        type: 'POST',
+                        url: Drupal.settings.basePath + 'views/ajax',
+                        dataType: 'json',
+                        data: 'view_name=' + viewName + '&view_display_id=' + viewDisplay + '&view_args=' + viewArgument + '&department=test', // Pass a key/value pair.
+                        success: function(data) {
+
+                            console.log('s');
+
+                            var viewHtml = data[1]['data'];
+                            console.log(viewHtml);
+                            target.children().fadeOut(300, function() {
+                                target.html(viewHtml);
+
+                                var newHeightOfTarget = target.children().height();
+
+                                target.children().hide();
+
+                                target.animate({
+                                    height: newHeightOfTarget
+                                }, 150);
+
+                                target.children().delay(150).fadeIn(300);
+
+                                Drupal.attachBehaviors(target);
+                            });
+                        },
+                        error: function(data) {
+                            target.html('An error occured!');
+                        }
+                    });
+
+
+                    //for(i=0; i < d.data.count; i++){
+                    //    var val = i+1;
+                    //    table.append( '<tr><td>' + d.data.department + ' ' +  val + '</td></tr>' );
+                    //}
+                })
+                .attr("x", function(d, i) {
+                    return settings.padding + i * (settings.innerWidth / data.length);
+                })
+                .attr("y", function(d) {
+                    return scaleY(d.data.count);
+                })
+                .attr("width", settings.innerWidth / data.length - settings.barPadding)
+                .attr("height", function(d) {
+                    return settings.innerHeight - settings.hpadding - scaleY(d.data.count);  // Just the data value
+                });
+
+            svg.selectAll("text")
+                .data(data)
+                .enter()
+                .append("text")
+                .attr("font-family", "sans-serif")
+                .attr("font-size", "9px")
+                .attr("fill", "black")
+                .attr("text-anchor", "middle")
+                .text(function(d) {
+                    return d.data.department;
+                })
+                .attr("x", function(d, i) {
+                    return i * (settings.innerWidth / data.length) + (settings.innerWidth / data.length - settings.barPadding) / 2;
+                })
+                .attr("y", function(d) {
+                    return settings.innerHeight - 10;
+                });
+
+            // Append the axes
+            svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(" + settings.padding + ",0)")
+                .call(yAxis);
+
+        }
      
         // Relationship visualisation
         var links = [
