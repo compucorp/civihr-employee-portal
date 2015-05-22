@@ -102,15 +102,13 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     var viewArgument = d.data.department;
 
                     $.ajax({
-                        type: 'POST',
-                        url: Drupal.settings.basePath + 'views/ajax',
-                        dataType: 'json',
-                        data: 'view_name=' + viewName + '&view_display_id=' + viewDisplay + '&view_args=' + viewArgument + '&department=test', // Pass a key/value pair.
+                        type: 'GET',
+                        url: Drupal.settings.basePath + 'civihr_reports/' + viewName + '/' + viewDisplay + '?value=' + viewArgument + '&ajax=true',
                         success: function(data) {
 
-                            console.log('s');
+                            console.log(data);
 
-                            var viewHtml = data[1]['data'];
+                            var viewHtml = data;
                             console.log(viewHtml);
                             target.children().fadeOut(300, function() {
                                 target.html(viewHtml);
@@ -133,11 +131,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                         }
                     });
 
-
-                    //for(i=0; i < d.data.count; i++){
-                    //    var val = i+1;
-                    //    table.append( '<tr><td>' + d.data.department + ' ' +  val + '</td></tr>' );
-                    //}
                 })
                 .attr("x", function(d, i) {
                     return settings.padding + i * (settings.innerWidth / data.length);

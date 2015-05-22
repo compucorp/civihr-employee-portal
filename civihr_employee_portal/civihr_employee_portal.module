@@ -516,6 +516,7 @@ function civihr_employee_portal_menu() {
     $items['civihr_reports'] = array(
         'title' => 'CiviHR reports',
         'page callback' => 'civihr_employee_portal_get_reports',
+        'page arguments' => array(1, 2),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
@@ -1586,18 +1587,73 @@ function civihr_employee_portal_views_pre_render(&$view) {
 }
 
 /**
- * Show reports for the CiviHR
+ * @param $view_name
+ * @param string $view_display
+ * Load view as html block
  */
-function civihr_employee_portal_get_reports() {
+function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 'default') {
 
-    // Add the javascript library for D3
-    drupal_add_js('http://d3js.org/d3.v3.min.js', 'external');
+    // Array for contextual filters
+    $args = [];
 
-    views_add_js('ajax_view');
+    // Set the contextual filters (if any)
+    if (isset($_GET['value'])) {
+        $args[] = $_GET['value'];
+    }
 
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
+    // No view display the default reports page (reports dashboard)
+    if (!$view_name) {
 
-    return '<div id="custom-report"></div><div id="custom-report-details"></div><div id="relationship-report"></div>';
+        // Load the reports page
+        // Add the javascript library for D3
+        drupal_add_js('http://d3js.org/d3.v3.min.js', 'external');
+        drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
+
+        return '<div id="custom-report"></div><div id="custom-report-details">ez</div><div id="relationship-report"></div>';
+
+    }
+
+    // Special handling if we paginate, or sort the view
+    if (isset($_GET['order']) || isset($_GET['page']) || isset($_GET['sort']) || !isset($_GET['ajax'])) {
+
+        // Load the reports page
+        // Add the javascript library for D3
+        drupal_add_js('http://d3js.org/d3.v3.min.js', 'external');
+        drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
+
+        // Load the view, set filters and display
+        $view = views_get_view($view_name);
+        $view->set_display($view_display);
+
+        // Set the contextual filters from graph (passed in GET['value'])
+        $view->set_arguments($args);
+
+        $view->execute();
+
+        // Set the view data to variable (and return later)
+        $view_data =  $view->render();
+
+        return '<div id="custom-report"></div><div id="custom-report-details">' . $view_data . '</div><div id="relationship-report"></div>';
+
+    }
+    else {
+
+        // Reset ajax
+        unset($_GET['ajax']);
+
+        // When clicked on the graph load a specific view to display data under the graph
+        $view = views_get_view($view_name);
+        $view->set_display($view_display);
+
+        // Set the contextual filters from graph (passed in GET['value'])
+        $view->set_arguments($args);
+
+        $view->execute();
+
+        print $view->render();
+
+    }
+
 }
 
 /**
