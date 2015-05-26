@@ -10,7 +10,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
         var data; // Holds our loaded data
 
-        d3.json("http://localhost:8900/all-roles", function(error, json) {
+        console.log(Drupal.settings.basePath);
+
+        d3.json(Drupal.settings.basePath + "all-roles", function(error, json) {
             if (error) return console.warn(error);
 
             console.log(json);
