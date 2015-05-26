@@ -24,6 +24,8 @@ dependencies[] = front_page
 dependencies[] = fancy_login
 dependencies[] = jcarousel
 dependencies[] = views_fieldsets
+dependencies[] = civicrm_entity
+dependencies[] = civihr_hrjobcontract_entities
 
 ; Views Handlers
 files[] = views/includes/civihr_employee_portal_handler_absence_duration.inc
