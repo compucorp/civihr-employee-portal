@@ -152,20 +152,25 @@ function civihr_employee_portal_flush_caches() {
         // Views Json Query directory for the cached files
         $folder_path = $drupal_root . '/sites/default/files/views_json_query/';
 
-        $dirHandle = opendir($folder_path);
+        // If we the views_json_query directory exists, check the cached files and remove them
+        if (is_dir($folder_path)) {
 
-        // Loop over all of the files in the folder
-        while ($file = readdir($dirHandle)) {
+            $dirHandle = opendir($folder_path);
 
-            // If $file is NOT a directory remove it
-            if (!is_dir($file)) {
-                unlink ($folder_path . $file); // unlink() delete the file
-                drush_log($file . ' deleted');
+            // Loop over all of the files in the folder
+            while ($file = readdir($dirHandle)) {
+
+                // If $file is NOT a directory remove it
+                if (!is_dir($file)) {
+                    unlink($folder_path . $file); // unlink() delete the file
+                    drush_log($file . ' deleted');
+                }
             }
-        }
 
-        // Close the directory
-        closedir($dirHandle);
+            // Close the directory
+            closedir($dirHandle);
+
+        }
     }
 
     // Set variable to TRUE so the mysql database views will be refreshed
