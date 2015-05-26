@@ -1,0 +1,28 @@
+commit 9b4a886f6c97a1c976f8af68d36af32b41cda969
+Author: Gergely Meszaros <greg@compucorp.co.uk>
+Date:   Tue May 26 13:50:36 2015 +0100
+
+    CRM-16461 for civi 4.5
+
+diff --git a/modules/views/components/civicrm.case.inc b/modules/views/components/civicrm.case.inc
+index cee8b45..dfb9a7f 100644
+--- a/modules/views/components/civicrm.case.inc
++++ b/modules/views/components/civicrm.case.inc
+@@ -93,7 +93,7 @@ function _civicrm_case_data(&$data, $enabled) {
+       'click sortable' => TRUE,
+       'pseudo class' => 'CRM_Case_PseudoConstant',
+       'pseudo method' => 'caseType',
+-	  'pseudo args' => array('Label', FALSE),
++	  'pseudo args' => array('Title', FALSE),
+     ),
+     'argument' => array(
+       'handler' => 'views_handler_argument',
+@@ -102,7 +102,7 @@ function _civicrm_case_data(&$data, $enabled) {
+       'handler' => 'civicrm_handler_filter_pseudo_constant',
+       'pseudo class' => 'CRM_Case_PseudoConstant',
+       'pseudo method' => 'caseType',
+-	  'pseudo args' => array('Label', FALSE),
++	  'pseudo args' => array('Title', FALSE),
+     ),
+     'sort' => array(
+       'handler' => 'views_handler_sort',
