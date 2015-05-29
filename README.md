@@ -1,18 +1,15 @@
 CiviHR employee portal custom Drupal modules
 ======================
 
+DEMO site available here:
+http://178.79.132.53:8001/welcome-page
+======================
+
 Installation instructions - CiviHR 1.5
 ======================
 
-- Install the hrdemo with civicrm_buildkit
-- Turn on the Radix theme (/appearance) and set it to default theme
-- Set the CiviCRM Administration theme and CiviCRM Public theme to Seven theme (/appearance)
-- Disable the Emergency contacts (v1.4) module
-- Disable the Absence (CiviHR v1.4) module
-- Uninstall the Absence (CiviHR v1.4) module
-- Install Absence (CiviHR v1.5)
-- Disable the Job (CiviHR v1.4) module (no uninstall needed here)
-- Install the Job Contract (CiviHR v1.5) module
+- Install the hr15 profile with civicrm_buildkit (https://github.com/civicrm/civicrm-buildkit)
+- Example command to install CiviHR: civibuild create hr15 --civi-ver 4.5 --url http://localhost:8900
 
 Optionally:
 - search for civihr_staff -> set absence entitlement for holidays, maternity etc
