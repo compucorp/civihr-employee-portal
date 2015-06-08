@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\civihr_employee_portal\Helpers\HelperClass;
+
 /**
  * Implementation of hook_rules_event_info().
  * @ingroup Absence entity
@@ -65,38 +67,17 @@ function civihr_employee_portal_rules_action_info() {
  */
 function _new_absence_request_action($roles, $absence_type, $absence_details, $form_values) {
     global $user;
-    
-    // Civi init
-    civicrm_initialize();
-    
-    // Get the main admin contact
-    $main_admin_contact = civicrm_api('uf_match', 'get', array(
-        'version' => 3,
-        'uf_id' => 1,
-    ));
-    
-    $main_admin_contact = array_shift($main_admin_contact['values']);
-    
-    // Set default manager ID
-    $main_manager_contact_id = $main_admin_contact['contact_id'];
-    
-    $res = civicrm_api3('Relationship', 'get', array('contact_id' => $_SESSION['CiviCRM']['userID']));
-    $contactRelationships = $res['values'];
-    
-    // If Leave approver is find, assign him as the manager (change the $main_manager_contact_id)
-    foreach ($contactRelationships as $key => $relation) {
-        if ($relation['relation'] == 'has Leave Approved by') {
-            $main_manager_contact_id = $relation['contact_id_b'];
-        }
-    }
-                
+
+    // Get the assigned manager contact IDs array
+    $managers = HelperClass::_get_contact_manager_contact_id($_SESSION['CiviCRM']['userID']);
+
     // Create the main activity
     $activityParam = array(
         'sequential' => 1,
         'source_contact_id' => $_SESSION['CiviCRM']['userID'],
         'target_contact_id' => $_SESSION['CiviCRM']['userID'],
         'details' => $form_values->details,
-        'assignee_contact_id' => $main_manager_contact_id,
+        'assignee_contact_id' => $managers[0],
         'activity_type_id' => $form_values->absence_request_type,
         // TODO --> status ID should be dynamic??
         'status_id' => '1'

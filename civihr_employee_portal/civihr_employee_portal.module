@@ -403,7 +403,7 @@ function get_civihr_contact_data($contact_id = NULL) {
 
                 $contact_data = civicrm_api('Contact', 'getsingle', array(
                     'version' => 3,
-                    'return' => array('display_name', 'nick_name', 'image_URL'),
+                    'return' => array('display_name', 'nick_name', 'image_URL', 'email'),
                     'id' => $contact_id
                 ));
                 watchdog('DB hit contact data', print_r($contact_id, TRUE));
@@ -1910,4 +1910,80 @@ function civihr_employee_portal_preprocess_page(&$vars) {
     $vars['edit_account'] = l('<i class="fa fa-edit"></i>' . t('Edit Account'), 'user/' . $user->uid . '/edit', array('html' => true));
     $vars['logout_link'] = l('<i class="fa fa-sign-out"></i>' . t('Log Out'), 'user/logout', array('html' => true));
 
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function civihr_employee_portal_token_info() {
+
+    $info = array();
+
+    // Define any custom tokens.
+    $info['tokens']['user']['assigned_manager_name'] = array(
+        'name' => t('Assigned manager name'),
+        'description' => t('Full Name of the assigned manager.'),
+    );
+
+    $info['tokens']['user']['assigned_manager_email'] = array(
+        'name' => t('Assigned manager email address'),
+        'description' => t('Email Address of the assigned manager.'),
+    );
+
+    return $info;
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function civihr_employee_portal_tokens($type, $tokens, array $data = array(), array $options = array()) {
+    $replacements = array();
+
+    if ($type == 'user') {
+
+        // Get the global user data, which includes Civi data too
+        global $user;
+
+        // Get the assigned manager contact IDs for the logged in contact
+        if (isset($_SESSION) && $_SESSION['CiviCRM']['userID'] != '') {
+            $managers = HelperClass::_get_contact_manager_contact_id($_SESSION['CiviCRM']['userID']);
+        }
+
+        // Get the details for the manager
+        $assigned_manager_contact_data = get_civihr_contact_data($managers[0]);
+
+        // Loop through the available tokens.
+        foreach ($tokens as $name => $original) {
+            // Find our custom tokens by name.
+            switch ($name) {
+                case 'assigned_manager_name':
+
+                    // Find the assigned manager name.
+                    $value = '';
+
+                    if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['display_name'] != '') {
+                        $value = $assigned_manager_contact_data['display_name'];
+                    }
+
+                    // Set the token values!
+                    $replacements[$original] = $value;
+                    break;
+
+                case 'assigned_manager_email':
+
+                    // Find the assigned manager email address.
+                    $value = '';
+
+                    if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['email'] != '') {
+                        $value = $assigned_manager_contact_data['email'];
+                    }
+
+                    // Set the token values!
+                    $replacements[$original] = $value;
+                    break;
+            }
+        }
+    }
+
+    return $replacements;
 }
