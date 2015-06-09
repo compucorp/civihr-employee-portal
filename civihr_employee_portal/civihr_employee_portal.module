@@ -972,7 +972,7 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
             $form_object = (object) $form_state['values'];
 
             // Fire rules events
-            rules_invoke_event('reject_all_post_event', $user, $target_user, $form_object);
+            rules_invoke_event('reject_all_post_event', $user, $target_user, $form_state['values']['manager_notes'], $form_object);
 
         }
 

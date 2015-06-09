@@ -26,6 +26,7 @@ function civihr_employee_portal_rules_event_info() {
             'variables' => array(
                 'current_user' => array('type' => 'user', 'label' => t('The current logged in user from Absence entity.')),
                 'target_user' => array('type' => 'user', 'label' => t('The target User entity.')),
+                'manager_notes' => array('type' => 'text', 'label' => t('Manager notes.')),
                 'form_values' => array('type' => 'object', 'label' => t('Submitted form values.')),
             ),
         ),
