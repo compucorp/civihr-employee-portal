@@ -790,6 +790,15 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
     $res = civicrm_api3('Activity', 'get', $abesence_details);
     $absence_details = $res['values'];
 
+    // Get additional details about the main activity
+    $additional_info = array(
+        'id' => $form_state['main_absence_id'],
+    );
+
+    $res = civicrm_api3('Activity', 'get', $additional_info);
+    $additional_info = $res['values'];
+
+    // Set up array list for checkboxes with absence values
     $disputes = array();
 
     // Calculate the whole duration
@@ -799,7 +808,6 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
     foreach ($absence_details as $absence_value) {
 
         $duration = $absence_value['duration'] / (6 * 80);
-
         $all_duration += $duration;
 
         $disputes[$absence_value['id']] = array($absence_value['activity_date_time'], $duration, get_civihr_absence_statuses($absence_value['status_id']));
@@ -839,17 +847,29 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
     );
 
     if ($all_duration <= 1) {
+
+        // Show 1 date only
+        $duration_date = $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'];
         $day = t('day');
     }
     else {
+
+        // Show start date and end date for the absence
+        $duration_date = array_values($disputes)[0][0] . ' - ' .  $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'];
         $day = t('days');
     }
 
+    // Output staff comments (if any)
+    $form['staff_comments'] = array(
+        '#markup' => '<div class="staff-comments"><span class="staff-notes-label">' . t('Staff notes: ') . '</span>' . $additional_info[$form_state['main_absence_id']]['details'] . '</div>'
+    );
+
     $form['whole_duration'] = array(
-        '#markup' => $absence_details[key($absence_details)]['activity_date_time'] . ' - ' .  $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'] . ' = ' . $all_duration . ' ' . $day . '<br /><br />',
+        '#markup' => $duration_date . ' = ' . $all_duration . ' ' . $day . '<br /><br />',
     );
 
     $form['#validate'][] = 'civihr_employee_portal_manager_approval_pick_days_form_validate';
+
     $form['#submit'][] = "civihr_employee_portal_manager_approval_pick_days_form_submit";
 
     $form['reject_all'] = array(
