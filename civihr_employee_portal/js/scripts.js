@@ -1,6 +1,26 @@
 (function($) {
 Drupal.behaviors.civihr_employee_portal = {
     attach: function (context, settings) {
+
+        // Hide if not needed
+        $('.form-item-manager-notes').hide();
+
+        // This is the reject all modal form submit button
+        $('#edit-reject-all').hide();
+
+        // Show manager notes form when any action button is clicked in the manager approval modal windows
+        $('#manager-reject-all').click(function() {
+
+            // Show the manager notes edit field
+            $('.form-item-manager-notes').show();
+
+            // Hide the reject jquery action button
+            $('#manager-reject-all').hide();
+
+            // Show the real Reject All form button
+            $('#edit-reject-all').show();
+
+        });
         
         $("#edit-absence-request-date-from-datepicker-popup-0", context).change(function() {
       

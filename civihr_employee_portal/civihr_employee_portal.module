@@ -790,13 +790,15 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
     $res = civicrm_api3('Activity', 'get', $abesence_details);
     $absence_details = $res['values'];
 
-    // Get additional details about the main activity
+    // Get additional details about the main activity (staff notes and manager notes too)
     $additional_info = array(
+        'sequential' => 1,
         'id' => $form_state['main_absence_id'],
+        'api.CustomValue.get' => array('entity_id' => $form_state['main_absence_id']),
     );
 
     $res = civicrm_api3('Activity', 'get', $additional_info);
-    $additional_info = $res['values'];
+    $additional_info = array_shift($res['values']);
 
     // Set up array list for checkboxes with absence values
     $disputes = array();
@@ -814,8 +816,20 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
 
     }
 
-    $header = array(t('Date'), t('Absence duration'), t('Absence status'));
+    if ($all_duration <= 1) {
 
+        // Show 1 date only
+        $duration_date = $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'];
+        $day = t('day');
+    }
+    else {
+
+        // Show start date and end date for the absence
+        $duration_date = array_values($disputes)[0][0] . ' - ' .  $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'];
+        $day = t('days');
+    }
+
+    $header = array(t('Date'), t('Absence duration'), t('Absence status'));
     $absenceTypes = get_civihr_absence_types();
 
     foreach ($absenceTypes as $absenceType) {
@@ -836,7 +850,12 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
     );
 
     $form['leave_type'] = array(
-        '#markup' => '<div class="approval-leave-type">' . t('Leave type:') . ' ' . $leave_type . '</div>',
+        '#markup' => '<div class="approval-leave-type"><b>' . t('Leave type:') . '</b> ' . $leave_type . '</div>',
+    );
+
+    // Start / End date of the absence duration
+    $form['whole_duration'] = array(
+        '#markup' => '<div class="whole-duration"><b>Date: </b>' . $duration_date . ' = ' . $all_duration . ' ' . $day . '</div>',
     );
 
     $form['pick_day_checkboxes'] = array(
@@ -846,31 +865,24 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
         '#empty' => 'No users were found.'
     );
 
-    if ($all_duration <= 1) {
-
-        // Show 1 date only
-        $duration_date = $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'];
-        $day = t('day');
-    }
-    else {
-
-        // Show start date and end date for the absence
-        $duration_date = array_values($disputes)[0][0] . ' - ' .  $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'];
-        $day = t('days');
-    }
-
     // Output staff comments (if any)
     $form['staff_comments'] = array(
-        '#markup' => '<div class="staff-comments"><span class="staff-notes-label">' . t('Staff notes: ') . '</span>' . $additional_info[$form_state['main_absence_id']]['details'] . '</div>'
+        '#markup' => '<div class="staff-comments"><div class="staff-notes-label"><b>' . t('Staff notes: ') . '</b></div>' . $additional_info['details'] . '</div>'
     );
 
-    $form['whole_duration'] = array(
-        '#markup' => $duration_date . ' = ' . $all_duration . ' ' . $day . '<br /><br />',
+    // api.CustomValue.get (show manager notes)
+    $form['manager_notes'] = array(
+        '#title' => t('Manager notes: '),
+        '#type' => 'textarea',
+        '#rows' => 2,
+        '#description' => t('Additional manager notes. (These will be visible for staff!)'),
+        '#default_value' => isset($additional_info['api.CustomValue.get']) ? $additional_info['api.CustomValue.get']['values'][0]['latest'] : '',
     );
 
-    $form['#validate'][] = 'civihr_employee_portal_manager_approval_pick_days_form_validate';
-
-    $form['#submit'][] = "civihr_employee_portal_manager_approval_pick_days_form_submit";
+    // This is a jquery button, which will be replaced onclick with the real Reject All form button (+it will show the manager comments form)
+    $form['manager_actions'] = array(
+        '#markup' => '<div id="manager-reject-all" class="form-submit btn btn-default">' . t('Reject all') . '</div>'
+    );
 
     $form['reject_all'] = array(
         '#type' => 'submit',
@@ -886,6 +898,9 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
         '#type' => 'submit',
         '#value' => t('Approve selected'),
     );
+
+    $form['#validate'][] = 'civihr_employee_portal_manager_approval_pick_days_form_validate';
+    $form['#submit'][] = "civihr_employee_portal_manager_approval_pick_days_form_submit";
 
     return $form;
 
@@ -923,11 +938,19 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
 
             }
 
+            // Set the activity status
             $result = civicrm_api3('Activity', 'setvalue', array(
-                                                                    'id' => $form_state['values']['main_id'],
-                                                                    'field' => 'status_id',
-                                                                    'value' => 9
-                                                               ));
+                'id' => $form_state['values']['main_id'],
+                'field' => 'status_id',
+                'value' => 9
+            ));
+
+            // Set the manager notes for the main absence ID
+            $result = civicrm_api3('Activity', 'setvalue', array(
+                'id' => $form_state['values']['main_id'],
+                'field' => 'custom_34',
+                'value' => $form_state['values']['manager_notes']
+            ));
 
             drupal_set_message(t('Leave successfully rejected for the whole duration'), 'success');
         }
