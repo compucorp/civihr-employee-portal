@@ -19,6 +19,16 @@ function civihr_employee_portal_rules_event_info() {
                 'form_values' => array('type' => 'object', 'label' => t('Submitted form values.')),
             ),
         ),
+        'reject_all_post_event' => array(
+            'label' => t('Reject All button event - All Absence Rejected'),
+            'group' => t('Absence entity'),
+            'module' => 'civihr_employee_portal',
+            'variables' => array(
+                'current_user' => array('type' => 'user', 'label' => t('The current logged in user from Absence entity.')),
+                'target_user' => array('type' => 'user', 'label' => t('The target User entity.')),
+                'form_values' => array('type' => 'object', 'label' => t('Submitted form values.')),
+            ),
+        ),
     );
 }
 
@@ -66,10 +76,12 @@ function civihr_employee_portal_rules_action_info() {
  * New absence request action.
  */
 function _new_absence_request_action($roles, $absence_type, $absence_details, $form_values) {
+
+    // @TODO --> Change this to the passed USER object (source or target)
     global $user;
 
     // Get the assigned manager contact IDs array
-    $managers = HelperClass::_get_contact_manager_contact_id($_SESSION['CiviCRM']['userID']);
+    $managers = HelperClass::_get_contact_manager_contact_id($user->uid);
 
     // Create the main activity
     $activityParam = array(

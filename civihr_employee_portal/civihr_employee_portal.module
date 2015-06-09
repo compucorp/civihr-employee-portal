@@ -921,6 +921,9 @@ function civihr_employee_portal_manager_approval_pick_days_form_validate($form, 
 
 function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$form_state) {
 
+    // Current USER object
+    global $user;
+
     // @TODO -> move to custom rules action (so it will be configurable through UI)
     if ($form_state['values']['op'] == 'Reject all') {
         if (isset($form_state['values']['pick_day_checkboxes'])) {
@@ -931,10 +934,10 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
             foreach ($form_state['values']['pick_day_checkboxes'] as $act_key => $act_value) {
 
                 $result = civicrm_api3('Activity', 'setvalue', array(
-                                                                    'id' => $act_key,
-                                                                    'field' => 'status_id',
-                                                                    'value' => 9
-                                                               ));
+                    'id' => $act_key,
+                    'field' => 'status_id',
+                    'value' => 9
+                ));
 
             }
 
@@ -952,7 +955,25 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
                 'value' => $form_state['values']['manager_notes']
             ));
 
-            drupal_set_message(t('Leave successfully rejected for the whole duration'), 'success');
+            $params = array(
+                'contact_id' => $form_state['user_data'],
+                'version' => 3,
+                'sequential' => 1,
+            );
+
+            // Get the USER ID from the passed target contact ID
+            $res = civicrm_api3('UFMatch', 'Get', $params);
+            $contact_data = array_shift($res['values']);
+
+            // Set the target user OBJECT
+            $target_user = user_load($contact_data['uf_id']);
+
+            // Send the form submitted values
+            $form_object = (object) $form_state['values'];
+
+            // Fire rules events
+            rules_invoke_event('reject_all_post_event', $user, $target_user, $form_object);
+
         }
 
     }
@@ -1984,12 +2005,13 @@ function civihr_employee_portal_tokens($type, $tokens, array $data = array(), ar
 
     if ($type == 'user') {
 
-        // Get the global user data, which includes Civi data too
-        global $user;
+        // Get the USER what is passed in Rules (can be current USER or TARGET user for example)
+        watchdog('data object', print_r($data, TRUE));
 
-        // Get the assigned manager contact IDs for the logged in contact
-        if (isset($_SESSION) && $_SESSION['CiviCRM']['userID'] != '') {
-            $managers = HelperClass::_get_contact_manager_contact_id($_SESSION['CiviCRM']['userID']);
+        // Get the assigned manager contact IDs for the passed USER object
+        if (isset($data['user']) && $data['user']->uid != '') {
+
+            $managers = HelperClass::_get_contact_manager_contact_id($data['user']->uid);
         }
 
         // Get the details for the manager

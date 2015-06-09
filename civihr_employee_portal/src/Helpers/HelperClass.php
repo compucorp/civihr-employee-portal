@@ -38,16 +38,27 @@ class HelperClass {
     }
 
     /**
-     * @param $contact_id
+     * @param $user_id
      * @return mixed
-     * Pass the contact ID and this function will return array of assigned manager contact IDs
+     * Pass the user ID and this function will return array of assigned manager contact IDs
      */
-    public static function _get_contact_manager_contact_id($contact_id) {
+    public static function _get_contact_manager_contact_id($user_id) {
 
         // Civi init
         civicrm_initialize();
 
-        $res = civicrm_api3('Relationship', 'get', array('contact_id' => $contact_id));
+        $params = array(
+            'uf_id' => $user_id,
+            'version' => 3,
+            'sequential' => 1,
+        );
+
+        // Get the contact DATA from the passed user ID
+        $res = civicrm_api3('UFMatch', 'Get', $params);
+        $contact_data = array_shift($res['values']);
+
+        // Get the relationships for the Contact
+        $res = civicrm_api3('Relationship', 'get', array('contact_id' => $contact_data['contact_id']));
         $contactRelationships = $res['values'];
 
         $assigned_manager_contact_ids = [];
