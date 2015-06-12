@@ -1314,7 +1314,7 @@ function civihr_employee_portal_absence_request_form_submit($form, &$form_state)
     $absence_details = '';
 
     if (isset($form_state['values']['details']) && $form_state['values']['details'] != '') {
-        $absence_details = $form_state['values']['details'];
+        $absence_details = drupal_html_to_text(nl2br($form_state['values']['details']));
     }
 
     // Send the form submitted values
