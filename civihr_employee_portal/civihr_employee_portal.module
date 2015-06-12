@@ -971,8 +971,10 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
             // Send the form submitted values
             $form_object = (object) $form_state['values'];
 
+            $manager_notes = drupal_html_to_text(nl2br($form_state['values']['manager_notes']));
+
             // Fire rules events
-            rules_invoke_event('reject_all_post_event', $user, $target_user, $form_state['values']['manager_notes'], $form_object);
+            rules_invoke_event('reject_all_post_event', $user, $target_user, $manager_notes, $form_object);
 
         }
 
