@@ -14,9 +14,11 @@ function civihr_employee_portal_rules_event_info() {
             'module' => 'civihr_employee_portal',
             'variables' => array(
                 'current_user' => array('type' => 'user', 'label' => t('The current logged in user from Absence entity.')),
-                'absence_type' => array('type' => 'text', 'label' => t('Absence type.')),
+                'absence_type' => array('type' => 'text', 'label' => t('Absence Debit/Credit main type.')),
                 'absence_details' => array('type' => 'text', 'label' => t('Absence details.')),
                 'form_values' => array('type' => 'object', 'label' => t('Submitted form values.')),
+                'leave_type' => array('type' => 'text', 'label' => t('Leave Type.')),
+                'leave_date' => array('type' => 'text', 'label' => t('Leave Date and Duration.')),
             ),
         ),
         'reject_all_post_event' => array(

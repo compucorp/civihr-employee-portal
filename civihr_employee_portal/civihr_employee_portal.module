@@ -1374,10 +1374,10 @@ function civihr_employee_portal_absence_request_form_submit($form, &$form_state)
     global $user;
 
     // Set absence type
-    $absence_type = 'debit';
+    $absence_main_type = 'debit';
 
     if (isset($form_state['values']['absence_type']) && $form_state['values']['absence_type'] != '') {
-        $absence_type = $form_state['values']['absence_type'];
+        $absence_main_type = $form_state['values']['absence_type'];
     }
 
     // Set absence details
@@ -1387,11 +1387,29 @@ function civihr_employee_portal_absence_request_form_submit($form, &$form_state)
         $absence_details = drupal_html_to_text(nl2br($form_state['values']['details']));
     }
 
+    // Get the absence types
+    $absenceTypes = get_civihr_absence_types();
+
+    // Get leave Type
+    foreach ($absenceTypes as $absenceType) {
+
+        if (isset($absenceType['credit_activity_type_id']) && $absenceType['credit_activity_type_id'] == $form_state['values']['absence_request_type']) {
+            $leave_type = $absenceType['title'];
+        }
+
+        if (isset($absenceType['debit_activity_type_id']) && $absenceType['debit_activity_type_id'] == $form_state['values']['absence_request_type']) {
+            $leave_type = $absenceType['title'];
+        }
+    }
+
     // Send the form submitted values
     $form_object = (object) $form_state['values'];
 
+    // Get the leave date and duration
+    $leave_date = '1975';
+
     // Fire rules events
-    rules_invoke_event('absence_request_add', $user, $absence_type, $absence_details, $form_object);
+    rules_invoke_event('absence_request_add', $user, $absence_main_type, $absence_details, $form_object, $leave_type, $leave_date);
 
 }
 
@@ -2058,8 +2076,14 @@ function civihr_employee_portal_token_info() {
     // Define any custom tokens.
     $info['tokens']['user']['contact_display_name'] = array(
         'name' => t('CiviCRM Contact Display Name'),
-        'description' => t('CiviCRM Display Name from the contact.'),
+        'description' => t('CiviCRM Display Name from the contact record.'),
     );
+
+    $info['tokens']['user']['contact_phone'] = array(
+        'name' => t('CiviCRM Contact Phone'),
+        'description' => t('CiviCRM Contact Phone from the contact record.'),
+    );
+
 
     $info['tokens']['user']['assigned_manager_name'] = array(
         'name' => t('Assigned manager name'),
@@ -2113,6 +2137,18 @@ function civihr_employee_portal_tokens($type, $tokens, array $data = array(), ar
 
                     if (isset($user_contact_data) && $user_contact_data['display_name'] != '') {
                         $value = $user_contact_data['display_name'];
+                    }
+
+                    // Set the token values!
+                    $replacements[$original] = $value;
+                    break;
+                case 'contact_phone':
+
+                    // Find the contact phone number.
+                    $value = '';
+
+                    if (isset($user_contact_data) && $user_contact_data['phone'] != '') {
+                        $value = $user_contact_data['phone'];
                     }
 
                     // Set the token values!
