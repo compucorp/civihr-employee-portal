@@ -47,18 +47,12 @@ class HelperClass {
         // Civi init
         civicrm_initialize();
 
-        $params = array(
-            'uf_id' => $user_id,
-            'version' => 3,
-            'sequential' => 1,
-        );
+        // Get the contact ID based on the USER ID
+        $contact_id = get_civihr_uf_match_data($user_id)['contact_id'];
 
-        // Get the contact DATA from the passed user ID
-        $res = civicrm_api3('UFMatch', 'Get', $params);
-        $contact_data = array_shift($res['values']);
-
+        // @TODO -> cache the relationships if we need to!
         // Get the relationships for the Contact
-        $res = civicrm_api3('Relationship', 'get', array('contact_id' => $contact_data['contact_id']));
+        $res = civicrm_api3('Relationship', 'get', array('contact_id' => $contact_id));
         $contactRelationships = $res['values'];
 
         $assigned_manager_contact_ids = [];

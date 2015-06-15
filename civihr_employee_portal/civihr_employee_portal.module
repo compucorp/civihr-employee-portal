@@ -382,9 +382,63 @@ function get_civihr_absence_statuses($status_id = NULL) {
 }
 
 /**
+ * Function for caching civicrm_uf_match table from CiviCRM
+ */
+function get_civihr_uf_match_data($user_id = NULL) {
+
+    // Generate unique static callable / uf_match
+    $contact_uf_match = &drupal_static(__FUNCTION__ . '_' . $user_id);
+
+    if (!isset($contact_uf_match)) {
+        if ($cache = cache_get('civihr_uf_match_data_' . $user_id)) {
+            $contact_uf_match = $cache->data;
+            watchdog('cache hit user uf_match data', print_r($user_id, TRUE));
+        }
+        else {
+
+            try {
+
+                // Civi init
+                civicrm_initialize();
+
+                $params = array(
+                    'uf_id' => $user_id,
+                    'version' => 3,
+                    'sequential' => 1,
+                );
+
+                // Get the contact DATA from the passed user ID
+                $res = civicrm_api3('UFMatch', 'Get', $params);
+                $contact_uf_match = array_shift($res['values']);
+
+                watchdog('DB hit user uf_match data', print_r($user_id, TRUE));
+
+            }
+
+            catch (CiviCRM_API3_Exception $e) {
+                $error = $e->getMessage();
+            }
+
+            // Cache the contact data for 5 minutes
+            cache_set('civihr_uf_match_data_' . $user_id, $contact_uf_match, 'cache', time() + 360);
+        }
+    }
+
+    return $contact_uf_match;
+}
+
+/**
  * Function for caching contact data returned from CiviCRM
  */
-function get_civihr_contact_data($contact_id = NULL) {
+function get_civihr_contact_data($contact_id = NULL, $user_id = '') {
+
+    // If $user_id is passed get the contact ID and continue in the function
+    if (isset($user_id) && $user_id != '') {
+
+        // Get the contact ID based on the USER ID
+        $contact_id = get_civihr_uf_match_data($user_id)['contact_id'];
+
+    }
 
     // Generate unique static callable / contact
     $contact_data = &drupal_static(__FUNCTION__ . '_' . $contact_id);
@@ -403,7 +457,7 @@ function get_civihr_contact_data($contact_id = NULL) {
 
                 $contact_data = civicrm_api('Contact', 'getsingle', array(
                     'version' => 3,
-                    'return' => array('display_name', 'nick_name', 'image_URL', 'email'),
+                    'return' => array('display_name', 'nick_name', 'image_URL', 'email', 'phone'),
                     'id' => $contact_id
                 ));
                 watchdog('DB hit contact data', print_r($contact_id, TRUE));
@@ -853,9 +907,21 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
         '#markup' => '<div class="approval-leave-type"><b>' . t('Leave type:') . '</b> ' . $leave_type . '</div>',
     );
 
+    $form['hidden_leave_type'] = array(
+        '#type'     => 'hidden',
+        '#title' => 'Leave type',
+        '#default_value' => $leave_type,
+    );
+
     // Start / End date of the absence duration
     $form['whole_duration'] = array(
         '#markup' => '<div class="whole-duration"><b>Date: </b>' . $duration_date . ' = ' . $all_duration . ' ' . $day . '</div>',
+    );
+
+    $form['hidden_whole_duration'] = array(
+        '#type'     => 'hidden',
+        '#title' => 'Duration and Date (showed in emails)',
+        '#default_value' => $duration_date . ' = ' . $all_duration . ' ' . $day,
     );
 
     $form['pick_day_checkboxes'] = array(
@@ -968,13 +1034,17 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
             // Set the target user OBJECT
             $target_user = user_load($contact_data['uf_id']);
 
-            // Send the form submitted values
-            $form_object = (object) $form_state['values'];
-
+            // Get the manager notes
             $manager_notes = drupal_html_to_text(nl2br($form_state['values']['manager_notes']));
 
+            // Get the leave type
+            $leave_type = $form_state['values']['hidden_leave_type'];
+
+            // Get the Start Date / End Date + duration of the leave
+            $leave_date = $form_state['values']['hidden_whole_duration'];
+
             // Fire rules events
-            rules_invoke_event('reject_all_post_event', $user, $target_user, $manager_notes, $form_object);
+            rules_invoke_event('reject_all_post_event', $user, $target_user, $manager_notes, $leave_type, $leave_date);
 
         }
 
@@ -1986,9 +2056,19 @@ function civihr_employee_portal_token_info() {
     $info = array();
 
     // Define any custom tokens.
+    $info['tokens']['user']['contact_display_name'] = array(
+        'name' => t('CiviCRM Contact Display Name'),
+        'description' => t('CiviCRM Display Name from the contact.'),
+    );
+
     $info['tokens']['user']['assigned_manager_name'] = array(
         'name' => t('Assigned manager name'),
         'description' => t('Full Name of the assigned manager.'),
+    );
+
+    $info['tokens']['user']['assigned_manager_phone'] = array(
+        'name' => t('Assigned manager phone'),
+        'description' => t('Phone of the assigned manager.'),
     );
 
     $info['tokens']['user']['assigned_manager_email'] = array(
@@ -2014,6 +2094,8 @@ function civihr_employee_portal_tokens($type, $tokens, array $data = array(), ar
         if (isset($data['user']) && $data['user']->uid != '') {
 
             $managers = HelperClass::_get_contact_manager_contact_id($data['user']->uid);
+            $user_contact_data = get_civihr_contact_data(NULL, $data['user']->uid);
+
         }
 
         // Get the details for the manager
@@ -2023,6 +2105,20 @@ function civihr_employee_portal_tokens($type, $tokens, array $data = array(), ar
         foreach ($tokens as $name => $original) {
             // Find our custom tokens by name.
             switch ($name) {
+
+                case 'contact_display_name':
+
+                    // Find the contact display name.
+                    $value = '';
+
+                    if (isset($user_contact_data) && $user_contact_data['display_name'] != '') {
+                        $value = $user_contact_data['display_name'];
+                    }
+
+                    // Set the token values!
+                    $replacements[$original] = $value;
+                    break;
+
                 case 'assigned_manager_name':
 
                     // Find the assigned manager name.
@@ -2030,6 +2126,19 @@ function civihr_employee_portal_tokens($type, $tokens, array $data = array(), ar
 
                     if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['display_name'] != '') {
                         $value = $assigned_manager_contact_data['display_name'];
+                    }
+
+                    // Set the token values!
+                    $replacements[$original] = $value;
+                    break;
+
+                case 'assigned_manager_phone':
+
+                    // Find the assigned manager phone.
+                    $value = '';
+
+                    if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['phone'] != '') {
+                        $value = $assigned_manager_contact_data['phone'];
                     }
 
                     // Set the token values!

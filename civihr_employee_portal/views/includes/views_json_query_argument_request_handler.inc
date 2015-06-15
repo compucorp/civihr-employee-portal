@@ -114,8 +114,7 @@ class views_json_query_argument_request_handler extends views_handler_argument {
             watchdog('passed request', print_r($passed_request, TRUE));
         }
         else {
-            
-            watchdog('def argument', print_r($this->argument, TRUE));
+
             // Fallback to the specified default value
             $passed_request = $this->argument;
         }
