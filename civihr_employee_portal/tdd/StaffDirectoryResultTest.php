@@ -1,7 +1,7 @@
 <?php 
 
 // We assume that this script is being executed from the root of the Drupal
-// installation. e.g. -- > phpunit StaffDirectoryResultTest sites/all/modules/civihr_custom/civihr_employee_portal/tdd/StaffDirectoryResultTest.php
+// installation. e.g. -- > phpunit StaffDirectoryResultTest sites/all/modules/civihr-custom/civihr_employee_portal/tdd/StaffDirectoryResultTest.php
 // These constants and variables are needed for the bootstrap process.
 define('DRUPAL_ROOT', getcwd());
 
