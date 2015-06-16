@@ -24,6 +24,8 @@ dependencies[] = front_page
 dependencies[] = fancy_login
 dependencies[] = jcarousel
 dependencies[] = views_fieldsets
+dependencies[] = views_datasource
+dependencies[] = mailsystem
 dependencies[] = civicrm_entity
 dependencies[] = civihr_hrjobcontract_entities
 
