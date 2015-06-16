@@ -1405,8 +1405,28 @@ function civihr_employee_portal_absence_request_form_submit($form, &$form_state)
     // Send the form submitted values
     $form_object = (object) $form_state['values'];
 
-    // Get the leave date and duration
-    $leave_date = '1975';
+    $whole_duration = 0;
+
+    // Calculate the leave whole duration
+    foreach ($form_state['values'] as $s_key => $form_s_val) {
+
+        if (strpos($s_key, '_requested_day_') !== false) {
+            $whole_duration += $form_s_val;
+        }
+    }
+
+    // Get the leave_date
+    if (isset($form_state['values']) && $form_state['values']['dates_counter'] != '1') {
+        $absence_date = $form_state['values']['absence_request_date_from'] . ' - ' . $form_state['values']['absence_request_date_to'];
+        $day = t('days');
+    }
+    else {
+        $absence_date = $form_state['values']['absence_request_date_from'];
+        $day = t('day');
+    }
+
+    // Build the leave date string
+    $leave_date = $absence_date . ' = ' . $whole_duration / (6 * 80) . ' ' . $day;
 
     // Fire rules events
     rules_invoke_event('absence_request_add', $user, $absence_main_type, $absence_details, $form_object, $leave_type, $leave_date);
@@ -2110,9 +2130,6 @@ function civihr_employee_portal_tokens($type, $tokens, array $data = array(), ar
     $replacements = array();
 
     if ($type == 'user') {
-
-        // Get the USER what is passed in Rules (can be current USER or TARGET user for example)
-        watchdog('data object', print_r($data, TRUE));
 
         // Get the assigned manager contact IDs for the passed USER object
         if (isset($data['user']) && $data['user']->uid != '') {
