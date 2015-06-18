@@ -1014,10 +1014,16 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
                 'value' => 9
             ));
 
+            // As manger notes is a custom field at first we need to find the ID for the custom field as this can change
+            $custom_field_data = civicrm_api3('CustomField', 'get', array(
+                'sequential' => 1,
+                'name' => "Comment",
+            ));
+
             // Set the manager notes for the main absence ID
             $result = civicrm_api3('Activity', 'setvalue', array(
                 'id' => $form_state['values']['main_id'],
-                'field' => 'custom_34',
+                'field' => 'custom_' . $custom_field_data['id'],
                 'value' => $form_state['values']['manager_notes']
             ));
 
