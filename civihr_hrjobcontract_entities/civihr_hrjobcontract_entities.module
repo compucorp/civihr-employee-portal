@@ -44,6 +44,8 @@ function civihr_hrjobcontract_entities_init() {
                         ORDER BY r2.effective_date DESC 
                         LIMIT 1
                     )
+
+                    AND (t.period_end_date >= NOW() OR t.period_end_date IS NULL)
                     GROUP BY r.jobcontract_id");
         
         db_query('DROP VIEW IF EXISTS hrjc_health');
