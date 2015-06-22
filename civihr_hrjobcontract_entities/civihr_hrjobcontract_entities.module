@@ -27,7 +27,7 @@ function civihr_hrjobcontract_entities_init() {
                     ov_location.label AS location,
                     c.is_primary
                     FROM {$civi_db_name}.civicrm_hrjobcontract_details AS t
-                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.id
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.details_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
                     
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_contract_type ON og_contract_type.name = 'hrjc_contract_type'
@@ -63,8 +63,10 @@ function civihr_hrjobcontract_entities_init() {
                     t.description_life_insurance,
                     t.dependents_life_insurance
                     FROM {$civi_db_name}.civicrm_hrjobcontract_health AS t
-                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.id
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.health_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_details d ON r.details_revision_id = d.jobcontract_revision_id
                     
                     WHERE r.id = ( 
                         SELECT r2.id
@@ -74,6 +76,7 @@ function civihr_hrjobcontract_entities_init() {
                         ORDER BY r2.effective_date DESC 
                         LIMIT 1
                     )
+                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
                     GROUP BY r.jobcontract_id");
         
         db_query('DROP VIEW IF EXISTS hrjc_hour');
@@ -90,11 +93,13 @@ function civihr_hrjobcontract_entities_init() {
                     t.fte_num,
                     t.fte_denom
                     FROM {$civi_db_name}.civicrm_hrjobcontract_hour AS t
-                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.id
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.hour_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
                     
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_hours_type ON og_hours_type.name = 'hrjc_hours_type'
                     LEFT JOIN {$civi_db_name}.civicrm_option_value ov_hours_type ON og_hours_type.id = ov_hours_type.option_group_id AND ov_hours_type.value = t.hours_type
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_details d ON r.details_revision_id = d.jobcontract_revision_id
                     
                     WHERE r.id = ( 
                         SELECT r2.id
@@ -104,6 +109,7 @@ function civihr_hrjobcontract_entities_init() {
                         ORDER BY r2.effective_date DESC 
                         LIMIT 1
                     )
+                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
                     GROUP BY r.jobcontract_id");
         
         db_query('DROP VIEW IF EXISTS hrjc_leave');
@@ -115,10 +121,12 @@ function civihr_hrjobcontract_entities_init() {
                     at.name AS leave_type,
                     t.leave_amount
                     FROM {$civi_db_name}.civicrm_hrjobcontract_leave AS t
-                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.id
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.leave_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
                     
                     LEFT JOIN {$civi_db_name}.civicrm_hrabsence_type at ON t.leave_type = at.id
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_details d ON r.details_revision_id = d.jobcontract_revision_id
                     
                     WHERE r.id = ( 
                         SELECT r2.id
@@ -128,6 +136,7 @@ function civihr_hrjobcontract_entities_init() {
                         ORDER BY r2.effective_date DESC 
                         LIMIT 1
                     )
+                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
                     GROUP BY r.jobcontract_id");
         
         db_query('DROP VIEW IF EXISTS hrjc_pay');
@@ -149,7 +158,7 @@ function civihr_hrjobcontract_entities_init() {
                     t.pay_per_cycle_gross,
                     t.pay_per_cycle_net
                     FROM {$civi_db_name}.civicrm_hrjobcontract_pay AS t
-                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.id
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.pay_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
                     
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_is_paid ON og_is_paid.name = 'hrjc_pay_grade'
@@ -161,6 +170,8 @@ function civihr_hrjobcontract_entities_init() {
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_pay_cycle ON og_pay_cycle.name = 'hrjc_pay_cycle'
                     LEFT JOIN {$civi_db_name}.civicrm_option_value ov_pay_cycle ON og_pay_cycle.id = ov_pay_cycle.option_group_id AND ov_pay_cycle.value = t.pay_cycle
                     
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_details d ON r.details_revision_id = d.jobcontract_revision_id
+                    
                     WHERE r.id = ( 
                         SELECT r2.id
                         FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
@@ -169,6 +180,7 @@ function civihr_hrjobcontract_entities_init() {
                         ORDER BY r2.effective_date DESC 
                         LIMIT 1
                     )
+                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
                     GROUP BY r.jobcontract_id");
         
         db_query('DROP VIEW IF EXISTS hrjc_pension');
@@ -184,11 +196,13 @@ function civihr_hrjobcontract_entities_init() {
                     t.ee_contrib_abs,
                     t.ee_evidence_note
                     FROM {$civi_db_name}.civicrm_hrjobcontract_pension AS t
-                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.id
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.pension_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
                     
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_pension_type ON og_pension_type.name = 'hrjc_pension_type'
                     LEFT JOIN {$civi_db_name}.civicrm_option_value ov_pension_type ON og_pension_type.id = ov_pension_type.option_group_id AND ov_pension_type.value = t.pension_type
+                    
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_details d ON r.details_revision_id = d.jobcontract_revision_id
                     
                     WHERE r.id = ( 
                         SELECT r2.id
@@ -198,6 +212,7 @@ function civihr_hrjobcontract_entities_init() {
                         ORDER BY r2.effective_date DESC 
                         LIMIT 1
                     )
+                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
                     GROUP BY r.jobcontract_id");
         
         db_query('DROP VIEW IF EXISTS hrjc_role');
