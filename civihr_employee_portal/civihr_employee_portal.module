@@ -2232,6 +2232,11 @@ function civihr_employee_portal_module_implements_alter(&$implementations, $hook
         return;
     }
 
+    // Check if the module exists and it's installed
+    if (!module_exists('views_autocomplete_filters')) {
+        return;
+    }
+
     $module = 'views_autocomplete_filters';
     watchdog('alter default order', print_r($implementations, TRUE));
 
