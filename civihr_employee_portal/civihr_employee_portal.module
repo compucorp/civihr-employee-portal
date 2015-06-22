@@ -2222,3 +2222,25 @@ function civihr_employee_portal_tokens($type, $tokens, array $data = array(), ar
 
     return $replacements;
 }
+
+/**
+ * Implements hook_module_implements_alter()
+ */
+function civihr_employee_portal_module_implements_alter(&$implementations, $hook) {
+
+    if ($hook != 'views_data_alter') {
+        return;
+    }
+
+    $module = 'views_autocomplete_filters';
+    watchdog('alter default order', print_r($implementations, TRUE));
+
+    $group = array($module => $implementations[$module]);
+    unset($implementations[$module]);
+
+    // Make sure this module is after civicrm to avoid error with autocomplete search
+    $implementations = $implementations + $group;
+
+    watchdog('alter modified order', print_r($implementations, TRUE));
+}
+
