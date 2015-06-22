@@ -46,6 +46,7 @@ function civihr_hrjobcontract_entities_init() {
                     )
 
                     AND (t.period_end_date >= NOW() OR t.period_end_date IS NULL)
+                    AND c.deleted = 0
                     GROUP BY r.jobcontract_id");
         
         db_query('DROP VIEW IF EXISTS hrjc_health');
@@ -77,6 +78,7 @@ function civihr_hrjobcontract_entities_init() {
                         LIMIT 1
                     )
                     AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
+                    AND c.deleted = 0
                     GROUP BY r.jobcontract_id");
         
         db_query('DROP VIEW IF EXISTS hrjc_hour');
@@ -110,6 +112,7 @@ function civihr_hrjobcontract_entities_init() {
                         LIMIT 1
                     )
                     AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
+                    AND c.deleted = 0
                     GROUP BY r.jobcontract_id");
         
         db_query('DROP VIEW IF EXISTS hrjc_leave');
@@ -137,6 +140,7 @@ function civihr_hrjobcontract_entities_init() {
                         LIMIT 1
                     )
                     AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
+                    AND c.deleted = 0
                     GROUP BY r.jobcontract_id");
         
         db_query('DROP VIEW IF EXISTS hrjc_pay');
@@ -181,6 +185,7 @@ function civihr_hrjobcontract_entities_init() {
                         LIMIT 1
                     )
                     AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
+                    AND c.deleted = 0
                     GROUP BY r.jobcontract_id");
         
         db_query('DROP VIEW IF EXISTS hrjc_pension');
@@ -213,6 +218,7 @@ function civihr_hrjobcontract_entities_init() {
                         LIMIT 1
                     )
                     AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
+                    AND c.deleted = 0
                     GROUP BY r.jobcontract_id");
         
         db_query('DROP VIEW IF EXISTS hrjc_role');
