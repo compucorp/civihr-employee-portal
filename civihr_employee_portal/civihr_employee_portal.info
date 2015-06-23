@@ -27,6 +27,7 @@ dependencies[] = views_fieldsets
 dependencies[] = mailsystem
 dependencies[] = civicrm_entity
 dependencies[] = civihr_hrjobcontract_entities
+dependencies[] = views_autocomplete_filters
 
 ; Views Handlers
 files[] = views/includes/civihr_employee_portal_handler_absence_duration.inc
