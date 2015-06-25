@@ -772,13 +772,22 @@ function civihr_employee_portal_manager_approval_pick_days_callback($ajax, $acti
 
         $title = t('Manager approval modal window');
 
-        // Get the contact data (cached or from CIVI)
-        $contact_data = get_civihr_contact_data($user);
+        // Getting the details for the current user or staff
+        if (!isset($user) || $user == 'user') {
 
-        if ($action == 'pick_days') {
-            $title = t('Approve leave for: ' . $contact_data['display_name']);
+            $title = t('Absence Details');
+
         }
+        else {
 
+            // Get the contact data (cached or from CIVI)
+            $contact_data = get_civihr_contact_data($user);
+
+            if ($action == 'pick_days') {
+                $title = t('Approve leave for: ' . $contact_data['display_name']);
+            }
+
+        }
 
         $form_state = array(
             'ajax' => TRUE,
@@ -929,37 +938,54 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
         '#markup' => '<div class="staff-comments"><div class="staff-notes-label"><b>' . t('Staff notes: ') . '</b></div>' . $additional_info['details'] . '</div>'
     );
 
-    // api.CustomValue.get (show manager notes)
-    $form['manager_notes'] = array(
-        '#title' => t('Manager notes: '),
-        '#type' => 'textarea',
-        '#rows' => 2,
-        '#description' => t('Additional manager notes. (These will be visible for staff!)'),
-        '#default_value' => isset($additional_info['api.CustomValue.get']) ? $additional_info['api.CustomValue.get']['values'][0]['latest'] : '',
-    );
+    // Get manager notes data (if any)
+    $manager_notes_data = isset($additional_info['api.CustomValue.get']) && !empty($additional_info['api.CustomValue.get']['values']) ? $additional_info['api.CustomValue.get']['values'][0]['latest'] : '';
 
-    // This is a jquery button, which will be replaced onclick with the real Reject All form button (+it will show the manager comments form)
-    $form['manager_actions'] = array(
-        '#markup' => '<div id="manager-reject-all" class="form-submit btn btn-default">' . t('Reject all') . '</div>'
-    );
+    // Check if we are in readonly mode
+    if ($form_state['user_data'] != 'user') {
 
-    $form['reject_all'] = array(
-        '#type' => 'submit',
-        '#value' => t('Reject all'),
-    );
+        // api.CustomValue.get (show manager notes)
+        $form['manager_notes'] = array(
+            '#title' => t('Manager notes: '),
+            '#type' => 'textarea',
+            '#rows' => 2,
+            '#description' => t('Additional manager notes. (These will be visible for staff!)'),
+            '#default_value' => $manager_notes_data,
+        );
 
-    $form['approve_all'] = array(
-        '#type' => 'submit',
-        '#value' => t('Approve all'),
-    );
+        // This is a jquery button, which will be replaced onclick with the real Reject All form button (+it will show the manager comments form)
+        $form['manager_actions'] = array(
+            '#markup' => '<div id="manager-reject-all" class="form-submit btn btn-default">' . t('Reject all') . '</div>'
+        );
 
-    $form['approve_selected'] = array(
-        '#type' => 'submit',
-        '#value' => t('Approve selected'),
-    );
+        $form['reject_all'] = array(
+            '#type' => 'submit',
+            '#value' => t('Reject all'),
+        );
 
-    $form['#validate'][] = 'civihr_employee_portal_manager_approval_pick_days_form_validate';
-    $form['#submit'][] = "civihr_employee_portal_manager_approval_pick_days_form_submit";
+        $form['approve_all'] = array(
+            '#type' => 'submit',
+            '#value' => t('Approve all'),
+        );
+
+        $form['approve_selected'] = array(
+            '#type' => 'submit',
+            '#value' => t('Approve selected'),
+        );
+
+        $form['#validate'][] = 'civihr_employee_portal_manager_approval_pick_days_form_validate';
+        $form['#submit'][] = "civihr_employee_portal_manager_approval_pick_days_form_submit";
+
+    }
+    else {
+
+        // Still show the read only manager notes
+        $form['show_manager_notes'] = array(
+            '#markup' => '<div class="show-manager-comments"><div class="show-manager-notes-label"><b>' . t('Manager notes: ') . '</b></div>' . $manager_notes_data . '</div>'
+        );
+    }
+
+
 
     return $form;
 
