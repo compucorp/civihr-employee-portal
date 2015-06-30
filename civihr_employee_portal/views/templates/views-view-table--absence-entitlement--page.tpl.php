@@ -39,7 +39,7 @@
     </thead>
   <?php endif; ?>
   <tbody>
-  
+
     <?php foreach ($rows as $row_count => $row): ?>
       
       <tr <?php if ($row_classes[$row_count]) { print 'class="' . implode(' ', $row_classes[$row_count]) .'"';  } ?>>

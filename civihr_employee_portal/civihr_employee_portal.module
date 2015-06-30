@@ -1278,7 +1278,7 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
         '#type' => 'date_popup',
         '#required' => 'TRUE',
         '#date_format' => 'Y-m-d',
-        '#date_year_range' => '-10:+10',
+        '#date_year_range' => '-2:+2',
     );
 
     $form['absence_request_date_to'] = array(
@@ -1386,9 +1386,12 @@ function jms_industry_lens_form_ajax(&$form, &$form_state) {
     return $form['absence_request_dates_selected'];
 }
 
+/**
+ * @param $form
+ * @param $form_state
+ * @return bool
+ */
 function civihr_employee_portal_absence_request_form_validate($form, &$form_state) {
-
-    watchdog('passed data', print_r($form_state['values'], TRUE));
 
     global $user;
 
@@ -1423,15 +1426,41 @@ function civihr_employee_portal_absence_request_form_validate($form, &$form_stat
         if (!isset($form_state['values']['absence_request_date_from']['date'])) {
 
             // Explode the date, convert to timestamp and compare to the current day timestamp
-            $mk_time = explode("-", $form_state['values']['absence_request_date_from']);
-            $request_timestamp = mktime(0, 0, 0, $mk_time[1], $mk_time[2], $mk_time[0]);
+            $mk_time_start = explode("-", $form_state['values']['absence_request_date_from']);
+            $mk_time_end = explode("-", $form_state['values']['absence_request_date_to']);
+
+            // Not allow the request to overflow to next/different year (how we calculate the available entitlement if we allow this?)
+            if ($mk_time_end[0] != $mk_time_start[0]) {
+                form_set_error('absence_request_date_to', t('Absence request start and end date must be in the same year!'));
+            }
+
+            // Load the date periods
+            $date_periods = get_civihr_date_periods();
+
+            foreach ($date_periods as $date_period) {
+
+                // Check the date periods and compare to the requested absence start date
+                if (strpos($date_period['start_date'], $mk_time_start[0]) !== false) {
+                    $period_id = $date_period['id'];
+                }
+
+            }
+
+            // Check if we have the period ID (based on the passed absence start date year) - if no period ID return error
+            if (!isset($period_id)) {
+                form_set_error('absence_request_date_from', t("This date period is not yet defined, please contact your Administrator!"));
+                return FALSE;
+            }
+
+            // Requested leave - start timestamp
+            $request_timestamp = mktime(0, 0, 0, $mk_time_start[1], $mk_time_start[2], $mk_time_start[0]);
 
             // If we requested leave with start date in the past
-            if ($request_timestamp < strtotime('today'))
+            if ($request_timestamp < strtotime('today') && $form_state['values']['absence_type'] != "sick")
                 form_set_error('absence_request_date_from', t('Only Sickness can be requested with start date in the past!'));
 
-            // Check if we have enough leave left to request this leave (only if leave type is DEBIT) -> deducting days
-            if ($form_state['values']['absence_type'] == 'debit') {
+            // Check if we have enough leave left to request this leave (only if leave type is DEBIT or CREDIT_USE) -> deducting days
+            if ($form_state['values']['absence_type'] == 'debit' || $form_state['values']['absence_type'] == 'credit_use') {
 
                 // Get the absence types
                 $absenceTypes = get_civihr_absence_types();
@@ -1461,12 +1490,24 @@ function civihr_employee_portal_absence_request_form_validate($form, &$form_stat
                     }
                 }
 
-                $entitlement_data = civicrm_api3('HRAbsenceEntitlement', 'getsingle', array(
-                    'sequential' => 1,
-                    'type_id' => $leave_id,
-                    'contact_id' => $_SESSION['CiviCRM']['userID'],
-                    'period_id' => 1,
-                ));
+                try {
+
+                    $entitlement_data = civicrm_api3('HRAbsenceEntitlement', 'getsingle', array(
+                        'sequential' => 1,
+                        'type_id' => $leave_id,
+                        'contact_id' => $_SESSION['CiviCRM']['userID'],
+                        'period_id' => $period_id,
+                        'options' => array('limit' => 1) // Make sure to return with limit 1 as if credit and debit is defined the API returns 2 results as default
+                    ));
+
+                } catch (Exception $e) {
+
+                    // No entitlement returned or server error
+                    watchdog('exception - entitlement data', print_r($e, TRUE));
+
+                    form_set_error('absence_request_date_from', t("No entitlement defined for absence type, or server error!"));
+                    return FALSE;
+                }
 
                 // Duration of days what we requested
                 $whole_duration = $whole_duration / (6 * 80);
@@ -1476,27 +1517,42 @@ function civihr_employee_portal_absence_request_form_validate($form, &$form_stat
                     ->condition('contact_id', $_SESSION['CiviCRM']['userID'])
                     ->condition('absence_status', 3, '<>')
                     ->condition('absence_status', 9, '<>')
+                    ->condition('absence_start_date', '%' . db_like($mk_time_start[0]) . '%', 'LIKE')
                     ->condition('activity_type_id', $form_state['values']['absence_request_type']);
                 $q->addExpression('sum(duration) / (6 * 80)');
 
                 $sum_approved_duration = $q->execute()->fetchField();
 
-                $available_days = $entitlement_data['amount'] - $sum_approved_duration;
+                // Check if we have credit added for that absence type
+                $q = db_select('absence_list', 'al')
+                    ->condition('contact_id', $_SESSION['CiviCRM']['userID'])
+                    ->condition('absence_status', 3, '<>')
+                    ->condition('absence_status', 9, '<>')
+                    ->condition('is_credit', 1)
+                    ->condition('absence_start_date', '%' . db_like($mk_time_start[0]) . '%', 'LIKE')
+                    ->condition('absence_title', $leave_type);
+                $q->addExpression('sum(duration) / (6 * 80)');
+
+                $sum_added_credit = $q->execute()->fetchField();
+
+                // Available days = (credit absences added + total_entitlement) - debit_absences
+                $available_days = ($sum_added_credit + $entitlement_data['amount']) - $sum_approved_duration;
 
                 if ($whole_duration > $available_days) {
 
                     form_set_error('absence_request_date_from', t("You don't have enough days available to request this leave! (@days_left days left)", array('@days_left' => $available_days)));
 
                 }
-                // @TODO -> Pass the date period from URL
-                // @ not allow request to overflow to next year
 
-                watchdog('approve duration', print_r($sum_approved_duration, TRUE));
+                watchdog('total duration requested', print_r($whole_duration, TRUE));
+                watchdog('entitlement data', print_r($entitlement_data['amount'], TRUE));
+                watchdog('sum total added credit', print_r($sum_added_credit, TRUE));
+                watchdog('already approved duration', print_r($sum_approved_duration, TRUE));
 
-                watchdog('total dur', print_r($whole_duration, TRUE));
-                watchdog('result', print_r($entitlement_data, TRUE));
-                watchdog('user data', print_r($user, TRUE));
+
             }
+
+            // @todo If we requeting credit type -> currently no rule
 
         }
     }
