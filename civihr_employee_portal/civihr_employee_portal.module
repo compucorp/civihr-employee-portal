@@ -1230,7 +1230,7 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
             if ($absenceType['allow_credits'] == '1' && $absence_type == 'credit') {
 
                 // Default credit types
-                $options[$absenceType['credit_activity_type_id']] = $absenceType['title'] . ' (Credit)';
+                $options[$absenceType['credit_activity_type_id']] = $absenceType['title'];
 
             }
 
