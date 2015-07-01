@@ -1318,12 +1318,40 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
         $to = $form_state['values']['absence_request_date_to'];
         $i = 0;
 
+        try {
+
+            // Get the activity ID for the public holiday activity type
+            $holiday_activity_type_id = civicrm_api3('OptionValue', 'getvalue', array(
+                'sequential' => 1,
+                'name' => "Public Holiday",
+                'return' => "value"
+            ));
+
+            // Get the public holidays
+            $public_holidays = civicrm_api3('Activity', 'get', array(
+                'sequential' => 1,
+                'activity_type_id' => $holiday_activity_type_id,
+            ));
+
+        } catch (Exception $e) {
+
+            // No public holidays returned or server error
+            watchdog('exception - public holidays', print_r($e, TRUE));
+
+            form_set_error('absence_request_date_from', t("Public holidays not defined, or server error!"));
+            return $form;
+        }
+
         while ($from <= $to) {
+
+            // Check if the day is public holiday or not working day
+            $check_day = _checkRequestedDay($public_holidays, $from);
 
             $form['absence_request_dates_selected']['_requested_day_' . $i] = array(
                 '#type'     => 'select',
-                '#title' => $from,
-                '#options' => array('480' => t('All day'), '240' => t('Half day')),
+                '#title' => $from . $check_day['exclude_type'],
+                '#options' => array('480' => t('All day'), '240' => t('Half day'), '0' => t('Excluded @exclude_type', array('@exclude_type' => $check_day['exclude_type']))),
+                '#default_value' => $check_day['default_value']
             );
 
             $from = strtotime($from);
@@ -1364,7 +1392,21 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
  */
 function jms_industry_lens_form_ajax(&$form, &$form_state) {
 
-    $form['absence_request_dates_selected']['#title'] = t('Dates selected:') . ' ' . $form_state['values']['absence_request_date_from'] . " - " . $form_state['values']['absence_request_date_to'];
+    // Init leave whole duration
+    $whole_duration = 0;
+
+    // Calculate the leave whole duration
+    foreach ($form_state['values'] as $s_key => $form_s_val) {
+
+        if (strpos($s_key, '_requested_day_') !== false) {
+            $whole_duration += $form_s_val;
+        }
+    }
+
+    // Get the days
+    $whole_duration = $whole_duration / (6 * 80);
+
+    $form['absence_request_dates_selected']['#title'] = t('Dates selected:') . ' ' . $form_state['values']['absence_request_date_from'] . " - " . $form_state['values']['absence_request_date_to'] . " - " . $whole_duration . " " . t("days") ;
 
     $from = $form_state['values']['absence_request_date_from'];
     $to = $form_state['values']['absence_request_date_to'];
@@ -1460,7 +1502,7 @@ function civihr_employee_portal_absence_request_form_validate($form, &$form_stat
                 form_set_error('absence_request_date_from', t('Only Sickness can be requested with start date in the past!'));
 
             // Check if we have enough leave left to request this leave (only if leave type is DEBIT or CREDIT_USE) -> deducting days
-            if ($form_state['values']['absence_type'] == 'debit' || $form_state['values']['absence_type'] == 'credit_use') {
+            if (isset($form_state['values']['absence_type']) && ($form_state['values']['absence_type'] == 'debit' || $form_state['values']['absence_type'] == 'credit_use')) {
 
                 // Get the absence types
                 $absenceTypes = get_civihr_absence_types();
@@ -2410,3 +2452,55 @@ function civihr_employee_portal_module_implements_alter(&$implementations, $hook
     watchdog('alter modified order', print_r($implementations, TRUE));
 }
 
+/**
+ * Check if a passed date is weekend day or not
+ */
+function _isWeekend($date_passed) {
+
+    $date = explode("-", $date_passed);
+
+    $time = mktime(0, 0, 0, $date[1], $date[2], $date[0]);
+    $weekday = date('w', $time);
+    return ($weekday == 0 || $weekday == 6);
+}
+
+/**
+ * @param $public_holidays
+ * Check if the requested day is holiday or not working day
+ */
+function _checkRequestedDay($public_holidays, $date) {
+
+    $not_working_day = t('Weekend');
+
+    foreach ($public_holidays['values'] as $public_holiday) {
+
+        $public_holiday_date = explode(" ", $public_holiday['activity_date_time']);
+
+        // If the public holiday equals with the requested date and the public holiday is enabled
+        if ($public_holiday_date[0] == $date && $public_holiday['status_id'] == 1) {
+            $exclude_type = " (" . $public_holiday['subject'] . ")";
+
+            return array(
+                'default_value' => 0,
+                'exclude_type' => $exclude_type
+            );
+        }
+        else if (_isWeekend($date)) {
+            $exclude_type = " (" . $not_working_day . ")";
+
+            return array(
+                'default_value' => 0,
+                'exclude_type' => $exclude_type
+            );
+
+        }
+
+    }
+
+    // Default fallback value
+    return array(
+        'default_value' => 480,
+        'exclude_type' => ''
+    );
+
+}
