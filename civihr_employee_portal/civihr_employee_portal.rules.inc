@@ -126,12 +126,12 @@ function _new_absence_request_action($roles, $absence_type, $absence_details, $f
                 $new_date = $new_date + (60 * 60 * 24 * $date_counter);
                 $new_date = date('Y-m-d', $new_date);
                 
-                $absentDateDurations[$object_property_key] = array('date' => $new_date . " 00:00:00", 'duration' => $object_property_value, 'approval' => '2');
+                $absentDateDurations[$object_property_key] = array('date' => $new_date . " 00:00:00", 'duration' => $object_property_value, 'approval' => '1');
             
             }
             else {
                 
-                $absentDateDurations[$object_property_key] = array('date' => $form_values->absence_request_date_from . " 00:00:00", 'duration' => $object_property_value, 'approval' => '2');
+                $absentDateDurations[$object_property_key] = array('date' => $form_values->absence_request_date_from . " 00:00:00", 'duration' => $object_property_value, 'approval' => '1');
                 
             }
             
