@@ -190,6 +190,10 @@ function civihr_employee_portal_permission() {
       'title' => t('Access CiviHR manager approval screen'),
       'description' => t('Perfom manager approval related tasks for CiviHR.'),
     ),
+    'access private file download' => array(
+      'title' => t('Access CiviHR absence attached files'),
+      'description' => t('Availability to access the files attached for Absence.'),
+    ),
   );
 }
 
@@ -936,6 +940,23 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
         '#empty' => 'No users were found.'
     );
 
+    // Check if the user has the permissions to see the attachments
+    if (user_access('access private file download')) {
+
+        // Load the activity entity
+        $main_activity = entity_load_single('civicrm_activity', $form_state['main_absence_id']);
+
+        // Check if attachment is set
+        if (isset($main_activity->field_attachment['und'][0]['uri'])) {
+            $imgpath = $main_activity->field_attachment['und'][0]['uri'];
+
+            $form['show_attached_file'] = array(
+                '#markup' => '<div class="show-attached-file"><div class="show-attached-file-label"><b>' . t('Attached file: ') . '</b></div>' . l("View Attachment", file_create_url($imgpath), array('html' => TRUE, 'attributes' => array('target' => '_blank'))) . '</div>'
+            );
+        }
+
+    }
+
     // Output staff comments (if any)
     $form['staff_comments'] = array(
         '#markup' => '<div class="staff-comments"><div class="staff-notes-label"><b>' . t('Staff notes: ') . '</b></div>' . $additional_info['details'] . '</div>'
@@ -986,6 +1007,7 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
         $form['show_manager_notes'] = array(
             '#markup' => '<div class="show-manager-comments"><div class="show-manager-notes-label"><b>' . t('Manager notes: ') . '</b></div>' . $manager_notes_data . '</div>'
         );
+
     }
 
 
@@ -1622,6 +1644,8 @@ function civihr_employee_portal_absence_request_form_submit($form, &$form_state)
 
     global $user;
 
+    $submitted_attachment = new stdClass();
+
     if (isset($form_state['values']['absence_file']) && $form_state['values']['absence_file'] != "") {
 
         // Unset the file from the form
@@ -1630,10 +1654,13 @@ function civihr_employee_portal_absence_request_form_submit($form, &$form_state)
 
         // Change the file to permanent
         $file->status = FILE_STATUS_PERMANENT;
-        file_save($file);
+        $file->display = 1;
+        $file->description = '';
 
-        watchdog('file ID to attach', print_r($file, TRUE));
-        watchdog('absence data', print_r($form_state['values'], TRUE));
+        $saved_file = file_save($file);
+
+        // Add the attached file
+        $submitted_attachment = (object) $saved_file;
 
     }
 
@@ -1693,7 +1720,7 @@ function civihr_employee_portal_absence_request_form_submit($form, &$form_state)
     $leave_date = $absence_date . ' = ' . $whole_duration / (6 * 80) . ' ' . $day;
 
     // Fire rules events
-    rules_invoke_event('absence_request_add', $user, $absence_main_type, $absence_details, $form_object, $leave_type, $leave_date);
+    rules_invoke_event('absence_request_add', $user, $absence_main_type, $absence_details, $form_object, $leave_type, $leave_date, $submitted_attachment);
 
 }
 
@@ -2513,5 +2540,18 @@ function _checkRequestedDay($public_holidays, $date) {
         'default_value' => 480,
         'exclude_type' => ''
     );
+
+}
+
+// Check if the user can access the private file
+function civihr_employee_portal_file_download_access_alter(&$grants, $file_item, $entity_type, $entity) {
+
+    if ($entity_type == 'civicrm_activity') {
+
+        // Check if the user has the permissions to see the attachments
+        if (user_access('access private file download')) {
+            $grants = array(TRUE);
+        }
+    }
 
 }

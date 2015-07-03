@@ -19,6 +19,7 @@ function civihr_employee_portal_rules_event_info() {
                 'form_values' => array('type' => 'object', 'label' => t('Submitted form values.')),
                 'leave_type' => array('type' => 'text', 'label' => t('Leave Type.')),
                 'leave_date' => array('type' => 'text', 'label' => t('Leave Date and Duration.')),
+                'submitted_attachment' => array('type' => 'object', 'label' => t('Submitted file attachment.')),
             ),
         ),
         'reject_all_post_event' => array(
@@ -69,6 +70,11 @@ function civihr_employee_portal_rules_action_info() {
                     'label' => t('Submitted form values'),
                     'description' => t("Submitted form values by the employee."),
                 ),
+                'submitted_attachment' => array(
+                    'type' => 'object',
+                    'label' => t('Submitted file attachment'),
+                    'description' => t("Submitted file attachment by the employee."),
+                ),
             ),
         ),
     );
@@ -79,7 +85,7 @@ function civihr_employee_portal_rules_action_info() {
 /**
  * New absence request action.
  */
-function _new_absence_request_action($roles, $absence_type, $absence_details, $form_values) {
+function _new_absence_request_action($roles, $absence_type, $absence_details, $form_values, $submitted_attachment) {
 
     // @TODO --> Change this to the passed USER object (source or target)
     global $user;
@@ -111,9 +117,29 @@ function _new_absence_request_action($roles, $absence_type, $absence_details, $f
         'source_record_id' => $result['id'],
         'activity_type_id' => $activityTypeId,
     );
-    
+
+    // Check if there is attachment created
+    if (count((array) $submitted_attachment) != 0) {
+
+        watchdog('absence attached file', print_r($submitted_attachment, TRUE));
+
+        // @TODO -> check if we have file - if yes load the entity add the file and save
+        // Load the main entity
+        $main_activity = entity_load_single('civicrm_activity', $result['id']);
+
+        // Attach the file to the entity
+        $main_activity->field_attachment[LANGUAGE_NONE][0] = (array) $submitted_attachment;
+
+        // Save the entity
+        $main_activity->save();
+
+    }
+    else {
+        watchdog('no attached file', print_r($submitted_attachment, TRUE));
+    }
+
+    // Define Absence Date Durations
     $absentDateDurations = array();
-    
     $date_counter = 0;
     
     foreach ($form_values as $object_property_key => $object_property_value) {
