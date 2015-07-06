@@ -27,6 +27,7 @@ function civihr_employee_portal_init() {
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/custom.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweet-alert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/documents.css");
 
     // Check the variable and decide if we need to rebuild the absence_list mysql view
     $rebuild_absence_list_view = variable_get('rebuild_absence_list_view', 'TRUE');
@@ -221,6 +222,14 @@ function civihr_employee_portal_theme() {
                 'custom_data' => NULL
             ),
             'template' => 'templates/civihr-employee-portal-print-leave-report',
+        ),
+        'civihr_employee_portal_document_form' => array(
+            //'arguments' => array('form' => NULL),
+            'variables' => array(
+                'custom_data' => NULL
+            ),
+            'template' => 'templates/civihr-employee-portal-document-form',
+            'render element' => 'form',
         ),
     );
 }
@@ -495,6 +504,21 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
+    $items['civi_documents'] = array(
+        'title' => 'Document list',
+        'page callback' => 'civihr_employee_portal_get_document_list',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    $items['civi_documents/%ctools_js/edit/%'] = array(
+        'title' => 'Document edit',
+        'page callback' => 'civihr_employee_portal_edit_document',
+        'page arguments' => array(1, 3),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
     $items['civihr_contacts'] = array(
         'title' => 'Vacancy list',
         'page callback' => 'civihr_employee_portal_get_contact_list',
@@ -618,6 +642,10 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
 
     if ($link_type == 'hr-resource') {
         return '' . l($link_text, 'hr_resources/nojs/resource/' . $nid, array('attributes' => array('class' => 'ctools-use-modal ctools-modal-civihr-default-style'))) . '';
+    }
+    
+    if ($link_type == 'document') {
+        return '' . l($link_text, 'civi_documents/nojs/edit/' . $nid, array('attributes' => array('class' => 'ctools-use-modal ctools-modal-civihr-default-style'))) . '';
     }
 
     return '' . l($link_text, 'absence_request/nojs/' . $link_type, array('attributes' => array('class' => 'btn btn-custom ctools-use-modal ctools-modal-civihr-default-style'))) . '';
@@ -1014,16 +1042,10 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
                 'value' => 9
             ));
 
-            // As manger notes is a custom field at first we need to find the ID for the custom field as this can change
-            $custom_field_data = civicrm_api3('CustomField', 'get', array(
-                'sequential' => 1,
-                'name' => "Comment",
-            ));
-
             // Set the manager notes for the main absence ID
             $result = civicrm_api3('Activity', 'setvalue', array(
                 'id' => $form_state['values']['main_id'],
-                'field' => 'custom_' . $custom_field_data['id'],
+                'field' => 'custom_34',
                 'value' => $form_state['values']['manager_notes']
             ));
 
@@ -1494,6 +1516,227 @@ function civihr_employee_portal_get_vacancy_list() {
 }
 
 /**
+ * Returns the vacancy list from CiviCRM in json format
+ * The json response will be cached in local file when the VIEWS requests to load data from this endpoint
+ */
+function civihr_employee_portal_get_document_list() {
+
+    watchdog('not cached document list', 'test');
+
+    $result_output = civicrm_api3('Document', 'get', array(
+        'sequential' => 1,
+        //'return' => "id",
+    ));
+
+    // Output json
+    drupal_json_output($result_output);
+    drupal_exit();
+
+}
+
+/**
+* Ajax menu callback.
+*/
+function civihr_employee_portal_edit_document($ajax, $id) {
+
+    if ($ajax) {
+        ctools_include('ajax');
+        ctools_include('modal');
+        
+        //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/plupload/plupload.full.min.js');
+        //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/plupload-init.js');
+        ////ctools_add_js('plupload.full.min', 'civihr_employee_portal', 'js/plupload');
+        ////ctools_add_js('plupload-init', 'civihr_employee_portal', 'js');
+
+        $title = t('Upload Document');
+
+        $form_state = array(
+            'ajax' => TRUE,
+            'is_ajax_update' => TRUE,
+            'title' => $title,
+            'id' => $id,
+            'some_form_field' => 'test123',
+            //'absence_type' => 'credit',
+        );
+
+        // Since this will run again on form rebuild while still in the modal, prevent
+        // form IDs from being incremented.
+        // @todo https://drupal.org/node/1305882
+        if (!empty($_POST['ajax_html_ids'])) {
+            unset($_POST['ajax_html_ids']);
+        }
+
+        // Use ctools to generate ajax instructions for the browser to create
+        // a form in a modal popup.
+        $output = ctools_modal_form_wrapper('civihr_employee_portal_document_form', $form_state);
+        //print ajax_render($output);drupal_exit();
+        //$form = drupal_get_form('civihr_employee_portal_document_form');
+        /*$form_name = 'civihr_employee_portal_document_form';
+        $form = drupal_get_form($form_name);
+        print drupal_render($form);drupal_exit();
+        $output = drupal_build_form($form, $form_state);*/
+//var_dump($output);drupal_exit();
+        // If the form has been submitted, there may be additional instructions
+        // such as dismissing the modal popup.
+        if (!empty($form_state['executed'])) {
+
+            drupal_add_js('misc/jquery.form.js');
+            // Add the responder javascript, required by ctools
+            ctools_add_js('ajax-responder');
+
+            $output[] = ajax_command_replace('.messages', 'all good');
+            $output[] = ctools_modal_command_dismiss();
+            $output[] = ctools_ajax_command_redirect('dashboard');
+
+        }
+
+        // Return the ajax instructions to the browser via ajax_render().
+        print ajax_render($output);
+        drupal_exit();
+
+    }
+
+    else {
+        return drupal_get_form('civihr_employee_portal_document_form');
+    }
+
+}
+
+/**
+ * Custom Document dashboard block form.
+ */
+function civihr_employee_portal_document_form($form, &$form_state) {
+
+    $result = civicrm_api3('Document', 'get', array(
+        'sequential' => 1,
+        'id' => $form_state['id'],
+    ));
+    $document = CRM_Utils_Array::first($result['values']);
+
+    $files = CRM_Tasksassignments_Page_Files::fileList(
+        array(
+            'entityTable' => 'civicrm_activity',
+            'entityID' => $document['id'],
+        )
+    );
+    //$files = array();
+
+    $form['document_type'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Document type'),
+        '#attributes' => array('placeholder' => t('Enter name')),
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => 'Some type</div>',
+        '#default_value' => $document['subject'],
+    );
+    
+    $form['files'] = array(
+        '#type' => 'plupload',
+        '#title' => 'Files',
+        '#prefix' => '<div class="col-md-6"><div class="well drop-zone" id="drop-target">Drop document(s) here</div>',
+        '#suffix' => '<div id="notsupported">Your browser doesn\'t support multiupload feature.</div>
+            <div>
+                <table class="table table-condensed ct-table-upload">
+                    <colgroup>
+                            <col class="col-index">
+                            <col class="col-name">
+                            <col class="col-size">
+                            <col class="col-status">
+                            <col class="col-action">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Size</th>
+                        <th>Progress</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="filelist">
+                    </tbody>
+                </table>
+            </div>
+            <br />
+            <div id="container">
+                <a id="pickfiles" href="javascript:;">[Select files]</a> 
+                <a id="uploadfiles" href="javascript:;">[Upload files]</a>
+            </div>
+            <br />
+            <pre id="console"></pre>
+            <script>
+            var uploaderInstance = null;
+            CRM.$(document).ready(function () { uploaderInstance = Uploader({id: ' . $document['id'] . ', formId: "civihr-employee-portal-document-form", files:' . json_encode($files) . '}); });
+            </script>
+        </div>',
+    );
+    
+    $form['expiry_date'] = array(
+        '#title' => t('Expiry date:'),
+        '#type' => 'date_popup',
+        '#required' => 'TRUE',
+        '#date_format' => 'Y-m-d',
+        '#date_year_range' => '-10:+10',
+        '#default_value' => $document['expire_date'],
+    );
+    
+    $form['details'] = array(
+        '#type' => 'textarea',
+        '#title' => t('Notes'),
+        '#rows' => 10,
+        '#cols' => 100,
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div>',
+        '#default_value' => strip_tags($document['details']),
+    );
+    
+    $form['delete_files'] = array(
+        '#type' => 'hidden',
+        //'#tree' => TRUE,
+    );
+    
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Save'),
+        '#prefix' => '<hr>'
+    );
+
+    // Add the validation function
+    $form['#validate'][] = 'civihr_employee_portal_document_form_validate';
+
+    // Add the submit function
+    $form['#submit'][] = 'civihr_employee_portal_document_form_submit';
+
+    return $form;
+}
+
+function civihr_employee_portal_document_form_validate($form, &$form_state) {
+
+    if ($form_state['values']['details'] == '') {
+        form_set_error('display_name', 'Details cannot be blank!');
+    }
+}
+
+function civihr_employee_portal_document_form_submit($form, &$form_state) {
+
+    global $user;
+
+    //var_dump($form_state['values']['details']);
+    
+    /*drupal_goto('hr-staff-directory', array('query'=> array(
+                                                        'display_name' => $form_state['values']['display_name'],
+                                                        'job_title' => $form_state['values']['job_title'],
+                                                        'phone' => $form_state['values']['phone'],
+                                                        'email_value' => $form_state['values']['email_value'],
+
+    )));*/
+
+    // Fire rules events
+    //rules_invoke_event('absence_request_add', $user, $absence_main_type, $absence_details, $form_object, $leave_type, $leave_date);
+
+}
+
+/**
  * Returns the contact list from CiviCRM in json format
  * The json response will be cached in local file when the VIEWS requests to load data from this endpoint
  */
@@ -1769,6 +2012,9 @@ function civihr_employee_portal_views_pre_render(&$view) {
 
         }
     }
+    
+    //if ($view->name == 'Documents') {
+    //}
 }
 
 /**
