@@ -103,9 +103,11 @@ function Uploader(config)
         that.removeFile(id);
         that.htmlRenderFileList();
         console.info('files:');console.info(that.uploader.files);
+        var deleteFiles = document.getElementsByName('delete_files')[0];
+        deleteFiles.value = JSON.stringify(that.files.deleted);
     }
     
-    this.submitForm = function() {
+    this.uploadFiles = function() {
         that.uploader.start();
     }
     
@@ -149,18 +151,17 @@ function Uploader(config)
         
         return bytes.toFixed(1) + ' ' + units[u];
     }
-    
-    document.getElementById(that.config.formId).addEventListener('submit', function(e) {
-        
-        e.preventDefault();
+
+    /*CRM.$('#civihr-employee-portal-document-form #edit-submit').bind('click', function(el) {
+        //el.preventDefault();
         if (!that.uploaded) {
-            console.info('uploading files');
-            that.submitForm();
+            console.info('uploading files!');
+            that.uploadFiles();
             return false;
         }
         console.info('submitting form');
         return true;
-    });
+    });*/
     
     uploader.init();
     htmlRenderFileList();
