@@ -1,5 +1,7 @@
 <?php
 
+global $base_url;
+
 $view = new view();
 $view->name = 'Documents';
 $view->description = '';
@@ -21,7 +23,7 @@ $handler->display->display_options['access']['role'] = array(
 );
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
-$handler->display->display_options['query']['options']['json_file'] = 'http://hr15.localhost/civi_documents/';
+$handler->display->display_options['query']['options']['json_file'] = $base_url . '/civi_documents/';
 $handler->display->display_options['query']['options']['row_apath'] = 'values';
 $handler->display->display_options['query']['options']['show_errors'] = 1;
 $handler->display->display_options['exposed_form']['type'] = 'basic';
