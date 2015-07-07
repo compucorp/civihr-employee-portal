@@ -86,11 +86,11 @@ $statuses = array(
               endif;
               ?>
               <?php if ($field === 'status_id'): ?>
-                <select class="document-status" onchange="changeDocumentStatus(<?php print strip_tags($row['id']); ?>, this.value)">
+                <select class="document-status" name="document-<?php print strip_tags($row['id']); ?>-select-status" onchange="changeDocumentStatus(<?php print strip_tags($row['id']); ?>, this)">
                 <?php foreach ($statuses as $statusKey => $statusValue): ?>
                     <?php
                         $selected = '';
-                        if ($statusKey == strip_tags($content)):
+                        if ($statusKey == (int)strip_tags($content)):
                             $selected = ' selected="selected"';
                         endif;
                     ?>
@@ -99,13 +99,35 @@ $statuses = array(
                 </select>
               <?php continue; ?>
               <?php endif; ?>
+              <?php if ($field === 'case_id'): ?>
+              <?php
+                $caseId = (int)strip_tags($content);
+                if ($caseId):
+                    $case = civicrm_api3('Case', 'get', array(
+                      'sequential' => 1,
+                      'id' => $caseId,
+                    ));
+                    $caseType = civicrm_api3('CaseType', 'get', array(
+                      'sequential' => 1,
+                      'id' => $case['values'][0]['case_type_id'],
+                    ));
+                    print $caseType['values'][0]['title'];
+                endif;
+              ?>
+              <?php continue; ?>
+              <?php endif; ?>
               <?php if ($field === 'nothing'): ?>
-                <div class="more">
-                    <span>More...</span>
-                    <?php if ((int)strip_tags($row['file_count'])): ?><a href="/civicrm/tasksassignments/file/zip?entityID=<?php print $row['id']; ?>&entityTable=civicrm_activity" target="_blank">View</a><?php endif; ?>
-                    <a href="/civi_documents/nojs/edit/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Edit</a>
-                    <a href="/civi_documents/nojs/reminder/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Send reminder</a>
-                    <a href="/civi_documents/nojs/delete/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Delete</a>
+                <div class="btn-group">
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                        More...
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <?php if ((int)strip_tags($row['file_count'])): ?><li><a href="/civicrm/tasksassignments/file/zip?entityID=<?php print $row['id']; ?>&entityTable=civicrm_activity" target="_blank">View</a></li><?php endif; ?>
+                        <li><a href="/civi_documents/nojs/edit/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Edit</a></li>
+                        <li><a href="/civi_documents/nojs/reminder/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Send reminder</a></li>
+                        <li><a href="/civi_documents/nojs/delete/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Delete</a></li>
+                    </ul>
                 </div>
               <?php else: ?>
                 <?php print strip_tags($content); ?>
@@ -118,9 +140,14 @@ $statuses = array(
 </table>
 
 <script>
-    function changeDocumentStatus(id, value) {
-        console.info('TODO: change Document status on the fly');
-        console.info('id: ' + id);
-        console.info('value: ' + value);
+    function changeDocumentStatus(id, ob) {
+        CRM.$(ob).attr('disabled', 'disabled');
+        CRM.api3('Document', 'create', {
+        "sequential": 1,
+        "id": id,
+        "status_id": ob.value
+        }).done(function(result) {
+            CRM.$(ob).removeAttr('disabled');
+        });
     }
 </script>

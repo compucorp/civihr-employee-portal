@@ -1630,6 +1630,9 @@ function civihr_employee_portal_document_form($form, &$form_state) {
     );
     //$files = array();
     
+    $form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
+    $form['#suffix'] = '</div></article>';
+    
     $form['id'] = array(
         '#type' => 'hidden',
         '#value' => $document['id'],
@@ -1639,7 +1642,7 @@ function civihr_employee_portal_document_form($form, &$form_state) {
         '#type' => 'textfield',
         '#title' => t('Document type'),
         '#prefix' => '<div class="row"><div class="col-md-12">',
-        '#suffix' => '</div>',
+        '#suffix' => '</div></div>',
         '#attributes' => array('readonly' => 'readonly'),
         '#attributes' => array('disabled' => 'disabled'),
         '#default_value' => $activityOptions['type'][$document['activity_type_id']],
@@ -1648,7 +1651,7 @@ function civihr_employee_portal_document_form($form, &$form_state) {
     $form['files'] = array(
         '#type' => 'plupload',
         '#title' => 'Files',
-        '#prefix' => '<div class="col-md-6"><div class="well drop-zone" id="drop-target">Drop document(s) here</div>',
+        '#prefix' => '<div class="row"><div class="col-md-12"><div class="well drop-zone" id="drop-target">Drop document(s) here</div>',
         '#suffix' => '<div id="notsupported">Your browser doesn\'t support multiupload feature.</div>
             <div>
                 <table class="table table-condensed ct-table-upload">
@@ -1682,13 +1685,14 @@ function civihr_employee_portal_document_form($form, &$form_state) {
             <script>
             CRM.$(document).trigger("uploaderFormReady", {id: ' . $document['id'] . ', formId: "civihr-employee-portal-document-form", files:' . json_encode($files) . '});
             </script>
-        </div>',
+        </div></div>',
     );
     
-    $form['expiry_date'] = array(
-        '#title' => t('Expiry date:'),
+    $form['expire_date'] = array(
         '#type' => 'date_popup',
-        '#required' => 'TRUE',
+        '#title' => t('Expiry date:'),
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div></div>',
         '#date_format' => 'Y-m-d',
         '#date_year_range' => '-10:+10',
         '#default_value' => $document['expire_date'],
@@ -1697,10 +1701,10 @@ function civihr_employee_portal_document_form($form, &$form_state) {
     $form['details'] = array(
         '#type' => 'textarea',
         '#title' => t('Notes'),
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div></div>',
         '#rows' => 10,
         '#cols' => 100,
-        '#prefix' => '<div class="row"><div class="col-md-12">',
-        '#suffix' => '</div>',
         '#default_value' => strip_tags($document['details']),
     );
     
@@ -1708,13 +1712,11 @@ function civihr_employee_portal_document_form($form, &$form_state) {
         '#type' => 'hidden',
         //'#tree' => TRUE,
     );
-    
-    $form['submit'] = array(
-        '#type' => 'button',
-        '#value' => t('Save'),
-        '#prefix' => '<hr>'
-    );
 
+    $form['save'] = array(
+        '#markup' => '<input type="button" class="form-button btn btn-default" value="' . t('Save') . '" />',
+    );
+    
     // Add the validation function
     $form['#validate'][] = 'civihr_employee_portal_document_form_validate';
 
@@ -1732,6 +1734,17 @@ function civihr_employee_portal_document_form_validate($form, &$form_state) {
 }
 
 function civihr_employee_portal_document_form_submit($form, &$form_state) {
+    
+    $id = $form_state['values']['id'];
+    $expireDate = $form_state['values']['expire_date'];
+    $details = strip_tags($form_state['values']['details']);
+    
+    $result = civicrm_api3('Document', 'create', array(
+        'sequential' => 1,
+        'id' => $id,
+        'expire_date' => $expireDate,
+        'details' => $details,
+    ));
 
     $deleteFiles = json_decode($form_state['values']['delete_files'], true);
     if (!empty($deleteFiles)) {

@@ -39,7 +39,6 @@ $handler->display->display_options['row_plugin'] = 'fields';
 $handler->display->display_options['row_options']['inline'] = array(
   'id' => 'id',
   'subject' => 'subject',
-  'activity_date_time' => 'activity_date_time',
   'details' => 'details',
 );
 /* Field: id: value */
@@ -47,7 +46,6 @@ $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'json';
 $handler->display->display_options['fields']['id']['field'] = 'value';
 $handler->display->display_options['fields']['id']['label'] = 'Document ID';
-//$handler->display->display_options['fields']['id']['exclude'] = TRUE;
 $handler->display->display_options['fields']['id']['key'] = 'id';
 /* Field: activity_type_id: value */
 $handler->display->display_options['fields']['activity_type_id']['id'] = 'activity_type_id';
@@ -59,6 +57,16 @@ $handler->display->display_options['fields']['activity_type_id']['element_label_
 $handler->display->display_options['fields']['activity_type_id']['element_wrapper_type'] = 'div';
 $handler->display->display_options['fields']['activity_type_id']['element_wrapper_class'] = 'document-wrapper';
 $handler->display->display_options['fields']['activity_type_id']['key'] = 'activity_type_id';
+/* Field: case_id: value */
+$handler->display->display_options['fields']['case_id']['id'] = 'case_id';
+$handler->display->display_options['fields']['case_id']['table'] = 'json';
+$handler->display->display_options['fields']['case_id']['field'] = 'value';
+$handler->display->display_options['fields']['case_id']['label'] = 'Case ID';
+$handler->display->display_options['fields']['case_id']['element_type'] = 'div';
+$handler->display->display_options['fields']['case_id']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['case_id']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['case_id']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['case_id']['key'] = 'case_id';
 /* Field: subject: value */
 $handler->display->display_options['fields']['subject']['id'] = 'subject';
 $handler->display->display_options['fields']['subject']['table'] = 'json';
@@ -79,56 +87,6 @@ $handler->display->display_options['fields']['activity_date_time']['element_labe
 $handler->display->display_options['fields']['activity_date_time']['element_wrapper_type'] = 'div';
 $handler->display->display_options['fields']['activity_date_time']['element_wrapper_class'] = 'document-wrapper';
 $handler->display->display_options['fields']['activity_date_time']['key'] = 'activity_date_time';
-/* Field: details: value */
-$handler->display->display_options['fields']['details']['id'] = 'details';
-$handler->display->display_options['fields']['details']['table'] = 'json';
-$handler->display->display_options['fields']['details']['field'] = 'value';
-$handler->display->display_options['fields']['details']['label'] = 'Details';
-$handler->display->display_options['fields']['details']['element_type'] = 'div';
-$handler->display->display_options['fields']['details']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['details']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['details']['element_wrapper_class'] = 'document-wrapper';
-$handler->display->display_options['fields']['details']['key'] = 'details';
-/* Field: status_id: value */
-$handler->display->display_options['fields']['status_id']['id'] = 'status_id';
-$handler->display->display_options['fields']['status_id']['table'] = 'json';
-$handler->display->display_options['fields']['status_id']['field'] = 'value';
-$handler->display->display_options['fields']['status_id']['label'] = 'Status ID';
-$handler->display->display_options['fields']['status_id']['element_type'] = 'div';
-$handler->display->display_options['fields']['status_id']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['status_id']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['status_id']['element_wrapper_class'] = 'document-wrapper';
-$handler->display->display_options['fields']['status_id']['key'] = 'status_id';
-/* Field: source_contact_id: value */
-$handler->display->display_options['fields']['source_contact_id']['id'] = 'source_contact_id';
-$handler->display->display_options['fields']['source_contact_id']['table'] = 'json';
-$handler->display->display_options['fields']['source_contact_id']['field'] = 'value';
-$handler->display->display_options['fields']['source_contact_id']['label'] = 'Source Contact ID';
-$handler->display->display_options['fields']['source_contact_id']['element_type'] = 'div';
-$handler->display->display_options['fields']['source_contact_id']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['source_contact_id']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['source_contact_id']['element_wrapper_class'] = 'document-wrapper';
-$handler->display->display_options['fields']['source_contact_id']['key'] = 'source_contact_id';
-/* Field: case_id: value */
-$handler->display->display_options['fields']['case_id']['id'] = 'case_id';
-$handler->display->display_options['fields']['case_id']['table'] = 'json';
-$handler->display->display_options['fields']['case_id']['field'] = 'value';
-$handler->display->display_options['fields']['case_id']['label'] = 'Case ID';
-$handler->display->display_options['fields']['case_id']['element_type'] = 'div';
-$handler->display->display_options['fields']['case_id']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['case_id']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['case_id']['element_wrapper_class'] = 'document-wrapper';
-$handler->display->display_options['fields']['case_id']['key'] = 'case_id';
-/* Field: file_count: value */
-$handler->display->display_options['fields']['file_count']['id'] = 'file_count';
-$handler->display->display_options['fields']['file_count']['table'] = 'json';
-$handler->display->display_options['fields']['file_count']['field'] = 'value';
-$handler->display->display_options['fields']['file_count']['label'] = 'File Count';
-$handler->display->display_options['fields']['file_count']['element_type'] = 'div';
-$handler->display->display_options['fields']['file_count']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['file_count']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['file_count']['element_wrapper_class'] = 'document-wrapper';
-$handler->display->display_options['fields']['file_count']['key'] = 'file_count';
 /* Field: expire_date: value */
 $handler->display->display_options['fields']['expire_date']['id'] = 'expire_date';
 $handler->display->display_options['fields']['expire_date']['table'] = 'json';
@@ -139,6 +97,46 @@ $handler->display->display_options['fields']['expire_date']['element_label_type'
 $handler->display->display_options['fields']['expire_date']['element_wrapper_type'] = 'div';
 $handler->display->display_options['fields']['expire_date']['element_wrapper_class'] = 'document-wrapper';
 $handler->display->display_options['fields']['expire_date']['key'] = 'expire_date';
+/* Field: details: value */
+$handler->display->display_options['fields']['details']['id'] = 'details';
+$handler->display->display_options['fields']['details']['table'] = 'json';
+$handler->display->display_options['fields']['details']['field'] = 'value';
+$handler->display->display_options['fields']['details']['label'] = 'Details';
+$handler->display->display_options['fields']['details']['element_type'] = 'div';
+$handler->display->display_options['fields']['details']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['details']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['details']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['details']['key'] = 'details';
+/* Field: source_contact_id: value */
+$handler->display->display_options['fields']['source_contact_id']['id'] = 'source_contact_id';
+$handler->display->display_options['fields']['source_contact_id']['table'] = 'json';
+$handler->display->display_options['fields']['source_contact_id']['field'] = 'value';
+$handler->display->display_options['fields']['source_contact_id']['label'] = 'Source Contact ID';
+$handler->display->display_options['fields']['source_contact_id']['element_type'] = 'div';
+$handler->display->display_options['fields']['source_contact_id']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['source_contact_id']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['source_contact_id']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['source_contact_id']['key'] = 'source_contact_id';
+/* Field: file_count: value */
+$handler->display->display_options['fields']['file_count']['id'] = 'file_count';
+$handler->display->display_options['fields']['file_count']['table'] = 'json';
+$handler->display->display_options['fields']['file_count']['field'] = 'value';
+$handler->display->display_options['fields']['file_count']['label'] = 'File Count';
+$handler->display->display_options['fields']['file_count']['element_type'] = 'div';
+$handler->display->display_options['fields']['file_count']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['file_count']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['file_count']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['file_count']['key'] = 'file_count';
+/* Field: status_id: value */
+$handler->display->display_options['fields']['status_id']['id'] = 'status_id';
+$handler->display->display_options['fields']['status_id']['table'] = 'json';
+$handler->display->display_options['fields']['status_id']['field'] = 'value';
+$handler->display->display_options['fields']['status_id']['label'] = 'Status ID';
+$handler->display->display_options['fields']['status_id']['element_type'] = 'div';
+$handler->display->display_options['fields']['status_id']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['status_id']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['status_id']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['status_id']['key'] = 'status_id';
 /* Field: Global: Custom text */
 $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
@@ -156,17 +154,18 @@ $handler->display->display_options['pager']['type'] = 'none';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'table';
+$handler->display->display_options['style_options']['row_class_special'] = FALSE;
 $handler->display->display_options['style_options']['columns'] = array(
   'id' => 'id',
   'activity_type_id' => 'activity_type_id',
+  'case_id' => 'case_id',
   'subject' => 'subject',
   'activity_date_time' => 'activity_date_time',
-  'details' => 'details',
-  'status_id' => 'status_id',
-  'source_contact_id' => 'source_contact_id',
-  'case_id' => 'case_id',
-  'file_count' => 'file_count',
   'expire_date' => 'expire_date',
+  'details' => 'details',
+  'source_contact_id' => 'source_contact_id',
+  'file_count' => 'file_count',
+  'status_id' => 'status_id',
   'nothing' => 'nothing',
 );
 $handler->display->display_options['style_options']['default'] = '-1';
@@ -179,6 +178,13 @@ $handler->display->display_options['style_options']['info'] = array(
     'empty_column' => 0,
   ),
   'activity_type_id' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'case_id' => array(
     'sortable' => 0,
     'default_sort_order' => 'asc',
     'align' => '',
@@ -199,14 +205,14 @@ $handler->display->display_options['style_options']['info'] = array(
     'separator' => '',
     'empty_column' => 0,
   ),
-  'details' => array(
+  'expire_date' => array(
     'sortable' => 0,
     'default_sort_order' => 'asc',
     'align' => '',
     'separator' => '',
     'empty_column' => 0,
   ),
-  'status_id' => array(
+  'details' => array(
     'sortable' => 0,
     'default_sort_order' => 'asc',
     'align' => '',
@@ -220,13 +226,6 @@ $handler->display->display_options['style_options']['info'] = array(
     'separator' => '',
     'empty_column' => 0,
   ),
-  'case_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
   'file_count' => array(
     'sortable' => 0,
     'default_sort_order' => 'asc',
@@ -234,7 +233,7 @@ $handler->display->display_options['style_options']['info'] = array(
     'separator' => '',
     'empty_column' => 0,
   ),
-  'expire_date' => array(
+  'status_id' => array(
     'sortable' => 0,
     'default_sort_order' => 'asc',
     'align' => '',
@@ -268,17 +267,18 @@ $handler->display->display_options['pager']['type'] = 'none';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'table';
+$handler->display->display_options['style_options']['row_class_special'] = FALSE;
 $handler->display->display_options['style_options']['columns'] = array(
   'id' => 'id',
   'activity_type_id' => 'activity_type_id',
+  'case_id' => 'case_id',
   'subject' => 'subject',
   'activity_date_time' => 'activity_date_time',
-  'details' => 'details',
-  'status_id' => 'status_id',
-  'source_contact_id' => 'source_contact_id',
-  'case_id' => 'case_id',
-  'file_count' => 'file_count',
   'expire_date' => 'expire_date',
+  'details' => 'details',
+  'source_contact_id' => 'source_contact_id',
+  'file_count' => 'file_count',
+  'status_id' => 'status_id',
   'nothing' => 'nothing',
 );
 $handler->display->display_options['style_options']['default'] = '-1';
@@ -291,6 +291,13 @@ $handler->display->display_options['style_options']['info'] = array(
     'empty_column' => 0,
   ),
   'activity_type_id' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'case_id' => array(
     'sortable' => 0,
     'default_sort_order' => 'asc',
     'align' => '',
@@ -311,14 +318,14 @@ $handler->display->display_options['style_options']['info'] = array(
     'separator' => '',
     'empty_column' => 0,
   ),
-  'details' => array(
+  'expire_date' => array(
     'sortable' => 0,
     'default_sort_order' => 'asc',
     'align' => '',
     'separator' => '',
     'empty_column' => 0,
   ),
-  'status_id' => array(
+  'details' => array(
     'sortable' => 0,
     'default_sort_order' => 'asc',
     'align' => '',
@@ -332,13 +339,6 @@ $handler->display->display_options['style_options']['info'] = array(
     'separator' => '',
     'empty_column' => 0,
   ),
-  'case_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
   'file_count' => array(
     'sortable' => 0,
     'default_sort_order' => 'asc',
@@ -346,7 +346,7 @@ $handler->display->display_options['style_options']['info'] = array(
     'separator' => '',
     'empty_column' => 0,
   ),
-  'expire_date' => array(
+  'status_id' => array(
     'sortable' => 0,
     'default_sort_order' => 'asc',
     'align' => '',
@@ -399,14 +399,14 @@ $translatables['Documents'] = array(
   t('last »'),
   t('Document ID'),
   t('Activity Type ID'),
+  t('Case ID'),
   t('Subject'),
   t('Activity Date'),
-  t('Details'),
-  t('Status ID'),
-  t('Source Contact ID'),
-  t('Case ID'),
-  t('File Count'),
   t('Expire Date'),
+  t('Details'),
+  t('Source Contact ID'),
+  t('File Count'),
+  t('Status ID'),
   t('<a href="/civi_documents/nojs/edit/[id]" class="btn btn-custom ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Upload</a>'),
   t('Documents Dashboard block'),
   t('Documents'),
@@ -414,4 +414,3 @@ $translatables['Documents'] = array(
   t('Documents Manager'),
   t('Document edit'),
 );
-
