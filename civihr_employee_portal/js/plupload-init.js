@@ -1,7 +1,6 @@
 (function($){
 
-    function Uploader(config)
-    {
+    function Uploader(config) {
         var that = this;
         this.config = config;
         this.files = {
@@ -70,7 +69,7 @@
                     if (up.files.length == (up.total.uploaded + up.total.failed)) {
                         console.info('submitting');
                         that.uploaded = true;
-                        document.getElementById(that.config.formId).submit();
+                        $('#civihr-employee-portal-document-form #edit-save').click();
                     }
                 },
 
@@ -89,12 +88,12 @@
                 type: 'new',
                 ob: file
             };
-        }
+        };
 
 
         this.removeFile = function(id) {
             delete that.files.list[id];
-        }
+        };
 
         this.remove = function(id) {
             if (that.files.list[id].type == 'existing') {
@@ -107,35 +106,47 @@
             console.info('files:');console.info(that.uploader.files);
             var deleteFiles = document.getElementsByName('delete_files')[0];
             deleteFiles.value = JSON.stringify(that.files.deleted);
-        }
+        };
 
         this.uploadFiles = function() {
             that.uploader.start();
-        }
+        };
 
         this.htmlRenderFileList = function() {
-            var html = '';
-            var index = 1;
-            for (var i in files.list) {
-                var file = files.list[i];
-                html += that.htmlGetFileRow(index++, file.id, file.name, file.size);
+            var elFilelist = document.getElementById('filelist'), i, file;
+
+            while (elFilelist.firstChild) {
+                elFilelist.removeChild(elFilelist.firstChild);
             }
-            document.getElementById('filelist').innerHTML = html;
-        }
+
+            for (i in that.files.list) {
+                file = that.files.list[i];
+                elFilelist.appendChild(that.htmlGetFileRow(parseInt(i)+1, file.id, file.name, file.size));
+            }
+
+        };
 
         this.htmlGetFileRow = function(index, id, name, size) {
-            return '<tr>' +
-                '    <td><strong class="ng-binding">' + index + '</strong></td>' +
-                '    <td><strong class="ng-binding">' + name + '</strong></td>' +
-                '    <td nowrap="">' + that.humanFileSize(size, true) + '</td>' +
+            var $rowEl = $('<tr>' +
+                '    <td><strong>' + index + '</strong></td>' +
+                '    <td><strong>' + name + '</strong></td>' +
+                '    <td>' + that.humanFileSize(size, true) + '</td>' +
                 '    <td id="status_' + id + '"><b></b></td>' +
-                '    <td nowrap="">' +
-                '        <button type="button" class="btn btn-danger btn-xs" onclick="uploaderInstance.remove(\'' + id + '\')">' +
+                '    <td>' +
+                '        <a href class="btn btn-danger btn-xs">' +
                 '            <span class="glyphicon glyphicon-trash"></span> Remove' +
-                '        </button>' +
+                '        </a>' +
                 '    </td>' +
-                '</tr>';
-        }
+                '</tr>');
+
+            $rowEl.find('.btn')[0].addEventListener('click',function(e){
+                that.remove(id);
+                e.preventDefault();
+            });
+
+            return $rowEl[0];
+
+        };
 
         this.humanFileSize = function(bytes, si) {
             var thresh = si ? 1000 : 1024;
@@ -154,42 +165,25 @@
             return bytes.toFixed(1) + ' ' + units[u];
         };
 
-        function cbFormSubmit(e){
-            if (that.uploader.files.length && !that.uploaded) {
-                console.info('uploading files!');
-                that.uploadFiles();
-            }
-            e.preventDefault();
-            return false;
-            console.info('submitting form');
+        this.bindEvents = function(){
+            $('#civihr-employee-portal-document-form #edit-save').bind('click', function(e) {
+                if (that.uploader.files.length && !that.uploaded) {
+                    console.info('uploading files!');
+                    that.uploadFiles();
+                    e.preventDefault();
+                    return false;
+                }
+            });
         }
 
-        $('#civihr-employee-portal-document-form').submit(cbFormSubmit);
-        $('#civihr-employee-portal-document-form #edit-submit').bind('click', cbFormSubmit);
-
-
-        /*
-         CRM.$('#civihr-employee-portal-document-form #edit-submit').bind('click', function(el) {
-         el.preventDefault();
-         if (!that.uploaded) {
-         console.info('uploading files!');
-         that.uploadFiles();
-         return false;
-         }
-         console.info('submitting form');
-         return true;
-         });
-         */
-
-        uploader.init();
-        htmlRenderFileList();
-
-        return this;
+        this.uploader.init();
+        this.htmlRenderFileList();
+        this.bindEvents();
     }
 
     var uploaderInstance = null;
     $(document).on('uploaderFormReady', function(e, data){
-        uploaderInstance = Uploader(data);
+        uploaderInstance = new Uploader(data);
     })
 
 
