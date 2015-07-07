@@ -47,74 +47,88 @@ $statuses = array(
 );
 
 ?>
-<div id="documents-tabs">
-    <div class="documents-tab status-all active" tab-index="0">All</div>
-    <div class="documents-tab status-awaiting-upload" tab-index="1">Awaiting Upload</div>
-    <div class="documents-tab status-awaiting-approval" tab-index="2">Awaiting Approval</div>
-    <div class="documents-tab status-approved" tab-index="3">Approved</div>
-    <div class="documents-tab status-rejected" tab-index="4">Rejected</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-4 col-lg-3">
+        <ul id="nav-documents-status" class="nav nav-pills nav-stacked">
+            <li class="active"><a href data-document-status="0">All  <span class="badge pull-right">4</span></a></li>
+            <li><a href data-document-status="1">Awaiting Upload  <span class="badge pull-right">4</span></a></li>
+            <li><a href data-document-status="2">Awaiting Approval  <span class="badge pull-right">4</span></a></li>
+            <li><a href data-document-status="3">Approved  <span class="badge pull-right">4</span></a></li>
+            <li><a href data-document-status="4">Rejected  <span class="badge pull-right">4</span></a></li>
+        </ul>
+    </div>
+    <div class="col-xs-12 col-sm-8 col-lg-9">
+        <table id="documents-dashboard-table-staff" <?php if ($classes) { print 'class="'. $classes . '" '; } ?><?php print $attributes; ?>>
+            <?php if (!empty($title) || !empty($caption)) : ?>
+                <caption><?php print $caption . $title; ?></caption>
+            <?php endif; ?>
+            <?php if (!empty($header)) : ?>
+                <thead>
+                <tr>
+                    <?php foreach ($header as $field => $label): ?>
+                        <?php
+                        if (!in_array($field, array_keys($fieldsToDisplay))):
+                            continue;
+                        endif;
+                        $label = $fieldsToDisplay[$field];
+                        ?>
+                        <th <?php if ($header_classes[$field]) { print 'class="'. $header_classes[$field] . '" '; } ?>>
+                            <?php print $label; ?>
+                        </th>
+                    <?php endforeach; ?>
+                </tr>
+                </thead>
+            <?php endif; ?>
+            <tbody>
+            <?php foreach ($rows as $row_count => $row): ?>
+                <?php $class = 'document-row status-id-' . strip_tags($row['status_id']); ?>
+                <tr <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?>>
+                    <?php foreach ($row as $field => $content): ?>
+                        <?php
+                        if (!in_array($field, array_keys($fieldsToDisplay))):
+                            continue;
+                        endif;
+                        ?>
+                        <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
+                            <?php if ($field === 'activity_type_id'):
+                                print $types[strip_tags($content)];
+                                continue;
+                            endif;
+                            ?>
+                            <?php if ($field === 'status_id'):
+                                print $statuses[strip_tags($content)];
+                                continue;
+                            endif; ?>
+                            <?php print $content; ?>
+                        </td>
+                    <?php endforeach; ?>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
-<table id="documents-dashboard-table-staff" <?php if ($classes) { print 'class="'. $classes . '" '; } ?><?php print $attributes; ?>>
-   <?php if (!empty($title) || !empty($caption)) : ?>
-     <caption><?php print $caption . $title; ?></caption>
-  <?php endif; ?>
-  <?php if (!empty($header)) : ?>
-    <thead>
-      <tr>
-        <?php foreach ($header as $field => $label): ?>
-          <?php
-          if (!in_array($field, array_keys($fieldsToDisplay))):
-            continue;    
-          endif;
-          $label = $fieldsToDisplay[$field];
-          ?>
-            <th <?php if ($header_classes[$field]) { print 'class="'. $header_classes[$field] . '" '; } ?>>
-              <?php print $label; ?>
-            </th>
-        <?php endforeach; ?>
-      </tr>
-    </thead>
-  <?php endif; ?>
-  <tbody>
-    <?php foreach ($rows as $row_count => $row): ?>
-      <?php $class = 'document-row status-id-' . strip_tags($row['status_id']); ?>
-      <tr <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?>>
-        <?php foreach ($row as $field => $content): ?>
-          <?php
-          if (!in_array($field, array_keys($fieldsToDisplay))):
-            continue;    
-          endif;
-          ?>
-            <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
-              <?php if ($field === 'activity_type_id'):
-                print $types[strip_tags($content)];
-                continue;
-              endif;
-              ?>
-              <?php if ($field === 'status_id'):
-                print $statuses[strip_tags($content)];
-                continue;
-              endif; ?>
-              <?php print $content; ?>
-            </td>
-        <?php endforeach; ?>
-      </tr>
-    <?php endforeach; ?>
-  </tbody>
-</table>
 
 <script>
-    CRM.$('.documents-tab').bind('click', function() {
-        var tabIndex = CRM.$(this).attr('tab-index');
-        if (tabIndex != 0) {
-            CRM.$('.document-row').hide();
-            CRM.$('.status-id-' + tabIndex).show();
-        } else {
-            CRM.$('.document-row').show();
-        }
-        CRM.$('.document-row:visible:odd').removeClass('odd').addClass('even');
-        CRM.$('.document-row:visible:even').removeClass('even').addClass('odd');
-        CRM.$('.documents-tab').removeClass('active');
-        CRM.$(this).addClass('active');
-    });
+    (function($){
+        var $navDocStatus = $('#nav-documents-status');
+
+            $navDocStatus.find('a').bind('click', function(e) {
+                e.preventDefault();
+
+                var $this = $(this),
+                    documentStatus = $this.data('documentStatus');
+
+                $navDocStatus.find('> li').removeClass('active');
+                $this.parent().addClass('active');
+
+                if (!documentStatus) {
+                    $('.document-row').show();
+                    return
+                }
+
+                $('.document-row').hide();
+                $('.status-id-' + documentStatus).show();
+        });
+    }(CRM.$));
 </script>

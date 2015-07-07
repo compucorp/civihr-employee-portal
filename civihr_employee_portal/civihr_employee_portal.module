@@ -1680,8 +1680,7 @@ function civihr_employee_portal_document_form($form, &$form_state) {
             <br />
             <pre id="console"></pre>
             <script>
-            var uploaderInstance = null;
-            CRM.$(document).ready(function () { uploaderInstance = Uploader({id: ' . $document['id'] . ', formId: "civihr-employee-portal-document-form", files:' . json_encode($files) . '}); });
+            CRM.$(document).trigger("uploaderFormReady", {id: ' . $document['id'] . ', formId: "civihr-employee-portal-document-form", files:' . json_encode($files) . '});
             </script>
         </div>',
     );
@@ -1711,7 +1710,7 @@ function civihr_employee_portal_document_form($form, &$form_state) {
     );
     
     $form['submit'] = array(
-        '#type' => 'submit',
+        '#type' => 'button',
         '#value' => t('Save'),
         '#prefix' => '<hr>'
     );
