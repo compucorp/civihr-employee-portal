@@ -1715,9 +1715,9 @@ function civihr_employee_portal_document_form($form, &$form_state) {
     );
     
     $form['save'] = array(
-        '#markup' => '<input type="button" class="form-button btn btn-default" value="' . t('Save') . '" />',
+    '#markup' => '<input type="button" class="form-button btn btn-default" value="' . t('Save') . " />',
     );
-    
+
     // Add the validation function
     $form['#validate'][] = 'civihr_employee_portal_document_form_validate';
 
