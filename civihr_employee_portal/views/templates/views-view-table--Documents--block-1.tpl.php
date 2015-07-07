@@ -33,10 +33,10 @@ $typeResult = civicrm_api3('Activity', 'getoptions', array(
 ));
 $types = $typeResult['values'];
 
-$statusesResult = civicrm_api3('Document', 'getstatuses', array(
+/*$statusesResult = civicrm_api3('Document', 'getstatuses', array(
     'sequential' => 1,
 ));
-/*$statuses = array();
+$statuses = array();
 foreach ($statusesResult['values'] as $status):
     $statuses[$status['value']] = $status['label'];
 endforeach;*/
@@ -116,6 +116,14 @@ $statuses = array(
               ?>
               <?php continue; ?>
               <?php endif; ?>
+              <?php if ($field === 'activity_date_time' && trim(strip_tags($content))):
+                  print date('M d Y', strtotime(strip_tags($content)));
+                  continue;
+              endif; ?>
+              <?php if ($field === 'expire_date' && trim(strip_tags($content))):
+                  print date('M d Y', strtotime(strip_tags($content)));
+                  continue;
+              endif; ?>
               <?php if ($field === 'nothing'): ?>
                 <div class="btn-group">
                     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">

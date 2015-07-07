@@ -149,6 +149,11 @@ $handler->display->display_options['fields']['nothing']['element_label_colon'] =
 $handler = $view->new_display('block', 'Documents Dashboard block', 'block');
 $handler->display->display_options['defaults']['title'] = FALSE;
 $handler->display->display_options['title'] = 'Documents';
+$handler->display->display_options['defaults']['query'] = FALSE;
+$handler->display->display_options['query']['type'] = 'views_query';
+$handler->display->display_options['query']['options']['json_file'] = $base_url . '/civi_documents/';
+$handler->display->display_options['query']['options']['row_apath'] = 'values';
+$handler->display->display_options['query']['options']['show_errors'] = 1;
 $handler->display->display_options['defaults']['pager'] = FALSE;
 $handler->display->display_options['pager']['type'] = 'none';
 $handler->display->display_options['pager']['options']['offset'] = '0';
@@ -262,6 +267,11 @@ $handler->display->display_options['access']['type'] = 'role';
 $handler->display->display_options['access']['role'] = array(
   5 => '5',
 );
+$handler->display->display_options['defaults']['query'] = FALSE;
+$handler->display->display_options['query']['type'] = 'views_query';
+$handler->display->display_options['query']['options']['json_file'] = $base_url . '/civi_documents_manager/';
+$handler->display->display_options['query']['options']['row_apath'] = 'values';
+$handler->display->display_options['query']['options']['show_errors'] = 1;
 $handler->display->display_options['defaults']['pager'] = FALSE;
 $handler->display->display_options['pager']['type'] = 'none';
 $handler->display->display_options['pager']['options']['offset'] = '0';
@@ -365,22 +375,6 @@ $handler->display->display_options['defaults']['row_options'] = FALSE;
 $handler->display->display_options['defaults']['header'] = FALSE;
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
-
-/* Display: Document edit */
-$handler = $view->new_display('page', 'Document edit', 'page');
-$handler->display->display_options['defaults']['pager'] = FALSE;
-$handler->display->display_options['pager']['type'] = 'full';
-$handler->display->display_options['pager']['options']['items_per_page'] = '1';
-$handler->display->display_options['pager']['options']['offset'] = '0';
-$handler->display->display_options['pager']['options']['id'] = '0';
-$handler->display->display_options['pager']['options']['quantity'] = '9';
-$handler->display->display_options['path'] = 'civi_document_edit';
-$handler->display->display_options['menu']['type'] = 'normal';
-$handler->display->display_options['menu']['title'] = 'Upload Document';
-$handler->display->display_options['menu']['weight'] = '6';
-$handler->display->display_options['menu']['name'] = 'main-menu';
-$handler->display->display_options['menu']['context'] = 0;
-$handler->display->display_options['menu']['context_only_inline'] = 0;
 $translatables['Documents'] = array(
   t('Master'),
   t('Documents and Downloads'),
@@ -412,5 +406,4 @@ $translatables['Documents'] = array(
   t('Documents'),
   t('Documents Dashboard Manager block'),
   t('Documents Manager'),
-  t('Document edit'),
 );

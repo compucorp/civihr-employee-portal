@@ -32,29 +32,37 @@ $typeResult = civicrm_api3('Activity', 'getoptions', array(
 ));
 $types = $typeResult['values'];
 
-$statusesResult = civicrm_api3('Document', 'getstatuses', array(
+/*$statusesResult = civicrm_api3('Document', 'getstatuses', array(
     'sequential' => 1,
 ));
-/*$statuses = array();
+$statuses = array();
 foreach ($statusesResult['values'] as $status):
     $statuses[$status['value']] = $status['label'];
 endforeach;*/
 $statuses = array(
+    0 => 'All',
     1 => 'Awaiting upload',
     2 => 'Awaiting approval',
     3 => 'Approved',
     4 => 'Rejected',
 );
 
+$statusesCount = array_combine(array_keys($statuses), array_fill(0, count($statuses), 0));
+
+foreach ($rows as $row):
+    $statusesCount[(int)strip_tags($row['status_id'])]++;
+    $statusesCount[0]++;
+endforeach;
+
 ?>
 <div class="row">
     <div class="col-xs-12 col-sm-4 col-lg-3">
         <ul id="nav-documents-status" class="nav nav-pills nav-stacked">
-            <li class="active"><a href data-document-status="0">All  <span class="badge pull-right">4</span></a></li>
-            <li><a href data-document-status="1">Awaiting Upload  <span class="badge pull-right">4</span></a></li>
-            <li><a href data-document-status="2">Awaiting Approval  <span class="badge pull-right">4</span></a></li>
-            <li><a href data-document-status="3">Approved  <span class="badge pull-right">4</span></a></li>
-            <li><a href data-document-status="4">Rejected  <span class="badge pull-right">4</span></a></li>
+<?php $classActive = ' class="active"'; ?>
+<?php foreach ($statuses as $key => $value): ?>
+            <li<?php print $classActive; ?>><a href data-document-status="<?php print $key; ?>"><?php print $value; ?> <span class="badge pull-right"><?php print $statusesCount[$key]; ?></span></a></li>
+<?php $classActive = ''; ?>
+<?php endforeach; ?>
         </ul>
     </div>
     <div class="col-xs-12 col-sm-8 col-lg-9">
@@ -95,6 +103,14 @@ $statuses = array(
                                 continue;
                             endif;
                             ?>
+                            <?php if ($field === 'activity_date_time' && trim(strip_tags($content))):
+                                print date('M d Y', strtotime(strip_tags($content)));
+                                continue;
+                            endif; ?>
+                            <?php if ($field === 'expire_date' && trim(strip_tags($content))):
+                                print date('M d Y', strtotime(strip_tags($content)));
+                                continue;
+                            endif; ?>
                             <?php if ($field === 'status_id'):
                                 print $statuses[strip_tags($content)];
                                 continue;
@@ -123,12 +139,12 @@ $statuses = array(
                 $this.parent().addClass('active');
 
                 if (!documentStatus) {
-                    $('.document-row').show();
+                    $('#documents-dashboard-table-staff .document-row').show();
                     return
                 }
 
-                $('.document-row').hide();
-                $('.status-id-' + documentStatus).show();
+                $('#documents-dashboard-table-staff .document-row').hide();
+                $('#documents-dashboard-table-staff .status-id-' + documentStatus).show();
         });
     }(CRM.$));
 </script>
