@@ -50,11 +50,11 @@ $statuses = array(
 <div class="row">
     <div class="col-xs-12 col-sm-4 col-lg-3">
         <ul id="nav-documents-status" class="nav nav-pills nav-stacked">
-            <li class="active"><a href data-document-status="0">All  <span class="badge pull-right">4</span></a></li>
-            <li><a href data-document-status="1">Awaiting Upload  <span class="badge pull-right">4</span></a></li>
-            <li><a href data-document-status="2">Awaiting Approval  <span class="badge pull-right">4</span></a></li>
-            <li><a href data-document-status="3">Approved  <span class="badge pull-right">4</span></a></li>
-            <li><a href data-document-status="4">Rejected  <span class="badge pull-right">4</span></a></li>
+            <li class="active"><a href data-document-status="0">All  <span class="badge badge-primary pull-right">4</span></a></li>
+            <li><a href data-document-status="1">Awaiting Upload  <span class="badge badge-primary pull-right">4</span></a></li>
+            <li><a href data-document-status="2">Awaiting Approval  <span class="badge badge-primary pull-right">4</span></a></li>
+            <li><a href data-document-status="3">Approved  <span class="badge badge-primary pull-right">4</span></a></li>
+            <li><a href data-document-status="4">Rejected  <span class="badge badge-primary pull-right">4</span></a></li>
         </ul>
     </div>
     <div class="col-xs-12 col-sm-8 col-lg-9">
