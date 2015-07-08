@@ -511,6 +511,13 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
     
+    $items['civi_documents_manager'] = array(
+        'title' => 'Document list',
+        'page callback' => 'civihr_employee_portal_get_document_list_manager',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
     $items['civi_documents/%ctools_js/edit/%'] = array(
         'title' => 'Edit Document',
         'page callback' => 'civihr_employee_portal_edit_document',
@@ -1532,22 +1539,41 @@ function civihr_employee_portal_get_vacancy_list() {
 }
 
 /**
- * Returns the vacancy list from CiviCRM in json format
- * The json response will be cached in local file when the VIEWS requests to load data from this endpoint
+ * Returns the document list
  */
 function civihr_employee_portal_get_document_list() {
 
-    watchdog('not cached document list', 'test');
-
+    global $user;
+    $contactId = get_civihr_uf_match_data($user->uid)['contact_id'];
+    
     $result_output = civicrm_api3('Document', 'get', array(
         'sequential' => 1,
+        'target_contact_id' => $contactId,
         'is_deleted' => 0,
     ));
 
     // Output json
     drupal_json_output($result_output);
     drupal_exit();
+}
 
+/**
+ * Returns the document list for Manager
+ */
+function civihr_employee_portal_get_document_list_manager() {
+
+    global $user;
+    $contactId = get_civihr_uf_match_data($user->uid)['contact_id'];
+    
+    $result_output = civicrm_api3('Document', 'get', array(
+        'sequential' => 1,
+        'assignee_contact_id' => $contactId,
+        'is_deleted' => 0,
+    ));
+    
+    // Output json
+    drupal_json_output($result_output);
+    drupal_exit();
 }
 
 /**
