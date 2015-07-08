@@ -1654,7 +1654,7 @@ function civihr_employee_portal_document_form($form, &$form_state) {
         '#prefix' => '<div class="row"><div class="col-md-12"><div class="well drop-zone" id="drop-target">Drop document(s) here</div>',
         '#suffix' => '<div id="notsupported">Your browser doesn\'t support multiupload feature.</div>
             <div>
-                <table class="table table-condensed ct-table-upload">
+                <table class="table table-condensed table-upload">
                     <colgroup>
                             <col class="col-index">
                             <col class="col-name">
@@ -1663,13 +1663,13 @@ function civihr_employee_portal_document_form($form, &$form_state) {
                             <col class="col-action">
                     </colgroup>
                     <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Size</th>
-                        <th>Progress</th>
-                        <th></th>
-                    </tr>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Size</th>
+                            <th>Progress</th>
+                            <th></th>
+                        </tr>
                     </thead>
                     <tbody id="filelist">
                     </tbody>

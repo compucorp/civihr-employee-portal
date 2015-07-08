@@ -113,7 +113,7 @@
         };
 
         this.htmlRenderFileList = function() {
-            var elFilelist = document.getElementById('filelist'), i, file;
+            var elFilelist = document.getElementById('filelist'), i, index = 0, file;
 
             while (elFilelist.firstChild) {
                 elFilelist.removeChild(elFilelist.firstChild);
@@ -121,7 +121,7 @@
 
             for (i in that.files.list) {
                 file = that.files.list[i];
-                elFilelist.appendChild(that.htmlGetFileRow(parseInt(i)+1, file.id, file.name, file.size));
+                elFilelist.appendChild(that.htmlGetFileRow(++index, file.id, file.name, file.size));
             }
 
         };
