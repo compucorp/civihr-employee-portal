@@ -511,6 +511,7 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
+<<<<<<< HEAD
     $items['civi_documents'] = array(
         'title' => 'Document list',
         'page callback' => 'civihr_employee_portal_get_document_list',
@@ -556,6 +557,8 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
+=======
+>>>>>>> f9c940f8477a7eb7ca6fc32d83a4e618e3a3482e
     $items['absence_request/%ctools_js/debit'] = array(
         'page callback' => 'civihr_employee_portal_absence_request_callback',
         'page arguments' => array(1, 2),
@@ -1116,16 +1119,10 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
                 'value' => 9
             ));
 
-            // As manger notes is a custom field at first we need to find the ID for the custom field as this can change
-            $custom_field_data = civicrm_api3('CustomField', 'get', array(
-                'sequential' => 1,
-                'name' => "Comment",
-            ));
-
             // Set the manager notes for the main absence ID
             $result = civicrm_api3('Activity', 'setvalue', array(
                 'id' => $form_state['values']['main_id'],
-                'field' => 'custom_' . $custom_field_data['id'],
+                'field' => 'custom_34',
                 'value' => $form_state['values']['manager_notes']
             ));
 
@@ -1837,6 +1834,7 @@ function civihr_employee_portal_get_vacancy_list() {
 }
 
 /**
+<<<<<<< HEAD
  * Returns the document list
  */
 function civihr_employee_portal_get_document_list() {
@@ -2372,6 +2370,8 @@ function civihr_employee_portal_get_contact_list() {
 }
 
 /**
+=======
+>>>>>>> f9c940f8477a7eb7ca6fc32d83a4e618e3a3482e
  * Implements hook_block_info().
  */
 function civihr_employee_portal_block_info() {

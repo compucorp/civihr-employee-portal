@@ -19,7 +19,11 @@ class MyDetailsData {
         if (isset($_GET['q']) && $_GET['q'] == 'hr-details') {
 
             // Get the contact details view
-            $contact_details = views_embed_view('my_details_block', 'my_details_block');
+            $contact_details = views_embed_view('my_details_block', 'my_details_block_full');
+
+            // Get the emergency contacts block (not the address data)
+            $address_data = views_embed_view('my_details_block', 'my_details_emergency_contact');
+            $address_data_title = t('Emergency Contact');
 
         }
         else {
@@ -27,18 +31,19 @@ class MyDetailsData {
             // Get the contact details view
             $contact_details = views_embed_view('my_details_block', 'my_details_block');
 
-        }
+            // Get the address details view
+            $address_data = views_embed_view('my_details_block', 'my_address_block');
+            $address_data_title = t('Contact Information');
 
-        
-        // Get the address details view
-        $address_data = views_embed_view('my_details_block', 'my_address_block');
+        }
         
         // Output the themed details block
         return theme('civihr_employee_portal_my_details_block', 
             array(
                 'contact_data' => $contact_data,
                 'contact_details' => $contact_details,
-                'address_data' => $address_data
+                'address_data' => $address_data,
+                'address_data_title' => $address_data_title
             )
         );
                 

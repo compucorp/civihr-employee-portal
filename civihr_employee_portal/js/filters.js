@@ -28,7 +28,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                         "sequential": 1,
                         "source_record_id": clicked_object,
                     }).done(function(result) {
-                        console.log(result);
+
                         for (index = 0; index < result.count; ++index) {
 
                             CRM.api3('Activity', 'setvalue', {
@@ -40,6 +40,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
 
                             });
                         }
+
                     });
 
                 CRM.api3('Activity', 'setvalue', {
@@ -53,13 +54,146 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                             swal("Failed!", result.error_message, "error");
                         }
                         else {
-                            console.log(result);
+
+                            // Update absence status on the screen
                             $("#act-id-" + clicked_object).html(status_type);
+
+                            // Remove the row (so it will not be loaded when rebuilding the filters)
+                            $("#act-id-" + clicked_object).closest('tr').remove();
+
+                            // Rebuild filters
+                            loadFilters();
+
+                            // Notify with popup
                             swal(status_type + "!", status_message, "success");
                         }
 
 
                     });
+
+            }
+
+            /**
+             * Load filters function
+             */
+            function loadFilters() {
+
+                // Function to create a distinct list from array
+                function distinctList(inputArray) {
+                    var i;
+                    var length = inputArray.length;
+                    var outputArray = [];
+                    var temp = {};
+                    for (i = 0; i < length; i++) {
+
+                        // Count the values based on their key
+                        if (typeof temp[inputArray[i]] !== 'undefined') {
+                            temp[inputArray[i]] = temp[inputArray[i]] + 1;
+                        }
+                        else {
+                            temp[inputArray[i]] = 1;
+                        }
+
+                    }
+
+                    return temp;
+                }
+
+                // Map the classes for each item into a new array
+                classes = $(".manager-approval-main-table > tbody tr").map(function () {
+
+                    // If data attribute is defined
+                    if ($(this).attr("data") !== undefined) {
+                        return $(this).attr("data").split('@');
+                    }
+
+                });
+
+                // Create list of distinct items only
+                var classList = distinctList(classes);
+
+                // Generate the list of filter links
+                var tagList = '<ul id="tag-list" class="list-group"></ul>';
+
+                // Check if we need to display the filter options
+                if (classes.length !== 0) {
+
+                    // All filter
+                    tagItem = '<li><button class="btn btn-custom btn-custom-block" type="button" class="active">all&nbsp;<span class="badge">' + classList['approvals-table'] + '</span></button></li>';
+
+                    // Check for the enabled absence types only
+                    var excluded_values = ["approvals table", "Approved", "Rejected"];
+
+                    // Check for the enabled approved / rejected only
+                    var included_values = ["Approved", "Rejected"];
+
+                    // Loop through the list of classes & add link
+                    $.each(classList, function (index, value) {
+
+                        var index = index.replace("-", " ");
+
+                        // Build the approval filters
+                        if ($.inArray(index, excluded_values) == -1) {
+                            tagItem += '<li><button class="btn btn-custom btn-custom-block" type="button">' + index + '&nbsp;<span class="badge">' + value + '</span></button></li>';
+                        }
+
+                    });
+
+                    // Loop through the list of classes & add link
+                    $.each(classList, function (index, value) {
+
+                        var index = index.replace("-", " ");
+
+                        // Build the approved / rejected filters
+                        if ($.inArray(index, included_values) !== -1) {
+                            tagItem += '<li><button class="btn btn-custom btn-custom-block" type="button">' + index + '&nbsp;<span class="badge">' + value + '</span></button></li>';
+                        }
+
+                    });
+
+                    // Add the filter links before the list of items
+                    $("div.approval-filters").html($(tagList).append(tagItem));
+
+                }
+                else {
+
+                    // Clear filters if there is no more absence to approve
+                    $("div.approval-filters").html('');
+                }
+
+                $('#tag-list button').click(function (e) {
+
+                    // allows filter categories using multiple words
+                    var getText = $(this).text().replace(/ /g, "-");
+
+                    // Get the value name from the string (it includes the count value, so this removes it) -> similar to php explode function
+                    var string = getText.match(/\S+/g);
+
+                    if (string[0] == 'all') {
+                        $(".manager-approval-main-table > tbody tr").fadeIn(10);
+                    } else {
+                        $(".manager-approval-main-table > tbody tr").fadeOut(10);
+                        $(".manager-approval-main-table > tbody tr").each(function () {
+
+                            var data_array = $(this).attr('data').split("@");
+                            var index = string[0].replace(/-/g, " ");
+
+                            // Filter
+                            if ($.inArray(index, data_array) !== -1) {
+                                $(this).fadeIn(10);
+                            }
+
+                        });
+                    }
+
+                    // Add class "active" to current filter item
+                    $('#tag-list button').removeClass('active');
+                    $(this).addClass('active');
+
+                    // Prevent the page scrolling to the top of the screen
+                    e.preventDefault();
+                });
+
 
             }
 
@@ -77,7 +211,6 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                 },
                 function() {
 
-                    console.log(clicked_object);
                     civiUpdateActivity(clicked_object, 'approve');
 
                 });
@@ -97,8 +230,6 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                   },
                   function(){
 
-                    console.log('reject');
-                    console.log(clicked_object);
                     civiUpdateActivity(clicked_object, 'reject');
 
                   });
@@ -176,111 +307,10 @@ Drupal.behaviors.civihr_employee_portal_filters = {
             });
         });
 
-        if ($('div').hasClass('approval-filters') && $('div').hasClass('ctools-modal-dialog') == false) {
+        if ($('div').hasClass('approval-filters') && $('div').hasClass('ctools-modal-dialog') == false && context == document) {
 
-            // Function to create a distinct list from array
-            function distinctList(inputArray) {
-                var i;
-                var length = inputArray.length;
-                var outputArray = [];
-                var temp = {};
-                for (i = 0; i < length; i++) {
-
-                    // Count the values based on their key
-                    if (typeof temp[inputArray[i]] !== 'undefined') {
-                        temp[inputArray[i]] = temp[inputArray[i]] + 1;
-                    }
-                    else {
-                        temp[inputArray[i]] = 1;
-                    }
-
-                }
-
-                return temp;
-            }
-
-             // Map the classes for each item into a new array
-             classes = $(".manager-approval-main-table > tbody tr").map(function() {
-                return $(this).attr("data").split('@');
-            });
-
-            // Create list of distinct items only
-            var classList = distinctList(classes);
-
-            // Generate the list of filter links
-            var tagList = '<ul id="tag-list" class="list-group"></ul>';
-
-            // All filter
-            tagItem = '<li><button class="btn btn-custom btn-custom-block" type="button" class="active">all&nbsp;<span class="badge">' + classList['approvals-table'] + '</span></button></li>';
-
-            // Check for the enabled absence types only
-            var excluded_values = ["approvals table", "Approved", "Rejected"];
-
-            // Check for the enabled approved / rejected only
-            var included_values = ["Approved", "Rejected"];
-
-            // Loop through the list of classes & add link
-            $.each(classList, function(index, value) {
-
-                var index = index.replace("-", " ");
-
-                // Build the approval filters
-                if($.inArray(index, excluded_values) == -1) {
-                    tagItem += '<li><button class="btn btn-custom btn-custom-block" type="button">' + index + '&nbsp;<span class="badge">' + value + '</span></button></li>';
-                }
-
-            });
-
-            // Loop through the list of classes & add link
-            $.each(classList, function(index, value) {
-
-                var index = index.replace("-", " ");
-
-                // Build the approved / rejected filters
-                if($.inArray(index, included_values) !== -1) {
-                    tagItem += '<li><button class="btn btn-custom btn-custom-block" type="button">' + index + '&nbsp;<span class="badge">' + value + '</span></button></li>';
-                }
-
-            });
-
-            // Add the filter links before the list of items
-            $( "div.approval-filters" ).html($(tagList).append(tagItem));
-
-            $('#tag-list button').click(function(e) {
-
-                // allows filter categories using multiple words
-                var getText = $(this).text().replace(/ /g, "-");
-
-                // Get the value name from the string (it includes the count value, so this removes it) -> similar to php explode function
-                var string = getText.match(/\S+/g);
-
-                if(string[0] == 'all'){
-                    $(".manager-approval-main-table > tbody tr").fadeIn(10);
-                } else {
-                    $(".manager-approval-main-table > tbody tr").fadeOut(10);
-                    $(".manager-approval-main-table > tbody tr").each(function() {
-
-                        var data_array = $(this).attr('data').split("@");
-                        var index = string[0].replace(/-/g, " ");
-
-                        //console.log(data_array);
-                        //console.log(index);
-                        // Filter
-                        if ($.inArray(index, data_array) !== -1) {
-                            console.log('match');
-                            $(this).fadeIn(10);
-                        }
-
-                    });
-                }
-
-                // Add class "active" to current filter item
-                $('#tag-list button').removeClass('active');
-                $(this).addClass('active');
-
-                // Prevent the page scrolling to the top of the screen
-                e.preventDefault();
-            });
+            // Init the filters
+            loadFilters();
 
         }
 

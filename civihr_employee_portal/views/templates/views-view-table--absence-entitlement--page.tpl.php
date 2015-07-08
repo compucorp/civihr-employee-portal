@@ -39,15 +39,7 @@
     </thead>
   <?php endif; ?>
   <tbody>
-      
-    <tr class="entitlement-date-row">
-      <?php if (isset($rows[0])) { ?>
-        <td>
-          <?php print $rows[0]['period_html_1']; ?>
-        </td>
-      <?php } ?>
-    </tr>
-    
+
     <?php foreach ($rows as $row_count => $row): ?>
       
       <tr <?php if ($row_classes[$row_count]) { print 'class="' . implode(' ', $row_classes[$row_count]) .'"';  } ?>>

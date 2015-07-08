@@ -77,21 +77,22 @@ class civihr_employee_portal_handler_area_totals extends views_handler_area {
 
                 foreach ($this->view->result as $row) {
 
-                    if (isset($row->absence_list_is_credit) && $row->absence_list_is_credit == '1' && isset($absenceType['credit_activity_type_id']) && $row->absence_list_activity_type_id == $absenceType['credit_activity_type_id']) {
+                    // Calculate totals only from data which are not rejected or cancelled
+                    if (isset($row->absence_list_absence_status) && ($row->absence_list_absence_status != "9" && $row->absence_list_absence_status != "3")) {
+                        if (isset($row->absence_list_is_credit) && $row->absence_list_is_credit == '1' && isset($absenceType['credit_activity_type_id']) && $row->absence_list_activity_type_id == $absenceType['credit_activity_type_id']) {
 
-                        $results[$absenceType['id']] += $row->absence_list_duration / (6 * 80);
+                            $results[$absenceType['id']] += $row->absence_list_duration / (6 * 80);
 
-                    }
-                    else {
+                        } else {
 
-                        if ($row->absence_list_activity_type_id == $absenceType['debit_activity_type_id']) {
+                            if ($row->absence_list_activity_type_id == $absenceType['debit_activity_type_id']) {
 
-                            $results[$absenceType['id']] -= $row->absence_list_duration / (6 * 80);
+                                $results[$absenceType['id']] -= $row->absence_list_duration / (6 * 80);
+
+                            }
 
                         }
-
                     }
-
                 }
 
                 /**
