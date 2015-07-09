@@ -142,7 +142,7 @@ $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
 $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = '';
-$handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="/civi_documents/nojs/edit/[id]" class="btn btn-custom ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Upload</a>';
+$handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="/civi_documents/nojs/edit/[id]" class="btn btn-sm btn-default ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"><i class="fa fa-upload"></i> Upload</a>';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
 
 /* Display: Documents Dashboard block */
