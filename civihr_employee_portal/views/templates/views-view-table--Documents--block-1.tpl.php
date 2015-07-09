@@ -86,7 +86,7 @@ $statuses = array(
               endif;
               ?>
               <?php if ($field === 'status_id'): ?>
-                <select class="document-status" name="document-<?php print strip_tags($row['id']); ?>-select-status" onchange="changeDocumentStatus(<?php print strip_tags($row['id']); ?>, this)">
+                <select class="document-status" name="document-<?php print strip_tags($row['id']); ?>-select-status" data-original-value="<?php print (int)strip_tags($content); ?>" onchange="changeDocumentStatus(<?php print strip_tags($row['id']); ?>, this)">
                 <?php foreach ($statuses as $statusKey => $statusValue): ?>
                     <?php
                         $selected = '';
@@ -152,6 +152,10 @@ $statuses = array(
         "id": id,
         "status_id": ob.value
         }).done(function(result) {
+            if (result.is_error) {
+                CRM.alert(result.error_message);
+                CRM.$(ob).val(CRM.$(ob).data('original-value'));
+            }
             CRM.$(ob).removeAttr('disabled');
         });
     }
