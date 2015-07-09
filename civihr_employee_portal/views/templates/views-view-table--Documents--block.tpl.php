@@ -24,7 +24,6 @@ $fieldsToDisplay = array(
     'activity_date_time' => t('Due Date'),
     'expire_date' => t('Expiry Date'),
     'status_id' => t('Status'),
-    'nothing' => '',
 );
 
 $typeResult = civicrm_api3('Activity', 'getoptions', array(
@@ -72,7 +71,7 @@ endforeach;
             <?php endif; ?>
             <?php if (!empty($header)) : ?>
                 <thead>
-                <tr>
+                    <tr>
                     <?php foreach ($header as $field => $label): ?>
                         <?php
                         if (!in_array($field, array_keys($fieldsToDisplay))):
@@ -84,7 +83,8 @@ endforeach;
                             <?php print $label; ?>
                         </th>
                     <?php endforeach; ?>
-                </tr>
+                        <th></th>
+                    </tr>
                 </thead>
             <?php endif; ?>
             <tbody>
@@ -115,15 +115,23 @@ endforeach;
                                 print $statuses[strip_tags($content)];
                                 continue;
                             endif; ?>
-                            <?php if ($field === 'nothing'):
-                                    if (strip_tags($row['status_id']) < 3):
-                                        print $content;
-                                    endif;
-                                continue;
-                            endif; ?>
-                            <?php print $content; ?>
                         </td>
                     <?php endforeach; ?>
+                        <td>
+                            <?php if (strip_tags($row['status_id']) == 3): ?>
+                                <button
+                                    class="btn btn-sm btn-default ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"
+                                    disabled="disabled">
+                                    <i class="fa fa-upload"></i> Upload
+                                </button>
+                            <?php else: ?>
+                                <a
+                                    href="/civi_documents/nojs/edit/<?php print strip_tags($row['id']); ?>"
+                                    class="btn btn-sm btn-default ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">
+                                    <i class="fa fa-upload"></i> Upload
+                                </a>
+                            <?php endif; ?>
+                        </td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

@@ -157,13 +157,6 @@ $handler->display->display_options['fields']['status_id']['element_label_type'] 
 $handler->display->display_options['fields']['status_id']['element_wrapper_type'] = 'div';
 $handler->display->display_options['fields']['status_id']['element_wrapper_class'] = 'document-wrapper';
 $handler->display->display_options['fields']['status_id']['key'] = 'status_id';
-/* Field: Global: Custom text */
-$handler->display->display_options['fields']['nothing']['id'] = 'nothing';
-$handler->display->display_options['fields']['nothing']['table'] = 'views';
-$handler->display->display_options['fields']['nothing']['field'] = 'nothing';
-$handler->display->display_options['fields']['nothing']['label'] = '';
-$handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="/civi_documents/nojs/edit/[id]" class="btn btn-sm btn-default ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"><i class="fa fa-upload"></i> Upload</a>';
-$handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
 
 ////
 $handler->display->display_options['fields']['document_targets']['id'] = 'document_targets';
@@ -210,7 +203,6 @@ $handler->display->display_options['style_options']['columns'] = array(
   'assignee_contact_id' => 'assignee_contact_id',
   'file_count' => 'file_count',
   'status_id' => 'status_id',
-  'nothing' => 'nothing',
   'document_targets' => 'document_targets',
 );
 $handler->display->display_options['style_options']['default'] = '-1';
@@ -299,11 +291,6 @@ $handler->display->display_options['style_options']['info'] = array(
     'separator' => '',
     'empty_column' => 0,
   ),
-  'nothing' => array(
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
   'document_targets' => array(
     'align' => '',
     'separator' => '',
@@ -351,8 +338,7 @@ $handler->display->display_options['style_options']['columns'] = array(
   'target_contact_id' => 'target_contact_id',
   'assignee_contact_id' => 'assignee_contact_id',
   'file_count' => 'file_count',
-  'status_id' => 'status_id',
-  'nothing' => 'nothing',
+  'status_id' => 'status_id'
 );
 $handler->display->display_options['style_options']['default'] = '-1';
 $handler->display->display_options['style_options']['info'] = array(
@@ -439,12 +425,7 @@ $handler->display->display_options['style_options']['info'] = array(
     'align' => '',
     'separator' => '',
     'empty_column' => 0,
-  ),
-  'nothing' => array(
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
+  )
 );
 $handler->display->display_options['defaults']['style_options'] = FALSE;
 $handler->display->display_options['defaults']['row_plugin'] = FALSE;
@@ -483,7 +464,6 @@ $translatables['Documents'] = array(
   t('Assignee Contact ID'),
   t('File Count'),
   t('Status ID'),
-  t('<a href="/civi_documents/nojs/edit/[id]" class="btn btn-custom ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Upload</a>'),
   t('Documents Dashboard block'),
   t('Documents'),
   t('Documents Dashboard Manager block'),
