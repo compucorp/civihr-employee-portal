@@ -1841,13 +1841,10 @@ function civihr_employee_portal_get_vacancy_list() {
  */
 function civihr_employee_portal_get_document_list() {
 
-    global $user;
-    $contactId = get_civihr_uf_match_data($user->uid)['contact_id'];
-    
     $result_output = civicrm_api3('Document', 'get', array(
         'sequential' => 1,
-        'target_contact_id' => $contactId,
         'is_deleted' => 0,
+        'return' => "id,activity_type_id,activity_subject,activity_date_time,expire_date,activity_details,activity_status_id,activity_is_deleted,case_id,file_count,source_contact_id,target_contact_id,assignee_contact_id",
     ));
 
     // Output json
@@ -1860,15 +1857,12 @@ function civihr_employee_portal_get_document_list() {
  */
 function civihr_employee_portal_get_document_list_manager() {
 
-    global $user;
-    $contactId = get_civihr_uf_match_data($user->uid)['contact_id'];
-    
     $result_output = civicrm_api3('Document', 'get', array(
         'sequential' => 1,
-        'assignee_contact_id' => $contactId,
         'is_deleted' => 0,
+        'return' => "id,activity_type_id,activity_subject,activity_date_time,expire_date,activity_details,activity_status_id,activity_is_deleted,case_id,file_count,source_contact_id,target_contact_id,assignee_contact_id",
     ));
-    
+
     // Output json
     drupal_json_output($result_output);
     drupal_exit();
