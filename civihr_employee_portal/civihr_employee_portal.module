@@ -203,6 +203,13 @@ function civihr_employee_portal_permission() {
  */
 function civihr_employee_portal_theme() {
     return array(
+        'user_login_block' => array(
+            'render element' => 'form',
+            'template' => 'templates/civihr-employee-portal-user-login',
+            'preprocess functions' => array(
+            'civihr_employee_portal_preprocess_user_login'
+            ),
+        ),
         'civihr_employee_portal_manager_calendar_block' => array(
             'variables' => array(
                 'custom_data' => NULL
@@ -2757,6 +2764,20 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
+    if ($form_id == 'user_login_block') {
+        /*////if ($form_state['input']['forgot-password']) {
+            exit('password reminder');
+        }
+        exit('standard login');
+        array_unshift($form['#submit'], 'civihr_employee_portal_user_login_submit');
+        //$form['#validate'][] = 'civihr_employee_portal_user_login_submit';
+        //$form['#validate'] = array(
+            //'civihr_employee_portal_user_login_submit',
+        //);
+        $form['name']['#required'] = false;
+        $form['pass']['#required'] = false;*/
+    }
+
     // Do ajax submit generic for all the webform those have no redirect option enabled.
     if(isset($form['#node']) && $form['#node']->webform['redirect_url'] == "<none>") {
         $matches = array();
@@ -2780,6 +2801,27 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
     }
  }
+
+function civihr_employee_portal_preprocess_user_login(&$vars) {
+    ctools_include('ajax');
+    ctools_include('modal');
+
+    drupal_add_js('misc/jquery.form.js');
+    // Add the responder javascript, required by ctools
+    ctools_add_js('modal');
+    ctools_add_js('ajax-responder');
+
+    $vars['form']['#block']->subject = null;
+    $vars['form']['name']['#attributes']['placeholder'] = 'Username or email';
+    $vars['form']['name']['#required'] = false;
+    $vars['form']['pass']['#attributes']['placeholder'] = 'Password';
+    $vars['form']['pass']['#required'] = false;
+    //$vars['form']['#validate'] = array();
+}
+
+function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
+    ////exit('civihr_employee_portal_user_login_submit');
+}
 
 function webform_client_form_ajax_callback($form, &$form_state) {
 
