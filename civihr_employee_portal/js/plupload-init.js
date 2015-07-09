@@ -43,10 +43,14 @@
             init: {
                 PostInit: function() {
                     document.getElementById('notsupported').innerHTML = '';
-                    document.getElementById('uploadfiles').onclick = function() {
-                        uploader.start();
-                        return false;
-                    };
+
+                    $('#civihr-employee-portal-document-form #edit-save').bind('click', function(e) {
+                        if (that.uploader.files.length && !that.uploaded) {
+                            that.uploadFiles();
+                            e.preventDefault();
+                            return false;
+                        }
+                    });
                 },
 
                 FilesAdded: function(up, files) {
@@ -67,7 +71,6 @@
                 FileUploaded: function(up, file) {
                     console.info((up.total.uploaded + up.total.failed) + ' / ' + up.files.length);
                     if (up.files.length == (up.total.uploaded + up.total.failed)) {
-                        console.info('submitting');
                         that.uploaded = true;
                         $('#civihr-employee-portal-document-form #edit-save').click();
                     }
@@ -103,7 +106,7 @@
             }
             that.removeFile(id);
             that.htmlRenderFileList();
-            console.info('files:');console.info(that.uploader.files);
+
             var deleteFiles = document.getElementsByName('delete_files')[0];
             deleteFiles.value = JSON.stringify(that.files.deleted);
         };
@@ -165,20 +168,8 @@
             return bytes.toFixed(1) + ' ' + units[u];
         };
 
-        this.bindEvents = function(){
-            $('#civihr-employee-portal-document-form #edit-save').bind('click', function(e) {
-                if (that.uploader.files.length && !that.uploaded) {
-                    console.info('uploading files!');
-                    that.uploadFiles();
-                    e.preventDefault();
-                    return false;
-                }
-            });
-        }
-
         this.uploader.init();
         this.htmlRenderFileList();
-        this.bindEvents();
     }
 
     var uploaderInstance = null;

@@ -125,18 +125,15 @@ $statuses = array(
                   continue;
               endif; ?>
               <?php if ($field === 'nothing'): ?>
-                <div class="btn-group">
-                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                        More...
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <?php if ((int)strip_tags($row['file_count'])): ?><li><a href="/civicrm/tasksassignments/file/zip?entityID=<?php print $row['id']; ?>&entityTable=civicrm_activity" target="_blank">View</a></li><?php endif; ?>
-                        <li><a href="/civi_documents/nojs/edit/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Edit</a></li>
-                        <li><a href="/civi_documents/nojs/reminder/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Send reminder</a></li>
-                        <li><a href="/civi_documents/nojs/delete/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Delete</a></li>
-                    </ul>
-                </div>
+                  <div class="btn-group">
+                      <a href class="dropdown-toggle context-menu-toggle" data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i></a>
+                      <ul class="dropdown-menu pull-right">
+                          <?php if ((int)strip_tags($row['file_count'])): ?><li><a href="/civicrm/tasksassignments/file/zip?entityID=<?php print $row['id']; ?>&entityTable=civicrm_activity" target="_blank"><i class="fa fa-eye"></i> View</a></li><?php endif; ?>
+                          <li><a href="/civi_documents/nojs/edit/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"><i class="fa fa-pencil"></i> Edit</a></li>
+                          <li><a href="/civi_documents/nojs/reminder/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"><i class="fa fa-envelope-o"></i> Send reminder</a></li>
+                          <li><a href="/civi_documents/nojs/delete/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"><i class="fa fa-trash-o"></i> Delete</a></li>
+                      </ul>
+                  </div>
               <?php else: ?>
                 <?php print strip_tags($content); ?>
               <?php endif; ?>
