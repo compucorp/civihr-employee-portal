@@ -25,7 +25,6 @@ $fieldsToDisplay = array(
     'activity_date_time' => t('Due Date'),
     'expire_date' => t('Expiry Date'),
     'status_id' => t('Status'),
-    'nothing' => '',
 );
 
 $typeResult = civicrm_api3('Activity', 'getoptions', array(
@@ -66,6 +65,7 @@ $statuses = array(
               <?php print $label; ?>
             </th>
         <?php endforeach; ?>
+            <th></th>
       </tr>
     </thead>
   <?php endif; ?>
@@ -124,21 +124,19 @@ $statuses = array(
                   print date('M d Y', strtotime(strip_tags($content)));
                   continue;
               endif; ?>
-              <?php if ($field === 'nothing'): ?>
-                  <div class="btn-group">
-                      <a href class="dropdown-toggle context-menu-toggle" data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i></a>
-                      <ul class="dropdown-menu pull-right">
-                          <?php if ((int)strip_tags($row['file_count'])): ?><li><a href="/civicrm/tasksassignments/file/zip?entityID=<?php print $row['id']; ?>&entityTable=civicrm_activity" target="_blank"><i class="fa fa-eye"></i> View</a></li><?php endif; ?>
-                          <li><a href="/civi_documents/nojs/edit/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"><i class="fa fa-pencil"></i> Edit</a></li>
-                          <li><a href="/civi_documents/nojs/reminder/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"><i class="fa fa-envelope-o"></i> Send reminder</a></li>
-                          <li><a href="/civi_documents/nojs/delete/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"><i class="fa fa-trash-o"></i> Delete</a></li>
-                      </ul>
-                  </div>
-              <?php else: ?>
-                <?php print strip_tags($content); ?>
-              <?php endif; ?>
             </td>
         <?php endforeach; ?>
+          <td>
+              <div class="btn-group">
+                  <a href class="dropdown-toggle context-menu-toggle" data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i></a>
+                  <ul class="dropdown-menu pull-right">
+                      <?php if ((int)strip_tags($row['file_count'])): ?><li><a href="/civicrm/tasksassignments/file/zip?entityID=<?php print $row['id']; ?>&entityTable=civicrm_activity" target="_blank"><i class="fa fa-download"></i> Download</a></li><?php endif; ?>
+                      <li><a href="/civi_documents/nojs/edit/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"><i class="fa fa-pencil"></i> Edit</a></li>
+                      <li><a href="/civi_documents/nojs/reminder/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"><i class="fa fa-envelope-o"></i> Send reminder</a></li>
+                      <li><a href="/civi_documents/nojs/delete/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"><i class="fa fa-trash-o"></i> Delete</a></li>
+                  </ul>
+              </div>
+            </td>
       </tr>
     <?php endforeach; ?>
   </tbody>

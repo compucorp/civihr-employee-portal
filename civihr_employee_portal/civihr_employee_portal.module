@@ -2224,7 +2224,10 @@ function civihr_employee_portal_send_reminder_document($ajax, $id) {
 }
 
 function civihr_employee_portal_document_form_send_reminder($form, &$form_state){
-    
+
+    $form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
+    $form['#suffix'] = '</div></article>';
+
     $activityOptions = array();
     $typeResult = civicrm_api3('Activity', 'getoptions', array(
         'field' => "activity_type_id",
@@ -2300,7 +2303,6 @@ function civihr_employee_portal_document_form_send_reminder($form, &$form_state)
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => t('Send'),
-        '#prefix' => '<hr>',
     );
     
     $form['#submit'][] = 'civihr_employee_portal_document_form_send_reminder_submit';
