@@ -2012,7 +2012,7 @@ function civihr_employee_portal_document_form($form, &$form_state) {
         '#suffix' => '</div></div>',
         '#date_format' => 'Y-m-d',
         '#date_year_range' => '-10:+10',
-        '#default_value' => $document['expire_date'],
+        '#default_value' => isset($document['expire_date']) ? strip_tags($document['expire_date']) : '',
     );
     
     $form['details'] = array(
@@ -2022,7 +2022,7 @@ function civihr_employee_portal_document_form($form, &$form_state) {
         '#suffix' => '</div></div>',
         '#rows' => 10,
         '#cols' => 100,
-        '#default_value' => strip_tags($document['details']),
+        '#default_value' => isset($document['details']) ? strip_tags($document['details']) : '',
     );
     
     $form['delete_files'] = array(
