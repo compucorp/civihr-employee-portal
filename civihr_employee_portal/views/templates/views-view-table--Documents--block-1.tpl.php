@@ -86,7 +86,7 @@ $statuses = array(
               endif;
               ?>
               <?php if ($field === 'status_id'): ?>
-                <select class="document-status" name="document-<?php print strip_tags($row['id']); ?>-select-status" data-original-value="<?php print (int)strip_tags($content); ?>" onchange="changeDocumentStatus(<?php print strip_tags($row['id']); ?>, this)">
+                    <select class="document-status" name="document-<?php print strip_tags($row['id']); ?>-select-status" data-id="<?php print strip_tags($row['id']); ?>" data-original-value="<?php print (int)strip_tags($content); ?>">
                 <?php foreach ($statuses as $statusKey => $statusValue): ?>
                     <?php
                         $selected = '';
@@ -145,18 +145,31 @@ $statuses = array(
 </table>
 
 <script>
-    function changeDocumentStatus(id, ob) {
-        CRM.$(ob).attr('disabled', 'disabled');
-        CRM.api3('Document', 'create', {
-        "sequential": 1,
-        "id": id,
-        "status_id": ob.value
-        }).done(function(result) {
-            if (result.is_error) {
-                CRM.alert(result.error_message);
-                CRM.$(ob).val(CRM.$(ob).data('original-value'));
-            }
-            CRM.$(ob).removeAttr('disabled');
+    (function($, CRM){
+        var $tableDocManager = $('#documents-dashboard-table-manager');
+
+        $tableDocManager.find('.document-status').change(function(e){
+            var selectEl = e.delegateTarget,
+                $select = $(selectEl);
+
+            $select.attr('disabled', 'disabled');
+
+            CRM.api3('Document', 'create', {
+                "sequential": 1,
+                "id": $select.data('id'),
+                "status_id": selectEl.value
+            }).done(function(result) {
+                $select.removeAttr('disabled');
+
+                if (+result.is_error) {
+                    CRM.alert(result.error_message, 'Error', 'error');
+                    $select.val($select.data('originalValue'));
+                    return
+                }
+
+                $select.data('originalValue',selectEl.value);
+
+            });
         });
-    }
+    }(CRM.$, CRM));
 </script>
