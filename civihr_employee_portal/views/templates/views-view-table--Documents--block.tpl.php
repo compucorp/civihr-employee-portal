@@ -115,6 +115,12 @@ endforeach;
                                 print $statuses[strip_tags($content)];
                                 continue;
                             endif; ?>
+                            <?php if ($field === 'nothing'):
+                                    if (strip_tags($row['status_id']) < 3):
+                                        print $content;
+                                    endif;
+                                continue;
+                            endif; ?>
                             <?php print $content; ?>
                         </td>
                     <?php endforeach; ?>
