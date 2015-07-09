@@ -133,7 +133,9 @@ endforeach;
 
 <script>
     (function($){
-        var $navDocStatus = $('#nav-documents-status');
+        var $navDocStatus = $('#nav-documents-status'),
+            $tableDocStaff = $('#documents-dashboard-table-staff'),
+            $tableDocStaffRows = $tableDocStaff.find('.document-row');
 
             $navDocStatus.find('a').bind('click', function(e) {
                 e.preventDefault();
@@ -145,12 +147,12 @@ endforeach;
                 $this.parent().addClass('active');
 
                 if (!documentStatus) {
-                    $('#documents-dashboard-table-staff .document-row').show();
+                    $tableDocStaffRows.show();
                     return
                 }
 
-                $('#documents-dashboard-table-staff .document-row').hide();
-                $('#documents-dashboard-table-staff .status-id-' + documentStatus).show();
+                $tableDocStaffRows.hide();
+                $tableDocStaff.find('.status-id-' + documentStatus).show();
         });
     }(CRM.$));
 </script>

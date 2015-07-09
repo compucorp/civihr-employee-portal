@@ -2032,7 +2032,13 @@ function civihr_employee_portal_document_form($form, &$form_state) {
 
     $form['save'] = array(
         '#type' => 'submit',
-        '#value' => t('Save')
+        '#value' => t('Save'),
+        '#attributes' => array(
+            'class' => array(
+                'btn',
+                'btn-primary'
+            ),
+        ),
     );
 
     // Add the validation function
