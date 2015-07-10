@@ -165,6 +165,7 @@ $handler->display->display_options['fields']['document_targets']['id'] = 'docume
 $handler->display->display_options['fields']['document_targets']['table'] = 'json';
 $handler->display->display_options['fields']['document_targets']['field'] = 'document_contacts';
 $handler->display->display_options['fields']['document_targets']['label'] = 'Document Targets';
+$handler->display->display_options['fields']['document_targets']['key'] = 'target_contact_id';
 /* Contextual filter: Json: Document contacts */
 $handler->display->display_options['arguments']['document_targets']['id'] = 'document_targets';
 $handler->display->display_options['arguments']['document_targets']['table'] = 'json';
