@@ -323,7 +323,7 @@ $handler->display->display_options['access']['role'] = array(
 );
 $handler->display->display_options['defaults']['query'] = FALSE;
 $handler->display->display_options['query']['type'] = 'views_query';
-$handler->display->display_options['query']['options']['json_file'] = $base_url . '/civi_documents_manager/';
+$handler->display->display_options['query']['options']['json_file'] = $base_url . '/civi_documents/';
 $handler->display->display_options['query']['options']['row_apath'] = 'values';
 $handler->display->display_options['query']['options']['show_errors'] = 1;
 $handler->display->display_options['defaults']['pager'] = FALSE;
