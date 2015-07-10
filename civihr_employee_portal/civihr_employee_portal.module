@@ -14,6 +14,25 @@ function civihr_employee_portal_css_alter(&$css) {
 }
 
 /**
+ * Implements hook_js_alter()
+ */
+function civihr_employee_portal_js_alter(&$javascript) {
+
+    // Unset jcarousel on panel admin pages as it's causes infinite loops
+    // "admin/structure/pages"
+    if (strpos(current_path(), 'admin/structure/pages') !== false) {
+        foreach ($javascript['settings']['data'] as $key => $value) {
+            if (isset($value['jcarousel'])) {
+
+                unset($javascript['settings']['data'][$key]);
+            }
+        }
+
+    }
+
+}
+
+/**
  * Implements hook_init().
  */
 function civihr_employee_portal_init() {
