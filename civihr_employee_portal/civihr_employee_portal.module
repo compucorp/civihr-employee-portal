@@ -2945,7 +2945,7 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
     }
 
     // Do ajax submit generic for all the webform those have no redirect option enabled.
-    if(isset($form['#node']) && $form['#node']->webform['redirect_url'] == "<none>") {
+    if(isset($form['#node']) && isset($form['#node']->webform) && $form['#node']->webform['redirect_url'] == "<none>") {
         $matches = array();
 
         // Check whether the form id have nid at the end like _nid
