@@ -1,14 +1,27 @@
-commit fd87169fe0f762f12d8bfa9b9bd23592e4d1871b
-Author: gregmeszaros <meszaros275@gmail.com>
-Date:   Tue Feb 24 18:00:57 2015 +0000
+commit 8b3b6f4aa65260e2f9a8a9b46656c1420dc94427
+Author: Gergely Meszaros <greg@compucorp.co.uk>
+Date:   Fri Jul 10 16:10:58 2015 +0100
 
-    Changes to patch v1
+    Views json query patch 10/07/2015
 
 diff --git a/handlers/views_json_query_handler_filter.inc b/handlers/views_json_query_handler_filter.inc
-index f8f0358..f3238d9 100755
+index f8f0358..dd1a2c0 100755
 --- a/handlers/views_json_query_handler_filter.inc
 +++ b/handlers/views_json_query_handler_filter.inc
-@@ -116,7 +116,7 @@ class views_json_query_handler_filter extends views_handler_filter_string {
+@@ -50,6 +50,12 @@ class views_json_query_handler_filter extends views_handler_filter_string {
+         'method' => 'op_not',
+         'values' => 1,
+       ),
++      'array_contains' => array(
++        'title' => t('Array Contains'),
++        'short' => t('array_contains'),
++        'method' => 'op_array_contains',
++        'values' => 1,
++      ),
+       'shorterthan' => array(
+         'title' => t('Length is shorter than'),
+         'short' => t('shorter than'),
+@@ -116,7 +122,7 @@ class views_json_query_handler_filter extends views_handler_filter_string {
    function generate() {
      $operator = $this->options['operator'];
      $key = $this->options['key'];
@@ -18,21 +31,25 @@ index f8f0358..f3238d9 100755
      return array($key, $operator, $value);
    }
 diff --git a/views_json_query.info b/views_json_query.info
-index b3f3418..1b5d804 100755
+index b3f3418..3817b7f 100755
 --- a/views_json_query.info
 +++ b/views_json_query.info
-@@ -8,4 +8,4 @@ files[] = views_json_query_plugin_query_json.inc
- ; Handlers
+@@ -9,3 +9,10 @@ files[] = views_json_query_plugin_query_json.inc
  files[] = handlers/views_json_query_handler_field.inc
  files[] = handlers/views_json_query_handler_filter.inc
--files[] = handlers/views_json_query_handler_sort.inc
-+files[] = handlers/views_json_query_handler_sort.inc
-\ No newline at end of file
+ files[] = handlers/views_json_query_handler_sort.inc
++
++; Information added by drush on 2015-06-24
++version = "7.x-1.0+1-dev"
++core = "7.x"
++project = "views_json_query"
++datestamp = "1435146028"
++
 diff --git a/views_json_query_plugin_query_json.inc b/views_json_query_plugin_query_json.inc
-index 64d1182..25d2747 100755
+index 64d1182..29c22c5 100755
 --- a/views_json_query_plugin_query_json.inc
 +++ b/views_json_query_plugin_query_json.inc
-@@ -4,6 +4,45 @@
+@@ -4,6 +4,43 @@
   * Query plugin for views_json_query.
   */
  
@@ -68,8 +85,6 @@ index 64d1182..25d2747 100755
 +class CountQueryExecuteFetchField extends CountQueryExecute {
 +
 +    public function fetchField() {
-+        
-+        watchdog('test count', print_r($this->getTotalCount(), TRUE));
 +        return $this->getTotalCount();
 +    }
 +}
@@ -78,7 +93,7 @@ index 64d1182..25d2747 100755
  class views_json_query_plugin_query_json extends views_plugin_query {
  
    /**
-@@ -32,7 +71,7 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+@@ -32,7 +69,7 @@ class views_json_query_plugin_query_json extends views_plugin_query {
  
      // Let the pager modify the query to add limits.
      $this->pager->query();
@@ -87,7 +102,7 @@ index 64d1182..25d2747 100755
      $view->build_info['query'] = $this->query();
  
      $view->build_info['query_args'] = array();
-@@ -71,6 +110,14 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+@@ -71,6 +108,14 @@ class views_json_query_plugin_query_json extends views_plugin_query {
          $headers['If-Modified-Since'] = $last_headers['last-modified'];
        }
      }
@@ -102,7 +117,7 @@ index 64d1182..25d2747 100755
  
      $result = drupal_http_request($uri, array('headers' => $headers));
      if (isset($result->error)) {
-@@ -78,8 +125,7 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+@@ -78,8 +123,7 @@ class views_json_query_plugin_query_json extends views_plugin_query {
        $message = t('HTTP response: %error. URI: %uri', $args);
        throw new Exception($message);
      }
@@ -112,6 +127,20 @@ index 64d1182..25d2747 100755
      if ($result->code == 304) {
        if (file_exists($cache_file_uri)) {
          return file_get_contents($cache_file_uri);
+@@ -198,11 +242,13 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+    * Define ops for using in filter.
+    */
+   function ops($op, $l, $r) {
++
+     $table = array(
+       '=' => create_function('$l,$r', 'return $l === $r;'),
+       '!=' => create_function('$l,$r', 'return $l !== $r;'),
+       'contains' => create_function('$l, $r', 'return strpos($l, $r) !== false;'),
+       '!contains' => create_function('$l, $r', 'return strpos($l, $r) === false;'),
++      'array_contains' => create_function('$l, $r', 'return in_array($r, $l) !== false;'),
+       'shorterthan' => create_function('$l, $r', 'return strlen($l) < $r;'),
+       'longerthan' => create_function('$l, $r', 'return strlen($l) > $r;'),
+     );
 @@ -226,7 +272,10 @@ class views_json_query_plugin_query_json extends views_plugin_query {
      foreach ($ret as $k => $row) {
        $check = TRUE;
