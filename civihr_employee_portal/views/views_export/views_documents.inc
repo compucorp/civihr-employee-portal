@@ -19,6 +19,9 @@ $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
 $handler->display->display_options['access']['role'] = array(
+  3 => '3',
+  4 => '4',
+  5 => '5',
   6 => '6',
 );
 $handler->display->display_options['cache']['type'] = 'none';
@@ -117,7 +120,7 @@ $handler->display->display_options['fields']['source_contact_id']['element_label
 $handler->display->display_options['fields']['source_contact_id']['element_wrapper_type'] = 'div';
 $handler->display->display_options['fields']['source_contact_id']['element_wrapper_class'] = 'document-wrapper';
 $handler->display->display_options['fields']['source_contact_id']['key'] = 'source_contact_id';
-/* Field: source_contact_id: value */
+/* Field: target_contact_id: value */
 $handler->display->display_options['fields']['target_contact_id']['id'] = 'target_contact_id';
 $handler->display->display_options['fields']['target_contact_id']['table'] = 'json';
 $handler->display->display_options['fields']['target_contact_id']['field'] = 'value';
@@ -157,14 +160,12 @@ $handler->display->display_options['fields']['status_id']['element_label_type'] 
 $handler->display->display_options['fields']['status_id']['element_wrapper_type'] = 'div';
 $handler->display->display_options['fields']['status_id']['element_wrapper_class'] = 'document-wrapper';
 $handler->display->display_options['fields']['status_id']['key'] = 'status_id';
-
-////
+/* Field: Json: Document contacts */
 $handler->display->display_options['fields']['document_targets']['id'] = 'document_targets';
 $handler->display->display_options['fields']['document_targets']['table'] = 'json';
 $handler->display->display_options['fields']['document_targets']['field'] = 'document_contacts';
 $handler->display->display_options['fields']['document_targets']['label'] = 'Document Targets';
-$handler->display->display_options['fields']['document_targets']['key'] = 'target_contact_id';
-
+/* Contextual filter: Json: Document contacts */
 $handler->display->display_options['arguments']['document_targets']['id'] = 'document_targets';
 $handler->display->display_options['arguments']['document_targets']['table'] = 'json';
 $handler->display->display_options['arguments']['document_targets']['field'] = 'document_contacts';
@@ -172,8 +173,6 @@ $handler->display->display_options['arguments']['document_targets']['default_act
 $handler->display->display_options['arguments']['document_targets']['default_argument_type'] = 'current_user';
 $handler->display->display_options['arguments']['document_targets']['summary']['format'] = 'default_summary';
 $handler->display->display_options['arguments']['document_targets']['name'] = 'document_targets';
-
-////
 
 /* Display: Documents Dashboard block */
 $handler = $view->new_display('block', 'Documents Dashboard block', 'block');
@@ -301,10 +300,17 @@ $handler->display->display_options['defaults']['style_options'] = FALSE;
 $handler->display->display_options['defaults']['row_plugin'] = FALSE;
 $handler->display->display_options['defaults']['row_options'] = FALSE;
 $handler->display->display_options['defaults']['header'] = FALSE;
+$handler->display->display_options['defaults']['arguments'] = FALSE;
+/* Contextual filter: Json: Document contacts */
+$handler->display->display_options['arguments']['document_targets']['id'] = 'document_targets';
+$handler->display->display_options['arguments']['document_targets']['table'] = 'json';
+$handler->display->display_options['arguments']['document_targets']['field'] = 'document_contacts';
+$handler->display->display_options['arguments']['document_targets']['default_action'] = 'default';
+$handler->display->display_options['arguments']['document_targets']['default_argument_type'] = 'current_user';
+$handler->display->display_options['arguments']['document_targets']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['document_targets']['name'] = 'target_contact_id';
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
-
-
 
 /* Display: Documents Dashboard Manager block */
 $handler = $view->new_display('block', 'Documents Dashboard Manager block', 'block_1');
@@ -338,7 +344,7 @@ $handler->display->display_options['style_options']['columns'] = array(
   'target_contact_id' => 'target_contact_id',
   'assignee_contact_id' => 'assignee_contact_id',
   'file_count' => 'file_count',
-  'status_id' => 'status_id'
+  'status_id' => 'status_id',
 );
 $handler->display->display_options['style_options']['default'] = '-1';
 $handler->display->display_options['style_options']['info'] = array(
@@ -425,17 +431,23 @@ $handler->display->display_options['style_options']['info'] = array(
     'align' => '',
     'separator' => '',
     'empty_column' => 0,
-  )
+  ),
 );
 $handler->display->display_options['defaults']['style_options'] = FALSE;
 $handler->display->display_options['defaults']['row_plugin'] = FALSE;
 $handler->display->display_options['defaults']['row_options'] = FALSE;
 $handler->display->display_options['defaults']['header'] = FALSE;
+$handler->display->display_options['defaults']['arguments'] = FALSE;
+/* Contextual filter: Json: Document contacts */
+$handler->display->display_options['arguments']['document_targets']['id'] = 'document_targets';
+$handler->display->display_options['arguments']['document_targets']['table'] = 'json';
+$handler->display->display_options['arguments']['document_targets']['field'] = 'document_contacts';
+$handler->display->display_options['arguments']['document_targets']['default_action'] = 'default';
+$handler->display->display_options['arguments']['document_targets']['default_argument_type'] = 'current_user';
+$handler->display->display_options['arguments']['document_targets']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['document_targets']['name'] = 'assignee_contact_id';
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
-
-
-
 $translatables['Documents'] = array(
   t('Master'),
   t('Documents and Downloads'),
@@ -464,6 +476,8 @@ $translatables['Documents'] = array(
   t('Assignee Contact ID'),
   t('File Count'),
   t('Status ID'),
+  t('Document Targets'),
+  t('All'),
   t('Documents Dashboard block'),
   t('Documents'),
   t('Documents Dashboard Manager block'),
