@@ -37,11 +37,15 @@ files[] = views/includes/civihr_employee_portal_handler_absence_period.inc
 files[] = views/includes/civihr_employee_portal_filter_absence_period.inc
 files[] = views/includes/civihr_employee_portal_handler_employee_id.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_status.inc
+files[] = views/includes/civihr_employee_portal_handler_document_contacts.inc
 files[] = views/includes/views_json_query_argument_request_handler.inc
+files[] = views/includes/views_json_query_argument_document_contacts_request_handler.inc
 
 ; Custom js
 scripts[] = js/scripts.js
 scripts[] = js/filters.js
+scripts[] = js/plupload/plupload.full.min.js
+scripts[] = js/plupload-init.js
 
 ; Additional js
 scripts[] = lib/tablesorter/jquery.tablesorter.min.js

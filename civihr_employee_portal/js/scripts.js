@@ -68,6 +68,24 @@ Drupal.behaviors.civihr_employee_portal = {
                 return number;
             }
         }
+        
+        $(window).load(function(){
+            $('a.ctools-use-modal').each( function() {
+                var $this = $(this);
+                $this.unbind();
+                $this.click(Drupal.CTools.Modal.clickAjaxLink);
+                var element_settings = {};
+                if ($this.attr('href')) {
+                  element_settings.url = $this.attr('href');
+                  element_settings.event = 'click';
+                  element_settings.progress = {
+                    type: 'throbber'
+                  };
+                }
+                var base = $this.attr('href');
+                Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
+            });
+        });
     }
 }
 })(jQuery);
