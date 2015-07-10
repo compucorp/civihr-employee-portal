@@ -5,15 +5,6 @@ _drupal_session_write('custom_login_success_message', '');
 
 $errors = form_get_errors();
 ?>
-<!--
-<div class="row">
-    <div class="col-xs-12 text-center" id="ssp-login-login-block-header">
-        <div class="ssp-login-">Logo</div>
-        <h1>UK Youth</h1>
-        <h2>Self Service Portal</h2>
-    </div>
-</div>
--->
 <div class="panel panel-login">
     <div class="panel-heading">
         <h2 class="panel-title">Login:</h2>
@@ -48,28 +39,22 @@ $errors = form_get_errors();
             <div class="col-xs-12">
                 <p>Enter your work email address in the box below and we'll resend you username and password.</p>
                 <?php print drupal_render($form['forgot-password']); ?>
-                <?php if ($customLoginSuccessMessage): ?>
-                    <div class="alert alert-success alert-dismissable">
-                        <ul>
-                            <li><?php print $customLoginSuccessMessage; ?></li>
-                        </ul>
-                    </div>
-                <?php else: ?>
+                <?php if (!$customLoginSuccessMessage): ?>
                     <div class="form-actions form-wrapper" id="edit-actions">
                         <input name="forgot-password-button" value="Send me my details" class="form-submit btn btn-default btn-primary" type="button">
                     </div>
                 <?php endif; ?>
             </div>
         </div>
-        <!--
+        <?php if ($customLoginSuccessMessage): ?>
         <div class="row">
             <div class="alert alert-success text-center">
                 <ul>
-                        <li>Details sent!</li>
+                    <li><?php print $customLoginSuccessMessage; ?></li>
                 </ul>
             </div>
         </div>
-        -->
+        <?php endif; ?>
     </div>
 </div>
 <div class="row">
@@ -81,6 +66,13 @@ $errors = form_get_errors();
 <script type="text/javascript">
     (function($){
         $(document).ready(function(){
+
+            $('#messages').hide();
+            $('#block-system-main').hide();
+            $('#block-system-navigation').hide();
+            $('#page-header').hide();
+
+
             var $panelForgotPassword  = $('.panel-forgot-password');
             $('#link-forgot-password').click(function(e){
                 $panelForgotPassword.toggleClass('hidden');
