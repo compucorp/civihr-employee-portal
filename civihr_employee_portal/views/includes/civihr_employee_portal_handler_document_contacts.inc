@@ -11,7 +11,12 @@ class civihr_employee_portal_handler_document_contacts extends views_handler_fie
   function render($values) {
       
     $key = $this->field_alias;
-    return ',' . implode(',', $values->$key) . ',';
+
+    if (isset($key) && !empty($key)) {
+        return ',' . implode(',', $values->$key) . ',';
+    }
+
+    return '';
   }
 
   /**

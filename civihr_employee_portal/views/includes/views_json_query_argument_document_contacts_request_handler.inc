@@ -26,6 +26,14 @@ class views_json_query_argument_document_contacts_request_handler extends views_
    */
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
+
+      $form['name'] = array(
+          '#type' => 'textfield',
+          '#title' => t('JSON key'),
+          '#default_value' => $this->options['name'],
+          '#description' => t('The key in the JSON file to use for the filter.'),
+          '#required' => TRUE,
+      );
   }
   
   function options_submit(&$form, &$form_state) {
@@ -82,10 +90,19 @@ class views_json_query_argument_document_contacts_request_handler extends views_
    */
   function generate() {
 
-    $operator = '=';
+    // Use the array_contains new filter type
+    $operator = 'array_contains';
+
+    // Get the column key which we want to filter
     $key = $this->options['name'];
 
-    return array($key, $operator, $this->argument);
+    // Get the contact match data from UID
+    $contact_match = get_civihr_uf_match_data($this->argument);
+
+    // $key -> the key(column) in json which we will filter
+    // $operator -> used for filter
+    // $contact_match['contact_id'] -> data what we are looking for
+    return array($key, $operator, $contact_match['contact_id']);
   }
   
 }
