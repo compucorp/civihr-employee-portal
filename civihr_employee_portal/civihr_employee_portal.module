@@ -2965,6 +2965,16 @@ function civihr_employee_portal_preprocess_user_login(&$vars) {
     $vars['form']['name']['#required'] = false;
     $vars['form']['pass']['#attributes']['placeholder'] = 'Password';
     $vars['form']['pass']['#required'] = false;
+    $vars['form']['actions']['forgot_password'] = array(
+        '#markup' => l('Forgot password?', '/user/password',  array(
+            'attributes' =>
+                array(
+                    'class' => 'btn btn-link pull-left',
+                    'id' => 'link-forgot-password',
+                    'title' => 'Request new password via e-mail.'
+                )
+        ))
+    );
 }
 
 function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
