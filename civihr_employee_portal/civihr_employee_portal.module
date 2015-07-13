@@ -14,6 +14,25 @@ function civihr_employee_portal_css_alter(&$css) {
 }
 
 /**
+ * Implements hook_js_alter()
+ */
+function civihr_employee_portal_js_alter(&$javascript) {
+
+    // Unset jcarousel on panel admin pages as it's causes infinite loops
+    // "admin/structure/pages"
+    if (strpos(current_path(), 'admin/structure/pages') !== false) {
+        foreach ($javascript['settings']['data'] as $key => $value) {
+            if (isset($value['jcarousel'])) {
+
+                unset($javascript['settings']['data'][$key]);
+            }
+        }
+
+    }
+
+}
+
+/**
  * Implements hook_init().
  */
 function civihr_employee_portal_init() {
@@ -532,14 +551,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
-    $items['civi_documents_manager'] = array(
-        'title' => 'Document list',
-        'page callback' => 'civihr_employee_portal_get_document_list_manager',
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-    
+
     $items['civi_documents/%ctools_js/edit/%'] = array(
         'title' => 'Edit Document',
         'page callback' => 'civihr_employee_portal_edit_document',
@@ -1868,22 +1880,6 @@ function civihr_employee_portal_get_document_list() {
 }
 
 /**
- * Returns the document list for Manager
- */
-function civihr_employee_portal_get_document_list_manager() {
-
-    $result_output = civicrm_api3('Document', 'get', array(
-        'sequential' => 1,
-        'is_deleted' => 0,
-        'return' => "id,activity_type_id,activity_subject,activity_date_time,expire_date,activity_details,activity_status_id,activity_is_deleted,case_id,file_count,source_contact_id,target_contact_id,assignee_contact_id",
-    ));
-
-    // Output json
-    drupal_json_output($result_output);
-    drupal_exit();
-}
-
-/**
 * Ajax menu callback.
 */
 function civihr_employee_portal_edit_document($ajax, $id) {
@@ -2979,7 +2975,7 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
     }
 
     // Do ajax submit generic for all the webform those have no redirect option enabled.
-    if(isset($form['#node']) && $form['#node']->webform['redirect_url'] == "<none>") {
+    if(isset($form['#node']) && isset($form['#node']->webform) && $form['#node']->webform['redirect_url'] == "<none>") {
         $matches = array();
 
         // Check whether the form id have nid at the end like _nid
@@ -3018,6 +3014,16 @@ function civihr_employee_portal_preprocess_user_login(&$vars) {
     $vars['form']['name']['#required'] = false;
     $vars['form']['pass']['#attributes']['placeholder'] = 'Password';
     $vars['form']['pass']['#required'] = false;
+    $vars['form']['actions']['forgot_password'] = array(
+        '#markup' => l('Forgot password?', '/user/password',  array(
+            'attributes' =>
+                array(
+                    'class' => 'btn btn-link pull-left',
+                    'id' => 'link-forgot-password',
+                    'title' => 'Request new password via e-mail.'
+                )
+        ))
+    );
 }
 
 function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
