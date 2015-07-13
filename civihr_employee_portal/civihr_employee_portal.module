@@ -3024,6 +3024,12 @@ function civihr_employee_portal_preprocess_user_login(&$vars) {
                 )
         ))
     );
+    
+    $vars['classes_array'] = array();
+    $vars['content_attributes_array'] = array();
+    $vars['title_attributes_array'] = array();
+    $vars['content_attributes_array'] = array();
+    $vars['attributes_array'] = array();
 }
 
 function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
