@@ -19,14 +19,6 @@
  * @ingroup views_templates
  */
 
-$fieldsToDisplay = array(
-    'activity_type_id' => t('Type'),
-    'case_id' => t('Assignment'),
-    'activity_date_time' => t('Due Date'),
-    'expire_date' => t('Expiry Date'),
-    'status_id' => t('Status'),
-);
-
 $typeResult = civicrm_api3('Activity', 'getoptions', array(
     'field' => "activity_type_id",
 ));
@@ -55,12 +47,6 @@ $statuses = array(
     <thead>
       <tr>
         <?php foreach ($header as $field => $label): ?>
-          <?php
-          if (!in_array($field, array_keys($fieldsToDisplay))):
-            continue;    
-          endif;
-          $label = $fieldsToDisplay[$field];
-          ?>
             <th <?php if ($header_classes[$field]) { print 'class="'. $header_classes[$field] . '" '; } ?>>
               <?php print $label; ?>
             </th>
@@ -74,11 +60,6 @@ $statuses = array(
       <?php $class = 'document-row status-id-' . strip_tags($row['status_id']); ?>
       <tr <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?>>
         <?php foreach ($row as $field => $content): ?>
-          <?php
-          if (!in_array($field, array_keys($fieldsToDisplay))):
-            continue;    
-          endif;
-          ?>
             <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
               <?php if ($field === 'activity_type_id'):
                 print $types[strip_tags($content)];
@@ -124,6 +105,7 @@ $statuses = array(
                   print date('M d Y', strtotime(strip_tags($content)));
                   continue;
               endif; ?>
+              <?php print $content; ?>
             </td>
         <?php endforeach; ?>
           <td>
