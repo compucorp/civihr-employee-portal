@@ -24,6 +24,8 @@ $fieldsToDisplay = array(
     'activity_date_time' => t('Due Date'),
     'expire_date' => t('Expiry Date'),
     'status_id' => t('Status'),
+    'document_contacts' => t('Target Contact'),
+    'document_contacts_1' => t('Target Contact Assignee'),
 );
 
 $typeResult = civicrm_api3('Activity', 'getoptions', array(
@@ -92,6 +94,7 @@ endforeach;
                 <?php $class = 'document-row status-id-' . strip_tags($row['status_id']); ?>
                 <tr <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?>>
                     <?php foreach ($row as $field => $content): ?>
+
                         <?php
                         if (!in_array($field, array_keys($fieldsToDisplay))):
                             continue;
@@ -115,6 +118,12 @@ endforeach;
                                 print $statuses[strip_tags($content)];
                                 continue;
                             endif; ?>
+                            <?php if ($field === 'document_contacts' || $field === 'document_contacts_1'):
+                                print $content;
+                                continue;
+                            endif; ?>
+
+
                         </td>
                     <?php endforeach; ?>
                         <td>

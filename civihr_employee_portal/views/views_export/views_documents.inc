@@ -110,36 +110,6 @@ $handler->display->display_options['fields']['details']['element_label_type'] = 
 $handler->display->display_options['fields']['details']['element_wrapper_type'] = 'div';
 $handler->display->display_options['fields']['details']['element_wrapper_class'] = 'document-wrapper';
 $handler->display->display_options['fields']['details']['key'] = 'details';
-/* Field: source_contact_id: value */
-$handler->display->display_options['fields']['source_contact_id']['id'] = 'source_contact_id';
-$handler->display->display_options['fields']['source_contact_id']['table'] = 'json';
-$handler->display->display_options['fields']['source_contact_id']['field'] = 'value';
-$handler->display->display_options['fields']['source_contact_id']['label'] = 'Source Contact ID';
-$handler->display->display_options['fields']['source_contact_id']['element_type'] = 'div';
-$handler->display->display_options['fields']['source_contact_id']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['source_contact_id']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['source_contact_id']['element_wrapper_class'] = 'document-wrapper';
-$handler->display->display_options['fields']['source_contact_id']['key'] = 'source_contact_id';
-/* Field: target_contact_id: value */
-$handler->display->display_options['fields']['target_contact_id']['id'] = 'target_contact_id';
-$handler->display->display_options['fields']['target_contact_id']['table'] = 'json';
-$handler->display->display_options['fields']['target_contact_id']['field'] = 'value';
-$handler->display->display_options['fields']['target_contact_id']['label'] = 'Target Contact ID';
-$handler->display->display_options['fields']['target_contact_id']['element_type'] = 'div';
-$handler->display->display_options['fields']['target_contact_id']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['target_contact_id']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['target_contact_id']['element_wrapper_class'] = 'document-wrapper';
-$handler->display->display_options['fields']['target_contact_id']['key'] = 'target_contact_id';
-/* Field: assignee_contact_id: value */
-$handler->display->display_options['fields']['assignee_contact_id']['id'] = 'assignee_contact_id';
-$handler->display->display_options['fields']['assignee_contact_id']['table'] = 'json';
-$handler->display->display_options['fields']['assignee_contact_id']['field'] = 'value';
-$handler->display->display_options['fields']['assignee_contact_id']['label'] = 'Assignee Contact ID';
-$handler->display->display_options['fields']['assignee_contact_id']['element_type'] = 'div';
-$handler->display->display_options['fields']['assignee_contact_id']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['assignee_contact_id']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['assignee_contact_id']['element_wrapper_class'] = 'document-wrapper';
-$handler->display->display_options['fields']['assignee_contact_id']['key'] = 'assignee_contact_id';
 /* Field: file_count: value */
 $handler->display->display_options['fields']['file_count']['id'] = 'file_count';
 $handler->display->display_options['fields']['file_count']['table'] = 'json';
@@ -160,12 +130,18 @@ $handler->display->display_options['fields']['status_id']['element_label_type'] 
 $handler->display->display_options['fields']['status_id']['element_wrapper_type'] = 'div';
 $handler->display->display_options['fields']['status_id']['element_wrapper_class'] = 'document-wrapper';
 $handler->display->display_options['fields']['status_id']['key'] = 'status_id';
-/* Field: Json: Document contacts */
-$handler->display->display_options['fields']['document_targets']['id'] = 'document_targets';
-$handler->display->display_options['fields']['document_targets']['table'] = 'json';
-$handler->display->display_options['fields']['document_targets']['field'] = 'document_contacts';
-$handler->display->display_options['fields']['document_targets']['label'] = 'Document Targets';
-$handler->display->display_options['fields']['document_targets']['key'] = 'target_contact_id';
+/* Field: target_contact_id: Document contacts */
+$handler->display->display_options['fields']['document_contacts']['id'] = 'document_contacts';
+$handler->display->display_options['fields']['document_contacts']['table'] = 'json';
+$handler->display->display_options['fields']['document_contacts']['field'] = 'document_contacts';
+$handler->display->display_options['fields']['document_contacts']['label'] = 'Document contacts (target)';
+$handler->display->display_options['fields']['document_contacts']['key'] = 'target_contact_id';
+/* Field: assignee_contact_id: Document contacts */
+$handler->display->display_options['fields']['document_contacts_1']['id'] = 'document_contacts_1';
+$handler->display->display_options['fields']['document_contacts_1']['table'] = 'json';
+$handler->display->display_options['fields']['document_contacts_1']['field'] = 'document_contacts';
+$handler->display->display_options['fields']['document_contacts_1']['label'] = 'Document contacts (assignee)';
+$handler->display->display_options['fields']['document_contacts_1']['key'] = 'assignee_contact_id';
 /* Contextual filter: Json: Document contacts */
 $handler->display->display_options['arguments']['document_targets']['id'] = 'document_targets';
 $handler->display->display_options['arguments']['document_targets']['table'] = 'json';
@@ -472,12 +448,10 @@ $translatables['Documents'] = array(
   t('Activity Date'),
   t('Expire Date'),
   t('Details'),
-  t('Source Contact ID'),
-  t('Target Contact ID'),
-  t('Assignee Contact ID'),
   t('File Count'),
   t('Status ID'),
-  t('Document Targets'),
+  t('Document contacts (target)'),
+  t('Document contacts (assignee)'),
   t('All'),
   t('Documents Dashboard block'),
   t('Documents'),
