@@ -66,13 +66,6 @@ $errors = form_get_errors();
 <script type="text/javascript">
     (function($){
         $(document).ready(function(){
-
-            $('#messages').hide();
-            $('#block-system-main').hide();
-            $('#block-system-navigation').hide();
-            $('#page-header').hide();
-
-
             var $panelForgotPassword  = $('.panel-forgot-password');
             $('#link-forgot-password').click(function(e){
                 $panelForgotPassword.toggleClass('hidden');
