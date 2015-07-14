@@ -423,6 +423,42 @@ function get_civihr_absence_statuses($status_id = NULL) {
 
 }
 
+function get_document_statuses($status_id = NULL) {
+    
+    $documentStatuses = &drupal_static(__FUNCTION__);
+
+    if (!isset($documentStatuses)) {
+
+        if ($cache = cache_get('civihr_document_statuses')) {
+            $documentStatuses = $cache->data;
+            watchdog('cache hit document statuses', 'cache');
+        }
+        else {
+            try {
+                // Civi init
+                civicrm_initialize();
+
+                // Document statuses array
+                $documentStatuses = civicrm_api3('Document', 'getoptions', array(
+                    'field' => "status_id",
+                ));
+            }
+
+            catch (CiviCRM_API3_Exception $e) {
+                $error = $e->getMessage();
+            }
+
+            // Cache the document statuses for 5 minutes
+            cache_set('civihr_document_statuses', $documentStatuses, 'cache', time() + 360);
+        }
+    }
+
+    // Get the status values based on the status_id
+    $status_id_value = CRM_Utils_Array::value($status_id, $documentStatuses);
+
+    return $status_id_value;
+}
+
 /**
  * Function for caching civicrm_uf_match table from CiviCRM
  */
