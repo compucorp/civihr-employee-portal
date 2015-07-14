@@ -277,6 +277,114 @@ $handler->display->display_options['defaults']['style_options'] = FALSE;
 $handler->display->display_options['defaults']['row_plugin'] = FALSE;
 $handler->display->display_options['defaults']['row_options'] = FALSE;
 $handler->display->display_options['defaults']['header'] = FALSE;
+$handler->display->display_options['defaults']['fields'] = FALSE;
+/* Field: id: value */
+$handler->display->display_options['fields']['id']['id'] = 'id';
+$handler->display->display_options['fields']['id']['table'] = 'json';
+$handler->display->display_options['fields']['id']['field'] = 'value';
+$handler->display->display_options['fields']['id']['label'] = 'Document ID';
+$handler->display->display_options['fields']['id']['element_class'] = 'hidden';
+$handler->display->display_options['fields']['id']['element_label_class'] = 'hidden';
+$handler->display->display_options['fields']['id']['key'] = 'id';
+/* Field: activity_type_id: value */
+$handler->display->display_options['fields']['activity_type_id']['id'] = 'activity_type_id';
+$handler->display->display_options['fields']['activity_type_id']['table'] = 'json';
+$handler->display->display_options['fields']['activity_type_id']['field'] = 'value';
+$handler->display->display_options['fields']['activity_type_id']['label'] = 'Type';
+$handler->display->display_options['fields']['activity_type_id']['element_type'] = 'div';
+$handler->display->display_options['fields']['activity_type_id']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['activity_type_id']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['activity_type_id']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['activity_type_id']['key'] = 'activity_type_id';
+/* Field: case_id: value */
+$handler->display->display_options['fields']['case_id']['id'] = 'case_id';
+$handler->display->display_options['fields']['case_id']['table'] = 'json';
+$handler->display->display_options['fields']['case_id']['field'] = 'value';
+$handler->display->display_options['fields']['case_id']['label'] = 'Assignment';
+$handler->display->display_options['fields']['case_id']['exclude'] = TRUE;
+$handler->display->display_options['fields']['case_id']['element_type'] = 'div';
+$handler->display->display_options['fields']['case_id']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['case_id']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['case_id']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['case_id']['key'] = 'case_id';
+/* Field: subject: value */
+$handler->display->display_options['fields']['subject']['id'] = 'subject';
+$handler->display->display_options['fields']['subject']['table'] = 'json';
+$handler->display->display_options['fields']['subject']['field'] = 'value';
+$handler->display->display_options['fields']['subject']['label'] = 'Subject';
+$handler->display->display_options['fields']['subject']['exclude'] = TRUE;
+$handler->display->display_options['fields']['subject']['element_type'] = 'div';
+$handler->display->display_options['fields']['subject']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['subject']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['subject']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['subject']['key'] = 'subject';
+/* Field: activity_date_time: value */
+$handler->display->display_options['fields']['activity_date_time']['id'] = 'activity_date_time';
+$handler->display->display_options['fields']['activity_date_time']['table'] = 'json';
+$handler->display->display_options['fields']['activity_date_time']['field'] = 'value';
+$handler->display->display_options['fields']['activity_date_time']['label'] = 'Due Date';
+$handler->display->display_options['fields']['activity_date_time']['element_type'] = 'div';
+$handler->display->display_options['fields']['activity_date_time']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['activity_date_time']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['activity_date_time']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['activity_date_time']['key'] = 'activity_date_time';
+/* Field: expire_date: value */
+$handler->display->display_options['fields']['expire_date']['id'] = 'expire_date';
+$handler->display->display_options['fields']['expire_date']['table'] = 'json';
+$handler->display->display_options['fields']['expire_date']['field'] = 'value';
+$handler->display->display_options['fields']['expire_date']['label'] = 'Expire Date';
+$handler->display->display_options['fields']['expire_date']['element_type'] = 'div';
+$handler->display->display_options['fields']['expire_date']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['expire_date']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['expire_date']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['expire_date']['key'] = 'expire_date';
+/* Field: details: value */
+$handler->display->display_options['fields']['details']['id'] = 'details';
+$handler->display->display_options['fields']['details']['table'] = 'json';
+$handler->display->display_options['fields']['details']['field'] = 'value';
+$handler->display->display_options['fields']['details']['label'] = 'Details';
+$handler->display->display_options['fields']['details']['exclude'] = TRUE;
+$handler->display->display_options['fields']['details']['element_type'] = 'div';
+$handler->display->display_options['fields']['details']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['details']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['details']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['details']['key'] = 'details';
+/* Field: file_count: value */
+$handler->display->display_options['fields']['file_count']['id'] = 'file_count';
+$handler->display->display_options['fields']['file_count']['table'] = 'json';
+$handler->display->display_options['fields']['file_count']['field'] = 'value';
+$handler->display->display_options['fields']['file_count']['label'] = 'File Count';
+$handler->display->display_options['fields']['file_count']['exclude'] = TRUE;
+$handler->display->display_options['fields']['file_count']['element_type'] = 'div';
+$handler->display->display_options['fields']['file_count']['element_class'] = 'hidden';
+$handler->display->display_options['fields']['file_count']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['file_count']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['file_count']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['file_count']['key'] = 'file_count';
+/* Field: status_id: value */
+$handler->display->display_options['fields']['status_id']['id'] = 'status_id';
+$handler->display->display_options['fields']['status_id']['table'] = 'json';
+$handler->display->display_options['fields']['status_id']['field'] = 'value';
+$handler->display->display_options['fields']['status_id']['label'] = 'Status';
+$handler->display->display_options['fields']['status_id']['element_type'] = 'div';
+$handler->display->display_options['fields']['status_id']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['status_id']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['status_id']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['status_id']['key'] = 'status_id';
+/* Field: target_contact_id: Document contacts */
+$handler->display->display_options['fields']['document_contacts']['id'] = 'document_contacts';
+$handler->display->display_options['fields']['document_contacts']['table'] = 'json';
+$handler->display->display_options['fields']['document_contacts']['field'] = 'document_contacts';
+$handler->display->display_options['fields']['document_contacts']['label'] = 'Document contacts (target)';
+$handler->display->display_options['fields']['document_contacts']['exclude'] = TRUE;
+$handler->display->display_options['fields']['document_contacts']['key'] = 'target_contact_id';
+/* Field: assignee_contact_id: Document contacts */
+$handler->display->display_options['fields']['document_contacts_1']['id'] = 'document_contacts_1';
+$handler->display->display_options['fields']['document_contacts_1']['table'] = 'json';
+$handler->display->display_options['fields']['document_contacts_1']['field'] = 'document_contacts';
+$handler->display->display_options['fields']['document_contacts_1']['label'] = 'Document contacts (assignee)';
+$handler->display->display_options['fields']['document_contacts_1']['exclude'] = TRUE;
+$handler->display->display_options['fields']['document_contacts_1']['key'] = 'assignee_contact_id';
 $handler->display->display_options['defaults']['arguments'] = FALSE;
 /* Contextual filter: Json: Document contacts */
 $handler->display->display_options['arguments']['document_targets']['id'] = 'document_targets';
@@ -414,6 +522,113 @@ $handler->display->display_options['defaults']['style_options'] = FALSE;
 $handler->display->display_options['defaults']['row_plugin'] = FALSE;
 $handler->display->display_options['defaults']['row_options'] = FALSE;
 $handler->display->display_options['defaults']['header'] = FALSE;
+$handler->display->display_options['defaults']['fields'] = FALSE;
+/* Field: id: value */
+$handler->display->display_options['fields']['id']['id'] = 'id';
+$handler->display->display_options['fields']['id']['table'] = 'json';
+$handler->display->display_options['fields']['id']['field'] = 'value';
+$handler->display->display_options['fields']['id']['label'] = 'Document ID';
+$handler->display->display_options['fields']['id']['element_class'] = 'hidden';
+$handler->display->display_options['fields']['id']['element_label_class'] = 'hidden';
+$handler->display->display_options['fields']['id']['key'] = 'id';
+/* Field: activity_type_id: value */
+$handler->display->display_options['fields']['activity_type_id']['id'] = 'activity_type_id';
+$handler->display->display_options['fields']['activity_type_id']['table'] = 'json';
+$handler->display->display_options['fields']['activity_type_id']['field'] = 'value';
+$handler->display->display_options['fields']['activity_type_id']['label'] = 'Activity Type ID';
+$handler->display->display_options['fields']['activity_type_id']['element_type'] = 'div';
+$handler->display->display_options['fields']['activity_type_id']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['activity_type_id']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['activity_type_id']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['activity_type_id']['key'] = 'activity_type_id';
+/* Field: case_id: value */
+$handler->display->display_options['fields']['case_id']['id'] = 'case_id';
+$handler->display->display_options['fields']['case_id']['table'] = 'json';
+$handler->display->display_options['fields']['case_id']['field'] = 'value';
+$handler->display->display_options['fields']['case_id']['label'] = 'Assignment';
+$handler->display->display_options['fields']['case_id']['element_type'] = 'div';
+$handler->display->display_options['fields']['case_id']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['case_id']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['case_id']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['case_id']['key'] = 'case_id';
+/* Field: subject: value */
+$handler->display->display_options['fields']['subject']['id'] = 'subject';
+$handler->display->display_options['fields']['subject']['table'] = 'json';
+$handler->display->display_options['fields']['subject']['field'] = 'value';
+$handler->display->display_options['fields']['subject']['label'] = 'Subject';
+$handler->display->display_options['fields']['subject']['exclude'] = TRUE;
+$handler->display->display_options['fields']['subject']['element_type'] = 'div';
+$handler->display->display_options['fields']['subject']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['subject']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['subject']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['subject']['key'] = 'subject';
+/* Field: activity_date_time: value */
+$handler->display->display_options['fields']['activity_date_time']['id'] = 'activity_date_time';
+$handler->display->display_options['fields']['activity_date_time']['table'] = 'json';
+$handler->display->display_options['fields']['activity_date_time']['field'] = 'value';
+$handler->display->display_options['fields']['activity_date_time']['label'] = 'Due Date';
+$handler->display->display_options['fields']['activity_date_time']['element_type'] = 'div';
+$handler->display->display_options['fields']['activity_date_time']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['activity_date_time']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['activity_date_time']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['activity_date_time']['key'] = 'activity_date_time';
+/* Field: expire_date: value */
+$handler->display->display_options['fields']['expire_date']['id'] = 'expire_date';
+$handler->display->display_options['fields']['expire_date']['table'] = 'json';
+$handler->display->display_options['fields']['expire_date']['field'] = 'value';
+$handler->display->display_options['fields']['expire_date']['label'] = 'Expire Date';
+$handler->display->display_options['fields']['expire_date']['element_type'] = 'div';
+$handler->display->display_options['fields']['expire_date']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['expire_date']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['expire_date']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['expire_date']['key'] = 'expire_date';
+/* Field: details: value */
+$handler->display->display_options['fields']['details']['id'] = 'details';
+$handler->display->display_options['fields']['details']['table'] = 'json';
+$handler->display->display_options['fields']['details']['field'] = 'value';
+$handler->display->display_options['fields']['details']['label'] = 'Details';
+$handler->display->display_options['fields']['details']['exclude'] = TRUE;
+$handler->display->display_options['fields']['details']['element_type'] = 'div';
+$handler->display->display_options['fields']['details']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['details']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['details']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['details']['key'] = 'details';
+/* Field: file_count: value */
+$handler->display->display_options['fields']['file_count']['id'] = 'file_count';
+$handler->display->display_options['fields']['file_count']['table'] = 'json';
+$handler->display->display_options['fields']['file_count']['field'] = 'value';
+$handler->display->display_options['fields']['file_count']['label'] = 'File Count';
+$handler->display->display_options['fields']['file_count']['element_type'] = 'div';
+$handler->display->display_options['fields']['file_count']['element_class'] = 'hidden';
+$handler->display->display_options['fields']['file_count']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['file_count']['element_label_class'] = 'hidden';
+$handler->display->display_options['fields']['file_count']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['file_count']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['file_count']['key'] = 'file_count';
+/* Field: status_id: value */
+$handler->display->display_options['fields']['status_id']['id'] = 'status_id';
+$handler->display->display_options['fields']['status_id']['table'] = 'json';
+$handler->display->display_options['fields']['status_id']['field'] = 'value';
+$handler->display->display_options['fields']['status_id']['label'] = 'Status';
+$handler->display->display_options['fields']['status_id']['element_type'] = 'div';
+$handler->display->display_options['fields']['status_id']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['status_id']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['status_id']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['status_id']['key'] = 'status_id';
+/* Field: target_contact_id: Document contacts */
+$handler->display->display_options['fields']['document_contacts']['id'] = 'document_contacts';
+$handler->display->display_options['fields']['document_contacts']['table'] = 'json';
+$handler->display->display_options['fields']['document_contacts']['field'] = 'document_contacts';
+$handler->display->display_options['fields']['document_contacts']['label'] = 'Document contacts (target)';
+$handler->display->display_options['fields']['document_contacts']['exclude'] = TRUE;
+$handler->display->display_options['fields']['document_contacts']['key'] = 'target_contact_id';
+/* Field: assignee_contact_id: Document contacts */
+$handler->display->display_options['fields']['document_contacts_1']['id'] = 'document_contacts_1';
+$handler->display->display_options['fields']['document_contacts_1']['table'] = 'json';
+$handler->display->display_options['fields']['document_contacts_1']['field'] = 'document_contacts';
+$handler->display->display_options['fields']['document_contacts_1']['label'] = 'Document contacts (assignee)';
+$handler->display->display_options['fields']['document_contacts_1']['exclude'] = TRUE;
+$handler->display->display_options['fields']['document_contacts_1']['key'] = 'assignee_contact_id';
 $handler->display->display_options['defaults']['arguments'] = FALSE;
 /* Contextual filter: Json: Document contacts */
 $handler->display->display_options['arguments']['document_targets']['id'] = 'document_targets';
@@ -455,6 +670,10 @@ $translatables['Documents'] = array(
   t('All'),
   t('Documents Dashboard block'),
   t('Documents'),
+  t('Type'),
+  t('Assignment'),
+  t('Due Date'),
+  t('Status'),
   t('Documents Dashboard Manager block'),
   t('Documents Manager'),
 );
