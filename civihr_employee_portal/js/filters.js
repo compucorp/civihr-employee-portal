@@ -113,13 +113,13 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                 var classList = distinctList(classes);
 
                 // Generate the list of filter links
-                var tagList = '<ul id="tag-list" class="list-group"></ul>';
+                var tagList = '<ul id="tag-list" class="nav nav-pills nav-stacked"></ul>';
 
                 // Check if we need to display the filter options
                 if (classes.length !== 0) {
 
                     // All filter
-                    tagItem = '<li><button class="btn btn-custom btn-custom-block" type="button" class="active">all&nbsp;<span class="badge">' + classList['approvals-table'] + '</span></button></li>';
+                    tagItem = '<li class="active"><a href >all&nbsp;<span class="badge badge-primary pull-right">' + classList['approvals-table'] + '</span></a></li>';
 
                     // Check for the enabled absence types only
                     var excluded_values = ["approvals table", "Approved", "Rejected"];
@@ -134,7 +134,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
 
                         // Build the approval filters
                         if ($.inArray(index, excluded_values) == -1) {
-                            tagItem += '<li><button class="btn btn-custom btn-custom-block" type="button">' + index + '&nbsp;<span class="badge">' + value + '</span></button></li>';
+                            tagItem += '<li><a href="#">' + index + '&nbsp;<span class="badge badge-primary pull-right">' + value + '</span></a></li>';
                         }
 
                     });
@@ -146,7 +146,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
 
                         // Build the approved / rejected filters
                         if ($.inArray(index, included_values) !== -1) {
-                            tagItem += '<li><button class="btn btn-custom btn-custom-block" type="button">' + index + '&nbsp;<span class="badge">' + value + '</span></button></li>';
+                            tagItem += '<li><a href="#">' + index + '&nbsp;<span class="badge badge-primary pull-right">' + value + '</span></a></li>';
                         }
 
                     });
@@ -161,7 +161,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     $("div.approval-filters").html('');
                 }
 
-                $('#tag-list button').click(function (e) {
+                $('#tag-list a').click(function (e) {
 
                     // allows filter categories using multiple words
                     var getText = $(this).text().replace(/ /g, "-");
@@ -187,8 +187,8 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     }
 
                     // Add class "active" to current filter item
-                    $('#tag-list button').removeClass('active');
-                    $(this).addClass('active');
+                    $('#tag-list li').removeClass('active');
+                    $(this).parent().addClass('active');
 
                     // Prevent the page scrolling to the top of the screen
                     e.preventDefault();

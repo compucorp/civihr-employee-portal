@@ -58,7 +58,9 @@ function civihr_employee_portal_features_user_default_permissions() {
   // Exported permission: 'access HRJobs'.
   $permissions['access HRJobs'] = array(
     'name' => 'access HRJobs',
-    'roles' => array(),
+    'roles' => array(
+      'civihr_admin' => 'civihr_admin',
+    ),
     'module' => 'civicrm',
   );
 
@@ -353,7 +355,9 @@ function civihr_employee_portal_features_user_default_permissions() {
   // Exported permission: 'edit HRJobs'.
   $permissions['edit HRJobs'] = array(
     'name' => 'edit HRJobs',
-    'roles' => array(),
+    'roles' => array(
+      'civihr_admin' => 'civihr_admin',
+    ),
     'module' => 'civicrm',
   );
 
