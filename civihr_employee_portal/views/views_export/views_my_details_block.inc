@@ -20,9 +20,9 @@ $handler->display->display_options['title'] = 'My details block';
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
 $handler->display->display_options['access']['role'] = array(
-    4 => '4',
-    6 => '6',
-    5 => '5',
+  4 => '4',
+  6 => '6',
+  5 => '5',
 );
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
@@ -205,35 +205,88 @@ $handler->display->display_options['fields']['country']['location_type'] = '0';
 $handler->display->display_options['fields']['country']['location_op'] = '0';
 $handler->display->display_options['fields']['country']['is_primary'] = 0;
 $handler->display->display_options['fields']['country']['is_billing'] = 0;
+
+/* Display: My details (full) */
+$handler = $view->new_display('block', 'My details (full)', 'my_details_block_full');
+$handler->display->display_options['defaults']['title'] = FALSE;
+$handler->display->display_options['title'] = 'My Details';
+$handler->display->display_options['defaults']['fields'] = FALSE;
+/* Field: CiviCRM Contacts: Contact ID */
+$handler->display->display_options['fields']['id']['id'] = 'id';
+$handler->display->display_options['fields']['id']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['id']['field'] = 'id';
+/* Field: CiviCRM Contacts: Display Name */
+$handler->display->display_options['fields']['display_name']['id'] = 'display_name';
+$handler->display->display_options['fields']['display_name']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['display_name']['field'] = 'display_name';
+$handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 0;
+
+/* Display: Emergency Contact (full) */
+$handler = $view->new_display('block', 'Emergency Contact (full)', 'my_details_emergency_contact');
+$handler->display->display_options['defaults']['title'] = FALSE;
+$handler->display->display_options['title'] = 'Emergency Contact';
+$handler->display->display_options['defaults']['fields'] = FALSE;
+/* Field: CiviCRM Custom: Emergency Contacts: Name */
+$handler->display->display_options['fields']['name_80']['id'] = 'name_80';
+$handler->display->display_options['fields']['name_80']['table'] = 'civicrm_value_emergency_contacts_21';
+$handler->display->display_options['fields']['name_80']['field'] = 'name_80';
+$handler->display->display_options['fields']['name_80']['label'] = 'Contact name';
+/* Field: CiviCRM Custom: Emergency Contacts: Relationship with Employee */
+$handler->display->display_options['fields']['relationship_with_employee_83']['id'] = 'relationship_with_employee_83';
+$handler->display->display_options['fields']['relationship_with_employee_83']['table'] = 'civicrm_value_emergency_contacts_21';
+$handler->display->display_options['fields']['relationship_with_employee_83']['field'] = 'relationship_with_employee_83';
+$handler->display->display_options['fields']['relationship_with_employee_83']['label'] = 'Relationship';
+/* Field: CiviCRM Custom: Emergency Contacts: Phone number */
+$handler->display->display_options['fields']['phone_number_81']['id'] = 'phone_number_81';
+$handler->display->display_options['fields']['phone_number_81']['table'] = 'civicrm_value_emergency_contacts_21';
+$handler->display->display_options['fields']['phone_number_81']['field'] = 'phone_number_81';
+$handler->display->display_options['fields']['phone_number_81']['label'] = 'Primary phone';
+/* Field: CiviCRM Custom: Emergency Contacts: Email */
+$handler->display->display_options['fields']['email_82']['id'] = 'email_82';
+$handler->display->display_options['fields']['email_82']['table'] = 'civicrm_value_emergency_contacts_21';
+$handler->display->display_options['fields']['email_82']['field'] = 'email_82';
+$handler->display->display_options['fields']['email_82']['label'] = 'Primary email';
+/* Field: CiviCRM Custom: Emergency Contacts: Notes */
+$handler->display->display_options['fields']['notes_84']['id'] = 'notes_84';
+$handler->display->display_options['fields']['notes_84']['table'] = 'civicrm_value_emergency_contacts_21';
+$handler->display->display_options['fields']['notes_84']['field'] = 'notes_84';
 $translatables['my_details_block'] = array(
-    t('Master'),
-    t('My details block'),
-    t('more'),
-    t('Apply'),
-    t('Reset'),
-    t('Sort by'),
-    t('Asc'),
-    t('Desc'),
-    t('Drupal User'),
-    t('HRJobContract Details entity'),
-    t('Contact ID'),
-    t('.'),
-    t(','),
-    t('Display Name'),
-    t('Emergency Contact'),
-    t('My details'),
-    t('HRJobContract Role entity'),
-    t('Name'),
-    t('Designation'),
-    t('Location'),
-    t('Role title'),
-    t('Role Department'),
-    t('My address'),
-    t('My address block'),
-    t('Primary Phone'),
-    t('Primary Email'),
-    t('Address'),
-    t('City / Suburb'),
-    t('ZIP / Postal Code'),
-    t('Country'),
+  t('Master'),
+  t('My details block'),
+  t('more'),
+  t('Apply'),
+  t('Reset'),
+  t('Sort by'),
+  t('Asc'),
+  t('Desc'),
+  t('Drupal User'),
+  t('HRJobContract Details entity'),
+  t('Contact ID'),
+  t('.'),
+  t(','),
+  t('Display Name'),
+  t('Emergency Contact'),
+  t('My details'),
+  t('HRJobContract Role entity'),
+  t('Name'),
+  t('Designation'),
+  t('Location'),
+  t('Role title'),
+  t('Role Department'),
+  t('My address'),
+  t('My address block'),
+  t('Primary Phone'),
+  t('Primary Email'),
+  t('Address'),
+  t('City / Suburb'),
+  t('ZIP / Postal Code'),
+  t('Country'),
+  t('My details (full)'),
+  t('My Details'),
+  t('Emergency Contact (full)'),
+  t('Contact name'),
+  t('Relationship'),
+  t('Primary phone'),
+  t('Primary email'),
+  t('Notes'),
 );

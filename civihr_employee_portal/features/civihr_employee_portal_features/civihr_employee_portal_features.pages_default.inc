@@ -421,7 +421,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     'relationships' => array(),
   );
   $display = new panels_display();
-  $display->layout = 'radix_sutro_double';
+  $display->layout = 'radix_geary';
   $display->layout_settings = array();
   $display->panel_settings = array(
     'style_settings' => array(
@@ -433,24 +433,37 @@ function civihr_employee_portal_features_default_page_manager_pages() {
       'secondcolumn1' => NULL,
       'secondcolumn2' => NULL,
       'footer' => NULL,
+      'column3' => NULL,
     ),
   );
   $display->cache = array();
-  $display->title = 'Welcome';
+  $display->title = '<none>';
   $display->uuid = '65fa22bb-05c5-4318-b3eb-20181449dc7a';
   $display->content = array();
   $display->panels = array();
     $pane = new stdClass();
-    $pane->pid = 'new-f122256d-6524-48e1-a630-60a24dfb412e';
-    $pane->panel = 'footer';
-    $pane->type = 'block';
-    $pane->subtype = 'user-login';
+    $pane->pid = 'new-3f0db58e-4030-419c-add3-07e0e6e8c7e0';
+    $pane->panel = 'column2';
+    $pane->type = 'custom';
+    $pane->subtype = 'custom';
     $pane->shown = TRUE;
     $pane->access = array();
     $pane->configuration = array(
-      'override_title' => 1,
-      'override_title_text' => '<none>',
-      'override_title_heading' => 'h2',
+      'admin_title' => '',
+      'title' => '',
+      'body' => '<div id="block-header-welcome">
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <div class="logo-rect-wrapper">
+                <img src="#">
+            </div>
+            <h1>UK Youth</h1>
+            <h2>Self Service Portal</h2>
+        </div>
+    </div>
+</div>',
+      'format' => 'full_html',
+      'substitute' => TRUE,
     );
     $pane->cache = array();
     $pane->style = array(
@@ -460,16 +473,78 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->extras = array();
     $pane->position = 0;
     $pane->locks = array();
+    $pane->uuid = '3f0db58e-4030-419c-add3-07e0e6e8c7e0';
+    $display->content['new-3f0db58e-4030-419c-add3-07e0e6e8c7e0'] = $pane;
+    $display->panels['column2'][0] = 'new-3f0db58e-4030-419c-add3-07e0e6e8c7e0';
+    $pane = new stdClass();
+    $pane->pid = 'new-f122256d-6524-48e1-a630-60a24dfb412e';
+    $pane->panel = 'column2';
+    $pane->type = 'block';
+    $pane->subtype = 'user-login';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array(
+      'override_title' => 1,
+      'override_title_text' => 'Login:',
+      'override_title_heading' => 'h2',
+    );
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array();
+    $pane->extras = array();
+    $pane->position = 1;
+    $pane->locks = array();
     $pane->uuid = 'f122256d-6524-48e1-a630-60a24dfb412e';
     $display->content['new-f122256d-6524-48e1-a630-60a24dfb412e'] = $pane;
-    $display->panels['footer'][0] = 'new-f122256d-6524-48e1-a630-60a24dfb412e';
+    $display->panels['column2'][1] = 'new-f122256d-6524-48e1-a630-60a24dfb412e';
+    $pane = new stdClass();
+    $pane->pid = 'new-c1e74a5e-1513-4ae2-bd55-e097b00d3575';
+    $pane->panel = 'column2';
+    $pane->type = 'custom';
+    $pane->subtype = 'custom';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array(
+      'admin_title' => '',
+      'title' => '',
+      'body' => '<p class="text-center">Don\'t have a login?
+        <a href="/request_new_account/nojs" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed" title="Request new account">Click here to request one from your HR administrator</a></p>',
+      'format' => 'full_html',
+      'substitute' => TRUE,
+    );
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array();
+    $pane->extras = array();
+    $pane->position = 2;
+    $pane->locks = array();
+    $pane->uuid = 'c1e74a5e-1513-4ae2-bd55-e097b00d3575';
+    $display->content['new-c1e74a5e-1513-4ae2-bd55-e097b00d3575'] = $pane;
+    $display->panels['column2'][2] = 'new-c1e74a5e-1513-4ae2-bd55-e097b00d3575';
     $pane = new stdClass();
     $pane->pid = 'new-34a8c3b9-acb5-4419-ba57-7ebfc1f3e8f2';
-    $pane->panel = 'middle';
+    $pane->panel = 'header';
     $pane->type = 'node';
     $pane->subtype = 'node';
     $pane->shown = TRUE;
-    $pane->access = array();
+    $pane->access = array(
+      'plugins' => array(
+        0 => array(
+          'name' => 'role',
+          'settings' => array(
+            'rids' => array(
+              0 => 3,
+            ),
+          ),
+          'context' => 'logged-in-user',
+          'not' => FALSE,
+        ),
+      ),
+    );
     $pane->configuration = array(
       'nid' => '1',
       'links' => 1,
@@ -490,7 +565,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->locks = array();
     $pane->uuid = '34a8c3b9-acb5-4419-ba57-7ebfc1f3e8f2';
     $display->content['new-34a8c3b9-acb5-4419-ba57-7ebfc1f3e8f2'] = $pane;
-    $display->panels['middle'][0] = 'new-34a8c3b9-acb5-4419-ba57-7ebfc1f3e8f2';
+    $display->panels['header'][0] = 'new-34a8c3b9-acb5-4419-ba57-7ebfc1f3e8f2';
   $display->hide_title = PANELS_TITLE_FIXED;
   $display->title_pane = '0';
   $handler->conf['display'] = $display;
