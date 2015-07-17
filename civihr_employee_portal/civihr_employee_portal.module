@@ -675,6 +675,13 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
+    $items['absence_all/%ctools_js/view'] = array(
+        'page callback' => 'civihr_employee_portal_absence_all_view_callback',
+        'page arguments' => array(1),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
     $items['my_details/%ctools_js/view'] = array(
         'page callback' => 'civihr_employee_portal_my_details_callback',
         'page arguments' => array(1),
@@ -724,12 +731,11 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
     }
 
     if ($link_type == 'leave_report') {
-        return '' . l($link_text, 'print-leave-report/', array(
-                                                                    'query' =>
-                                                                        array('absence_start_date_period_filter' => $nid),
-                                                                    'attributes' =>
-                                                                        array('class' => 'btn btn-custom', 'target'=>'_blank')
-                                                                    )
+        return '' . l($link_text, 'print-leave-report/',
+            array(
+                'query' => array('absence_start_date_period_filter' => $nid),
+                'attributes' => array('class' => 'btn btn-custom', 'target'=>'_blank')
+            )
         ) . '';
     }
 
@@ -827,6 +833,34 @@ function civihr_employee_portal_hr_resource_load_callback($ajax, $nid) {
     }
     else {
         return '';
+    }
+
+}
+
+/**
+ * Show all already approved absences in modal window and not seperate page
+ * @param $ajax
+ */
+function civihr_employee_portal_absence_all_view_callback($ajax) {
+
+    if ($ajax) {
+
+        ctools_include('ajax');
+        ctools_include('modal');
+
+        drupal_add_js('misc/jquery.form.js');
+
+        // Add the responder javascript, required by ctools
+        ctools_add_js('ajax-responder');
+
+        // Get the view for approved absences
+        $output[] = ctools_modal_command_display(t('All Absences'), views_embed_view('approvals', 'page'));
+
+        print ajax_render($output);
+        drupal_exit();
+    }
+    else {
+        return 'Javascript not enabled';
     }
 
 }
@@ -2560,7 +2594,7 @@ function civihr_employee_portal_request_new_account_submit($form, &$form_state) 
         }
     }
     
-    drupal_set_message(t('Request sent!') . 'result:' . json_encode($result), 'success');
+    drupal_set_message(t('Request sent!'), 'success');
 }
 
 /**
@@ -2983,11 +3017,11 @@ function civihr_employee_portal_directory_block_form_validate($form, &$form_stat
 function civihr_employee_portal_directory_block_form_submit($form, &$form_state) {
 
     // Redirect to the staff directory views list page passing parameters to filter the viewß
-    drupal_goto('hr-staff-directory', array('query'=> array(
+    drupal_goto('staff-directory', array('query'=> array(
                                                         'display_name' => $form_state['values']['display_name'],
-                                                        'job_title' => $form_state['values']['job_title'],
+                                                        'title' => $form_state['values']['job_title'],
                                                         'phone' => $form_state['values']['phone'],
-                                                        'email_value' => $form_state['values']['email_value'],
+                                                        'email' => $form_state['values']['email_value'],
 
     )));
 }
