@@ -3016,11 +3016,11 @@ function civihr_employee_portal_directory_block_form_validate($form, &$form_stat
 function civihr_employee_portal_directory_block_form_submit($form, &$form_state) {
 
     // Redirect to the staff directory views list page passing parameters to filter the viewß
-    drupal_goto('hr-staff-directory', array('query'=> array(
+    drupal_goto('staff-directory', array('query'=> array(
                                                         'display_name' => $form_state['values']['display_name'],
-                                                        'job_title' => $form_state['values']['job_title'],
+                                                        'title' => $form_state['values']['job_title'],
                                                         'phone' => $form_state['values']['phone'],
-                                                        'email_value' => $form_state['values']['email_value'],
+                                                        'email' => $form_state['values']['email_value'],
 
     )));
 }
