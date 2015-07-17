@@ -2545,21 +2545,22 @@ function civihr_employee_portal_request_new_account_submit($form, &$form_state) 
         //'init' => $form_state['values']['init'],
         'status' => 0,
         'access' => REQUEST_TIME,
-        'field_first_name' => array(
-            LANGUAGE_NONE => array(
-                array('value' => $form_state['values']['first_name']),
-            ),
-        ),
-        'field_last_name' => array(
-            LANGUAGE_NONE => array(
-                array('value' => $form_state['values']['last_name']),
-            ),
-        ),
     );
     
-    user_save(drupal_anonymous_user(), $edit);
+    $user = user_save(drupal_anonymous_user(), $edit);
+    if (!empty($user->uid)) {
+        $uf = get_civihr_uf_match_data($user->uid);
+        if (!empty($uf['contact_id'])) {
+            $result = civicrm_api3('Contact', 'create', array(
+                'sequential' => 1,
+                'id' => $uf['contact_id'],
+                'first_name' => $form_state['values']['first_name'],
+                'last_name' => $form_state['values']['last_name'],
+            ));
+        }
+    }
     
-    drupal_set_message(t('Request sent!'), 'success');
+    drupal_set_message(t('Request sent!') . 'result:' . json_encode($result), 'success');
 }
 
 /**
