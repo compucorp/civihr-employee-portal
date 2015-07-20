@@ -283,7 +283,7 @@ $handler->display->display_options['header']['area']['table'] = 'views';
 $handler->display->display_options['header']['area']['field'] = 'area';
 $handler->display->display_options['header']['area']['empty'] = TRUE;
 $handler->display->display_options['header']['area']['content'] = '<a href="manager_approval/nojs/calendar/show" class="ctools-use-modal ctools-modal-civihr-default-style">Open Manager Calendar</a>
-<a href="approvals" target="_blank" class="show-all-absences">Show all Absences</a>';
+<a href="absence_all/nojs/view" class="ctools-use-modal ctools-modal-civihr-default-style show-all-absences">Show all Absences</a>';
 $handler->display->display_options['header']['area']['format'] = 'filtered_html';
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
@@ -335,5 +335,5 @@ $translatables['approvals'] = array(
     t('Awaiting Approvals'),
     t('Awaiting Approvals dashboard block'),
     t('<a href="manager_approval/nojs/calendar/show" class="ctools-use-modal ctools-modal-civihr-default-style">Open Manager Calendar</a>
-<a href="approvals" target="_blank" class="show-all-absences">Show all Absences</a>'),
+<a href="absence_all/nojs/view" class="ctools-use-modal ctools-modal-civihr-default-style show-all-absences">Show all Absences</a>'),
 );
