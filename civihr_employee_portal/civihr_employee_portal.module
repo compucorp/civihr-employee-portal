@@ -707,13 +707,34 @@ function civihr_employee_portal_menu() {
     $items['hr-details'] = array(
         'title' => 'My Details',
         'page callback' => 'civihr_employee_portal_my_details',
-        'access callback' => TRUE,
+        'access callback' => '_user_has_role',
+        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin')),
         'type' => MENU_NORMAL_ITEM,
         'menu_name' => 'main-menu',
         'weight' => 4
     );
 
     return $items;
+}
+
+/**
+ * Function to check the menu item access against specific roles
+ * @param $roles
+ * @return bool
+ */
+function _user_has_role($roles = array()) {
+
+    // Check for the logged in user
+    global $user;
+
+    foreach ($roles as $role) {
+        if (in_array($role, $user->roles)) {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+
 }
 
 /**
