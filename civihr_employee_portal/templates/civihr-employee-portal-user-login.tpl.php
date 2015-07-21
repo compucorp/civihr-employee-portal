@@ -33,7 +33,7 @@ $errors = form_get_errors();
             <?php print drupal_render($form['forgot-password']); ?>
             <?php if (!$customLoginSuccessMessage): ?>
                 <div class="form-actions form-wrapper" id="edit-actions">
-                    <input name="forgot-password-button" value="Send me my details" class="form-submit btn btn-default btn-primary" type="button">
+                    <input name="forgot-password-button" value="Send me my details" class="form-submit btn btn-default btn-primary" type="submit">
                 </div>
             <?php endif; ?>
         </div>
