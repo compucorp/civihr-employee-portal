@@ -14,18 +14,21 @@ function civihr_employee_portal_features_user_default_roles() {
   $roles['civihr_admin'] = array(
     'name' => 'civihr_admin',
     'weight' => 3,
+    'machine_name' => 'civihr_admin',
   );
 
   // Exported role: civihr_manager.
   $roles['civihr_manager'] = array(
     'name' => 'civihr_manager',
     'weight' => 5,
+    'machine_name' => 'civihr_manager',
   );
 
   // Exported role: civihr_staff.
   $roles['civihr_staff'] = array(
     'name' => 'civihr_staff',
     'weight' => 4,
+    'machine_name' => 'civihr_staff',
   );
 
   return $roles;
