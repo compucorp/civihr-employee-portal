@@ -55,9 +55,9 @@
     <div class="content"<?php print $content_attributes; ?>>
          
         <?php foreach ($calendar_output as $calendar_table_data) { ?>
-        <div class="views-tooltip" tooltip-content="Absences for employees">
+        <h3>
             <?php if (isset($calendar_table_data['title'])) { print $calendar_table_data['title']; } ?>
-        </div>
+        </h3>
             <?php if (isset($calendar_table_data['data'])) { print $calendar_table_data['data']; } ?>
         <?php } ?>
         
