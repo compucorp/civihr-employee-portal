@@ -1958,12 +1958,16 @@ function civihr_employee_portal_get_vacancy_list() {
  * Returns the document list
  */
 function civihr_employee_portal_get_document_list() {
-
-    $result_output = civicrm_api3('Document', 'get', array(
-        'sequential' => 1,
-        'is_deleted' => 0,
-        'return' => "id,activity_type_id,activity_subject,activity_date_time,expire_date,activity_details,activity_status_id,activity_is_deleted,case_id,file_count,source_contact_id,target_contact_id,assignee_contact_id",
-    ));
+    
+    $result_output = array();
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (!empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+        $result_output = civicrm_api3('Document', 'get', array(
+            'sequential' => 1,
+            'is_deleted' => 0,
+            'return' => "id,activity_type_id,activity_subject,activity_date_time,expire_date,activity_details,activity_status_id,activity_is_deleted,case_id,file_count,source_contact_id,target_contact_id,assignee_contact_id",
+        ));
+    }
 
     // Output json
     drupal_json_output($result_output);
@@ -2030,6 +2034,12 @@ function civihr_employee_portal_edit_document($ajax, $id) {
  */
 function civihr_employee_portal_document_form($form, &$form_state) {
 
+    $result_output = array();
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+        return $form;
+    }
+    
     $activityOptions = array();
     $typeResult = civicrm_api3('Activity', 'getoptions', array(
         'field' => "activity_type_id",
@@ -2157,6 +2167,12 @@ function civihr_employee_portal_document_form_validate($form, &$form_state) {
 
 function civihr_employee_portal_document_form_submit($form, &$form_state) {
     
+    $result_output = array();
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+        return false;
+    }
+    
     $id = $form_state['values']['id'];
     $expireDate = substr($form_state['values']['expire_date'], 0, 10);
     $details = strip_tags($form_state['values']['details']);
@@ -2259,6 +2275,12 @@ function civihr_employee_portal_document_form_delete_confirm($form, &$form_state
 
 function civihr_employee_portal_document_form_delete_submit($form, &$form_state) {
     
+    $result_output = array();
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+        return false;
+    }
+    
     $id = (int)$form_state['values']['id'];
     
     $result = civicrm_api3('Document', 'create', array(
@@ -2327,6 +2349,12 @@ function civihr_employee_portal_send_reminder_document($ajax, $id) {
 
 function civihr_employee_portal_document_form_send_reminder($form, &$form_state){
 
+    $result_output = array();
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+        return $form;
+    }
+    
     $form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
     $form['#suffix'] = '</div></article>';
 
@@ -2413,6 +2441,12 @@ function civihr_employee_portal_document_form_send_reminder($form, &$form_state)
 }
 
 function civihr_employee_portal_document_form_send_reminder_submit($form, &$form_state) {
+    
+    $result_output = array();
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+        return false;
+    }
     
     $id = (int)$form_state['values']['id'];
     $notes = $form_state['values']['notes'];
