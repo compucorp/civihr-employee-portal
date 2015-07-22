@@ -899,8 +899,8 @@ function civihr_employee_portal_my_details_callback($ajax) {
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
 
-        // Load the my details node - @TODO -> not hardcode node ID
-        $node = node_load(2);
+        // Load the my details node
+        $node = node_load(variable_get('my_details_webform_nid', 2));
         $contents = render(node_view($node, 'full', NULL));
 
         $output = array();
@@ -928,8 +928,8 @@ function civihr_employee_portal_emergency_contacts_callback($ajax) {
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
 
-        // Load the emergency contacts node - @TODO -> not hardcode node ID
-        $node = node_load(3);
+        // Load the emergency contacts node
+        $node = node_load(variable_get('emergency_contact_webform_nid', 3));
         $contents = render(node_view($node, 'full', NULL));
 
         $output = array();
@@ -3050,7 +3050,35 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
 // Note: Under "Redirection location" NO redirect option should be select to get the confirmation message with ajax.
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
-    
+
+    // Alter system settings form and add CiviHR specific settings
+    if ($form_id == 'system_site_information_settings') {
+
+        $form['civihr_settings'] = array(
+            '#type' => 'fieldset',
+            '#title' => t('CiviHR settings')
+        );
+
+        $form['civihr_settings']['my_details_webform_nid'] = array(
+            '#type' => 'textfield',
+            '#title' => t('Node ID for the My details Webform page'),
+            '#default_value' => variable_get('my_details_webform_nid', '')
+        );
+
+        $form['civihr_settings']['emergency_contact_webform_nid'] = array(
+            '#type' => 'textfield',
+            '#title' => t('Node ID for the Emergency Contact Webform page'),
+            '#default_value' => variable_get('emergency_contact_webform_nid', '')
+        );
+
+        $form['civihr_settings']['relationship_name_to_use'] = array(
+            '#type' => 'textfield',
+            '#title' => t('Relationship Name to use for Leave Approval'),
+            '#description' => t('eg. "has Leave Approved by"'),
+            '#default_value' => variable_get('relationship_name_to_use', 'has Leave Approved by')
+        );
+    }
+
     if ($form_id == 'user_login_block') {
         array_unshift($form['#submit'], 'civihr_employee_portal_user_login_submit');
         
