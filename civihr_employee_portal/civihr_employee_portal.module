@@ -1959,7 +1959,9 @@ function civihr_employee_portal_get_vacancy_list() {
  */
 function civihr_employee_portal_get_document_list() {
     
-    $result_output = array();
+    $result_output = array(
+        'values' => array(),
+    );
     $extensions = CRM_Core_PseudoConstant::getExtensions();
     if (!empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
         $result_output = civicrm_api3('Document', 'get', array(
