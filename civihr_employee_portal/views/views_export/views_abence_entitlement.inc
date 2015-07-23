@@ -22,9 +22,9 @@ $handler->display->display_options['title'] = 'Absence entitlement';
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
 $handler->display->display_options['access']['role'] = array(
-  4 => '4',
-  6 => '6',
-  5 => '5',
+  55120974 => '55120974',
+  57573969 => '57573969',
+  17087012 => '17087012',
 );
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';

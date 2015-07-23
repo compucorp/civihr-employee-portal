@@ -707,13 +707,34 @@ function civihr_employee_portal_menu() {
     $items['hr-details'] = array(
         'title' => 'My Details',
         'page callback' => 'civihr_employee_portal_my_details',
-        'access callback' => TRUE,
+        'access callback' => '_user_has_role',
+        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin')),
         'type' => MENU_NORMAL_ITEM,
         'menu_name' => 'main-menu',
         'weight' => 4
     );
 
     return $items;
+}
+
+/**
+ * Function to check the menu item access against specific roles
+ * @param $roles
+ * @return bool
+ */
+function _user_has_role($roles = array()) {
+
+    // Check for the logged in user
+    global $user;
+
+    foreach ($roles as $role) {
+        if (in_array($role, $user->roles)) {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+
 }
 
 /**
@@ -878,8 +899,8 @@ function civihr_employee_portal_my_details_callback($ajax) {
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
 
-        // Load the my details node - @TODO -> not hardcode node ID
-        $node = node_load(2);
+        // Load the my details node
+        $node = node_load(variable_get('my_details_webform_nid', 2));
         $contents = render(node_view($node, 'full', NULL));
 
         $output = array();
@@ -907,8 +928,8 @@ function civihr_employee_portal_emergency_contacts_callback($ajax) {
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
 
-        // Load the emergency contacts node - @TODO -> not hardcode node ID
-        $node = node_load(3);
+        // Load the emergency contacts node
+        $node = node_load(variable_get('emergency_contact_webform_nid', 3));
         $contents = render(node_view($node, 'full', NULL));
 
         $output = array();
@@ -1937,12 +1958,18 @@ function civihr_employee_portal_get_vacancy_list() {
  * Returns the document list
  */
 function civihr_employee_portal_get_document_list() {
-
-    $result_output = civicrm_api3('Document', 'get', array(
-        'sequential' => 1,
-        'is_deleted' => 0,
-        'return' => "id,activity_type_id,activity_subject,activity_date_time,expire_date,activity_details,activity_status_id,activity_is_deleted,case_id,file_count,source_contact_id,target_contact_id,assignee_contact_id",
-    ));
+    
+    $result_output = array(
+        'values' => array(),
+    );
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (!empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+        $result_output = civicrm_api3('Document', 'get', array(
+            'sequential' => 1,
+            'is_deleted' => 0,
+            'return' => "id,activity_type_id,activity_subject,activity_date_time,expire_date,activity_details,activity_status_id,activity_is_deleted,case_id,file_count,source_contact_id,target_contact_id,assignee_contact_id",
+        ));
+    }
 
     // Output json
     drupal_json_output($result_output);
@@ -2009,6 +2036,12 @@ function civihr_employee_portal_edit_document($ajax, $id) {
  */
 function civihr_employee_portal_document_form($form, &$form_state) {
 
+    $result_output = array();
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+        return $form;
+    }
+    
     $activityOptions = array();
     $typeResult = civicrm_api3('Activity', 'getoptions', array(
         'field' => "activity_type_id",
@@ -2136,6 +2169,12 @@ function civihr_employee_portal_document_form_validate($form, &$form_state) {
 
 function civihr_employee_portal_document_form_submit($form, &$form_state) {
     
+    $result_output = array();
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+        return false;
+    }
+    
     $id = $form_state['values']['id'];
     $expireDate = substr($form_state['values']['expire_date'], 0, 10);
     $details = strip_tags($form_state['values']['details']);
@@ -2238,6 +2277,12 @@ function civihr_employee_portal_document_form_delete_confirm($form, &$form_state
 
 function civihr_employee_portal_document_form_delete_submit($form, &$form_state) {
     
+    $result_output = array();
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+        return false;
+    }
+    
     $id = (int)$form_state['values']['id'];
     
     $result = civicrm_api3('Document', 'create', array(
@@ -2306,6 +2351,12 @@ function civihr_employee_portal_send_reminder_document($ajax, $id) {
 
 function civihr_employee_portal_document_form_send_reminder($form, &$form_state){
 
+    $result_output = array();
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+        return $form;
+    }
+    
     $form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
     $form['#suffix'] = '</div></article>';
 
@@ -2392,6 +2443,12 @@ function civihr_employee_portal_document_form_send_reminder($form, &$form_state)
 }
 
 function civihr_employee_portal_document_form_send_reminder_submit($form, &$form_state) {
+    
+    $result_output = array();
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+        return false;
+    }
     
     $id = (int)$form_state['values']['id'];
     $notes = $form_state['values']['notes'];
@@ -3029,7 +3086,35 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
 // Note: Under "Redirection location" NO redirect option should be select to get the confirmation message with ajax.
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
-    
+
+    // Alter system settings form and add CiviHR specific settings
+    if ($form_id == 'system_site_information_settings') {
+
+        $form['civihr_settings'] = array(
+            '#type' => 'fieldset',
+            '#title' => t('CiviHR settings')
+        );
+
+        $form['civihr_settings']['my_details_webform_nid'] = array(
+            '#type' => 'textfield',
+            '#title' => t('Node ID for the My details Webform page'),
+            '#default_value' => variable_get('my_details_webform_nid', '')
+        );
+
+        $form['civihr_settings']['emergency_contact_webform_nid'] = array(
+            '#type' => 'textfield',
+            '#title' => t('Node ID for the Emergency Contact Webform page'),
+            '#default_value' => variable_get('emergency_contact_webform_nid', '')
+        );
+
+        $form['civihr_settings']['relationship_name_to_use'] = array(
+            '#type' => 'textfield',
+            '#title' => t('Relationship Name to use for Leave Approval'),
+            '#description' => t('eg. "has Leave Approved by"'),
+            '#default_value' => variable_get('relationship_name_to_use', 'has Leave Approved by')
+        );
+    }
+
     if ($form_id == 'user_login_block') {
         array_unshift($form['#submit'], 'civihr_employee_portal_user_login_submit');
         

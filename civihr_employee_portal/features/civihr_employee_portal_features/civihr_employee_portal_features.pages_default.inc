@@ -192,10 +192,9 @@ function civihr_employee_portal_features_default_page_manager_pages() {
           'name' => 'role',
           'settings' => array(
             'rids' => array(
-              0 => 2,
-              1 => 4,
-              2 => 6,
-              3 => 5,
+              0 => 55120974,
+              1 => 17087012,
+              2 => 57573969,
             ),
           ),
           'context' => 'logged-in-user',
@@ -340,10 +339,9 @@ function civihr_employee_portal_features_default_page_manager_pages() {
           'name' => 'role',
           'settings' => array(
             'rids' => array(
-              0 => 2,
-              1 => 4,
-              2 => 6,
-              3 => 5,
+              0 => 55120974,
+              1 => 17087012,
+              2 => 57573969,
             ),
           ),
           'context' => 'logged-in-user',
@@ -537,7 +535,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
           'name' => 'role',
           'settings' => array(
             'rids' => array(
-              0 => 3,
+              0 => 30037204,
             ),
           ),
           'context' => 'logged-in-user',

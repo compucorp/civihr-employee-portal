@@ -80,12 +80,20 @@ class ManagerCalendar {
             
  
         }
-        
+
+        // Get the colour codes from calendar legend
+        $view = views_get_view('calendar_absence_list');
+        $view->set_display('page_1');
+        $row_options = $view->display_handler->get_option('row_options');
+
+        // Save the colour codes (array of absence type ID + colour code)
+        $colour_codes = $row_options['colors']['calendar_colors_absence_type'];
+
         // Loop from current month backwards to January (optionally to set some more specific filters)
         for ($month = 12; $month > 0; $month--) {
             
             $num_days_month = cal_days_in_month(CAL_GREGORIAN, $month, $current_year);
-              
+
             // Header
             $header = array(t("Employee name"));
 
@@ -100,8 +108,7 @@ class ManagerCalendar {
                     $header[] = $s;
                        
                         foreach ($months_data[$month] as $employee) {
-                            
-                            
+
                             foreach ($employee as $activities) {
                                 foreach ($activities as $key_ac => $activity) {
                                     
@@ -109,7 +116,7 @@ class ManagerCalendar {
                                     
                                     if ($activity['start_month'] == $activity['end_month']) {
                                         if ($s >= $activity['start_day'] && $s <= $activity['end_day']) {
-                                            $rows[$key_ac][$s] = '<div class="' . '_' . $activity['type'] . '"><div class="views-tooltip" tooltip-content="' . $activity['title'] . ': ' . $activity['duration'] . '">'  . date('D', strtotime($current_year . '/' . $activity['start_month'] . '/' . $s)) . '</div></div>';
+                                            $rows[$key_ac][$s] = '<div class="' . $colour_codes[$activity['type']] . '"><div style="color: #ffffff; background-color: ' . $colour_codes[$activity['type']] . ';" class="views-tooltip stripe" tooltip-content="' . $activity['title'] . ': ' . $activity['duration'] . '">'  . date('D', strtotime($current_year . '/' . $activity['start_month'] . '/' . $s)) . '</div></div>';
                                         }
                                         else {
                                             $rows[$key_ac][$s] = '';
@@ -120,7 +127,6 @@ class ManagerCalendar {
                             }
                         
                         }
-                     
 
                 }
                
@@ -130,7 +136,6 @@ class ManagerCalendar {
                 $calendar_tables[]['data'] = theme('table', array('header' => $header, 'rows' => $rows));
                 
             }
-           
 
         }
         
