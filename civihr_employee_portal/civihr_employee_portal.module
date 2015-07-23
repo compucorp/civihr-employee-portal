@@ -162,42 +162,49 @@ function civihr_employee_portal_init() {
  */
 function civihr_employee_portal_flush_caches() {
 
-    // If we running from drush
-    // @ TODO -> add json file removal when we run from UI
-    // @ TODO -> move the json cache to the private file folder
     // @ TODO -> get the sites/default/files location from proper drupal function
+    $folder_real_path = drupal_realpath('public://') . '/views_json_query/';
+
     if (drupal_is_cli()) {
-
-        // Get the drupal root
-        $drupal_root = drush_get_context('DRUSH_DRUPAL_ROOT');
-
-        // Views Json Query directory for the cached files
-        $folder_path = $drupal_root . '/sites/default/files/views_json_query/';
-
-        // If we the views_json_query directory exists, check the cached files and remove them
-        if (is_dir($folder_path)) {
-
-            $dirHandle = opendir($folder_path);
-
-            // Loop over all of the files in the folder
-            while ($file = readdir($dirHandle)) {
-
-                // If $file is NOT a directory remove it
-                if (!is_dir($file)) {
-                    unlink($folder_path . $file); // unlink() delete the file
-                    drush_log($file . ' deleted');
-                }
-            }
-
-            // Close the directory
-            closedir($dirHandle);
-
-        }
+        _remove_json_cache_files($folder_real_path, TRUE);
+    }
+    else {
+        _remove_json_cache_files($folder_real_path);
     }
 
     // Set variable to TRUE so the mysql database views will be refreshed
     variable_set('rebuild_absence_list_view', 'TRUE');
     watchdog('Rebuild view REQUEST', 'ABSENCE LIST MYSQL VIEW');
+
+}
+
+function _remove_json_cache_files($folder_path = null, $cli = FALSE) {
+
+    // If we the views_json_query directory exists, check the cached files and remove them
+    if (is_dir($folder_path)) {
+
+        $dirHandle = opendir($folder_path);
+
+        // Loop over all of the files in the folder
+        while ($file = readdir($dirHandle)) {
+
+            // If $file is NOT a directory remove it
+            if (!is_dir($file)) {
+
+                $real_path = drupal_realpath($folder_path . $file);
+                unlink($real_path); // unlink() delete the file
+
+                // Log message if running from drush
+                if ($cli == TRUE) {
+                    drush_log($file . ' deleted');
+                }
+            }
+        }
+
+        // Close the directory
+        closedir($dirHandle);
+
+    }
 
 }
 
@@ -302,7 +309,6 @@ function get_civihr_date_periods() {
     if (!isset($periods_data)) {
         if ($cache = cache_get('civihr_date_periods')) {
             $periods_data = $cache->data;
-            watchdog('cache hit', 'cache');
         }
         else {
 
@@ -340,7 +346,6 @@ function get_civihr_absence_types() {
 
         if ($cache = cache_get('civihr_absence_types')) {
             $absenceTypes = $cache->data;
-            watchdog('cache hit absence types', 'cache');
         }
         else {
 
@@ -381,7 +386,6 @@ function get_civihr_absence_statuses($status_id = NULL) {
 
         if ($cache = cache_get('civihr_absence_statuses')) {
             $absenceStatuses = $cache->data;
-            watchdog('cache hit absence statuses', 'cache');
         }
         else {
 
@@ -431,7 +435,6 @@ function get_document_statuses($status_id = NULL) {
 
         if ($cache = cache_get('civihr_document_statuses')) {
             $documentStatuses = $cache->data;
-            watchdog('cache hit document statuses', 'cache');
         }
         else {
             try {
@@ -470,7 +473,6 @@ function get_civihr_uf_match_data($user_id = NULL) {
     if (!isset($contact_uf_match)) {
         if ($cache = cache_get('civihr_uf_match_data_' . $user_id)) {
             $contact_uf_match = $cache->data;
-            watchdog('cache hit user uf_match data', print_r($user_id, TRUE));
         }
         else {
 
@@ -524,7 +526,6 @@ function get_civihr_contact_data($contact_id = NULL, $user_id = '') {
     if (!isset($contact_data)) {
         if ($cache = cache_get('civihr_contact_data_' . $contact_id)) {
             $contact_data = $cache->data;
-            watchdog('cache hit contact data', print_r($contact_id, TRUE));
         }
         else {
 
