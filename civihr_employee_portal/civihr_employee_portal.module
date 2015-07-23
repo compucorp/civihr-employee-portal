@@ -612,12 +612,15 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
+    /**
+     * Not used currently
     $items['civihr_contacts'] = array(
         'title' => 'Vacancy list',
         'page callback' => 'civihr_employee_portal_get_contact_list',
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
+     */
 
     $items['absence_request/%ctools_js/debit'] = array(
         'page callback' => 'civihr_employee_portal_absence_request_callback',
