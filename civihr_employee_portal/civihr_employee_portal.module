@@ -161,6 +161,17 @@ function civihr_employee_portal_init() {
  * When caches are cleared rebuild the helper mysql views
  */
 function civihr_employee_portal_flush_caches() {
+    _run_civihr_tasks();
+}
+
+/**
+ * Implement hook_cron()
+ */
+function civihr_employee_portal_cron() {
+    _run_civihr_tasks();
+}
+
+function _run_civihr_tasks() {
 
     // @ TODO -> get the sites/default/files location from proper drupal function
     $folder_real_path = drupal_realpath('public://') . '/views_json_query/';
@@ -174,6 +185,8 @@ function civihr_employee_portal_flush_caches() {
 
     // Set variable to TRUE so the mysql database views will be refreshed
     variable_set('rebuild_absence_list_view', 'TRUE');
+    variable_set('rebuild_hrjobcontract_entities_view', 'TRUE');
+
     watchdog('Rebuild view REQUEST', 'ABSENCE LIST MYSQL VIEW');
 
 }
