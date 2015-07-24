@@ -210,6 +210,21 @@ $handler->display->display_options['fields']['country']['is_billing'] = 0;
 $handler = $view->new_display('block', 'My details (full)', 'my_details_block_full');
 $handler->display->display_options['defaults']['title'] = FALSE;
 $handler->display->display_options['title'] = 'My Details';
+$handler->display->display_options['defaults']['relationships'] = FALSE;
+/* Relationship: CiviCRM Contacts: Drupal ID */
+$handler->display->display_options['relationships']['drupal_id']['id'] = 'drupal_id';
+$handler->display->display_options['relationships']['drupal_id']['table'] = 'civicrm_contact';
+$handler->display->display_options['relationships']['drupal_id']['field'] = 'drupal_id';
+/* Relationship: CiviCRM Contacts: HRJobContract Details entity */
+$handler->display->display_options['relationships']['hrjc_details']['id'] = 'hrjc_details';
+$handler->display->display_options['relationships']['hrjc_details']['table'] = 'civicrm_contact';
+$handler->display->display_options['relationships']['hrjc_details']['field'] = 'hrjc_details';
+$handler->display->display_options['relationships']['hrjc_details']['relationship'] = 'drupal_id';
+/* Relationship: CiviCRM Contacts: HRJobContract Role entity */
+$handler->display->display_options['relationships']['hrjc_role']['id'] = 'hrjc_role';
+$handler->display->display_options['relationships']['hrjc_role']['table'] = 'civicrm_contact';
+$handler->display->display_options['relationships']['hrjc_role']['field'] = 'hrjc_role';
+$handler->display->display_options['relationships']['hrjc_role']['relationship'] = 'drupal_id';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
@@ -219,7 +234,110 @@ $handler->display->display_options['fields']['id']['field'] = 'id';
 $handler->display->display_options['fields']['display_name']['id'] = 'display_name';
 $handler->display->display_options['fields']['display_name']['table'] = 'civicrm_contact';
 $handler->display->display_options['fields']['display_name']['field'] = 'display_name';
+$handler->display->display_options['fields']['display_name']['label'] = 'Display name';
 $handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 0;
+/* Field: CiviCRM Phone Details: Phone Number */
+$handler->display->display_options['fields']['phone']['id'] = 'phone';
+$handler->display->display_options['fields']['phone']['table'] = 'civicrm_phone';
+$handler->display->display_options['fields']['phone']['field'] = 'phone';
+$handler->display->display_options['fields']['phone']['label'] = 'Primary phone';
+$handler->display->display_options['fields']['phone']['location_type'] = '0';
+$handler->display->display_options['fields']['phone']['location_op'] = '1';
+$handler->display->display_options['fields']['phone']['is_primary'] = 1;
+$handler->display->display_options['fields']['phone']['phone_type'] = '0';
+/* Field: CiviCRM Email: Email Address */
+$handler->display->display_options['fields']['email']['id'] = 'email';
+$handler->display->display_options['fields']['email']['table'] = 'civicrm_email';
+$handler->display->display_options['fields']['email']['field'] = 'email';
+$handler->display->display_options['fields']['email']['label'] = 'Primary email';
+$handler->display->display_options['fields']['email']['location_type'] = '0';
+$handler->display->display_options['fields']['email']['location_op'] = '1';
+$handler->display->display_options['fields']['email']['is_primary'] = 1;
+/* Field: HRJobContract Details entity: Title */
+$handler->display->display_options['fields']['title']['id'] = 'title';
+$handler->display->display_options['fields']['title']['table'] = 'hrjc_details';
+$handler->display->display_options['fields']['title']['field'] = 'title';
+$handler->display->display_options['fields']['title']['relationship'] = 'hrjc_details';
+$handler->display->display_options['fields']['title']['label'] = 'Designation';
+/* Field: HRJobContract Role entity: Department */
+$handler->display->display_options['fields']['department']['id'] = 'department';
+$handler->display->display_options['fields']['department']['table'] = 'hrjc_role';
+$handler->display->display_options['fields']['department']['field'] = 'department';
+$handler->display->display_options['fields']['department']['relationship'] = 'hrjc_role';
+/* Field: HRJobContract Details entity: Location */
+$handler->display->display_options['fields']['location']['id'] = 'location';
+$handler->display->display_options['fields']['location']['table'] = 'hrjc_details';
+$handler->display->display_options['fields']['location']['field'] = 'location';
+$handler->display->display_options['fields']['location']['relationship'] = 'hrjc_details';
+/* Field: HRJobContract Role entity: Title */
+$handler->display->display_options['fields']['title_1']['id'] = 'title_1';
+$handler->display->display_options['fields']['title_1']['table'] = 'hrjc_role';
+$handler->display->display_options['fields']['title_1']['field'] = 'title';
+$handler->display->display_options['fields']['title_1']['relationship'] = 'hrjc_role';
+$handler->display->display_options['fields']['title_1']['label'] = 'Role title';
+/* Field: CiviCRM Contacts: Birth Date */
+$handler->display->display_options['fields']['birth_date']['id'] = 'birth_date';
+$handler->display->display_options['fields']['birth_date']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['birth_date']['field'] = 'birth_date';
+$handler->display->display_options['fields']['birth_date']['label'] = 'Date of birth';
+$handler->display->display_options['fields']['birth_date']['date_format'] = 'custom';
+$handler->display->display_options['fields']['birth_date']['custom_date_format'] = 'd.m.Y';
+$handler->display->display_options['fields']['birth_date']['second_date_format'] = 'long';
+/* Field: CiviCRM Address: Full Street Address */
+$handler->display->display_options['fields']['street_address']['id'] = 'street_address';
+$handler->display->display_options['fields']['street_address']['table'] = 'civicrm_address';
+$handler->display->display_options['fields']['street_address']['field'] = 'street_address';
+$handler->display->display_options['fields']['street_address']['exclude'] = TRUE;
+$handler->display->display_options['fields']['street_address']['location_type'] = '0';
+$handler->display->display_options['fields']['street_address']['location_op'] = '1';
+$handler->display->display_options['fields']['street_address']['is_primary'] = 1;
+$handler->display->display_options['fields']['street_address']['is_billing'] = 0;
+/* Field: CiviCRM Address: Supplemental Street Address */
+$handler->display->display_options['fields']['supplemental_address_1']['id'] = 'supplemental_address_1';
+$handler->display->display_options['fields']['supplemental_address_1']['table'] = 'civicrm_address';
+$handler->display->display_options['fields']['supplemental_address_1']['field'] = 'supplemental_address_1';
+$handler->display->display_options['fields']['supplemental_address_1']['exclude'] = TRUE;
+$handler->display->display_options['fields']['supplemental_address_1']['location_type'] = '0';
+$handler->display->display_options['fields']['supplemental_address_1']['location_op'] = '1';
+$handler->display->display_options['fields']['supplemental_address_1']['is_primary'] = 1;
+$handler->display->display_options['fields']['supplemental_address_1']['is_billing'] = 0;
+/* Field: CiviCRM Address: City / Suburb */
+$handler->display->display_options['fields']['city']['id'] = 'city';
+$handler->display->display_options['fields']['city']['table'] = 'civicrm_address';
+$handler->display->display_options['fields']['city']['field'] = 'city';
+$handler->display->display_options['fields']['city']['exclude'] = TRUE;
+$handler->display->display_options['fields']['city']['location_type'] = '0';
+$handler->display->display_options['fields']['city']['location_op'] = '1';
+$handler->display->display_options['fields']['city']['is_primary'] = 1;
+$handler->display->display_options['fields']['city']['is_billing'] = 0;
+/* Field: CiviCRM Address: ZIP / Postal Code */
+$handler->display->display_options['fields']['postal_code']['id'] = 'postal_code';
+$handler->display->display_options['fields']['postal_code']['table'] = 'civicrm_address';
+$handler->display->display_options['fields']['postal_code']['field'] = 'postal_code';
+$handler->display->display_options['fields']['postal_code']['exclude'] = TRUE;
+$handler->display->display_options['fields']['postal_code']['location_type'] = '0';
+$handler->display->display_options['fields']['postal_code']['location_op'] = '1';
+$handler->display->display_options['fields']['postal_code']['is_primary'] = 1;
+$handler->display->display_options['fields']['postal_code']['is_billing'] = 0;
+/* Field: CiviCRM Address: Country */
+$handler->display->display_options['fields']['country']['id'] = 'country';
+$handler->display->display_options['fields']['country']['table'] = 'civicrm_address';
+$handler->display->display_options['fields']['country']['field'] = 'country';
+$handler->display->display_options['fields']['country']['exclude'] = TRUE;
+$handler->display->display_options['fields']['country']['location_type'] = '0';
+$handler->display->display_options['fields']['country']['location_op'] = '1';
+$handler->display->display_options['fields']['country']['is_primary'] = 1;
+$handler->display->display_options['fields']['country']['is_billing'] = 0;
+$handler->display->display_options['fields']['country']['country_display'] = '2';
+/* Field: Global: Custom text */
+$handler->display->display_options['fields']['nothing']['id'] = 'nothing';
+$handler->display->display_options['fields']['nothing']['table'] = 'views';
+$handler->display->display_options['fields']['nothing']['field'] = 'nothing';
+$handler->display->display_options['fields']['nothing']['label'] = 'Address';
+$handler->display->display_options['fields']['nothing']['alter']['text'] = '[street_address], <br />
+[supplemental_address_1], <br />
+[city], [postal_code] <br />
+[country]';
 
 /* Display: Emergency Contact (full) */
 $handler = $view->new_display('block', 'Emergency Contact (full)', 'my_details_emergency_contact');
