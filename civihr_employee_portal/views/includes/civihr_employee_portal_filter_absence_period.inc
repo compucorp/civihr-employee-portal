@@ -48,7 +48,7 @@ class civihr_employee_portal_filter_absence_period extends views_handler_filter_
 
       $form[$value] = array(
         '#type' => $this->options['group_info']['widget'],
-        '#default_value' => variable_get('default_date_period_id', 1),
+        '#default_value' => variable_get('default_date_period_id', '1'),
         '#options' => $groups,
       );
 

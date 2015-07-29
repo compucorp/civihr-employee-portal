@@ -117,7 +117,7 @@ class views_json_query_argument_request_handler extends views_handler_argument {
 
           if (isset($this->options['name']) && $this->options['name'] == 'period_id') {
             // Specific handling for date periods
-            $passed_request =  variable_get('default_date_period_id', 1);
+            $passed_request =  variable_get('default_date_period_id', '1');
           }
           else {
             // Fallback to the specified default value (from contextual filter)

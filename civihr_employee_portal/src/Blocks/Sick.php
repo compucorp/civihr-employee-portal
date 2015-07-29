@@ -8,7 +8,7 @@ class Sick {
 
         $name = 'absence_list';
         $display = 'page_1';
-        $alter = array('exposed' => array('absence_start_date_period_filter' => variable_get('default_date_period_id', 1)));
+        $alter = array('exposed' => array('absence_start_date_period_filter' => variable_get('default_date_period_id', '1')));
 
         $view = views_get_view($name);
 

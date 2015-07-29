@@ -21,7 +21,7 @@ class civihr_employee_portal_handler_area_totals extends views_handler_area {
     }
     else {
         // Set default period
-        $request_date = variable_get('default_date_period_id', 1);
+        $request_date = variable_get('default_date_period_id', '1');
     }
     
     // Build the query
