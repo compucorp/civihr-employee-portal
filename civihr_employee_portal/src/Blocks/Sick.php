@@ -44,8 +44,6 @@ class Sick {
         $view->display_handler->set_option('filters', $filters);
         $view->pre_execute();
 
-        $filters = $view->display_handler->get_option('filters');
-
         return $view->render($display);
 
     }
