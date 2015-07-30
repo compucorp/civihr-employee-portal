@@ -264,13 +264,6 @@ function civihr_hrjobcontract_entities_init() {
 }
 
 /**
- * When caches are cleared rebuild the helper mysql views
- */
-function civihr_hrjobcontract_entities_flush_caches() {
-    variable_set('rebuild_hrjobcontract_entities_view', 'TRUE');
-}
-
-/**
  * Implements hook_schema_alter().
  */
 function civihr_hrjobcontract_entities_schema_alter(&$schema) {

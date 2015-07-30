@@ -161,43 +161,63 @@ function civihr_employee_portal_init() {
  * When caches are cleared rebuild the helper mysql views
  */
 function civihr_employee_portal_flush_caches() {
+    _run_civihr_tasks();
+}
 
-    // If we running from drush
-    // @ TODO -> add json file removal when we run from UI
-    // @ TODO -> move the json cache to the private file folder
+/**
+ * Implement hook_cron()
+ */
+function civihr_employee_portal_cron() {
+    _run_civihr_tasks();
+}
+
+function _run_civihr_tasks() {
+
     // @ TODO -> get the sites/default/files location from proper drupal function
+    $folder_real_path = drupal_realpath('public://') . '/views_json_query/';
+
     if (drupal_is_cli()) {
-
-        // Get the drupal root
-        $drupal_root = drush_get_context('DRUSH_DRUPAL_ROOT');
-
-        // Views Json Query directory for the cached files
-        $folder_path = $drupal_root . '/sites/default/files/views_json_query/';
-
-        // If we the views_json_query directory exists, check the cached files and remove them
-        if (is_dir($folder_path)) {
-
-            $dirHandle = opendir($folder_path);
-
-            // Loop over all of the files in the folder
-            while ($file = readdir($dirHandle)) {
-
-                // If $file is NOT a directory remove it
-                if (!is_dir($file)) {
-                    unlink($folder_path . $file); // unlink() delete the file
-                    drush_log($file . ' deleted');
-                }
-            }
-
-            // Close the directory
-            closedir($dirHandle);
-
-        }
+        _remove_json_cache_files($folder_real_path, TRUE);
+    }
+    else {
+        _remove_json_cache_files($folder_real_path);
     }
 
     // Set variable to TRUE so the mysql database views will be refreshed
     variable_set('rebuild_absence_list_view', 'TRUE');
+    variable_set('rebuild_hrjobcontract_entities_view', 'TRUE');
+
     watchdog('Rebuild view REQUEST', 'ABSENCE LIST MYSQL VIEW');
+
+}
+
+function _remove_json_cache_files($folder_path = null, $cli = FALSE) {
+
+    // If we the views_json_query directory exists, check the cached files and remove them
+    if (is_dir($folder_path)) {
+
+        $dirHandle = opendir($folder_path);
+
+        // Loop over all of the files in the folder
+        while ($file = readdir($dirHandle)) {
+
+            // If $file is NOT a directory remove it
+            if (!is_dir($file)) {
+
+                $real_path = drupal_realpath($folder_path . $file);
+                unlink($real_path); // unlink() delete the file
+
+                // Log message if running from drush
+                if ($cli == TRUE) {
+                    drush_log($file . ' deleted');
+                }
+            }
+        }
+
+        // Close the directory
+        closedir($dirHandle);
+
+    }
 
 }
 
@@ -302,7 +322,6 @@ function get_civihr_date_periods() {
     if (!isset($periods_data)) {
         if ($cache = cache_get('civihr_date_periods')) {
             $periods_data = $cache->data;
-            watchdog('cache hit', 'cache');
         }
         else {
 
@@ -340,7 +359,6 @@ function get_civihr_absence_types() {
 
         if ($cache = cache_get('civihr_absence_types')) {
             $absenceTypes = $cache->data;
-            watchdog('cache hit absence types', 'cache');
         }
         else {
 
@@ -381,7 +399,6 @@ function get_civihr_absence_statuses($status_id = NULL) {
 
         if ($cache = cache_get('civihr_absence_statuses')) {
             $absenceStatuses = $cache->data;
-            watchdog('cache hit absence statuses', 'cache');
         }
         else {
 
@@ -431,7 +448,6 @@ function get_document_statuses($status_id = NULL) {
 
         if ($cache = cache_get('civihr_document_statuses')) {
             $documentStatuses = $cache->data;
-            watchdog('cache hit document statuses', 'cache');
         }
         else {
             try {
@@ -470,7 +486,6 @@ function get_civihr_uf_match_data($user_id = NULL) {
     if (!isset($contact_uf_match)) {
         if ($cache = cache_get('civihr_uf_match_data_' . $user_id)) {
             $contact_uf_match = $cache->data;
-            watchdog('cache hit user uf_match data', print_r($user_id, TRUE));
         }
         else {
 
@@ -524,7 +539,6 @@ function get_civihr_contact_data($contact_id = NULL, $user_id = '') {
     if (!isset($contact_data)) {
         if ($cache = cache_get('civihr_contact_data_' . $contact_id)) {
             $contact_data = $cache->data;
-            watchdog('cache hit contact data', print_r($contact_id, TRUE));
         }
         else {
 
@@ -612,12 +626,15 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
+    /**
+     * Not used currently
     $items['civihr_contacts'] = array(
         'title' => 'Vacancy list',
         'page callback' => 'civihr_employee_portal_get_contact_list',
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
+     */
 
     $items['absence_request/%ctools_js/debit'] = array(
         'page callback' => 'civihr_employee_portal_absence_request_callback',
@@ -2488,7 +2505,7 @@ function civihr_employee_portal_request_new_account($ajax) {
 
         // Use ctools to generate ajax instructions for the browser to create
         // a form in a modal popup.
-        $output = ctools_modal_form_wrapper(/*'user_register_form'*/'civihr_employee_portal_request_new_account_form', $form_state);
+        $output = ctools_modal_form_wrapper('civihr_employee_portal_request_new_account_form', $form_state);
 
         // If the form has been submitted, there may be additional instructions
         // such as dismissing the modal popup.
@@ -2500,7 +2517,7 @@ function civihr_employee_portal_request_new_account($ajax) {
 
             $output[] = ajax_command_replace('.messages', 'all good');
             $output[] = ctools_modal_command_dismiss();
-            $output[] = ctools_ajax_command_redirect('dashboard');
+            $output[] = ctools_ajax_command_redirect('welcome-page');
 
         }
 
@@ -2511,7 +2528,7 @@ function civihr_employee_portal_request_new_account($ajax) {
     }
 
     else {
-        return drupal_get_form(/*'user_register_form'*/'civihr_employee_portal_request_new_account_form');
+        return drupal_get_form('civihr_employee_portal_request_new_account_form');
     }
 }
 
@@ -2651,7 +2668,7 @@ function civihr_employee_portal_request_new_account_submit($form, &$form_state) 
         }
     }
     
-    drupal_set_message(t('Request sent!'), 'success');
+    drupal_set_message(t('Request sent! You will receive email notificiation once your account is activated.'), 'success');
 }
 
 /**
@@ -2916,26 +2933,6 @@ function civihr_employee_portal_views_api() {
 }
 
 /**
- * Implements hook_views_pre_render().
- * Adding required js for the modal window
- */
-function civihr_employee_portal_views_pre_render(&$view) {
-
-    if ($view->name == 'hr_documents') {
-
-        if ($view->current_display == 'hr_resources') {
-
-            ctools_include('modal');
-            ctools_modal_add_js();
-
-        }
-    }
-    
-    //if ($view->name == 'Documents') {
-    //}
-}
-
-/**
  * @param $view_name
  * @param string $view_display
  * Load view as html block
@@ -3113,6 +3110,13 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
             '#description' => t('eg. "has Leave Approved by"'),
             '#default_value' => variable_get('relationship_name_to_use', 'has Leave Approved by')
         );
+
+        $form['civihr_settings']['default_date_period_id'] = array(
+            '#type' => 'textfield',
+            '#title' => t('Default Date period ID'),
+            '#description' => t('Default Date period ID from CiviCRM'),
+            '#default_value' => variable_get('default_date_period_id', '1')
+        );
     }
 
     if ($form_id == 'user_login_block') {
@@ -3284,13 +3288,12 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
     // Show the open calendar button in the my leave block next to the date filters select list
     if (isset($form['#id']) && $form['#id'] == 'views-exposed-form-absence-list-page') {
 
-
         if (isset($_REQUEST['absence_start_date_period_filter'])) {
             $request_date = $_REQUEST['absence_start_date_period_filter'];
         }
         else {
             // Set default period
-            $request_date = '1';
+            $request_date = variable_get('default_date_period_id', '1');
         }
 
         $form['open_calendar'] = array(
@@ -3327,7 +3330,7 @@ function _absence_start_date_period_change_submit(&$form, &$form_state) {
     }
     else {
         // Set default period
-        $request_date = '1';
+        $request_date = variable_get('default_date_period_id', '1');
     }
 
     $form['leave_report'] = array(
