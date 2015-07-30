@@ -2,7 +2,7 @@ CiviHR employee portal custom Drupal modules
 ======================
 
 DEMO site available here:
-http://178.79.132.53:8001/welcome-page
+http://178.79.132.53/welcome-page
 ======================
 
 Installation instructions - CiviHR 1.5
