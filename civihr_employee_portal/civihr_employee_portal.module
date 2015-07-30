@@ -2505,7 +2505,7 @@ function civihr_employee_portal_request_new_account($ajax) {
 
         // Use ctools to generate ajax instructions for the browser to create
         // a form in a modal popup.
-        $output = ctools_modal_form_wrapper(/*'user_register_form'*/'civihr_employee_portal_request_new_account_form', $form_state);
+        $output = ctools_modal_form_wrapper('civihr_employee_portal_request_new_account_form', $form_state);
 
         // If the form has been submitted, there may be additional instructions
         // such as dismissing the modal popup.
@@ -2517,7 +2517,7 @@ function civihr_employee_portal_request_new_account($ajax) {
 
             $output[] = ajax_command_replace('.messages', 'all good');
             $output[] = ctools_modal_command_dismiss();
-            $output[] = ctools_ajax_command_redirect('dashboard');
+            $output[] = ctools_ajax_command_redirect('welcome-page');
 
         }
 
@@ -2528,7 +2528,7 @@ function civihr_employee_portal_request_new_account($ajax) {
     }
 
     else {
-        return drupal_get_form(/*'user_register_form'*/'civihr_employee_portal_request_new_account_form');
+        return drupal_get_form('civihr_employee_portal_request_new_account_form');
     }
 }
 
@@ -2668,7 +2668,7 @@ function civihr_employee_portal_request_new_account_submit($form, &$form_state) 
         }
     }
     
-    drupal_set_message(t('Request sent!'), 'success');
+    drupal_set_message(t('Request sent! You will receive email notificiation once your account is activated.'), 'success');
 }
 
 /**
