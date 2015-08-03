@@ -276,6 +276,12 @@ function civihr_employee_portal_theme() {
             ),
             'template' => 'templates/civihr-employee-portal-print-leave-report',
         ),
+        'civihr_employee_portal_custom_reports' => array(
+            'variables' => array(
+                'custom_data' => NULL
+            ),
+            'template' => 'templates/civihr-employee-portal-custom-reports',
+        ),
         'civihr_employee_portal_document_form' => array(
             //'arguments' => array('form' => NULL),
             'variables' => array(
@@ -2955,12 +2961,12 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         drupal_add_js('http://d3js.org/d3.v3.min.js', 'external');
         drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
 
-        return '<div class="col-md-2 column1 panel-panel">
-                    <button id="headcount" class="btn btn-primary btn-reports">Headcount</button>
-                    <button id="gender" class="btn btn-primary btn-reports">Gender</button>
-                    <button id="age" class="btn btn-primary btn-reports">Age</button>
-                </div>
-<div class="col-md-10 column2 panel-panel"><div id="custom-report"></div><div id="custom-report-details"></div></div>';
+        // Output the custom report theme page
+        return theme('civihr_employee_portal_custom_reports',
+            array(
+                'custom_data' => 'default'
+            )
+        );
 
     }
 
@@ -2987,7 +2993,12 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         // Set the view data to variable (and return later)
         $view_data =  $view->render();
 
-        return '<div id="custom-report"></div><div id="custom-report-details">' . $view_data . '</div>';
+        // Output the custom report theme page
+        return theme('civihr_employee_portal_custom_reports',
+            array(
+                'custom_data' => $view_data . 'sort'
+            )
+        );
 
     }
     else {
@@ -3004,7 +3015,7 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
 
         $view->execute();
 
-        print $view->render();
+        print $view->render() . 'ajax view';
 
     }
 
