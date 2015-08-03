@@ -11,3 +11,17 @@ and open the template in the editor.
 .view-absence-list .views-field, .view-absence-list th {
     width: 15%;
 }
+
+/**
+ * Report styles
+ */
+
+#custom-report-details {
+    height: auto !important;
+}
+
+.btn-reports {
+    display: block;
+    margin: 2px;
+    width: 100px;
+}

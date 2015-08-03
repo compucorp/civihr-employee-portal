@@ -2955,7 +2955,12 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         drupal_add_js('http://d3js.org/d3.v3.min.js', 'external');
         drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
 
-        return '<div id="custom-report"></div><div id="custom-report-details"></div><div id="relationship-report"></div>';
+        return '<div class="col-md-2 column1 panel-panel">
+                    <button id="headcount" class="btn btn-primary btn-reports">Headcount</button>
+                    <button id="gender" class="btn btn-primary btn-reports">Gender</button>
+                    <button id="age" class="btn btn-primary btn-reports">Age</button>
+                </div>
+<div class="col-md-10 column2 panel-panel"><div id="custom-report"></div><div id="custom-report-details"></div></div>';
 
     }
 
@@ -2971,6 +2976,9 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         $view = views_get_view($view_name);
         $view->set_display($view_display);
 
+        // Set dom_id otherwise notice message is displayed from Drupal
+        $view->dom_id = time();
+
         // Set the contextual filters from graph (passed in GET['value'])
         $view->set_arguments($args);
 
@@ -2979,7 +2987,7 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         // Set the view data to variable (and return later)
         $view_data =  $view->render();
 
-        return '<div id="custom-report"></div><div id="custom-report-details">' . $view_data . '</div><div id="relationship-report"></div>';
+        return '<div id="custom-report"></div><div id="custom-report-details">' . $view_data . '</div>';
 
     }
     else {
