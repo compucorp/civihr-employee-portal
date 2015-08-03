@@ -72,25 +72,25 @@ $handler->display->display_options['pager']['options']['quantity'] = '9';
 $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'table';
 $handler->display->display_options['style_options']['columns'] = array(
-'department_1' => 'department_1',
-'contact_id' => 'contact_id',
+  'department_1' => 'department_1',
+  'contact_id' => 'contact_id',
 );
 $handler->display->display_options['style_options']['default'] = '-1';
 $handler->display->display_options['style_options']['info'] = array(
-'department_1' => array(
-'sortable' => 1,
-'default_sort_order' => 'asc',
-'align' => '',
-'separator' => '',
-'empty_column' => 0,
-),
-'contact_id' => array(
-'sortable' => 0,
-'default_sort_order' => 'asc',
-'align' => '',
-'separator' => '',
-'empty_column' => 0,
-),
+  'department_1' => array(
+    'sortable' => 1,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'contact_id' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
 );
 $handler->display->display_options['defaults']['style_options'] = FALSE;
 $handler->display->display_options['defaults']['row_plugin'] = FALSE;
@@ -118,27 +118,61 @@ $handler->display->display_options['arguments']['department']['summary_options']
 $handler->display->display_options['arguments']['department']['limit'] = '0';
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
+
+/* Display: Data export */
+$handler = $view->new_display('views_data_export', 'Data export', 'views_data_export_1');
+$handler->display->display_options['defaults']['group_by'] = FALSE;
+$handler->display->display_options['pager']['type'] = 'some';
+$handler->display->display_options['style_plugin'] = 'views_data_export_csv';
+$handler->display->display_options['defaults']['fields'] = FALSE;
+/* Field: HRJobContract Role entity: Department */
+$handler->display->display_options['fields']['department_1']['id'] = 'department_1';
+$handler->display->display_options['fields']['department_1']['table'] = 'hrjc_role';
+$handler->display->display_options['fields']['department_1']['field'] = 'department';
+$handler->display->display_options['fields']['department_1']['label'] = 'department';
+/* Field: HRJobContract Role entity: Contact_id */
+$handler->display->display_options['fields']['contact_id']['id'] = 'contact_id';
+$handler->display->display_options['fields']['contact_id']['table'] = 'hrjc_role';
+$handler->display->display_options['fields']['contact_id']['field'] = 'contact_id';
+$handler->display->display_options['fields']['contact_id']['separator'] = '';
+$handler->display->display_options['defaults']['arguments'] = FALSE;
+/* Contextual filter: HRJobContract Role entity: Department */
+$handler->display->display_options['arguments']['department']['id'] = 'department';
+$handler->display->display_options['arguments']['department']['table'] = 'hrjc_role';
+$handler->display->display_options['arguments']['department']['field'] = 'department';
+$handler->display->display_options['arguments']['department']['default_argument_type'] = 'fixed';
+$handler->display->display_options['arguments']['department']['summary']['number_of_records'] = '0';
+$handler->display->display_options['arguments']['department']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['department']['summary_options']['items_per_page'] = '25';
+$handler->display->display_options['arguments']['department']['limit'] = '0';
+$handler->display->display_options['path'] = 'role_contacts_export';
+$handler->display->display_options['displays'] = array(
+  'role_contacts' => 'role_contacts',
+  'default' => 0,
+  'page' => 0,
+);
 $translatables['all_roles'] = array(
-t('Master'),
-t('Roles example report'),
-t('more'),
-t('Apply'),
-t('Reset'),
-t('Sort by'),
-t('Asc'),
-t('Desc'),
-t('Items per page'),
-t('- All -'),
-t('Offset'),
-t('« first'),
-t('‹ previous'),
-t('next ›'),
-t('last »'),
-t('department'),
-t('count'),
-t('Roles count - json'),
-t('Role contacts display'),
-t('Contact_id'),
-t('.'),
-t('All'),
+  t('Master'),
+  t('Roles example report'),
+  t('more'),
+  t('Apply'),
+  t('Reset'),
+  t('Sort by'),
+  t('Asc'),
+  t('Desc'),
+  t('Items per page'),
+  t('- All -'),
+  t('Offset'),
+  t('« first'),
+  t('‹ previous'),
+  t('next ›'),
+  t('last »'),
+  t('department'),
+  t('All'),
+  t('Roles count - json'),
+  t('data'),
+  t('.'),
+  t('Role contacts display'),
+  t('Contact_id'),
+  t('Data export'),
 );

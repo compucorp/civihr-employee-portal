@@ -25,3 +25,39 @@ and open the template in the editor.
     margin: 2px;
     width: 100px;
 }
+
+#custom-report-details .view {
+    margin: 0px;
+}
+
+.report-x-filters {
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.header-export {
+    padding: 5px;
+    background-color: #41AFCB;
+    color: #FFF;
+    border-bottom: 10px solid #ECEDEE;
+}
+
+.custom-data-block {
+    background: #fff;
+    margin: 0 0 30px 0;
+}
+
+.view-all-roles {
+    padding: 0px !important;
+}
+
+.view-all-roles .table-responsive {
+    margin: 0px;
+}
+
+@media screen and (max-width: 991px) {
+    .report-type {
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+}

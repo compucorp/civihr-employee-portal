@@ -2964,7 +2964,7 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         // Output the custom report theme page
         return theme('civihr_employee_portal_custom_reports',
             array(
-                'custom_data' => 'default'
+                'custom_data' => ''
             )
         );
 
@@ -2996,7 +2996,7 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         // Output the custom report theme page
         return theme('civihr_employee_portal_custom_reports',
             array(
-                'custom_data' => $view_data . 'sort'
+                'custom_data' => $view_data
             )
         );
 
@@ -3015,7 +3015,7 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
 
         $view->execute();
 
-        print $view->render() . 'ajax view';
+        print $view->render();
 
     }
 
