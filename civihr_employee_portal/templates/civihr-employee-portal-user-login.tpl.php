@@ -26,7 +26,13 @@ $errors = form_get_errors();
         <?php print drupal_render($form['actions']); ?>
     </div>
 </div>
-<div class="pane-user-login-forgot-password hidden">
+<?php
+    $forgotPasswordBlockVisibleClass = ' hidden ';
+    if ($customLoginSuccessMessage):
+        $forgotPasswordBlockVisibleClass = '';
+    endif;
+?>
+<div class="pane-user-login-forgot-password <?php print $forgotPasswordBlockVisibleClass; ?>">
     <div class="row">
         <div class="col-xs-12">
             <p>Enter your work email address in the box below and we'll resend you username and password.</p>
