@@ -10,6 +10,8 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
         var data; // Holds our loaded data
 
+        var type = 'bar';
+
         console.log(Drupal.settings.basePath);
 
         d3.json(Drupal.settings.basePath + "all-roles", function(error, json) {
@@ -26,6 +28,16 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             settings.innerHeight = window.innerHeight / 3;
             settings.barPadding = 2;
 
+            // Pie charts are round so we need a radius for them
+            settings.radius = Math.min(settings.innerWidth, settings.innerHeight) / 2;
+
+            // Set our defined range of coluor codes
+            //settings.color = d3.scale.ordinal()
+            //    .range(['#A60F2B', '#648C85', '#B3F2C9', '#528C18', '#C3F25C']);
+
+            // Use 20 predefined colours
+            settings.color = d3.scale.category20();
+
             // Set number of ticks
             settings.setTicks = 5;
 
@@ -39,12 +51,16 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             settings.duration = 250;
 
             // Draw the report
-            visualize(settings);
+            if (type == 'line') {
+                visualizeLineChart(settings);
+            }
+            if (type == 'bar') {
+                visualizeBarChart(settings);
+            }
+
         });
 
-        function visualize(settings) {
-
-            console.log(data);
+        function visualizeLineChart(settings) {
 
             $('#custom-report').empty();
 
@@ -168,6 +184,36 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .attr("class", "axis")
                 .attr("transform", "translate(" + settings.padding + ",0)")
                 .call(yAxis);
+
+        }
+
+        function visualizeBarChart(settings) {
+
+            $('#custom-report').empty();
+
+            var svg = d3.select('#custom-report')
+                .append('svg')
+                .attr('width', settings.innerWidth)
+                .attr('height', settings.innerHeight)
+                .append('g')
+                .attr('transform', 'translate(' + (settings.innerWidth / 2) +  ',' + (settings.innerHeight / 2) + ')');
+
+            var arc = d3.svg.arc()
+                .outerRadius(settings.radius);
+
+            var pie = d3.layout.pie()
+                .value(function(d) { console.log(d); return d.data.count; })
+                .sort(null);
+
+            var path = svg.selectAll('path')
+                .data(pie(data))
+                .enter()
+                .append('path')
+                .attr('d', arc)
+                .attr('fill', function(d, i) {
+                    console.log(d);
+                    return settings.color(d.data.data.department);
+                });
 
         }
               
