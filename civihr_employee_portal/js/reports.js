@@ -2,11 +2,6 @@
 Drupal.behaviors.civihr_employee_portal_reports = {
     attach: function (context, settings) {
 
-        // Round UP to the nearest five -> helper function
-        function roundUp5(x) {
-            return Math.ceil(x / 5) * 5;
-        }
-
         var data; // Will hold our loaded json data later
 
         /**
@@ -52,6 +47,12 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
         };
 
+        // Round UP to the nearest five -> helper function
+        DrawReport.prototype.roundUp5 = function(x) {
+            return Math.ceil(x / 5) * 5;
+        };
+
+        // Create the default chart types (links + adds to SVG, onclick redraws the graph)
         DrawReport.prototype.addChartTypes = function(svg) {
 
             console.log(this);
@@ -62,7 +63,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .attr("class", "btn btn-primary btn-reports")
                 .attr("type", "button")
                 .attr("x", _this.settings.outerWidth - 50)
-                .attr("y", 50)
+                .attr("y", 30)
                 .on('click', function(d,i) {
                     _this.drawGraph('all-roles', 'bar');
                 })
@@ -74,15 +75,13 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .attr("class", "btn btn-primary btn-reports")
                 .attr("type", "button")
                 .attr("x", _this.settings.outerWidth - 50)
-                .attr("y", 100)
+                .attr("y", 60)
                 .on('click', function(d,i) {
                     _this.drawGraph('all-roles', 'line');
                 })
                 .text(function(d,i) {
                     return 'Line chart';
                 });
-
-            return svg;
 
         };
 
@@ -130,7 +129,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             // Set up scales
             var scaleY = d3.scale.linear()
                 .range([report.settings.innerHeight - report.settings.hpadding, report.settings.hpadding])
-                .domain([0, d3.max(data, function(d) { return roundUp5(d.data.count); })]);
+                .domain([0, d3.max(data, function(d) { return report.roundUp5(d.data.count); })]);
 
             var yAxis = d3.svg.axis()
                 .scale(scaleY)
