@@ -52,6 +52,40 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
         };
 
+        DrawReport.prototype.addChartTypes = function(svg) {
+
+            console.log(this);
+
+            var _this = this;
+
+            svg.append("text")
+                .attr("class", "btn btn-primary btn-reports")
+                .attr("type", "button")
+                .attr("x", _this.settings.outerWidth - 50)
+                .attr("y", 50)
+                .on('click', function(d,i) {
+                    _this.drawGraph('all-roles', 'bar');
+                })
+                .text(function(d,i) {
+                    return 'Bar chart';
+                });
+
+            svg.append("text")
+                .attr("class", "btn btn-primary btn-reports")
+                .attr("type", "button")
+                .attr("x", _this.settings.outerWidth - 50)
+                .attr("y", 100)
+                .on('click', function(d,i) {
+                    _this.drawGraph('all-roles', 'line');
+                })
+                .text(function(d,i) {
+                    return 'Line chart';
+                });
+
+            return svg;
+
+        };
+
         // This will draw report on specified json endpoint, with specified report type
         DrawReport.prototype.drawGraph = function(json_url, type) {
 
@@ -65,12 +99,12 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
                 // Draw line chart
                 if (type == 'line') {
-                    visualizeLineChart(report.settings);
+                    visualizeLineChart(report);
                 }
 
                 // Draw bar chart
                 if (type == 'bar') {
-                    visualizeBarChart(report.settings);
+                    visualizeBarChart(report);
                 }
 
             });
@@ -83,25 +117,25 @@ Drupal.behaviors.civihr_employee_portal_reports = {
         report.drawGraph('all-roles', 'line');
 
 
-        function visualizeLineChart(settings) {
+        function visualizeLineChart(report) {
 
             $('#custom-report').empty();
 
             // Create SVG element
             var svg = d3.select("#custom-report")
                 .append("svg")
-                .attr("width", settings.outerWidth + settings.padding)
-                .attr("height", settings.outerHeight);
+                .attr("width", report.settings.outerWidth + report.settings.padding)
+                .attr("height", report.settings.outerHeight);
 
             // Set up scales
             var scaleY = d3.scale.linear()
-                .range([settings.innerHeight - settings.hpadding, settings.hpadding])
+                .range([report.settings.innerHeight - report.settings.hpadding, report.settings.hpadding])
                 .domain([0, d3.max(data, function(d) { return roundUp5(d.data.count); })]);
 
             var yAxis = d3.svg.axis()
                 .scale(scaleY)
                 .orient("left")
-                .ticks(settings.setTicks);
+                .ticks(report.settings.setTicks);
 
             svg.selectAll("rect")
                 .data(data)
@@ -125,7 +159,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .on("mouseout", function(d) {
                     d3.select(this)
                         .transition()
-                        .duration(settings.duration)
+                        .duration(report.settings.duration)
                         .attr("fill", "teal");
                 })
                 .on("click", function(d, i) {
@@ -170,14 +204,14 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
                 })
                 .attr("x", function(d, i) {
-                    return settings.padding + i * (settings.innerWidth / data.length);
+                    return report.settings.padding + i * (report.settings.innerWidth / data.length);
                 })
                 .attr("y", function(d) {
                     return scaleY(d.data.count);
                 })
-                .attr("width", settings.innerWidth / data.length - settings.barPadding)
+                .attr("width", report.settings.innerWidth / data.length - report.settings.barPadding)
                 .attr("height", function(d) {
-                    return settings.innerHeight - settings.hpadding - scaleY(d.data.count);  // Just the data value
+                    return report.settings.innerHeight - report.settings.hpadding - scaleY(d.data.count);  // Just the data value
                 });
 
             svg.selectAll("text")
@@ -192,56 +226,35 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return d.data.department;
                 })
                 .attr("x", function(d, i) {
-                    return i * (settings.innerWidth / data.length) + (settings.innerWidth / data.length - settings.barPadding) / 2;
+                    return i * (report.settings.innerWidth / data.length) + (report.settings.innerWidth / data.length - report.settings.barPadding) / 2;
                 })
                 .attr("y", function(d) {
-                    return settings.innerHeight - 10;
+                    return report.settings.innerHeight - 10;
                 });
 
             // Append the axes
             svg.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(" + settings.padding + ",0)")
+                .attr("transform", "translate(" + report.settings.padding + ",0)")
                 .call(yAxis);
 
-            svg.append("text")
-                .attr("class", "btn btn-primary btn-reports")
-                .attr("type", "button")
-                .attr("x", settings.outerWidth - 50)
-                .attr("y", 50)
-                .on('click', function(d,i) {
-                    report.drawGraph('all-roles', 'bar');
-                })
-                .text(function(d,i) {
-                    return 'Bar chart';
-                })
-
-            svg.append("text")
-                .attr("class", "btn btn-primary btn-reports")
-                .attr("type", "button")
-                .attr("x", settings.outerWidth - 50)
-                .attr("y", 100)
-                .on('click', function(d,i) {
-                    report.drawGraph('all-roles', 'line');
-                })
-                .text(function(d,i) {
-                    return 'Line chart';
-                })
+            // Add chart types
+            report.addChartTypes(svg);
 
         }
 
-        function visualizeBarChart(settings) {
+        function visualizeBarChart(report) {
 
             $('#custom-report').empty();
 
             var svg = d3.select('#custom-report')
                 .append('svg')
-                .attr('width', settings.outerWidth + settings.padding)
-                .attr('height', settings.outerHeight)
+                .attr('width', report.settings.outerWidth + report.settings.padding)
+                .attr('height', report.settings.outerHeight)
                 .append('g');
 
             var arc = d3.svg.arc()
-                .outerRadius(settings.radius);
+                .outerRadius(report.settings.radius);
 
             var pie = d3.layout.pie()
                 .value(function(d) {
@@ -253,35 +266,14 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .data(pie(data))
                 .enter()
                 .append("path")
-                .attr('transform', 'translate(' + (settings.innerWidth / 2) +  ',' + (settings.innerHeight / 2) + ')')
+                .attr('transform', 'translate(' + (report.settings.innerWidth / 2) +  ',' + (report.settings.innerHeight / 2) + ')')
                 .attr('d', arc)
                 .attr('fill', function(d, i) {
-                    return settings.color(d.data.data.department);
+                    return report.settings.color(d.data.data.department);
                 });
 
-            svg.append("text")
-                .attr("class", "btn btn-primary btn-reports")
-                .attr("type", "button")
-                .attr("x", settings.outerWidth - 50)
-                .attr("y", 50)
-                .on('click', function(d,i) {
-                    report.drawGraph('all-roles', 'bar');
-                })
-                .text(function(d,i) {
-                    return 'Bar chart';
-                })
-
-            svg.append("text")
-                .attr("class", "btn btn-primary btn-reports")
-                .attr("type", "button")
-                .attr("x", settings.outerWidth - 50)
-                .attr("y", 100)
-                .on('click', function(d,i) {
-                    report.drawGraph('all-roles', 'line');
-                })
-                .text(function(d,i) {
-                    return 'Line chart';
-                })
+            // Add chart types
+            report.addChartTypes(svg);
 
         }
               
