@@ -6,15 +6,9 @@
         <button id="age" class="btn btn-primary btn-reports">Age</button>
     </div>
 
-    <div class="col-md-8 column2 panel-panel">
+    <div class="col-md-10 column2 panel-panel">
         <div id="custom-report"></div>
     </div>
-
-    <div class="col-md-2 column3 panel-panel report-type">
-        <button id="bar-chart" class="btn btn-primary btn-reports">Bar chart</button>
-        <button id="pie-chart" class="btn btn-primary btn-reports">Pie chart</button>
-    </div>
-
 
     <div class="col-md-12 column1 panel-panel report-x-filters">
         <button id="all" class="btn btn-primary btn-reports">All</button>
