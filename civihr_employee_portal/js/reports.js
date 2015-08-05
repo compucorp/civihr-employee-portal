@@ -29,7 +29,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             // Pie charts are round so we need a radius for them
             this.settings.radius = Math.min(this.settings.innerWidth, this.settings.innerHeight) / 2;
 
-            // Set our defined range of coluor codes
+            // Set our defined range of colour codes for now
             // this.settings.color = d3.scale.ordinal()
             //    .range(['#A60F2B', '#648C85', '#B3F2C9', '#528C18', '#C3F25C']);
 
@@ -239,7 +239,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .attr('width', settings.outerWidth)
                 .attr('height', settings.outerHeight)
                 .append('g')
-                .attr('transform', 'translate(' + (settings.outerWidth / 2) +  ',' + (settings.outerHeight / 2) + ')');
+                .attr('transform', 'translate(' + (settings.innerWidth / 2) +  ',' + (settings.innerHeight / 2) + ')');
 
             var arc = d3.svg.arc()
                 .outerRadius(settings.radius);
