@@ -236,10 +236,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             var svg = d3.select('#custom-report')
                 .append('svg')
-                .attr('width', settings.outerWidth)
+                .attr('width', settings.outerWidth + settings.padding)
                 .attr('height', settings.outerHeight)
-                .append('g')
-                .attr('transform', 'translate(' + (settings.innerWidth / 2) +  ',' + (settings.innerHeight / 2) + ')');
+                .append('g');
 
             var arc = d3.svg.arc()
                 .outerRadius(settings.radius);
@@ -250,10 +249,11 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 })
                 .sort(null);
 
-            var path = svg.selectAll('path')
+            var path = svg.selectAll("path")
                 .data(pie(data))
                 .enter()
-                .append('path')
+                .append("path")
+                .attr('transform', 'translate(' + (settings.innerWidth / 2) +  ',' + (settings.innerHeight / 2) + ')')
                 .attr('d', arc)
                 .attr('fill', function(d, i) {
                     return settings.color(d.data.data.department);
@@ -262,8 +262,8 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             svg.append("text")
                 .attr("class", "btn btn-primary btn-reports")
                 .attr("type", "button")
-                .attr("x", 150)
-                .attr("y", -100)
+                .attr("x", settings.outerWidth - 50)
+                .attr("y", 50)
                 .on('click', function(d,i) {
                     report.drawGraph('all-roles', 'bar');
                 })
@@ -274,8 +274,8 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             svg.append("text")
                 .attr("class", "btn btn-primary btn-reports")
                 .attr("type", "button")
-                .attr("x", 150)
-                .attr("y", -50)
+                .attr("x", settings.outerWidth - 50)
+                .attr("y", 100)
                 .on('click', function(d,i) {
                     report.drawGraph('all-roles', 'line');
                 })
