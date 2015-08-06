@@ -11,12 +11,12 @@
     </div>
 
     <div class="col-md-12 column1 panel-panel report-x-filters">
-        <button id="all" class="btn btn-primary btn-reports">All</button>
-        <button id="location" class="btn btn-primary btn-reports">Location</button>
-        <button id="department" class="btn btn-primary btn-reports">Department</button>
-        <button id="level" class="btn btn-primary btn-reports">Level</button>
-        <button id="contract-type" class="btn btn-primary btn-reports">Contract Type</button>
-        <button id="project-type" class="btn btn-primary btn-reports">Project Type</button>
+        <button id="all" class="subFilter btn btn-primary btn-reports">All</button>
+        <button id="location" class="subFilter btn btn-primary btn-reports">Location</button>
+        <button id="department" class="subFilter btn btn-primary btn-reports">Department</button>
+        <button id="level" class="subFilter btn btn-primary btn-reports">Level</button>
+        <button id="contract-type" class="subFilter btn btn-primary btn-reports">Contract Type</button>
+        <button id="project-type" class="subFilter btn btn-primary btn-reports">Project Type</button>
     </div>
 
 </div>

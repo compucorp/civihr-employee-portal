@@ -16,7 +16,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 
 /* Display: Master */
 $handler = $view->new_display('default', 'Master', 'default');
-$handler->display->display_options['title'] = 'Roles example report';
+$handler->display->display_options['title'] = 'Headcount / Filter by Department';
 $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['group_by'] = TRUE;
@@ -56,12 +56,14 @@ $handler->display->display_options['fields']['department']['group_type'] = 'coun
 $handler->display->display_options['fields']['department']['label'] = 'count';
 $handler->display->display_options['fields']['department']['separator'] = '';
 
-/* Display: Roles count - json */
-$handler = $view->new_display('page', 'Roles count - json', 'page');
-$handler->display->display_options['path'] = 'all-roles';
+/* Display: Headcount / Department (count) */
+$handler = $view->new_display('page', 'Headcount / Department (count)', 'page');
+$handler->display->display_options['path'] = 'headcount-department';
 
-/* Display: Role contacts display */
-$handler = $view->new_display('block', 'Role contacts display', 'role_contacts');
+/* Display: Filter by Department */
+$handler = $view->new_display('block', 'Filter by Department', 'role_contacts');
+$handler->display->display_options['defaults']['title'] = FALSE;
+$handler->display->display_options['title'] = 'Headcount / Filter by Department';
 $handler->display->display_options['defaults']['group_by'] = FALSE;
 $handler->display->display_options['defaults']['pager'] = FALSE;
 $handler->display->display_options['pager']['type'] = 'full';
@@ -72,25 +74,25 @@ $handler->display->display_options['pager']['options']['quantity'] = '9';
 $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'table';
 $handler->display->display_options['style_options']['columns'] = array(
-  'department_1' => 'department_1',
-  'contact_id' => 'contact_id',
+    'department_1' => 'department_1',
+    'contact_id' => 'contact_id',
 );
 $handler->display->display_options['style_options']['default'] = '-1';
 $handler->display->display_options['style_options']['info'] = array(
-  'department_1' => array(
-    'sortable' => 1,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'contact_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
+    'department_1' => array(
+        'sortable' => 1,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'contact_id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
 );
 $handler->display->display_options['defaults']['style_options'] = FALSE;
 $handler->display->display_options['defaults']['row_plugin'] = FALSE;
@@ -147,32 +149,32 @@ $handler->display->display_options['arguments']['department']['summary_options']
 $handler->display->display_options['arguments']['department']['limit'] = '0';
 $handler->display->display_options['path'] = 'role_contacts_export';
 $handler->display->display_options['displays'] = array(
-  'role_contacts' => 'role_contacts',
-  'default' => 0,
-  'page' => 0,
+    'role_contacts' => 'role_contacts',
+    'default' => 0,
+    'page' => 0,
 );
 $translatables['all_roles'] = array(
-  t('Master'),
-  t('Roles example report'),
-  t('more'),
-  t('Apply'),
-  t('Reset'),
-  t('Sort by'),
-  t('Asc'),
-  t('Desc'),
-  t('Items per page'),
-  t('- All -'),
-  t('Offset'),
-  t('« first'),
-  t('‹ previous'),
-  t('next ›'),
-  t('last »'),
-  t('department'),
-  t('All'),
-  t('Roles count - json'),
-  t('data'),
-  t('.'),
-  t('Role contacts display'),
-  t('Contact_id'),
-  t('Data export'),
+    t('Master'),
+    t('Headcount / Filter by Department'),
+    t('more'),
+    t('Apply'),
+    t('Reset'),
+    t('Sort by'),
+    t('Asc'),
+    t('Desc'),
+    t('Items per page'),
+    t('- All -'),
+    t('Offset'),
+    t('« first'),
+    t('‹ previous'),
+    t('next ›'),
+    t('last »'),
+    t('department'),
+    t('count'),
+    t('Headcount / Department (count)'),
+    t('Filter by Department'),
+    t('Contact_id'),
+    t('.'),
+    t('All'),
+    t('Data export'),
 );

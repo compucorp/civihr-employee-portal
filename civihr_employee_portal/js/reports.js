@@ -2,7 +2,32 @@
 Drupal.behaviors.civihr_employee_portal_reports = {
     attach: function (context, settings) {
 
+        // main filter can be (headcount, gender, age)
+        $.cookie('mainFilter', 'headcount');
+
         var data; // Will hold our loaded json data later
+
+        // Init the sub filters
+        var subFilters = document.querySelectorAll(".subFilter");
+
+        // Loop the buttons and attach the onclick function
+        for (i = 0; i < subFilters.length; i++) {
+            subFilters[i].onclick = function (data) {
+
+                if (data.target !== null) {
+
+                    // Set the subfilter
+                    customReport.setSubFilter(data.target.id);
+                    console.log(data.target.id);
+
+                    // @TODO pass the chart type from cookie or default value
+                    customReport.drawGraph(customReport.getJsonUrl(), 'line');
+
+                }
+
+                return false;
+            }
+        }
 
         /**
          * DrawReport Object
@@ -60,6 +85,61 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
         };
 
+        // Set default main filter type
+        DrawReport.prototype.setMainFilter = function(filter) {
+            this.mainFilter = filter;
+        };
+
+        // Set default sub filter type
+        DrawReport.prototype.setSubFilter = function(filter) {
+            // Sets the filter to the object
+            this.subFilter = filter;
+
+            // Sets the filter on the cookie as well (helps to set default values)
+            $.cookie('subFilter', filter);
+
+        };
+
+        // Get default sub filter type
+        DrawReport.prototype.getSubFilter = function() {
+
+            // Gets the default filter from the object
+            if (this.subFilter !== 'undefined' && this.subFilter) {
+                return this.subFilter;
+            }
+
+            // If not set on the object, try to get from the COOKIE values
+            if ($.cookie('subFilter') !== 'undefined' && $.cookie('subFilter')) {
+                return $.cookie('subFilter');
+            }
+            else {
+
+                // Provide default sub filter type
+                return 'department';
+            }
+
+        };
+
+        // Get default main filter type
+        DrawReport.prototype.getMainFilter = function() {
+
+            // Gets the default filter from the object
+            if (this.mainFilter !== 'undefined' && this.mainFilter) {
+                return this.mainFilter;
+            }
+
+            // If not set on the object, try to get from the COOKIE values
+            if ($.cookie('mainFilter') !== 'undefined' && $.cookie('mainFilter')) {
+                return $.cookie('mainFilter');
+            }
+            else {
+
+                // Provide default main filter type
+                return 'headcount';
+            }
+
+        };
+
         // This will draw report on specified json endpoint, with specified report type
         DrawReport.prototype.drawGraph = function(json_url, type) {
 
@@ -109,7 +189,10 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .attr("x", _this.settings.outerWidth - 50)
                 .attr("y", 30)
                 .on('click', function(d,i) {
-                    _this.drawGraph('all-roles', 'bar');
+
+                    console.log(_this.getJsonUrl());
+
+                    _this.drawGraph(_this.getJsonUrl(), 'bar');
                 })
                 .text(function(d,i) {
                     return 'Bar chart';
@@ -121,7 +204,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .attr("x", _this.settings.outerWidth - 50)
                 .attr("y", 60)
                 .on('click', function(d,i) {
-                    _this.drawGraph('all-roles', 'line');
+                    _this.drawGraph(_this.getJsonUrl(), 'line');
                 })
                 .text(function(d,i) {
                     return 'Line chart';
@@ -130,10 +213,21 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
         };
 
+        // Get reports basic json url for graph report
+        CustomReport.prototype.getJsonUrl = function() {
+
+            // Returns the report graph url from (mainFilter and subFilter values)
+            return this.getMainFilter() + '-' + this.getSubFilter();
+
+        };
+
         var customReport = new CustomReport('param to pass');
-        customReport.drawGraph('all-roles', 'line');
+        customReport.drawGraph(customReport.getJsonUrl(), 'line');
 
         console.log(customReport);
+
+        console.log($.cookie('mainFilter'));
+        console.log($.cookie('subFilter'));
 
         function visualizeLineChart(report) {
 
