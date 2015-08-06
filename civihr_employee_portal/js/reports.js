@@ -8,7 +8,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
          * DrawReport Object
          * @constructor
          */
-        var DrawReport = function () {
+        function DrawReport() {
 
             // Init default settings for the Report class
             this.settings = [];
@@ -55,7 +55,51 @@ Drupal.behaviors.civihr_employee_portal_reports = {
         // Create the default chart types (links + adds to SVG, onclick redraws the graph)
         DrawReport.prototype.addChartTypes = function(svg) {
 
-            console.log(this);
+            console.log('parent');
+            var _this = this;
+
+        };
+
+        // This will draw report on specified json endpoint, with specified report type
+        DrawReport.prototype.drawGraph = function(json_url, type) {
+
+            console.log('draw');
+            var _this = this;
+
+            d3.json(Drupal.settings.basePath + json_url, function(error, json) {
+                if (error) return console.warn(error);
+
+                // Prepare our data
+                data = json.results;
+
+                // Draw line chart
+                if (type == 'line') {
+                    visualizeLineChart(_this);
+                }
+
+                // Draw bar chart
+                if (type == 'bar') {
+                    visualizeBarChart(_this);
+                }
+
+            });
+
+        };
+
+        // Extend base class (overwrite any default settings if needed)
+        function CustomReport(name) {
+            DrawReport.call(this);
+            this.name = name;
+            this.settings.barPadding = 5;
+
+        }
+
+        CustomReport.prototype = new DrawReport();
+
+        // Overwrite any function if needed -> Create the default chart types (links + adds to SVG, onclick redraws the graph)
+        CustomReport.prototype.addChartTypes = function(svg) {
+
+            console.log('child');
 
             var _this = this;
 
@@ -83,38 +127,13 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return 'Line chart';
                 });
 
-        };
-
-        // This will draw report on specified json endpoint, with specified report type
-        DrawReport.prototype.drawGraph = function(json_url, type) {
-
-            console.log('draw');
-
-            d3.json(Drupal.settings.basePath + json_url, function(error, json) {
-                if (error) return console.warn(error);
-
-                // Prepare our data
-                data = json.results;
-
-                // Draw line chart
-                if (type == 'line') {
-                    visualizeLineChart(report);
-                }
-
-                // Draw bar chart
-                if (type == 'bar') {
-                    visualizeBarChart(report);
-                }
-
-            });
 
         };
 
-        // Init the basic Report Object
-        var report = new DrawReport();
+        var customReport = new CustomReport('param to pass');
+        customReport.drawGraph('all-roles', 'line');
 
-        report.drawGraph('all-roles', 'line');
-
+        console.log(customReport);
 
         function visualizeLineChart(report) {
 
