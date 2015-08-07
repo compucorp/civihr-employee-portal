@@ -248,6 +248,7 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
     // @TODO test with more custom views
     $view_displays_to_rewrite = array();
     $view_displays_to_rewrite['views_view__filter_headcount_department'] = 1;
+    $view_displays_to_rewrite['views_view__filter_headcount_location'] = 1;
 
     // This will hold any custom view display names where we need to override the template file
     $theme_hooks = array();

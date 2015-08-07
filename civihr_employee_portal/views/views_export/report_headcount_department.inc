@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Exported view jobroles report
+ * Exported view headcount_department report
  */
 
 $view = new view();
