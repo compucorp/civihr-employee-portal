@@ -47,11 +47,11 @@ and open the template in the editor.
     margin: 0 0 30px 0;
 }
 
-.view-all-roles {
+.view-dom-id-filter-results {
     padding: 0px !important;
 }
 
-.view-all-roles .table-responsive {
+.view-dom-id-filter-results .table-responsive {
     margin: 0px;
 }
 

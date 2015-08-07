@@ -240,8 +240,28 @@ function civihr_employee_portal_permission() {
 /**
  * Implements hook_theme().
  */
-function civihr_employee_portal_theme() {
-    return array(
+function civihr_employee_portal_theme($existing, $type, $theme, $path) {
+
+    // This will set the template file for any view page which is custom report (overriding the theme file what is suggested by drupal views as default)
+    $template_url = 'templates/civihr-employee-portal-custom-reports-filter-result';
+
+    // @TODO test with more custom views
+    $view_displays_to_rewrite = array();
+    $view_displays_to_rewrite['views_view__filter_headcount_department'] = 1;
+
+    // This will hold any custom view display names where we need to override the template file
+    $theme_hooks = array();
+
+    foreach ($view_displays_to_rewrite as $view_name => $val) {
+        $theme_hooks[$view_name] = array(
+            'template' => $template_url,
+            'original hook' => 'views_view',
+            'preprocess functions' => array('template_preprocess', 'template_preprocess_views_view'),
+            'arguments' => array('view' => NULL)
+        );
+    }
+
+    return $theme_hooks + array(
         'user_login_block' => array(
             'render element' => 'form',
             'template' => 'templates/civihr-employee-portal-user-login',
@@ -2983,7 +3003,7 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         $view->set_display($view_display);
 
         // Set dom_id otherwise notice message is displayed from Drupal
-        $view->dom_id = time();
+        $view->dom_id = 'filter-results';
 
         // Set the contextual filters from graph (passed in GET['value'])
         $view->set_arguments($args);
@@ -3009,6 +3029,9 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         // When clicked on the graph load a specific view to display data under the graph
         $view = views_get_view($view_name);
         $view->set_display($view_display);
+
+        // Set dom_id otherwise notice message is displayed from Drupal
+        $view->dom_id = 'filter-results';
 
         // Set the contextual filters from graph (passed in GET['value'])
         $view->set_arguments($args);
