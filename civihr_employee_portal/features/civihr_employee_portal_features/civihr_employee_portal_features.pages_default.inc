@@ -16,7 +16,21 @@ function civihr_employee_portal_features_default_page_manager_pages() {
   $page->admin_title = 'Dashboard';
   $page->admin_description = '';
   $page->path = 'dashboard';
-  $page->access = array();
+  $page->access = array(
+    'plugins' => array(
+      0 => array(
+        'name' => 'role',
+        'settings' => array(
+          'rids' => array(
+            0 => 2,
+          ),
+        ),
+        'context' => 'logged-in-user',
+        'not' => FALSE,
+      ),
+    ),
+    'logic' => 'and',
+  );
   $page->menu = array(
     'type' => 'normal',
     'title' => 'Dashboard',
@@ -192,10 +206,9 @@ function civihr_employee_portal_features_default_page_manager_pages() {
           'name' => 'role',
           'settings' => array(
             'rids' => array(
-              0 => 2,
-              1 => 4,
-              2 => 6,
-              3 => 5,
+              0 => 55120974,
+              1 => 17087012,
+              2 => 57573969,
             ),
           ),
           'context' => 'logged-in-user',
@@ -340,10 +353,9 @@ function civihr_employee_portal_features_default_page_manager_pages() {
           'name' => 'role',
           'settings' => array(
             'rids' => array(
-              0 => 2,
-              1 => 4,
-              2 => 6,
-              3 => 5,
+              0 => 55120974,
+              1 => 17087012,
+              2 => 57573969,
             ),
           ),
           'context' => 'logged-in-user',
@@ -455,9 +467,9 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     <div class="row">
         <div class="col-xs-12 text-center">
             <div class="logo-rect-wrapper">
-                <img src="#">
+                <img src="sites/default/files/logo.jpg">
             </div>
-            <h1>UK Youth</h1>
+            <h1>CiviHR DEMO</h1>
             <h2>Self Service Portal</h2>
         </div>
     </div>
@@ -537,7 +549,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
           'name' => 'role',
           'settings' => array(
             'rids' => array(
-              0 => 3,
+              0 => 30037204,
             ),
           ),
           'context' => 'logged-in-user',

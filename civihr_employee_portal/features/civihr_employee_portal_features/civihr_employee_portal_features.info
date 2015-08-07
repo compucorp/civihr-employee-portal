@@ -18,6 +18,7 @@ dependencies[] = node
 dependencies[] = node_export_features
 dependencies[] = options
 dependencies[] = page_manager
+dependencies[] = role_export
 dependencies[] = radix_layouts
 dependencies[] = rules
 dependencies[] = search

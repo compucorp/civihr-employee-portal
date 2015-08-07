@@ -60,7 +60,7 @@ class HelperClass {
 
         // If Leave approver is find, assign him as the manager (add contact ID to $assigned_manager_contact_ids array)
         foreach ($contactRelationships as $key => $relation) {
-            if ($relation['relation'] == 'has Leave Approved by') {
+            if ($relation['relation'] == variable_get('relationship_name_to_use', 'has Leave Approved by')) {
                 $assigned_manager_contact_ids[] = $relation['contact_id_b'];
                 $manager_found++;
             }

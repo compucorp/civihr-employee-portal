@@ -2,67 +2,256 @@
 Drupal.behaviors.civihr_employee_portal_reports = {
     attach: function (context, settings) {
 
+        // main filter can be (headcount, gender, age)
+        $.cookie('mainFilter', 'headcount');
 
-        // Round UP to the nearest five -> helper function
-        function roundUp5(x) {
-            return Math.ceil(x / 5) * 5;
+        var data; // Will hold our loaded json data later
+
+        // Init the sub filters
+        var subFilters = document.querySelectorAll(".subFilter");
+
+        // Loop the buttons and attach the onclick function
+        for (i = 0; i < subFilters.length; i++) {
+            subFilters[i].onclick = function (data) {
+
+                if (data.target !== null) {
+
+                    // Set the subfilter
+                    customReport.setSubFilter(data.target.id);
+
+                    // @TODO pass the chart type from cookie or default value
+                    customReport.drawGraph(customReport.getJsonUrl(), 'line');
+
+                }
+
+                return false;
+            }
         }
 
-        var data; // Holds our loaded data
+        /**
+         * DrawReport Object
+         * @constructor
+         */
+        function DrawReport() {
 
-        console.log(Drupal.settings.basePath);
+            // Init default settings for the Report class
+            this.settings = [];
 
-        d3.json(Drupal.settings.basePath + "all-roles", function(error, json) {
-            if (error) return console.warn(error);
+            this.settings.outerWidth = window.innerWidth / 2;
+            this.settings.outerHeight = window.innerHeight / 2;
 
-            console.log(json);
+            // Width and height for the SVG area (for charts)
+            this.settings.innerWidth = window.innerWidth / 3;
+            this.settings.innerHeight = window.innerHeight / 3;
+            this.settings.barPadding = 2;
 
-            // Prepare our data
-            data = json.results;
-            var settings = [];
+            // Pie charts are round so we need a radius for them
+            this.settings.radius = Math.min(this.settings.innerWidth, this.settings.innerHeight) / 2;
 
-            // Width and height for the SVG area
-            settings.innerWidth = window.innerWidth / 3;
-            settings.innerHeight = window.innerHeight / 3;
-            settings.barPadding = 2;
+            // Set our defined range of colour codes for now
+            // this.settings.color = d3.scale.ordinal()
+            //    .range(['#A60F2B', '#648C85', '#B3F2C9', '#528C18', '#C3F25C']);
+
+            // Use 20 predefined colours
+            this.settings.color = d3.scale.category20();
 
             // Set number of ticks
-            settings.setTicks = 5;
+            this.settings.setTicks = 5;
 
             // Start x padding, when using axes
-            settings.padding = 25;
+            this.settings.padding = 25;
 
             // Start y / height padding, when using axes
-            settings.hpadding = 5;
+            this.settings.hpadding = 5;
 
             // Duration
-            settings.duration = 250;
+            this.settings.duration = 250;
 
-            // Draw the report
-            visualize(settings);
-        });
+            console.log('init');
 
-        function visualize(settings) {
+        };
 
-            console.log(data);
+        // Round UP to the nearest five -> helper function
+        DrawReport.prototype.roundUp5 = function(x) {
+            return Math.ceil(x / 5) * 5;
+        };
+
+        // Create the default chart types (links + adds to SVG, onclick redraws the graph)
+        DrawReport.prototype.addChartTypes = function(svg) {
+
+            console.log('parent');
+            var _this = this;
+
+        };
+
+        // Set default main filter type
+        DrawReport.prototype.setMainFilter = function(filter) {
+            this.mainFilter = filter;
+        };
+
+        // Set default sub filter type
+        DrawReport.prototype.setSubFilter = function(filter) {
+            // Sets the filter to the object
+            this.subFilter = filter;
+
+            // Sets the filter on the cookie as well (helps to set default values)
+            $.cookie('subFilter', filter);
+
+        };
+
+        // Get default sub filter type
+        DrawReport.prototype.getSubFilter = function() {
+
+            // Gets the default filter from the object
+            if (this.subFilter !== 'undefined' && this.subFilter) {
+                return this.subFilter;
+            }
+
+            // If not set on the object, try to get from the COOKIE values
+            if ($.cookie('subFilter') !== 'undefined' && $.cookie('subFilter')) {
+                return $.cookie('subFilter');
+            }
+            else {
+
+                // Provide default sub filter type
+                return 'department';
+            }
+
+        };
+
+        // Get default main filter type
+        DrawReport.prototype.getMainFilter = function() {
+
+            // Gets the default filter from the object
+            if (this.mainFilter !== 'undefined' && this.mainFilter) {
+                return this.mainFilter;
+            }
+
+            // If not set on the object, try to get from the COOKIE values
+            if ($.cookie('mainFilter') !== 'undefined' && $.cookie('mainFilter')) {
+                return $.cookie('mainFilter');
+            }
+            else {
+
+                // Provide default main filter type
+                return 'headcount';
+            }
+
+        };
+
+        // This will draw report on specified json endpoint, with specified report type
+        DrawReport.prototype.drawGraph = function(json_url, type) {
+
+            console.log('draw');
+            var _this = this;
+
+            d3.json(Drupal.settings.basePath + json_url, function(error, json) {
+                if (error) return console.warn(error);
+
+                // Prepare our data
+                data = json.results;
+
+                // Draw line chart
+                if (type == 'line') {
+                    visualizeLineChart(_this);
+                }
+
+                // Draw bar chart
+                if (type == 'bar') {
+                    visualizeBarChart(_this);
+                }
+
+            });
+
+        };
+
+        // Extend base class (overwrite any default settings if needed)
+        function CustomReport(name) {
+            DrawReport.call(this);
+            this.name = name;
+            this.settings.barPadding = 5;
+
+        }
+
+        CustomReport.prototype = new DrawReport();
+
+        // Overwrite any function if needed -> Create the default chart types (links + adds to SVG, onclick redraws the graph)
+        CustomReport.prototype.addChartTypes = function(svg) {
+
+            console.log('child');
+
+            var _this = this;
+
+            svg.append("text")
+                .attr("class", "btn btn-primary btn-reports")
+                .attr("type", "button")
+                .attr("x", _this.settings.outerWidth - 50)
+                .attr("y", 30)
+                .on('click', function(d,i) {
+                    _this.drawGraph(_this.getJsonUrl(), 'bar');
+                })
+                .text(function(d,i) {
+                    return 'Bar chart';
+                });
+
+            svg.append("text")
+                .attr("class", "btn btn-primary btn-reports")
+                .attr("type", "button")
+                .attr("x", _this.settings.outerWidth - 50)
+                .attr("y", 60)
+                .on('click', function(d,i) {
+                    _this.drawGraph(_this.getJsonUrl(), 'line');
+                })
+                .text(function(d,i) {
+                    return 'Line chart';
+                });
+
+
+        };
+
+        // Get reports basic json url for graph report
+        CustomReport.prototype.getJsonUrl = function() {
+            // Returns the report graph url from (mainFilter and subFilter values)
+            return this.getMainFilter() + '-' + this.getSubFilter();
+        };
+
+        // Get reports basic view machine_name based on selected filter types
+        CustomReport.prototype.getViewMachineName = function() {
+            // Returns the view machine name from (mainFilter and subFilter values)
+            return this.getMainFilter() + '_' + this.getSubFilter();
+        };
+
+        // Get view_display machine name what will be used when filtering the main view
+        CustomReport.prototype.getViewDisplayName = function() {
+            // Returns the view_display name from (mainFilter and subFilter values)
+            return 'filter_' + this.getMainFilter() + '_' + this.getSubFilter();
+        };
+
+        var customReport = new CustomReport('param to pass');
+        customReport.drawGraph(customReport.getJsonUrl(), 'line');
+
+        console.log($.cookie('mainFilter'));
+        console.log($.cookie('subFilter'));
+
+        function visualizeLineChart(report) {
 
             $('#custom-report').empty();
 
             // Create SVG element
             var svg = d3.select("#custom-report")
                 .append("svg")
-                .attr("width", settings.innerWidth + settings.padding)
-                .attr("height", settings.innerHeight);
+                .attr("width", report.settings.outerWidth + report.settings.padding)
+                .attr("height", report.settings.outerHeight);
 
             // Set up scales
             var scaleY = d3.scale.linear()
-                .range([settings.innerHeight - settings.hpadding, settings.hpadding])
-                .domain([0, d3.max(data, function(d) { return roundUp5(d.data.count); })]);
+                .range([report.settings.innerHeight - report.settings.hpadding, report.settings.hpadding])
+                .domain([0, d3.max(data, function(d) { return report.roundUp5(d.data.count); })]);
 
             var yAxis = d3.svg.axis()
                 .scale(scaleY)
                 .orient("left")
-                .ticks(settings.setTicks);
+                .ticks(report.settings.setTicks);
 
             svg.selectAll("rect")
                 .data(data)
@@ -74,7 +263,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                         return 'green';
                     }
                     else {
-                        return 'teal';
+                        return report.settings.color(d.data.department);
                     }
 
                 })
@@ -86,63 +275,23 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .on("mouseout", function(d) {
                     d3.select(this)
                         .transition()
-                        .duration(settings.duration)
-                        .attr("fill", "teal");
+                        .duration(report.settings.duration)
+                        .attr("fill", report.settings.color(d.data.department));
                 })
                 .on("click", function(d, i) {
 
-                    console.log(d.data);
-
-                    $('#custom-report-details table').remove();
-                    $('#custom-report-details').append('<table></table>');
-
-                    // Build the custom table with details
-                    var target = $('#custom-report-details');
-                    var viewName = 'all_roles';
-                    var viewDisplay = 'role_contacts';
-
-                    var viewArgument = d.data.department;
-
-                    $.ajax({
-                        type: 'GET',
-                        url: Drupal.settings.basePath + 'civihr_reports/' + viewName + '/' + viewDisplay + '?value=' + viewArgument + '&ajax=true',
-                        success: function(data) {
-
-                            console.log(data);
-
-                            var viewHtml = data;
-                            console.log(viewHtml);
-                            target.children().fadeOut(300, function() {
-                                target.html(viewHtml);
-
-                                var newHeightOfTarget = target.children().height();
-
-                                target.children().hide();
-
-                                target.animate({
-                                    height: newHeightOfTarget
-                                }, 150);
-
-                                target.children().delay(150).fadeIn(300);
-
-                                Drupal.attachBehaviors(target);
-                            });
-                        },
-                        error: function(data) {
-                            target.html('An error occured!');
-                        }
-                    });
+                    _displayFilterData(d, report);
 
                 })
                 .attr("x", function(d, i) {
-                    return settings.padding + i * (settings.innerWidth / data.length);
+                    return report.settings.padding + i * (report.settings.innerWidth / data.length);
                 })
                 .attr("y", function(d) {
                     return scaleY(d.data.count);
                 })
-                .attr("width", settings.innerWidth / data.length - settings.barPadding)
+                .attr("width", report.settings.innerWidth / data.length - report.settings.barPadding)
                 .attr("height", function(d) {
-                    return settings.innerHeight - settings.hpadding - scaleY(d.data.count);  // Just the data value
+                    return report.settings.innerHeight - report.settings.hpadding - scaleY(d.data.count);  // Just the data value
                 });
 
             svg.selectAll("text")
@@ -157,126 +306,157 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return d.data.department;
                 })
                 .attr("x", function(d, i) {
-                    return i * (settings.innerWidth / data.length) + (settings.innerWidth / data.length - settings.barPadding) / 2;
+                    return i * (report.settings.innerWidth / data.length) + (report.settings.innerWidth / data.length - report.settings.barPadding) / 2;
                 })
                 .attr("y", function(d) {
-                    return settings.innerHeight - 10;
+                    return report.settings.innerHeight - 10;
                 });
 
             // Append the axes
             svg.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(" + settings.padding + ",0)")
+                .attr("transform", "translate(" + report.settings.padding + ",0)")
                 .call(yAxis);
 
+            // Add chart types
+            report.addChartTypes(svg);
+
         }
-     
-        // Relationship visualisation
-        var links = [
-            {source: "Gergely Meszaros", target: "Civi Manager", source_type: "civihr_staff", target_type: "civihr_manager"},
-            {source: "Civi Manager", target: "Admin", source_type: "civihr_manager", target_type: "civihr_admin"},
-            {source: "Robin", target: "Civi Manager", source_type: "civihr_staff", target_type: "civihr_manager"},
-            {source: "Rob", target: "Not set", source_type: "civihr_staff", target_type: "not_set"},
-            {source: "John", target: "Civi Manager Admin", source_type: "civihr_staff", target_type: "civihr_admin"},
-            {source: "Civi Manager Admin", target: "Admin", source_type: "civihr_admin", target_type: "civihr_admin"}
-        ];
 
-        var nodes = {};
+        function visualizeBarChart(report) {
 
-        // Compute the distinct nodes from the links.
-        links.forEach(function(link) {
-            link.source = nodes[link.source] || (nodes[link.source] = {name: link.source, type: link.source_type});
-            link.target = nodes[link.target] || (nodes[link.target] = {name: link.target, type: link.target_type});
-        });
+            $('#custom-report').empty();
 
-        var width = 960,
-            height = 500;
+            var svg = d3.select('#custom-report')
+                .append('svg')
+                .attr('width', report.settings.outerWidth + report.settings.padding)
+                .attr('height', report.settings.outerHeight)
+                .append('g');
 
-        var force = d3.layout.force()
-            .nodes(d3.values(nodes))
-            .links(links)
-            .size([width, height])
-            .linkDistance(60)
-            .charge(-300)
-            .on("tick", tick)
-            .start();
+            var arc = d3.svg.arc()
+                .outerRadius(report.settings.radius);
 
-        var svg = d3.select("#relationship-report").append("svg")
-            .attr("width", width)
-            .attr("height", height);
+            var pie = d3.layout.pie()
+                .value(function(d) {
+                    return d.data.count;
+                })
+                .sort(null);
 
-        // Per-type markers, as they don't inherit styles.
-        svg.append("defs").selectAll("marker")
-            .data(["civihr_staff", "civihr_manager", "civihr_admin"])
-            .enter().append("marker")
-            .attr("id", function(d) { return d; })
-            .attr("viewBox", "0 -5 10 10")
-            .attr("refX", 15)
-            .attr("refY", -1.5)
-            .attr("markerWidth", 6)
-            .attr("markerHeight", 6)
-            .attr("orient", "auto")
-            .append("path")
-            .attr("d", "M0,-5L10,0L0,5");
+            var path = svg.selectAll("path")
+                .data(pie(data))
+                .enter()
+                .append("path")
+                .attr('transform', 'translate(' + (report.settings.innerWidth / 2) +  ',' + (report.settings.innerHeight / 2) + ')')
+                .attr('d', arc)
+                .on("mouseover", function() {
+                    d3.select(this)
+                        .attr("cursor", "pointer")
+                        .attr("fill", "orange");
+                })
+                .on("mouseout", function(d) {
+                    d3.select(this)
+                        .transition()
+                        .duration(report.settings.duration)
+                        .attr("fill", report.settings.color(d.data.data.department));
+                })
+                .on("click", function(d, i) {
+                    _displayFilterData(d.data, report);
 
-        var path = svg.append("g").selectAll("path")
-            .data(force.links())
-            .enter().append("path")
-            .attr("class", function(d) { return "link " + d.source_type; })
-            .attr("marker-end", function(d) { return "url(#" + d.source_type + ")"; });
+                })
+                .attr('fill', function(d, i) {
+                    return report.settings.color(d.data.data.department);
+                });
 
-        var circle = svg.append("g").selectAll("circle")
-            .data(force.nodes())
-            .enter().append("circle")
-            .attr("r", 6)
-            .style("fill", function(d, i) {
-                if (d.type != '') {
-                    
-                    if (d.type == 'civihr_admin') {
-                        return 'red';
-                    }
-                    else if (d.type == 'civihr_staff') {
-                        return 'green';
-                    }
-                    else if (d.type == 'civihr_manager') {
-                        return 'grey';
-                    }
+            var label = svg.selectAll("label")
+                .data(pie(data));
+
+            // Add text label for each slice...
+            label.enter()
+                .append("text")
+                .attr("font-family", "sans-serif")
+                .attr("x", report.settings.innerWidth / 2)
+                .attr("y", report.settings.innerHeight / 2)
+                .attr("font-size", "9px")
+                .attr("fill", "black")
+                .attr("text-anchor", "middle")
+                .attr("transform", function(d) {
+                    // Sets the text outside from the circle
+                    d.innerRadius = report.settings.radius + 30;
+                    return "translate(" + arc.centroid(d) + ")";
+                })
+                .text(function(d, i) { return d.data.data.department; });
+
+            var count = svg.selectAll("count")
+                .data(pie(data));
+
+            // Add count for each slice...
+            count.enter()
+                .append("text")
+                .attr("font-family", "sans-serif")
+                .attr("x", report.settings.innerWidth / 2)
+                .attr("y", report.settings.innerHeight / 2)
+                .attr("font-size", "11px")
+                .attr("font-style", "bold")
+                .attr("fill", "white")
+                .attr("text-anchor", "middle")
+                .attr("transform", function(d) {
+                    // Sets the text inside the circle
+                    d.innerRadius = report.settings.radius - 80;
+                    return "translate(" + arc.centroid(d) + ")";
+                })
+                .text(function(d, i) { return d.data.data.count; });
+
+            // Add chart types
+            report.addChartTypes(svg);
+
+        }
+
+        /**
+         *
+         * @param d (passed from D3)
+         * @param report (report object) -> contains all the prototype settings and functions
+         * @private
+         */
+        function _displayFilterData(d, report) {
+
+            $('#custom-report-details table').remove();
+            $('#custom-report-details').append('<table></table>');
+
+            // Build the custom table with details
+            var target = $('#custom-report-details');
+            var viewName = report.getViewMachineName();
+            var viewDisplay = report.getViewDisplayName();
+
+            var viewArgument = d.data.department;
+
+            $.ajax({
+                type: 'GET',
+                url: Drupal.settings.basePath + 'civihr_reports/' + viewName + '/' + viewDisplay + '?value=' + viewArgument + '&ajax=true',
+                success: function(data) {
+
+                    var viewHtml = data;
+                    target.children().fadeOut(300, function() {
+                        target.html(viewHtml);
+
+                        var newHeightOfTarget = target.children().height();
+
+                        target.children().hide();
+
+                        target.animate({
+                            height: newHeightOfTarget
+                        }, 150);
+
+                        target.children().delay(150).fadeIn(300);
+
+                        // If we need to reload js behaviours call this function
+                        // Drupal.attachBehaviors(target);
+                    });
+                },
+                error: function(data) {
+                    target.html('An error occured!');
                 }
-                
-                // Default colour
-                return 'yellow';
-            })
-            .on("click", clickEvent)
-            .call(force.drag);
+            });
 
-        var text = svg.append("g").selectAll("text")
-            .data(force.nodes())
-            .enter().append("text")
-            .attr("x", 8)
-            .attr("y", ".31em")
-            .text(function(d) { return d.name; });
-
-        // Use elliptical arc path segments to doubly-encode directionality.
-        function tick() {
-            path.attr("d", linkArc);
-            circle.attr("transform", transform);
-            text.attr("transform", transform);
-        }
-        
-        function clickEvent(d) {
-            console.log(d);
-            console.log(d3.select(this));
-        }
-
-        function linkArc(d) {
-            var dx = d.target.x - d.source.x,
-                dy = d.target.y - d.source.y,
-                dr = Math.sqrt(dx * dx + dy * dy);
-            return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
-        }
-
-        function transform(d) {
-            return "translate(" + d.x + "," + d.y + ")";
         }
               
     }

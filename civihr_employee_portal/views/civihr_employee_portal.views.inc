@@ -213,3 +213,20 @@ function civihr_employee_portal_views_data_alter(&$data) {
     
     return $data;
 }
+
+/**
+ * Implements hook_views_pre_render().
+ * Adding required js for the modal window
+ */
+function civihr_employee_portal_views_pre_render(&$view) {
+
+    if ($view->name == 'hr_documents') {
+
+        if ($view->current_display == 'hr_resources') {
+
+            ctools_include('modal');
+            ctools_modal_add_js();
+
+        }
+    }
+}
