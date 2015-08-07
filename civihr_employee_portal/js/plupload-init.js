@@ -76,7 +76,7 @@
                             "sequential": 1,
                             "id": that.entityID,
                             "status_id": 2
-                        }).done(function(result) {
+                        }).done(function() {
                             $('#civihr-employee-portal-document-form #edit-save').click();
                         });
 
