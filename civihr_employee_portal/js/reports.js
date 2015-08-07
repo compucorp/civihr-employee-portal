@@ -18,7 +18,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
                     // Set the subfilter
                     customReport.setSubFilter(data.target.id);
-                    console.log(data.target.id);
 
                     // @TODO pass the chart type from cookie or default value
                     customReport.drawGraph(customReport.getJsonUrl(), 'line');
@@ -189,9 +188,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .attr("x", _this.settings.outerWidth - 50)
                 .attr("y", 30)
                 .on('click', function(d,i) {
-
-                    console.log(_this.getJsonUrl());
-
                     _this.drawGraph(_this.getJsonUrl(), 'bar');
                 })
                 .text(function(d,i) {
@@ -215,16 +211,24 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
         // Get reports basic json url for graph report
         CustomReport.prototype.getJsonUrl = function() {
-
             // Returns the report graph url from (mainFilter and subFilter values)
             return this.getMainFilter() + '-' + this.getSubFilter();
+        };
 
+        // Get reports basic view machine_name based on selected filter types
+        CustomReport.prototype.getViewMachineName = function() {
+            // Returns the view machine name from (mainFilter and subFilter values)
+            return this.getMainFilter() + '_' + this.getSubFilter();
+        };
+
+        // Get view_display machine name what will be used when filtering the main view
+        CustomReport.prototype.getViewDisplayName = function() {
+            // Returns the view_display name from (mainFilter and subFilter values)
+            return 'filter_' + this.getMainFilter() + '_' + this.getSubFilter();
         };
 
         var customReport = new CustomReport('param to pass');
         customReport.drawGraph(customReport.getJsonUrl(), 'line');
-
-        console.log(customReport);
 
         console.log($.cookie('mainFilter'));
         console.log($.cookie('subFilter'));
@@ -259,7 +263,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                         return 'green';
                     }
                     else {
-                        return 'teal';
+                        return report.settings.color(d.data.department);
                     }
 
                 })
@@ -272,47 +276,11 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     d3.select(this)
                         .transition()
                         .duration(report.settings.duration)
-                        .attr("fill", "teal");
+                        .attr("fill", report.settings.color(d.data.department));
                 })
                 .on("click", function(d, i) {
 
-                    $('#custom-report-details table').remove();
-                    $('#custom-report-details').append('<table></table>');
-
-                    // Build the custom table with details
-                    var target = $('#custom-report-details');
-                    var viewName = 'all_roles';
-                    var viewDisplay = 'role_contacts';
-
-                    var viewArgument = d.data.department;
-
-                    $.ajax({
-                        type: 'GET',
-                        url: Drupal.settings.basePath + 'civihr_reports/' + viewName + '/' + viewDisplay + '?value=' + viewArgument + '&ajax=true',
-                        success: function(data) {
-
-                            var viewHtml = data;
-                            target.children().fadeOut(300, function() {
-                                target.html(viewHtml);
-
-                                var newHeightOfTarget = target.children().height();
-
-                                target.children().hide();
-
-                                target.animate({
-                                    height: newHeightOfTarget
-                                }, 150);
-
-                                target.children().delay(150).fadeIn(300);
-
-                                // If we need to reload js behaviours call this function
-                                // Drupal.attachBehaviors(target);
-                            });
-                        },
-                        error: function(data) {
-                            target.html('An error occured!');
-                        }
-                    });
+                    _displayFilterData(d, report);
 
                 })
                 .attr("x", function(d, i) {
@@ -380,12 +348,75 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .append("path")
                 .attr('transform', 'translate(' + (report.settings.innerWidth / 2) +  ',' + (report.settings.innerHeight / 2) + ')')
                 .attr('d', arc)
+                .on("mouseover", function() {
+                    d3.select(this)
+                        .attr("cursor", "pointer")
+                        .attr("fill", "orange");
+                })
+                .on("mouseout", function(d) {
+                    d3.select(this)
+                        .transition()
+                        .duration(report.settings.duration)
+                        .attr("fill", report.settings.color(d.data.data.department));
+                })
+                .on("click", function(d, i) {
+                    _displayFilterData(d.data, report);
+
+                })
                 .attr('fill', function(d, i) {
                     return report.settings.color(d.data.data.department);
                 });
 
             // Add chart types
             report.addChartTypes(svg);
+
+        }
+
+        /**
+         *
+         * @param d (passed from D3)
+         * @param report (report object) -> contains all the prototype settings and functions
+         * @private
+         */
+        function _displayFilterData(d, report) {
+
+            $('#custom-report-details table').remove();
+            $('#custom-report-details').append('<table></table>');
+
+            // Build the custom table with details
+            var target = $('#custom-report-details');
+            var viewName = report.getViewMachineName();
+            var viewDisplay = report.getViewDisplayName();
+
+            var viewArgument = d.data.department;
+
+            $.ajax({
+                type: 'GET',
+                url: Drupal.settings.basePath + 'civihr_reports/' + viewName + '/' + viewDisplay + '?value=' + viewArgument + '&ajax=true',
+                success: function(data) {
+
+                    var viewHtml = data;
+                    target.children().fadeOut(300, function() {
+                        target.html(viewHtml);
+
+                        var newHeightOfTarget = target.children().height();
+
+                        target.children().hide();
+
+                        target.animate({
+                            height: newHeightOfTarget
+                        }, 150);
+
+                        target.children().delay(150).fadeIn(300);
+
+                        // If we need to reload js behaviours call this function
+                        // Drupal.attachBehaviors(target);
+                    });
+                },
+                error: function(data) {
+                    target.html('An error occured!');
+                }
+            });
 
         }
               

@@ -5,11 +5,11 @@
  */
 
 $view = new view();
-$view->name = 'all_roles';
+$view->name = 'headcount_department';
 $view->description = '';
 $view->tag = 'default';
 $view->base_table = 'hrjc_role';
-$view->human_name = 'all roles';
+$view->human_name = 'Headcount / Department';
 $view->core = 7;
 $view->api_version = '3.0';
 $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
@@ -61,7 +61,7 @@ $handler = $view->new_display('page', 'Headcount / Department (count)', 'page');
 $handler->display->display_options['path'] = 'headcount-department';
 
 /* Display: Filter by Department */
-$handler = $view->new_display('block', 'Filter by Department', 'role_contacts');
+$handler = $view->new_display('block', 'Filter by Department', 'filter_headcount_department');
 $handler->display->display_options['defaults']['title'] = FALSE;
 $handler->display->display_options['title'] = 'Headcount / Filter by Department';
 $handler->display->display_options['defaults']['group_by'] = FALSE;
@@ -121,8 +121,8 @@ $handler->display->display_options['arguments']['department']['limit'] = '0';
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
 
-/* Display: Data export */
-$handler = $view->new_display('views_data_export', 'Data export', 'views_data_export_1');
+/* Display: CSV data export */
+$handler = $view->new_display('views_data_export', 'CSV data export', 'headcount_department_export');
 $handler->display->display_options['defaults']['group_by'] = FALSE;
 $handler->display->display_options['pager']['type'] = 'some';
 $handler->display->display_options['style_plugin'] = 'views_data_export_csv';
@@ -147,13 +147,13 @@ $handler->display->display_options['arguments']['department']['summary']['number
 $handler->display->display_options['arguments']['department']['summary']['format'] = 'default_summary';
 $handler->display->display_options['arguments']['department']['summary_options']['items_per_page'] = '25';
 $handler->display->display_options['arguments']['department']['limit'] = '0';
-$handler->display->display_options['path'] = 'role_contacts_export';
+$handler->display->display_options['path'] = 'headcount-department-export';
 $handler->display->display_options['displays'] = array(
-    'role_contacts' => 'role_contacts',
+    'filter_headcount_department' => 'filter_headcount_department',
     'default' => 0,
     'page' => 0,
 );
-$translatables['all_roles'] = array(
+$translatables['headcount_department'] = array(
     t('Master'),
     t('Headcount / Filter by Department'),
     t('more'),
@@ -176,5 +176,5 @@ $translatables['all_roles'] = array(
     t('Contact_id'),
     t('.'),
     t('All'),
-    t('Data export'),
+    t('CSV data export'),
 );
