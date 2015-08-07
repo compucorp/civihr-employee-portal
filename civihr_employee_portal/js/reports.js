@@ -367,6 +367,45 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return report.settings.color(d.data.data.department);
                 });
 
+            var label = svg.selectAll("label")
+                .data(pie(data));
+
+            // Add text label for each slice...
+            label.enter()
+                .append("text")
+                .attr("font-family", "sans-serif")
+                .attr("x", report.settings.innerWidth / 2)
+                .attr("y", report.settings.innerHeight / 2)
+                .attr("font-size", "9px")
+                .attr("fill", "black")
+                .attr("text-anchor", "middle")
+                .attr("transform", function(d) {
+                    // Sets the text outside from the circle
+                    d.innerRadius = report.settings.radius + 30;
+                    return "translate(" + arc.centroid(d) + ")";
+                })
+                .text(function(d, i) { return d.data.data.department; });
+
+            var count = svg.selectAll("count")
+                .data(pie(data));
+
+            // Add count for each slice...
+            count.enter()
+                .append("text")
+                .attr("font-family", "sans-serif")
+                .attr("x", report.settings.innerWidth / 2)
+                .attr("y", report.settings.innerHeight / 2)
+                .attr("font-size", "11px")
+                .attr("font-style", "bold")
+                .attr("fill", "white")
+                .attr("text-anchor", "middle")
+                .attr("transform", function(d) {
+                    // Sets the text inside the circle
+                    d.innerRadius = report.settings.radius - 80;
+                    return "translate(" + arc.centroid(d) + ")";
+                })
+                .text(function(d, i) { return d.data.data.count; });
+
             // Add chart types
             report.addChartTypes(svg);
 
