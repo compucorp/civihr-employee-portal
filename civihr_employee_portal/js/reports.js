@@ -19,6 +19,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     // Set the subfilter
                     customReport.setSubFilter(data.target.id);
 
+                    // Add default classes
+                    _checkDefaultClasses(subFilters, data);
+
                     // @TODO pass the chart type from cookie or default value
                     customReport.drawGraph(customReport.getJsonUrl(), 'line');
 
@@ -26,6 +29,53 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
                 return false;
             }
+        }
+
+        // Set default classes on initial load
+        _setDefaultClass(subFilters);
+
+        /**
+         * Checks default CSS classes
+         * @param subFilters
+         * @param data
+         * @private
+         */
+        function _checkDefaultClasses(subFilters, data) {
+
+            // Append active class for subfilters
+            $("#" + data.target.id).addClass("active");
+
+            for (check = 0; check < subFilters.length; check++) {
+
+                // Add active class if filter clicked
+                if (subFilters[check]['id'] == data.target.id) {
+                    $("#" + data.target.id).addClass("active");
+                }
+                else {
+                    //Remove all other active classes
+                    $("#" + subFilters[check]['id']).removeClass("active");
+                }
+
+            }
+
+        }
+
+        /**
+         * Set default classes on initial load
+         * @param subFilters
+         * @private
+         */
+        function _setDefaultClass(subFilters) {
+
+            for (check = 0; check < subFilters.length; check++) {
+
+                // Add active class if the cookie is already set)
+                if (subFilters[check]['id'] == $.cookie('subFilter')) {
+                    $("#" + subFilters[check]['id']).addClass("active");
+                }
+
+            }
+
         }
 
         /**
