@@ -3,7 +3,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
     attach: function (context, settings) {
 
         // main filter can be (headcount, gender, age)
-        $.cookie('mainFilter', 'headcount');
+        $.cookie('mainFilter', 'headcount', { path: '/' });
 
         var data; // Will hold our loaded json data later
 
@@ -22,17 +22,14 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     // Add default classes
                     _checkDefaultClasses(subFilters, data);
 
-                    // @TODO pass the chart type from cookie or default value
-                    customReport.drawGraph(customReport.getJsonUrl(), 'line');
+                    // Re-draw graph
+                    customReport.drawGraph(customReport.getJsonUrl(), customReport.getChartType());
 
                 }
 
                 return false;
             }
         }
-
-        // Set default classes on initial load
-        _setDefaultClass(subFilters);
 
         /**
          * Checks default CSS classes
@@ -52,7 +49,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     $("#" + data.target.id).addClass("active");
                 }
                 else {
-                    //Remove all other active classes
+                    // Remove all other active classes
                     $("#" + subFilters[check]['id']).removeClass("active");
                 }
 
@@ -65,7 +62,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
          * @param subFilters
          * @private
          */
-        function _setDefaultClass(subFilters) {
+        function _setDefaultClass(subFilters, customReport) {
 
             for (check = 0; check < subFilters.length; check++) {
 
@@ -145,7 +142,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             this.subFilter = filter;
 
             // Sets the filter on the cookie as well (helps to set default values)
-            $.cookie('subFilter', filter);
+            $.cookie('subFilter', filter, { path: '/' });
 
         };
 
@@ -203,11 +200,20 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
                 // Draw line chart
                 if (type == 'line') {
+
+                    // Set "line" chart
+                    _this.setChartType('line');
+
+                    // Visualise
                     visualizeLineChart(_this);
                 }
 
                 // Draw bar chart
                 if (type == 'bar') {
+
+                    // Set "bar" chart
+                    _this.setChartType('bar');
+
                     visualizeBarChart(_this);
                 }
 
@@ -259,6 +265,35 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
         };
 
+        // Sets default chart type
+        CustomReport.prototype.setChartType = function(chart_type) {
+            // Sets the chart type to the object
+            this.chartType = chart_type;
+
+            // Sets the chartType on the cookie as well (helps to set default values)
+            $.cookie('chartType', chart_type, { path: '/' });
+
+        };
+
+        // Gets the default chart type
+        CustomReport.prototype.getChartType = function() {
+            // Gets the default chart type from the object
+            if (this.chartType !== 'undefined' && this.chartType) {
+                return this.chartType;
+            }
+
+            // If not set on the object, try to get from the COOKIE values
+            if ($.cookie('chartType') !== 'undefined' && $.cookie('chartType')) {
+                return $.cookie('chartType');
+            }
+            else {
+
+                // Provide default chart type
+                return 'line';
+            }
+
+        };
+
         // Get reports basic json url for graph report
         CustomReport.prototype.getJsonUrl = function() {
             // Returns the report graph url from (mainFilter and subFilter values)
@@ -278,7 +313,10 @@ Drupal.behaviors.civihr_employee_portal_reports = {
         };
 
         var customReport = new CustomReport('param to pass');
-        customReport.drawGraph(customReport.getJsonUrl(), 'line');
+        customReport.drawGraph(customReport.getJsonUrl(), customReport.getChartType());
+
+        // Set default classes on initial load
+        _setDefaultClass(subFilters, customReport);
 
         console.log($.cookie('mainFilter'));
         console.log($.cookie('subFilter'));
