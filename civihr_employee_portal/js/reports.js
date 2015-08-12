@@ -423,7 +423,8 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             // Append the axes
             svg.append("g")
-                .attr("class", "axis")
+                .attr("class", "y axis")
+                .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px' })
                 .attr("transform", "translate(" + report.settings.padding + ",0)")
                 .call(yAxis);
 
@@ -561,8 +562,8 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             var z = d3.scale.category10();
 
             var xAxis = d3.svg.axis()
-                .scale(x0);
-                //.orient("bottom");
+                .scale(x0)
+                .orient("bottom");
 
             var yAxis = d3.svg.axis()
                 .scale(y)
@@ -575,11 +576,13 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             svg.append("g")
                 .attr("class", "y axis")
+                .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px' })
                 .attr("transform", "translate(" + 30 + "," + 25 + ")")
                 .call(yAxis);
 
             svg.append("g")
-                .attr("class", "x axis")
+                .attr("class", "x-axis")
+                .style({ 'fill': 'none', 'stroke-width': '1px' })
                 .attr("transform", "translate(0," + height + ")")
                 .call(xAxis);
 

@@ -61,3 +61,10 @@ and open the template in the editor.
         margin-right: 10%;
     }
 }
+
+/**
+ * Line is hidden, but we still want to show the labels/ticks
+ */
+.x-axis > .tick {
+    fill: black;
+}
