@@ -109,7 +109,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             this.settings.padding = 25;
 
             // Start y / height padding, when using axes
-            this.settings.hpadding = 5;
+            this.settings.hpadding = 25;
 
             // Duration
             this.settings.duration = 250;
@@ -198,23 +198,32 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 // Prepare our data
                 data = json.results;
 
-                // Draw line chart
-                if (type == 'line') {
-
-                    // Set "line" chart
-                    _this.setChartType('line');
-
-                    // Visualise
-                    visualizeLineChart(_this);
-                }
-
-                // Draw bar chart
+                // Draw Simple bar chart
                 if (type == 'bar') {
 
                     // Set "bar" chart
                     _this.setChartType('bar');
 
+                    // Visualise
                     visualizeBarChart(_this);
+                }
+
+                // Draw pie chart
+                if (type == 'pie') {
+
+                    // Set "pie" chart
+                    _this.setChartType('pie');
+
+                    visualizePieChart(_this);
+                }
+
+                // Draw Grouped bar chart
+                if (type == 'grouped_bar') {
+
+                    // Set "grouped_bar" chart
+                    _this.setChartType('grouped_bar');
+
+                    multipleBarChart(_this);
                 }
 
             });
@@ -247,7 +256,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     _this.drawGraph(_this.getJsonUrl(), 'bar');
                 })
                 .text(function(d,i) {
-                    return 'Bar chart';
+                    return 'Simple Bar chart';
                 });
 
             svg.append("text")
@@ -256,10 +265,22 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .attr("x", _this.settings.outerWidth - 50)
                 .attr("y", 60)
                 .on('click', function(d,i) {
-                    _this.drawGraph(_this.getJsonUrl(), 'line');
+                    _this.drawGraph(_this.getJsonUrl(), 'grouped_bar');
                 })
                 .text(function(d,i) {
-                    return 'Line chart';
+                    return 'Bar chart';
+                });
+
+            svg.append("text")
+                .attr("class", "btn btn-primary btn-reports")
+                .attr("type", "button")
+                .attr("x", _this.settings.outerWidth - 50)
+                .attr("y", 90)
+                .on('click', function(d,i) {
+                    _this.drawGraph(_this.getJsonUrl(), 'pie');
+                })
+                .text(function(d,i) {
+                    return 'Pie chart';
                 });
 
 
@@ -289,7 +310,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             else {
 
                 // Provide default chart type
-                return 'line';
+                return 'bar';
             }
 
         };
@@ -321,7 +342,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
         console.log($.cookie('mainFilter'));
         console.log($.cookie('subFilter'));
 
-        function visualizeLineChart(report) {
+        function visualizeBarChart(report) {
 
             $('#custom-report').empty();
 
@@ -333,7 +354,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             // Set up scales
             var scaleY = d3.scale.linear()
-                .range([report.settings.innerHeight - report.settings.hpadding, report.settings.hpadding])
+                .range([report.settings.outerHeight - report.settings.hpadding, report.settings.hpadding])
                 .domain([0, d3.max(data, function(d) { return report.roundUp5(d.data.count); })]);
 
             var yAxis = d3.svg.axis()
@@ -379,7 +400,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 })
                 .attr("width", report.settings.innerWidth / data.length - report.settings.barPadding)
                 .attr("height", function(d) {
-                    return report.settings.innerHeight - report.settings.hpadding - scaleY(d.data.count);  // Just the data value
+                    return report.settings.outerHeight - report.settings.hpadding - scaleY(d.data.count);  // Just the data value
                 });
 
             svg.selectAll("text")
@@ -397,7 +418,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return i * (report.settings.innerWidth / data.length) + (report.settings.innerWidth / data.length - report.settings.barPadding) / 2;
                 })
                 .attr("y", function(d) {
-                    return report.settings.innerHeight - 10;
+                    return report.settings.outerHeight - 10;
                 });
 
             // Append the axes
@@ -411,7 +432,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
         }
 
-        function visualizeBarChart(report) {
+        function visualizePieChart(report) {
 
             $('#custom-report').empty();
 
@@ -493,6 +514,87 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return "translate(" + arc.centroid(d) + ")";
                 })
                 .text(function(d, i) { return d.data.data.count; });
+
+            // Add chart types
+            report.addChartTypes(svg);
+
+        }
+
+        function multipleBarChart(report) {
+
+            $('#custom-report').empty();
+
+            var n = 5, // number of samples
+                m = 4; // number of series
+
+            var data = d3.range(m).map(function() { return d3.range(n).map(Math.random); });
+
+            console.log(data);
+
+            var data = [];
+            data[0] = [];
+            data[0][0] = 2;
+            data[0][1] = 3;
+
+            data[1] = [];
+            data[1][0] = 4;
+            data[1][1] = 2;
+
+            console.log(data);
+
+            var margin = {top: 20, right: 30, bottom: 30, left: 40},
+                width = report.settings.outerWidth + report.settings.padding,
+                height = report.settings.outerHeight + report.settings.padding;
+
+            var y = d3.scale.linear()
+                .domain([0, 10])
+                .range([height - report.settings.padding, 0]);
+
+            var x0 = d3.scale.ordinal()
+                .domain(d3.range(n))
+                .rangeBands([0, width - report.settings.padding], .3);
+
+            var x1 = d3.scale.ordinal()
+                .domain(d3.range(m))
+                .rangeBands([0, x0.rangeBand()]);
+
+            var z = d3.scale.category10();
+
+            var xAxis = d3.svg.axis()
+                .scale(x0);
+                //.orient("bottom");
+
+            var yAxis = d3.svg.axis()
+                .scale(y)
+                .orient("left");
+
+            var svg = d3.select("#custom-report").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("svg:g");
+
+            svg.append("g")
+                .attr("class", "y axis")
+                .attr("transform", "translate(" + 30 + "," + 25 + ")")
+                .call(yAxis);
+
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+
+            svg.append("g").selectAll("g")
+                .data(data)
+                .enter().append("g")
+                .style("fill", function(d, i) { return z(i); })
+                .attr("transform", function(d, i) { return "translate(" + x1(i) + ",0)"; })
+                .selectAll("rect")
+                .data(function(d) { return d; })
+                .enter().append("rect")
+                .attr("width", x1.rangeBand())
+                .attr("height", y)
+                .attr("x", function(d, i) { return x0(i); })
+                .attr("y", function(d) { return height - y(d); });
 
             // Add chart types
             report.addChartTypes(svg);
