@@ -525,8 +525,8 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             $('#custom-report').empty();
 
-            var n = 5, // number of samples
-                m = 4; // number of series
+            var n = 4, // number of samples
+                m = 3; // number of series
 
             var data = d3.range(m).map(function() { return d3.range(n).map(Math.random); });
 
@@ -534,21 +534,21 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             var data = [];
             data[0] = [];
-            data[0][0] = 2;
-            data[0][1] = 3;
+            data[0][0] = 7;
+            data[0][1] = 1;
 
             data[1] = [];
-            data[1][0] = 4;
-            data[1][1] = 2;
+            data[1][0] = 1;
+            data[1][1] = 4;
 
             console.log(data);
 
             var margin = {top: 20, right: 30, bottom: 30, left: 40},
                 width = report.settings.outerWidth + report.settings.padding,
-                height = report.settings.outerHeight + report.settings.padding;
+                height = report.settings.outerHeight + report.settings.hpadding;
 
             var y = d3.scale.linear()
-                .domain([0, 10])
+                .domain([0, d3.max(data, function(d) { console.log(d); return report.roundUp5(d[0]); })])
                 .range([height - report.settings.padding, 0]);
 
             var x0 = d3.scale.ordinal()
@@ -567,7 +567,8 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             var yAxis = d3.svg.axis()
                 .scale(y)
-                .orient("left");
+                .orient("left")
+                .ticks(report.settings.setTicks);
 
             var svg = d3.select("#custom-report").append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -577,13 +578,13 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             svg.append("g")
                 .attr("class", "y axis")
                 .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px' })
-                .attr("transform", "translate(" + 30 + "," + 25 + ")")
+                .attr("transform", "translate(" + 30 + "," + report.settings.padding + ")")
                 .call(yAxis);
 
             svg.append("g")
                 .attr("class", "x-axis")
                 .style({ 'fill': 'none', 'stroke-width': '1px' })
-                .attr("transform", "translate(0," + height + ")")
+                .attr("transform", "translate(" + -30 + "," + height + ")")
                 .call(xAxis);
 
             svg.append("g").selectAll("g")
@@ -595,9 +596,14 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .data(function(d) { return d; })
                 .enter().append("rect")
                 .attr("width", x1.rangeBand())
-                .attr("height", y)
+                .attr("height", function(d) {
+                    return height - report.settings.hpadding - y(d);
+                })
                 .attr("x", function(d, i) { return x0(i); })
-                .attr("y", function(d) { return height - y(d); });
+                .attr("y", function(d) {
+
+                    return y(d) + report.settings.hpadding;
+                });
 
             // Add chart types
             report.addChartTypes(svg);
