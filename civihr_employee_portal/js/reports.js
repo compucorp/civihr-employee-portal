@@ -532,12 +532,15 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             var nested_data = d3.nest()
                 .key(function(d) {
-                    console.log(d);
                     return d.data.gender;
-                })
+                }).sortKeys(d3.ascending)
                 .key(function(d) {
                     return d.data.department;
                 })
+                // We should remove duplicated results if contact is assigned to same group multiple times
+                //.key(function(d) {
+                //    return d.data.contact_id;
+                //})
                 .rollup(function(d) {
                     return d3.sum(d, function(g) {
                         console.log(g);
@@ -546,37 +549,86 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 })
                 .entries(data);
 
-            //var data = [];
-
-            /**
-            // male
-            data[0] = [];
-            data[0][0] = 7; // location 1
-            data[0][1] = 1; // location 2
-            data[0][2] = 5; // location 3
-            data[0][3] = 2; // location 3
-
-            // female
-            data[1] = [];
-            data[1][0] = 1;
-            data[1][1] = 4;
-            data[1][2] = 4;
-
-            // other
-            data[2] = [];
-            data[2][0] = 4;
-            data[2][1] = 2;
-            */
-
-
             console.log(nested_data);
+
+            var tracker = 0;
+            var assigned_key = '';
+
+            var tracking_array = {};
+
+            console.log(tracking_array);
+
+            // Groups data
+            nested_data.forEach(function(s, main_key) {
+                console.log(s);
+
+                s.values.forEach(function(x, i) {
+
+                    console.log(tracking_array[x.key]);
+                    if (typeof tracking_array[x.key] == "undefined") {
+
+                        console.log(i);
+                        // Add to the array with current key (if not exist)
+                        tracking_array[x.key] = tracker;
+                        tracker++;
+                    }
+
+                    if (tracking_array[x.key] != i) {
+
+                        //nested_data[main_key].values[i].values = 0;
+                        console.log(nested_data[main_key].values[tracking_array[x.key]]);
+
+                        //var insert = { "key": "Home or Home-Office", "values": 0}
+                        //var insert = { "values": 0}
+                        //nested_data[main_key].values.splice(0, 0, insert);
+                        console.log(tracking_array[x.key]);
+                        console.log(i);
+
+                    }
+
+
+                });
+            });
+
+            // Sorts data
+            nested_data.forEach(function(s, main_key) {
+
+                var sorted_array = [];
+
+                $.map(nested_data[main_key].values, function (n, key_i) {
+
+                    console.log('hhmmmm 1');
+                    sorted_array[tracking_array[n.key]] = n;
+
+                });
+
+                nested_data[main_key].values = sorted_array;
+                console.log(sorted_array);
+
+            });
 
             var margin = {top: 20, right: 30, bottom: 30, left: 40},
                 width = report.settings.outerWidth + report.settings.padding,
                 height = report.settings.outerHeight + report.settings.hpadding;
 
             var y = d3.scale.linear()
-                .domain([0, d3.max(nested_data, function(d) { console.log(d); return report.roundUp5(d.values[0].values); })])
+                .domain([0, d3.max(nested_data, function(d) {
+
+                    // Get the highest column value
+                    var highest = 0;
+
+                    $.each(d.values, function(key, object_test) {
+                        if (object_test) {
+                            if (object_test.values > highest) {
+                                highest = object_test.values;
+                            }
+                        }
+                    });
+
+                    console.log(highest);
+
+                    console.log(d); return report.roundUp5(highest);
+                })])
                 .range([height - report.settings.padding, 0]);
 
             var x0 = d3.scale.ordinal()
@@ -619,12 +671,11 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .data(nested_data)
                 .enter().append("g")
                 .style("fill", function(d, i) { return z(i); })
-                .attr("transform", function(d, i) { return "translate(" + x1(i) + ",0)"; })
+                .attr("transform", function(d, i) {
+                    return "translate(" + x1(i) + ",0)";
+                })
                 .selectAll("rect")
                 .data(function(d) {
-
-                    console.log(d);
-
                     // d.key (holds male / female);
                     return d.values;
                 })
@@ -633,7 +684,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .attr("height", function(d) {
                     return height - report.settings.hpadding - y(d.values);
                 })
-                .attr("x", function(d, i) { return x0(i); })
+                .attr("x", function(d, i) {
+                    return x0(i);
+                })
                 .attr("y", function(d) {
 
                     console.log(d);
@@ -654,10 +707,10 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return d.key;
                 })
                 .attr("x", function(d, i) {
-                    return i * (width / nested_data.length) + (width / nested_data.length - report.settings.barPadding) / 2;
+                    return width - 50  - report.settings.barPadding;
                 })
-                .attr("y", function(d) {
-                    return report.settings.outerHeight - 10;
+                .attr("y", function(d, i) {
+                    return (i * report.settings.hpadding) + report.settings.outerHeight - 10;
                 });
 
             // Add chart types
