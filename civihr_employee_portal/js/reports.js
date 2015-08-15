@@ -682,6 +682,14 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return height - report.settings.hpadding - y(d.values);
 
                 })
+                .on("click", function(d, i) {
+                    
+                    console.log(d3.select(this.parentNode).attr("data-legend"));
+                    console.log(d);
+                    console.log(i);
+                    //_displayFilterData(d.data, report);
+
+                })
                 .attr("x", function(d, i) {
                     return x0(i);
                 })
@@ -696,6 +704,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return y(d.values) + report.settings.hpadding;
                 });
 
+            // Add legend labels
             svg.append("g").selectAll("g")
                 .data(nested_data)
                 .enter().append("text")
@@ -704,7 +713,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .attr("fill", function(d, i) { return z(i); })
                 .attr("text-anchor", "middle")
                 .text(function(d) {
-                    console.log(d);
                     return d.key;
                 })
                 .attr("x", function(d, i) {
@@ -714,6 +722,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return (i * report.settings.hpadding) + report.settings.outerHeight - 10;
                 });
 
+            // Add legend small image icons
             svg.append("g").selectAll("g")
                 .data(nested_data)
                 .enter().append("rect")
