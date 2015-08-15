@@ -662,6 +662,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .attr("transform", function(d, i) {
                     return "translate(" + x1(i) + ",0)";
                 })
+                .attr("data-legend",function(d) {
+                    return d.key;
+                })
                 .selectAll("rect")
                 .data(function(d) {
                     // d.key (holds male / female);
@@ -698,17 +701,33 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .enter().append("text")
                 .attr("font-family", "sans-serif")
                 .attr("font-size", "9px")
-                .attr("fill", "black")
+                .attr("fill", function(d, i) { return z(i); })
                 .attr("text-anchor", "middle")
                 .text(function(d) {
                     console.log(d);
-                    return d.key + 'todo';
+                    return d.key;
+                })
+                .attr("x", function(d, i) {
+                    return width - report.settings.barPadding;
+                })
+                .attr("y", function(d, i) {
+                    return (i * report.settings.hpadding) + report.settings.outerHeight - 10;
+                });
+
+            svg.append("g").selectAll("g")
+                .data(nested_data)
+                .enter().append("rect")
+                .attr("width", 15)
+                .attr("height", 15)
+                .attr("fill", function(d, i) { return z(i); })
+                .style("fill", function(d, i) {
+                    return z(i);
                 })
                 .attr("x", function(d, i) {
                     return width - 50  - report.settings.barPadding;
                 })
                 .attr("y", function(d, i) {
-                    return (i * report.settings.hpadding) + report.settings.outerHeight - 10;
+                    return (i * report.settings.hpadding - 10) + report.settings.outerHeight - 10;
                 });
 
             // Add chart types
