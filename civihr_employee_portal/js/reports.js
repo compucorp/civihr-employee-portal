@@ -525,9 +525,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             $('#custom-report').empty();
 
-            var n = 4, // number of samples
-                m = 3; // number of series
-
             console.log(data);
 
             var nested_data = d3.nest()
@@ -554,9 +551,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             var tracker = 0;
             var assigned_key = '';
 
-            var tracking_array = {};
-
-            console.log(tracking_array);
+            var tracking_array = [];
 
             // Groups data
             nested_data.forEach(function(s, main_key) {
@@ -570,6 +565,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                         console.log(i);
                         // Add to the array with current key (if not exist)
                         tracking_array[x.key] = tracker;
+
+                        // Number of grouped charts
+                        tracking_array['grouped_charts_num'] = tracker + 1;
                         tracker++;
                     }
 
@@ -589,6 +587,11 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
                 });
             });
+
+            var n = tracking_array['grouped_charts_num'], // Number of grouped charts
+                m = nested_data.length; // Number of columns / chart
+            
+            console.log(tracking_array);
 
             // Sorts data
             nested_data.forEach(function(s, main_key) {
@@ -682,14 +685,24 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .enter().append("rect")
                 .attr("width", x1.rangeBand())
                 .attr("height", function(d) {
+
+                    // If not set, just return 0
+                    if (typeof d == "undefined") {
+                        return height - report.settings.hpadding - y(0);
+                    }
+
                     return height - report.settings.hpadding - y(d.values);
+
                 })
                 .attr("x", function(d, i) {
                     return x0(i);
                 })
                 .attr("y", function(d) {
 
-                    console.log(d);
+                    // If not set, just return 0
+                    if (typeof d == "undefined") {
+                        return y(0) + report.settings.hpadding;
+                    }
 
                     // d.key (holds headquarters / home office)
                     return y(d.values) + report.settings.hpadding;
