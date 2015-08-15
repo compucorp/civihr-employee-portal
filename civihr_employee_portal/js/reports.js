@@ -540,7 +540,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 //})
                 .rollup(function(d) {
                     return d3.sum(d, function(g) {
-                        console.log(g);
                         return 1;
                     });
                 })
@@ -555,14 +554,10 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             // Groups data
             nested_data.forEach(function(s, main_key) {
-                console.log(s);
-
                 s.values.forEach(function(x, i) {
 
-                    console.log(tracking_array[x.key]);
                     if (typeof tracking_array[x.key] == "undefined") {
 
-                        console.log(i);
                         // Add to the array with current key (if not exist)
                         tracking_array[x.key] = tracker;
 
@@ -571,26 +566,12 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                         tracker++;
                     }
 
-                    if (tracking_array[x.key] != i) {
-
-                        //nested_data[main_key].values[i].values = 0;
-                        console.log(nested_data[main_key].values[tracking_array[x.key]]);
-
-                        //var insert = { "key": "Home or Home-Office", "values": 0}
-                        //var insert = { "values": 0}
-                        //nested_data[main_key].values.splice(0, 0, insert);
-                        console.log(tracking_array[x.key]);
-                        console.log(i);
-
-                    }
-
-
                 });
             });
 
             var n = tracking_array['grouped_charts_num'], // Number of grouped charts
                 m = nested_data.length; // Number of columns / chart
-            
+
             console.log(tracking_array);
 
             // Sorts data
@@ -599,14 +580,10 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 var sorted_array = [];
 
                 $.map(nested_data[main_key].values, function (n, key_i) {
-
-                    console.log('hhmmmm 1');
                     sorted_array[tracking_array[n.key]] = n;
-
                 });
 
                 nested_data[main_key].values = sorted_array;
-                console.log(sorted_array);
 
             });
 
@@ -628,9 +605,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                         }
                     });
 
-                    console.log(highest);
-
-                    console.log(d); return report.roundUp5(highest);
+                    return report.roundUp5(highest);
                 })])
                 .range([height - report.settings.padding, 0]);
 
@@ -646,6 +621,16 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             var xAxis = d3.svg.axis()
                 .scale(x0)
+                .tickFormat(function(d, i) {
+
+                    for(var key in tracking_array) {
+                        var value = tracking_array[key];
+
+                        if (tracking_array[key] == d) {
+                            return key;
+                        }
+                    }
+                })
                 .orient("bottom");
 
             var yAxis = d3.svg.axis()
@@ -717,7 +702,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .attr("text-anchor", "middle")
                 .text(function(d) {
                     console.log(d);
-                    return d.key;
+                    return d.key + 'todo';
                 })
                 .attr("x", function(d, i) {
                     return width - 50  - report.settings.barPadding;
