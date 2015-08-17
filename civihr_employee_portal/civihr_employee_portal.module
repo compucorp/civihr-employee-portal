@@ -240,8 +240,29 @@ function civihr_employee_portal_permission() {
 /**
  * Implements hook_theme().
  */
-function civihr_employee_portal_theme() {
-    return array(
+function civihr_employee_portal_theme($existing, $type, $theme, $path) {
+
+    // This will set the template file for any view page which is custom report (overriding the theme file what is suggested by drupal views as default)
+    $template_url = 'templates/civihr-employee-portal-custom-reports-filter-result';
+
+    // @TODO test with more custom views
+    $view_displays_to_rewrite = array();
+    $view_displays_to_rewrite['views_view__filter_headcount_department'] = 1;
+    $view_displays_to_rewrite['views_view__filter_headcount_location'] = 1;
+
+    // This will hold any custom view display names where we need to override the template file
+    $theme_hooks = array();
+
+    foreach ($view_displays_to_rewrite as $view_name => $val) {
+        $theme_hooks[$view_name] = array(
+            'template' => $template_url,
+            'original hook' => 'views_view',
+            'preprocess functions' => array('template_preprocess', 'template_preprocess_views_view'),
+            'arguments' => array('view' => NULL)
+        );
+    }
+
+    return $theme_hooks + array(
         'user_login_block' => array(
             'render element' => 'form',
             'template' => 'templates/civihr-employee-portal-user-login',
@@ -275,6 +296,12 @@ function civihr_employee_portal_theme() {
                 'custom_data' => NULL
             ),
             'template' => 'templates/civihr-employee-portal-print-leave-report',
+        ),
+        'civihr_employee_portal_custom_reports' => array(
+            'variables' => array(
+                'custom_data' => NULL
+            ),
+            'template' => 'templates/civihr-employee-portal-custom-reports',
         ),
         'civihr_employee_portal_document_form' => array(
             //'arguments' => array('form' => NULL),
@@ -1067,21 +1094,22 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
 
         $duration = $absence_value['duration'] / (6 * 80);
         $all_duration += $duration;
-
-        $disputes[$absence_value['id']] = array($absence_value['activity_date_time'], $duration, get_civihr_absence_statuses($absence_value['status_id']));
-
+        $date = new DateTime($absence_value['activity_date_time']);
+        $disputes[$absence_value['id']] = array($date->format('Y-m-d'), $duration, get_civihr_absence_statuses($absence_value['status_id']));
     }
 
     if ($all_duration <= 1) {
 
         // Show 1 date only
-        $duration_date = $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'];
+        $date = new DateTime($absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time']);
+        $duration_date = $date->format('Y-m-d');
         $day = t('day');
     }
     else {
 
         // Show start date and end date for the absence
-        $duration_date = array_values($disputes)[0][0] . ' - ' .  $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'];
+        $endDate = new DateTime($absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time']);
+        $duration_date = array_values($disputes)[0][0] . ' - ' .  $endDate->format('Y-m-d');
         $day = t('days');
     }
 
@@ -1115,7 +1143,7 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
         '#default_value' => $leave_type,
     );
 
-    // Start / End date of the absence duration
+    // Start / End date of the absence duration - temporarily removed according to PCHR-346 task
     $form['whole_duration'] = array(
         '#markup' => '<div class="whole-duration"><b>Date: </b>' . $duration_date . ' = ' . $all_duration . ' ' . $day . '</div>',
     );
@@ -2955,7 +2983,12 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         drupal_add_js('http://d3js.org/d3.v3.min.js', 'external');
         drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
 
-        return '<div id="custom-report"></div><div id="custom-report-details"></div><div id="relationship-report"></div>';
+        // Output the custom report theme page
+        return theme('civihr_employee_portal_custom_reports',
+            array(
+                'custom_data' => ''
+            )
+        );
 
     }
 
@@ -2971,6 +3004,9 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         $view = views_get_view($view_name);
         $view->set_display($view_display);
 
+        // Set dom_id otherwise notice message is displayed from Drupal
+        $view->dom_id = 'filter-results';
+
         // Set the contextual filters from graph (passed in GET['value'])
         $view->set_arguments($args);
 
@@ -2979,7 +3015,12 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         // Set the view data to variable (and return later)
         $view_data =  $view->render();
 
-        return '<div id="custom-report"></div><div id="custom-report-details">' . $view_data . '</div><div id="relationship-report"></div>';
+        // Output the custom report theme page
+        return theme('civihr_employee_portal_custom_reports',
+            array(
+                'custom_data' => $view_data
+            )
+        );
 
     }
     else {
@@ -2990,6 +3031,9 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         // When clicked on the graph load a specific view to display data under the graph
         $view = views_get_view($view_name);
         $view->set_display($view_display);
+
+        // Set dom_id otherwise notice message is displayed from Drupal
+        $view->dom_id = 'filter-results';
 
         // Set the contextual filters from graph (passed in GET['value'])
         $view->set_arguments($args);
@@ -3204,7 +3248,7 @@ function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
             form_clear_error();
             form_set_error('forgot-password', $errors['name']);
         }
-        return;
+        return true;
     }
     
     $requiredValidate = true;
@@ -3227,9 +3271,12 @@ function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
  
 function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
     
+    $destination = !empty($_REQUEST['destination']) ? $_REQUEST['destination'] : '';
     if ($form_state['input']['forgot-password']) {
         user_pass_submit($form, $form_state);
         _drupal_session_write('custom_login_success_message', t('Details sent!'));
+        drupal_goto($destination);
+        return true;
     }
 }
 

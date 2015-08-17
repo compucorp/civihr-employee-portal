@@ -72,7 +72,14 @@
                     console.info((up.total.uploaded + up.total.failed) + ' / ' + up.files.length);
                     if (up.files.length == (up.total.uploaded + up.total.failed)) {
                         that.uploaded = true;
-                        $('#civihr-employee-portal-document-form #edit-save').click();
+                        CRM.api3('Document', 'create', {
+                            "sequential": 1,
+                            "id": that.entityID,
+                            "status_id": 2
+                        }).done(function() {
+                            $('#civihr-employee-portal-document-form #edit-save').click();
+                        });
+
                     }
                 },
 
