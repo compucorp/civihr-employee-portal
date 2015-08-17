@@ -1101,7 +1101,8 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
     if ($all_duration <= 1) {
 
         // Show 1 date only
-        $duration_date = $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'];
+        $date = new DateTime($absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time']);
+        $duration_date = $date->format('Y-m-d');
         $day = t('day');
     }
     else {
