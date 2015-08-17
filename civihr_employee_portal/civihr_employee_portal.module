@@ -1095,7 +1095,8 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
         $duration = $absence_value['duration'] / (6 * 80);
         $all_duration += $duration;
 
-        $disputes[$absence_value['id']] = array($absence_value['activity_date_time'], $duration, get_civihr_absence_statuses($absence_value['status_id']));
+        $disputesDateTime[$absence_value['id']] = array($absence_value['activity_date_time']);
+        $disputes[$absence_value['id']] = array($duration, get_civihr_absence_statuses($absence_value['status_id']));
 
     }
 
@@ -1108,11 +1109,13 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
     else {
 
         // Show start date and end date for the absence
-        $duration_date = array_values($disputes)[0][0] . ' - ' .  $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'];
+        ///$duration_date = array_values($disputes)[0][0] . ' - ' .  $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'];
+        $duration_date = array_values($disputesDateTime)[0][0] . ' - ' .  $absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time'];
         $day = t('days');
     }
 
-    $header = array(t('Date'), t('Absence duration'), t('Absence status'));
+    ///$header = array(t('Date'), t('Absence duration'), t('Absence status'));
+    $header = array(t('Absence duration'), t('Absence status'));
     $absenceTypes = get_civihr_absence_types();
 
     foreach ($absenceTypes as $absenceType) {
@@ -1142,10 +1145,10 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
         '#default_value' => $leave_type,
     );
 
-    // Start / End date of the absence duration
-    $form['whole_duration'] = array(
+    // Start / End date of the absence duration - temporarily removed according to PCHR-346 task
+    /*$form['whole_duration'] = array(
         '#markup' => '<div class="whole-duration"><b>Date: </b>' . $duration_date . ' = ' . $all_duration . ' ' . $day . '</div>',
-    );
+    );*/
 
     $form['hidden_whole_duration'] = array(
         '#type'     => 'hidden',
