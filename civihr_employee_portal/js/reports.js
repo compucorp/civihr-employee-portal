@@ -2,10 +2,33 @@
 Drupal.behaviors.civihr_employee_portal_reports = {
     attach: function (context, settings) {
 
-        // main filter can be (headcount, gender, age)
-        $.cookie('mainFilter', 'headcount', { path: '/' });
-
         var data; // Will hold our loaded json data later
+
+        // Init the main filters
+        var mainFilters = document.querySelectorAll(".mainFilter");
+
+        // Loop the buttons and attach the onclick function
+        for (i = 0; i < mainFilters.length; i++) {
+            mainFilters[i].onclick = function (data) {
+
+                if (data.target !== null) {
+
+                    // Set the mainFilter
+                    customReport.setMainFilter(data.target.id);
+
+                    // Add default classes
+                    _checkDefaultClasses(mainFilters, data);
+
+                    _checkChartTypes(customReport);
+
+                    // Re-draw graph
+                    customReport.drawGraph(customReport.getJsonUrl(), customReport.getChartType());
+
+                }
+
+                return false;
+            }
+        }
 
         // Init the sub filters
         var subFilters = document.querySelectorAll(".subFilter");
@@ -33,24 +56,24 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
         /**
          * Checks default CSS classes
-         * @param subFilters
+         * @param subFilters or mainFilters
          * @param data
          * @private
          */
-        function _checkDefaultClasses(subFilters, data) {
+        function _checkDefaultClasses(filters, data) {
 
-            // Append active class for subfilters
+            // Append active class for filters
             $("#" + data.target.id).addClass("active");
 
-            for (check = 0; check < subFilters.length; check++) {
+            for (check = 0; check < filters.length; check++) {
 
                 // Add active class if filter clicked
-                if (subFilters[check]['id'] == data.target.id) {
+                if (filters[check]['id'] == data.target.id) {
                     $("#" + data.target.id).addClass("active");
                 }
                 else {
                     // Remove all other active classes
-                    $("#" + subFilters[check]['id']).removeClass("active");
+                    $("#" + filters[check]['id']).removeClass("active");
                 }
 
             }
@@ -62,15 +85,44 @@ Drupal.behaviors.civihr_employee_portal_reports = {
          * @param subFilters
          * @private
          */
-        function _setDefaultClass(subFilters, customReport) {
+        function _setDefaultClass(mainFilters, subFilters, customReport) {
+
+            for (check = 0; check < mainFilters.length; check++) {
+
+                // Add active class if the cookie is already set)
+                if (mainFilters[check]['id'] == customReport.getMainFilter()) {
+                    $("#" + mainFilters[check]['id']).addClass("active");
+                }
+
+            }
 
             for (check = 0; check < subFilters.length; check++) {
 
                 // Add active class if the cookie is already set)
-                if (subFilters[check]['id'] == $.cookie('subFilter')) {
+                if (subFilters[check]['id'] == customReport.getSubFilter()) {
                     $("#" + subFilters[check]['id']).addClass("active");
                 }
 
+            }
+
+        }
+
+        /**
+         * If the reports mainFilter value is gender or age allow only the grouped_bar chart
+         * @param customReport
+         * @private
+         */
+        function _checkChartTypes(customReport) {
+
+            if (customReport.getMainFilter() != 'headcount') {
+                customReport.setChartType('grouped_bar');
+            }
+            else {
+
+                // If the mainFilter value is 'headcount', and we have grouped_bar chart, reset it to default bar chart
+                if (customReport.setChartType() == 'grouped_bar') {
+                    customReport.setChartType('bar');
+                }
             }
 
         }
@@ -134,6 +186,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
         // Set default main filter type
         DrawReport.prototype.setMainFilter = function(filter) {
             this.mainFilter = filter;
+
+            // Sets the filter on the cookie as well (helps to set default values)
+            $.cookie('mainFilter', filter, { path: '/' });
         };
 
         // Set default sub filter type
@@ -247,42 +302,50 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             var _this = this;
 
-            svg.append("text")
-                .attr("class", "btn btn-primary btn-reports")
-                .attr("type", "button")
-                .attr("x", _this.settings.outerWidth - 50)
-                .attr("y", 30)
-                .on('click', function(d,i) {
-                    _this.drawGraph(_this.getJsonUrl(), 'bar');
-                })
-                .text(function(d,i) {
-                    return 'Simple Bar chart';
-                });
+            // Only headcount reports can be bar/pie types
+            // All other reports are currently grouped bar charts
+            if (this.getMainFilter() != 'headcount') {
 
-            svg.append("text")
-                .attr("class", "btn btn-primary btn-reports")
-                .attr("type", "button")
-                .attr("x", _this.settings.outerWidth - 50)
-                .attr("y", 60)
-                .on('click', function(d,i) {
-                    _this.drawGraph(_this.getJsonUrl(), 'grouped_bar');
-                })
-                .text(function(d,i) {
-                    return 'Bar chart';
-                });
+                svg.append("text")
+                    .attr("class", "btn btn-primary btn-reports")
+                    .attr("type", "button")
+                    .attr("x", _this.settings.outerWidth - 50)
+                    .attr("y", 30)
+                    .on('click', function(d,i) {
+                        _this.drawGraph(_this.getJsonUrl(), 'grouped_bar');
+                    })
+                    .text(function(d,i) {
+                        return 'Bar chart';
+                    });
 
-            svg.append("text")
-                .attr("class", "btn btn-primary btn-reports")
-                .attr("type", "button")
-                .attr("x", _this.settings.outerWidth - 50)
-                .attr("y", 90)
-                .on('click', function(d,i) {
-                    _this.drawGraph(_this.getJsonUrl(), 'pie');
-                })
-                .text(function(d,i) {
-                    return 'Pie chart';
-                });
+            }
+            else {
 
+                svg.append("text")
+                    .attr("class", "btn btn-primary btn-reports")
+                    .attr("type", "button")
+                    .attr("x", _this.settings.outerWidth - 50)
+                    .attr("y", 30)
+                    .on('click', function(d,i) {
+                        _this.drawGraph(_this.getJsonUrl(), 'bar');
+                    })
+                    .text(function(d,i) {
+                        return 'Bar chart';
+                    });
+
+                svg.append("text")
+                    .attr("class", "btn btn-primary btn-reports")
+                    .attr("type", "button")
+                    .attr("x", _this.settings.outerWidth - 50)
+                    .attr("y", 60)
+                    .on('click', function(d,i) {
+                        _this.drawGraph(_this.getJsonUrl(), 'pie');
+                    })
+                    .text(function(d,i) {
+                        return 'Pie chart';
+                    });
+
+            }
 
         };
 
@@ -298,6 +361,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
         // Gets the default chart type
         CustomReport.prototype.getChartType = function() {
+
             // Gets the default chart type from the object
             if (this.chartType !== 'undefined' && this.chartType) {
                 return this.chartType;
@@ -337,10 +401,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
         customReport.drawGraph(customReport.getJsonUrl(), customReport.getChartType());
 
         // Set default classes on initial load
-        _setDefaultClass(subFilters, customReport);
-
-        console.log($.cookie('mainFilter'));
-        console.log($.cookie('subFilter'));
+        _setDefaultClass(mainFilters, subFilters, customReport);
 
         function visualizeBarChart(report) {
 
