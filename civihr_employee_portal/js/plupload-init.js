@@ -69,23 +69,14 @@
                 },
 
                 FileUploaded: function(up, file) {
-                    console.info((up.total.uploaded + up.total.failed) + ' / ' + up.files.length);
                     if (up.files.length == (up.total.uploaded + up.total.failed)) {
                         that.uploaded = true;
-                        CRM.api3('Document', 'create', {
-                            "sequential": 1,
-                            "id": that.entityID,
-                            "status_id": 2
-                        }).done(function() {
-                            $('#civihr-employee-portal-document-form #edit-save').click();
-                        });
-
+                        $('#civihr-employee-portal-document-form #edit-save').click();
                     }
                 },
 
                 Error: function(up, err) {
-                    console.info("\nError #" + err.code + ": " + err.message);
-                    document.getElementById('console').appendChild(document.createTextNode("\nError #" + err.code + ": " + err.message));
+                    //document.getElementById('console').appendChild(document.createTextNode("\nError #" + err.code + ": " + err.message));
                 }
             }
         });

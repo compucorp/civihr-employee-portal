@@ -2244,6 +2244,24 @@ function civihr_employee_portal_document_form_submit($form, &$form_state) {
         }
     }
     
+    $documentResult = civicrm_api3('Document', 'get', array(
+        'sequential' => 1,
+        'id' => $id,
+    ));
+    if ($documentResult['count']) {
+        $document = CRM_Utils_Array::first($documentResult['values']);
+        if ($document['file_count']) {
+            $result = civicrm_api3('Document', 'create', array(
+                'sequential' => 1,
+                'id' => $id,
+                'status_id' => 2,
+            ));
+        }
+    }
+    
+    $folder_real_path = drupal_realpath('public://') . '/views_json_query/';
+    _remove_json_cache_files($folder_real_path);
+    
     drupal_set_message(t('Document changes has been saved.'), 'success');
 }
 
