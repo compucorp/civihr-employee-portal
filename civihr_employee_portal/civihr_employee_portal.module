@@ -1755,6 +1755,10 @@ function civihr_employee_portal_absence_request_form_validate($form, &$form_stat
             if ($request_timestamp < strtotime('today') && $form_state['values']['absence_type'] != "sick")
                 form_set_error('absence_request_date_from', t('Only Sickness can be requested with start date in the past!'));
 
+            // If we requested leave with start date in the future (applies only if leave type is "sick")
+            if ($request_timestamp > strtotime('today') && $form_state['values']['absence_type'] == "sick")
+                form_set_error('absence_request_date_from', t('You are not allowed to report Sickness in advance!'));
+
             // Check if we have enough leave left to request this leave (only if leave type is DEBIT or CREDIT_USE) -> deducting days
             if (isset($form_state['values']['absence_type']) && ($form_state['values']['absence_type'] == 'debit' || $form_state['values']['absence_type'] == 'credit_use')) {
 
