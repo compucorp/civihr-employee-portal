@@ -525,58 +525,88 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             $('#custom-report').empty();
 
-            var n = 4, // number of samples
-                m = 3; // number of series
-
             console.log(data);
 
             var nested_data = d3.nest()
                 .key(function(d) {
-                    console.log(d);
                     return d.data.gender;
-                })
+                }).sortKeys(d3.ascending)
                 .key(function(d) {
                     return d.data.department;
                 })
+                // We should remove duplicated results if contact is assigned to same group multiple times
+                //.key(function(d) {
+                //    return d.data.contact_id;
+                //})
                 .rollup(function(d) {
                     return d3.sum(d, function(g) {
-                        console.log(g);
                         return 1;
                     });
                 })
                 .entries(data);
 
-            //var data = [];
-
-            /**
-            // male
-            data[0] = [];
-            data[0][0] = 7; // location 1
-            data[0][1] = 1; // location 2
-            data[0][2] = 5; // location 3
-            data[0][3] = 2; // location 3
-
-            // female
-            data[1] = [];
-            data[1][0] = 1;
-            data[1][1] = 4;
-            data[1][2] = 4;
-
-            // other
-            data[2] = [];
-            data[2][0] = 4;
-            data[2][1] = 2;
-            */
-
-
             console.log(nested_data);
+
+            var tracker = 0;
+            var assigned_key = '';
+
+            var tracking_array = [];
+
+            // Groups data
+            nested_data.forEach(function(s, main_key) {
+                s.values.forEach(function(x, i) {
+
+                    if (typeof tracking_array[x.key] == "undefined") {
+
+                        // Add to the array with current key (if not exist)
+                        tracking_array[x.key] = tracker;
+
+                        // Number of grouped charts
+                        tracking_array['grouped_charts_num'] = tracker + 1;
+                        tracker++;
+                    }
+
+                });
+            });
+
+            var n = tracking_array['grouped_charts_num'], // Number of grouped charts
+                m = nested_data.length; // Number of columns / chart
+
+            console.log(tracking_array);
+
+            // Sorts data
+            nested_data.forEach(function(s, main_key) {
+
+                var sorted_array = [];
+
+                $.map(nested_data[main_key].values, function (n, key_i) {
+                    sorted_array[tracking_array[n.key]] = n;
+                });
+
+                nested_data[main_key].values = sorted_array;
+
+            });
 
             var margin = {top: 20, right: 30, bottom: 30, left: 40},
                 width = report.settings.outerWidth + report.settings.padding,
                 height = report.settings.outerHeight + report.settings.hpadding;
 
             var y = d3.scale.linear()
-                .domain([0, d3.max(nested_data, function(d) { console.log(d); return report.roundUp5(d.values[0].values); })])
+                .domain([0, d3.max(nested_data, function(d) {
+
+                    // Get the highest column value
+                    var highest = 0;
+
+                    $.each(d.values, function(key, object_test) {
+                        if (object_test) {
+                            if (object_test.values > highest) {
+                                highest = object_test.values;
+                            }
+                        }
+                    });
+
+                    return report.roundUp5(highest);
+                })])
                 .range([height - report.settings.padding, 0]);
 
             var x0 = d3.scale.ordinal()
@@ -591,6 +621,16 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             var xAxis = d3.svg.axis()
                 .scale(x0)
+                .tickFormat(function(d, i) {
+
+                    for(var key in tracking_array) {
+                        var value = tracking_array[key];
+
+                        if (tracking_array[key] == d) {
+                            return key;
+                        }
+                    }
+                })
                 .orient("bottom");
 
             var yAxis = d3.svg.axis()
@@ -619,45 +659,84 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .data(nested_data)
                 .enter().append("g")
                 .style("fill", function(d, i) { return z(i); })
-                .attr("transform", function(d, i) { return "translate(" + x1(i) + ",0)"; })
+                .attr("transform", function(d, i) {
+                    return "translate(" + x1(i) + ",0)";
+                })
+                .attr("data-legend",function(d) {
+                    return d.key;
+                })
                 .selectAll("rect")
                 .data(function(d) {
-
-                    console.log(d);
-
                     // d.key (holds male / female);
                     return d.values;
                 })
                 .enter().append("rect")
                 .attr("width", x1.rangeBand())
                 .attr("height", function(d) {
+
+                    // If not set, just return 0
+                    if (typeof d == "undefined") {
+                        return height - report.settings.hpadding - y(0);
+                    }
+
                     return height - report.settings.hpadding - y(d.values);
+
                 })
-                .attr("x", function(d, i) { return x0(i); })
+                .on("click", function(d, i) {
+                    
+                    console.log(d3.select(this.parentNode).attr("data-legend"));
+                    console.log(d);
+                    console.log(i);
+                    //_displayFilterData(d.data, report);
+
+                })
+                .attr("x", function(d, i) {
+                    return x0(i);
+                })
                 .attr("y", function(d) {
 
-                    console.log(d);
+                    // If not set, just return 0
+                    if (typeof d == "undefined") {
+                        return y(0) + report.settings.hpadding;
+                    }
 
                     // d.key (holds headquarters / home office)
                     return y(d.values) + report.settings.hpadding;
                 });
 
+            // Add legend labels
             svg.append("g").selectAll("g")
                 .data(nested_data)
                 .enter().append("text")
                 .attr("font-family", "sans-serif")
                 .attr("font-size", "9px")
-                .attr("fill", "black")
+                .attr("fill", function(d, i) { return z(i); })
                 .attr("text-anchor", "middle")
                 .text(function(d) {
-                    console.log(d);
                     return d.key;
                 })
                 .attr("x", function(d, i) {
-                    return i * (width / nested_data.length) + (width / nested_data.length - report.settings.barPadding) / 2;
+                    return width - report.settings.barPadding;
                 })
-                .attr("y", function(d) {
-                    return report.settings.outerHeight - 10;
+                .attr("y", function(d, i) {
+                    return (i * report.settings.hpadding) + report.settings.outerHeight - 10;
+                });
+
+            // Add legend small image icons
+            svg.append("g").selectAll("g")
+                .data(nested_data)
+                .enter().append("rect")
+                .attr("width", 15)
+                .attr("height", 15)
+                .attr("fill", function(d, i) { return z(i); })
+                .style("fill", function(d, i) {
+                    return z(i);
+                })
+                .attr("x", function(d, i) {
+                    return width - 50  - report.settings.barPadding;
+                })
+                .attr("y", function(d, i) {
+                    return (i * report.settings.hpadding - 10) + report.settings.outerHeight - 10;
                 });
 
             // Add chart types
