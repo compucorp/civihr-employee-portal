@@ -334,9 +334,9 @@ $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
 $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = 'Address';
-$handler->display->display_options['fields']['nothing']['alter']['text'] = '[street_address], <br />
-[supplemental_address_1], <br />
-[city], [postal_code] <br />
+$handler->display->display_options['fields']['nothing']['alter']['text'] = '[street_address] <br />
+[supplemental_address_1] <br />
+[city] [postal_code] <br />
 [country]';
 
 /* Display: Emergency Contact (full) */
@@ -349,25 +349,30 @@ $handler->display->display_options['fields']['name_80']['id'] = 'name_80';
 $handler->display->display_options['fields']['name_80']['table'] = 'civicrm_value_emergency_contacts_21';
 $handler->display->display_options['fields']['name_80']['field'] = 'name_80';
 $handler->display->display_options['fields']['name_80']['label'] = 'Contact name';
+$handler->display->display_options['fields']['name_80']['alter']['strip_tags'] = TRUE;
 /* Field: CiviCRM Custom: Emergency Contacts: Relationship with Employee */
 $handler->display->display_options['fields']['relationship_with_employee_83']['id'] = 'relationship_with_employee_83';
 $handler->display->display_options['fields']['relationship_with_employee_83']['table'] = 'civicrm_value_emergency_contacts_21';
 $handler->display->display_options['fields']['relationship_with_employee_83']['field'] = 'relationship_with_employee_83';
 $handler->display->display_options['fields']['relationship_with_employee_83']['label'] = 'Relationship';
+$handler->display->display_options['fields']['relationship_with_employee_83']['alter']['strip_tags'] = TRUE;
 /* Field: CiviCRM Custom: Emergency Contacts: Phone number */
 $handler->display->display_options['fields']['phone_number_81']['id'] = 'phone_number_81';
 $handler->display->display_options['fields']['phone_number_81']['table'] = 'civicrm_value_emergency_contacts_21';
 $handler->display->display_options['fields']['phone_number_81']['field'] = 'phone_number_81';
 $handler->display->display_options['fields']['phone_number_81']['label'] = 'Primary phone';
+$handler->display->display_options['fields']['phone_number_81']['alter']['strip_tags'] = TRUE;
 /* Field: CiviCRM Custom: Emergency Contacts: Email */
 $handler->display->display_options['fields']['email_82']['id'] = 'email_82';
 $handler->display->display_options['fields']['email_82']['table'] = 'civicrm_value_emergency_contacts_21';
 $handler->display->display_options['fields']['email_82']['field'] = 'email_82';
 $handler->display->display_options['fields']['email_82']['label'] = 'Primary email';
+$handler->display->display_options['fields']['email_82']['alter']['strip_tags'] = TRUE;
 /* Field: CiviCRM Custom: Emergency Contacts: Notes */
 $handler->display->display_options['fields']['notes_84']['id'] = 'notes_84';
 $handler->display->display_options['fields']['notes_84']['table'] = 'civicrm_value_emergency_contacts_21';
 $handler->display->display_options['fields']['notes_84']['field'] = 'notes_84';
+$handler->display->display_options['fields']['notes_84']['alter']['strip_tags'] = TRUE;
 $translatables['my_details_block'] = array(
   t('Master'),
   t('My details block'),
@@ -401,10 +406,19 @@ $translatables['my_details_block'] = array(
   t('Country'),
   t('My details (full)'),
   t('My Details'),
+  t('Display name'),
+  t('Primary phone'),
+  t('Primary email'),
+  t('Department'),
+  t('Date of birth'),
+  t('Full Street Address'),
+  t('Supplemental Street Address'),
+  t('[street_address] <br />
+[supplemental_address_1] <br />
+[city] [postal_code] <br />
+[country]'),
   t('Emergency Contact (full)'),
   t('Contact name'),
   t('Relationship'),
-  t('Primary phone'),
-  t('Primary email'),
   t('Notes'),
 );
