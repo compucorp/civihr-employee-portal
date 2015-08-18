@@ -19,7 +19,10 @@ $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
 $handler->display->display_options['access']['role'] = array(
-  17087012 => '17087012',
+  3 => '3',
+  4 => '4',
+  5 => '5',
+  6 => '6',
 );
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
@@ -401,7 +404,7 @@ $handler->display->display_options['title'] = 'Documents Manager';
 $handler->display->display_options['defaults']['access'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
 $handler->display->display_options['access']['role'] = array(
-  57573969 => '57573969',
+  5 => '5',
 );
 $handler->display->display_options['defaults']['query'] = FALSE;
 $handler->display->display_options['query']['type'] = 'views_query';
@@ -528,6 +531,16 @@ $handler->display->display_options['fields']['id']['label'] = 'Document ID';
 $handler->display->display_options['fields']['id']['element_class'] = 'hidden';
 $handler->display->display_options['fields']['id']['element_label_class'] = 'hidden';
 $handler->display->display_options['fields']['id']['key'] = 'id';
+/* Field: target_contact_id: Document contacts */
+$handler->display->display_options['fields']['document_contacts']['id'] = 'document_contacts';
+$handler->display->display_options['fields']['document_contacts']['table'] = 'json';
+$handler->display->display_options['fields']['document_contacts']['field'] = 'document_contacts';
+$handler->display->display_options['fields']['document_contacts']['label'] = 'Target Contact';
+$handler->display->display_options['fields']['document_contacts']['element_type'] = 'div';
+$handler->display->display_options['fields']['document_contacts']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['document_contacts']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['document_contacts']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['document_contacts']['key'] = 'target_contact_id';
 /* Field: activity_type_id: value */
 $handler->display->display_options['fields']['activity_type_id']['id'] = 'activity_type_id';
 $handler->display->display_options['fields']['activity_type_id']['table'] = 'json';
@@ -612,13 +625,6 @@ $handler->display->display_options['fields']['status_id']['element_label_type'] 
 $handler->display->display_options['fields']['status_id']['element_wrapper_type'] = 'div';
 $handler->display->display_options['fields']['status_id']['element_wrapper_class'] = 'document-wrapper';
 $handler->display->display_options['fields']['status_id']['key'] = 'status_id';
-/* Field: target_contact_id: Document contacts */
-$handler->display->display_options['fields']['document_contacts']['id'] = 'document_contacts';
-$handler->display->display_options['fields']['document_contacts']['table'] = 'json';
-$handler->display->display_options['fields']['document_contacts']['field'] = 'document_contacts';
-$handler->display->display_options['fields']['document_contacts']['label'] = 'Document contacts (target)';
-$handler->display->display_options['fields']['document_contacts']['exclude'] = TRUE;
-$handler->display->display_options['fields']['document_contacts']['key'] = 'target_contact_id';
 /* Field: assignee_contact_id: Document contacts */
 $handler->display->display_options['fields']['document_contacts_1']['id'] = 'document_contacts_1';
 $handler->display->display_options['fields']['document_contacts_1']['table'] = 'json';
@@ -673,4 +679,5 @@ $translatables['Documents'] = array(
   t('Status'),
   t('Documents Dashboard Manager block'),
   t('Documents Manager'),
+  t('Target Contact'),
 );
