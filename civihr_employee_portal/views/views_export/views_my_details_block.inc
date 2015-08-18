@@ -56,6 +56,7 @@ $handler->display->display_options['fields']['name_80']['id'] = 'name_80';
 $handler->display->display_options['fields']['name_80']['table'] = 'civicrm_value_emergency_contacts_21';
 $handler->display->display_options['fields']['name_80']['field'] = 'name_80';
 $handler->display->display_options['fields']['name_80']['label'] = 'Emergency Contact';
+$handler->display->display_options['fields']['name_80']['alter']['strip_tags'] = TRUE;
 /* Filter criterion: User: Current */
 $handler->display->display_options['filters']['uid_current']['id'] = 'uid_current';
 $handler->display->display_options['filters']['uid_current']['table'] = 'users';
@@ -124,6 +125,7 @@ $handler->display->display_options['fields']['name_80']['id'] = 'name_80';
 $handler->display->display_options['fields']['name_80']['table'] = 'civicrm_value_emergency_contacts_21';
 $handler->display->display_options['fields']['name_80']['field'] = 'name_80';
 $handler->display->display_options['fields']['name_80']['label'] = 'Emergency Contact';
+$handler->display->display_options['fields']['name_80']['alter']['strip_tags'] = TRUE;
 
 /* Display: My address */
 $handler = $view->new_display('block', 'My address', 'my_address_block');
