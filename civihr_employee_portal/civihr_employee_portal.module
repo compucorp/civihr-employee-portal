@@ -1255,6 +1255,28 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
     // Current USER object
     global $user;
 
+    $params = array(
+        'contact_id' => $form_state['user_data'],
+        'version' => 3,
+        'sequential' => 1,
+    );
+
+    // Get the USER ID from the passed target contact ID
+    $res = civicrm_api3('UFMatch', 'Get', $params);
+    $contact_data = array_shift($res['values']);
+
+    // Set the target user OBJECT
+    $target_user = user_load($contact_data['uf_id']);
+
+    // Get the manager notes
+    $manager_notes = drupal_html_to_text(nl2br($form_state['values']['manager_notes']));
+
+    // Get the leave type
+    $leave_type = $form_state['values']['hidden_leave_type'];
+
+    // Get the Start Date / End Date + duration of the leave
+    $leave_date = $form_state['values']['hidden_whole_duration'];
+
     // @TODO -> move to custom rules action (so it will be configurable through UI)
     if ($form_state['values']['op'] == 'Reject all') {
         if (isset($form_state['values']['pick_day_checkboxes'])) {
@@ -1292,28 +1314,6 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
                 'value' => $form_state['values']['manager_notes']
             ));
 
-            $params = array(
-                'contact_id' => $form_state['user_data'],
-                'version' => 3,
-                'sequential' => 1,
-            );
-
-            // Get the USER ID from the passed target contact ID
-            $res = civicrm_api3('UFMatch', 'Get', $params);
-            $contact_data = array_shift($res['values']);
-
-            // Set the target user OBJECT
-            $target_user = user_load($contact_data['uf_id']);
-
-            // Get the manager notes
-            $manager_notes = drupal_html_to_text(nl2br($form_state['values']['manager_notes']));
-
-            // Get the leave type
-            $leave_type = $form_state['values']['hidden_leave_type'];
-
-            // Get the Start Date / End Date + duration of the leave
-            $leave_date = $form_state['values']['hidden_whole_duration'];
-
             // Fire rules events
             rules_invoke_event('reject_all_post_event', $user, $target_user, $manager_notes, $leave_type, $leave_date);
 
@@ -1330,20 +1330,21 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
             foreach ($form_state['values']['pick_day_checkboxes'] as $act_key => $act_value) {
 
                 $result = civicrm_api3('Activity', 'setvalue', array(
-                                                                    'id' => $act_key,
-                                                                    'field' => 'status_id',
-                                                                    'value' => 2
-                                                               ));
+                    'id' => $act_key,
+                    'field' => 'status_id',
+                    'value' => 2
+                ));
 
             }
 
             $result = civicrm_api3('Activity', 'setvalue', array(
-                                                                    'id' => $form_state['values']['main_id'],
-                                                                    'field' => 'status_id',
-                                                                    'value' => 2
-                                                               ));
+                'id' => $form_state['values']['main_id'],
+                'field' => 'status_id',
+                'value' => 2
+            ));
 
-            drupal_set_message(t('Leave successfully approved for the whole duration'), 'success');
+            // Fire rules events
+            rules_invoke_event('approve_all_post_event', $user, $target_user, $manager_notes, $leave_type, $leave_date);
         }
 
     }
@@ -1358,10 +1359,10 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
 
                 if ($act_key == $act_value) {
                     $result = civicrm_api3('Activity', 'setvalue', array(
-                                                                        'id' => $act_key,
-                                                                        'field' => 'status_id',
-                                                                        'value' => 2
-                                                                   ));
+                        'id' => $act_key,
+                        'field' => 'status_id',
+                        'value' => 2
+                    ));
                 }
                 else {
 
@@ -1376,12 +1377,13 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
             }
 
             $result = civicrm_api3('Activity', 'setvalue', array(
-                                                                    'id' => $form_state['values']['main_id'],
-                                                                    'field' => 'status_id',
-                                                                    'value' => 10 // Set to the Partially Approved Status
-                                                               ));
+                'id' => $form_state['values']['main_id'],
+                'field' => 'status_id',
+                'value' => 10 // Set to the Partially Approved Status
+            ));
 
-            drupal_set_message(t('Leave successfully approved for the selected days'), 'success');
+            // Fire rules events
+            rules_invoke_event('partially_approve_post_event', $user, $target_user, $manager_notes, $leave_type, $leave_date);
         }
 
     }
