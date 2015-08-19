@@ -17,6 +17,12 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     var status_value = 2;
                     var status_type = 'Approved';
                     var status_message = 'The whole leave request has been Approved.';
+
+                    var target_user = 2;
+                    var leave_date = 'approve 2015';
+                    var leave_type = 'Vacation quick approve test 2';
+                    var manager_notes = 'quick approved leave';
+
                 }
                 if (type == 'reject') {
                     var status_value = 9;
@@ -63,6 +69,24 @@ Drupal.behaviors.civihr_employee_portal_filters = {
 
                             // Rebuild filters
                             loadFilters();
+
+                            console.log(Drupal.settings.basePath + 'ajax/quick_approve_notify/' + target_user + '/' + leave_date + '/' + leave_type + '/' + manager_notes);
+
+                            // Notify by email
+                            $.ajax({
+                                type: 'GET',
+                                url: Drupal.settings.basePath + 'ajax/quick_approve_notify/' + target_user + '/' + leave_date + '/' + leave_type + '/' + manager_notes,
+                                success: function(data) {
+
+                                    console.log('here');
+                                    console.log(data);
+
+                                },
+                                error: function(data) {
+                                    console.log(data);
+                                    console.log('Email not sent!');
+                                }
+                            });
 
                             // Notify with popup
                             swal(status_type + "!", status_message, "success");

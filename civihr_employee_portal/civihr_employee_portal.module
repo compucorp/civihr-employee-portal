@@ -752,10 +752,18 @@ function civihr_employee_portal_menu() {
         'title' => 'My Details',
         'page callback' => 'civihr_employee_portal_my_details',
         'access callback' => '_user_has_role',
-        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin')),
+        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin', 'administrator')),
         'type' => MENU_NORMAL_ITEM,
         'menu_name' => 'main-menu',
         'weight' => 4
+    );
+
+    $items['ajax/quick_approve_notify/%/%/%/%'] = array(
+        'title' => 'Quick Approve Leave',
+        'page callback' => '_ajax_approve_all_email_notify',
+        'page arguments' => array(2, 3, 4, 5),
+        'access callback' => '_user_has_role',
+        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin', 'administrator')),
     );
 
     return $items;
@@ -779,6 +787,24 @@ function _user_has_role($roles = array()) {
 
     return FALSE;
 
+}
+
+function _ajax_approve_all_email_notify($target_user, $leave_date, $leave_type, $manager_notes) {
+
+    global $user;
+
+    $target_user = user_load($target_user);
+
+    //$manager_notes = 'test notes';
+
+    //$leave_type = 'Quick Approve';
+
+    //$leave_date = '2015 - 2016';
+
+    // Fire rules events
+    rules_invoke_event('approve_all_post_event', $user, $target_user, $manager_notes, $leave_type, $leave_date);
+
+    watchdog('user invoke', print_r($user, TRUE));
 }
 
 /**
