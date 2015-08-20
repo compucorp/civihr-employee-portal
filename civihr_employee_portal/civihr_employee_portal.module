@@ -811,7 +811,17 @@ function _ajax_quick_email_notify($absence_id, $email_type = NULL) {
     // Pass empty manager notes as this is quick approval
     $manager_notes = '';
 
-    $leave_date = $result->absence_start_date . ' - ' . $result->absence_end_date;
+    // Calculate total duration
+    $duration = $result->duration / (6 * 80);
+
+    if ($duration > 1) {
+        $day = 'days';
+    }
+    else {
+        $day = 'day';
+    }
+
+    $leave_date = explode(" ", $result->absence_start_date)[0] . ' - ' . explode(" ", $result->absence_end_date)[0] . ' = ' . $duration . ' ' . $day;
 
     if ($email_type == 'approve') {
 
