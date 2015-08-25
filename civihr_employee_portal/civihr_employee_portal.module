@@ -2764,9 +2764,7 @@ function civihr_employee_portal_request_new_account_validate($form, &$form_state
 }
 
 function civihr_employee_portal_request_new_account_submit($form, &$form_state) {
-    
-    //user_register_submit($form, $form_state);
-    
+
     $edit = array(
         'name' => $form_state['values']['name'],
         'pass' => user_password(),
@@ -2788,7 +2786,10 @@ function civihr_employee_portal_request_new_account_submit($form, &$form_state) 
             ));
         }
     }
-    
+
+    // Fire rules register events
+    rules_invoke_event('user_and_civi_contact_added', $user);
+
     drupal_set_message(t('Request sent! You will receive email notificiation once your account is activated.'), 'success');
 }
 
