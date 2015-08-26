@@ -905,7 +905,6 @@ function civihr_employee_portal_absence_calendar_callback($ajax) {
         ctools_include('ajax');
         ctools_include('modal');
 
-        drupal_add_js('misc/jquery.form.js');
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
 
@@ -931,7 +930,6 @@ function civihr_employee_portal_manager_approval_show_calendar_callback($ajax) {
         ctools_include('ajax');
         ctools_include('modal');
 
-        drupal_add_js('misc/jquery.form.js');
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
 
@@ -962,8 +960,6 @@ function civihr_employee_portal_hr_resource_load_callback($ajax, $nid) {
         ctools_include('ajax');
         ctools_include('modal');
 
-        drupal_add_js('misc/jquery.form.js');
-
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
 
@@ -991,8 +987,6 @@ function civihr_employee_portal_absence_all_view_callback($ajax) {
 
         ctools_include('ajax');
         ctools_include('modal');
-
-        drupal_add_js('misc/jquery.form.js');
 
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
@@ -1110,8 +1104,6 @@ function civihr_employee_portal_manager_approval_pick_days_callback($ajax, $acti
 
         // If the form has been submitted, there may be additional instructions such as dismissing the modal popup.
         if (!empty($form_state['executed'])) {
-
-            drupal_add_js('misc/jquery.form.js');
 
             // Add the responder javascript, required by ctools
             ctools_add_js('ajax-responder');
@@ -1504,7 +1496,6 @@ function civihr_employee_portal_absence_request_callback($ajax, $absence_type = 
         // such as dismissing the modal popup.
         if (!empty($form_state['executed'])) {
 
-            drupal_add_js('misc/jquery.form.js');
             // Add the responder javascript, required by ctools
             ctools_add_js('ajax-responder');
 
@@ -2129,7 +2120,6 @@ function civihr_employee_portal_edit_document($ajax, $id) {
         // such as dismissing the modal popup.
         if (!empty($form_state['executed'])) {
 
-            drupal_add_js('misc/jquery.form.js');
             // Add the responder javascript, required by ctools
             ctools_add_js('ajax-responder');
 
@@ -2373,7 +2363,6 @@ function civihr_employee_portal_delete_document($ajax, $id) {
         // such as dismissing the modal popup.
         if (!empty($form_state['executed'])) {
 
-            drupal_add_js('misc/jquery.form.js');
             // Add the responder javascript, required by ctools
             ctools_add_js('ajax-responder');
 
@@ -2465,7 +2454,6 @@ function civihr_employee_portal_send_reminder_document($ajax, $id) {
         // such as dismissing the modal popup.
         if (!empty($form_state['executed'])) {
 
-            drupal_add_js('misc/jquery.form.js');
             // Add the responder javascript, required by ctools
             ctools_add_js('ajax-responder');
 
@@ -2632,7 +2620,6 @@ function civihr_employee_portal_request_new_account($ajax) {
         // such as dismissing the modal popup.
         if (!empty($form_state['executed'])) {
 
-            drupal_add_js('misc/jquery.form.js');
             // Add the responder javascript, required by ctools
             ctools_add_js('ajax-responder');
 
@@ -3301,7 +3288,6 @@ function civihr_employee_portal_preprocess_user_login(&$vars) {
     ctools_include('ajax');
     ctools_include('modal');
 
-    drupal_add_js('misc/jquery.form.js');
     ctools_add_js('modal');
     ctools_add_js('ajax-responder');
 
