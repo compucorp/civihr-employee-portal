@@ -82,7 +82,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
     'settings' => array(
       'description_field' => 1,
       'file_directory' => 'hr-documents',
-      'file_extensions' => 'txt pdf csv xls doc',
+      'file_extensions' => 'txt pdf csv xls doc docx jpg jpeg gif mov mp4 png',
       'max_filesize' => '2 MB',
       'user_register_form' => FALSE,
     ),
