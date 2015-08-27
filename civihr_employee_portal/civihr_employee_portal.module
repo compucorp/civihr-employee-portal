@@ -3209,6 +3209,12 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
+    // Alter HR documents node creation page
+    if ($form_id == 'hr_documents_node_form') {
+        // Make the fields hidden -> https://compucorp.atlassian.net/browse/PCHR-358
+        $form['field_download']['#attributes'] = array('style' => 'display:none');
+    }
+
     // Alter system settings form and add CiviHR specific settings
     if ($form_id == 'system_site_information_settings') {
 
