@@ -4,6 +4,7 @@ core = 7.x
 package = Compucorp
 dependencies[] = views
 dependencies[] = views_ui
+dependencies[] = node_export
 dependencies[] = tipsy
 dependencies[] = views_tooltip
 dependencies[] = xautoload
