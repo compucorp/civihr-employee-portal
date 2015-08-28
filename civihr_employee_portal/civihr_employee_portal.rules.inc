@@ -34,6 +34,38 @@ function civihr_employee_portal_rules_event_info() {
                 'leave_date' => array('type' => 'text', 'label' => t('Leave Date and Duration.')),
             ),
         ),
+        'approve_all_post_event' => array(
+            'label' => t('Approve All button event - All Absence Approved'),
+            'group' => t('Absence entity'),
+            'module' => 'civihr_employee_portal',
+            'variables' => array(
+                'current_user' => array('type' => 'user', 'label' => t('The current logged in user from Absence entity.')),
+                'target_user' => array('type' => 'user', 'label' => t('The target User entity.')),
+                'manager_notes' => array('type' => 'text', 'label' => t('Manager notes.')),
+                'leave_type' => array('type' => 'text', 'label' => t('Leave Type.')),
+                'leave_date' => array('type' => 'text', 'label' => t('Leave Date and Duration.')),
+            ),
+        ),
+        'partially_approve_post_event' => array(
+            'label' => t('Approve Selected button event - Partial Absence Approval'),
+            'group' => t('Absence entity'),
+            'module' => 'civihr_employee_portal',
+            'variables' => array(
+                'current_user' => array('type' => 'user', 'label' => t('The current logged in user from Absence entity.')),
+                'target_user' => array('type' => 'user', 'label' => t('The target User entity.')),
+                'manager_notes' => array('type' => 'text', 'label' => t('Manager notes.')),
+                'leave_type' => array('type' => 'text', 'label' => t('Leave Type.')),
+                'leave_date' => array('type' => 'text', 'label' => t('Leave Date and Duration.')),
+            ),
+        ),
+        'user_and_civi_contact_added' => array(
+            'label' => t('Employee requests access for the Self Service Portal'),
+            'group' => t('Absence entity'),
+            'module' => 'civihr_employee_portal',
+            'variables' => array(
+                'current_user' => array('type' => 'user', 'label' => t('The current logged in user from Absence entity.')),
+            ),
+        ),
     );
 }
 

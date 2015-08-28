@@ -17,6 +17,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     var status_value = 2;
                     var status_type = 'Approved';
                     var status_message = 'The whole leave request has been Approved.';
+
                 }
                 if (type == 'reject') {
                     var status_value = 9;
@@ -63,6 +64,21 @@ Drupal.behaviors.civihr_employee_portal_filters = {
 
                             // Rebuild filters
                             loadFilters();
+
+                            console.log(Drupal.settings.basePath + 'ajax/quick_email_notify/' + clicked_object + '/' + type);
+
+                            // Notify by email
+                            $.ajax({
+                                type: 'GET',
+                                url: Drupal.settings.basePath + 'ajax/quick_email_notify/' + clicked_object + '/' + type,
+                                success: function(data) {
+                                    console.log('Email sent');
+                                },
+                                error: function(data) {
+                                    console.log(data);
+                                    console.log('Email not sent!');
+                                }
+                            });
 
                             // Notify with popup
                             swal(status_type + "!", status_message, "success");

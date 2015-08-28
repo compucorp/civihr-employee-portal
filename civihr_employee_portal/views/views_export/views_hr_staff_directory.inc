@@ -22,9 +22,9 @@ $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
 $handler->display->display_options['access']['role'] = array(
-  55120974 => '55120974',
-  57573969 => '57573969',
-  17087012 => '17087012',
+    55120974 => '55120974',
+    57573969 => '57573969',
+    17087012 => '17087012',
 );
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
@@ -46,7 +46,7 @@ $handler->display->display_options['style_options']['columns'] = array(
     'contract_type' => 'contract_type',
     'department' => 'department',
 );
-$handler->display->display_options['style_options']['default'] = 'display_name';
+$handler->display->display_options['style_options']['default'] = '';
 $handler->display->display_options['style_options']['info'] = array(
     'display_name' => array(
         'sortable' => 1,
@@ -136,7 +136,7 @@ $handler->display->display_options['fields']['display_name']['id'] = 'display_na
 $handler->display->display_options['fields']['display_name']['table'] = 'civicrm_contact';
 $handler->display->display_options['fields']['display_name']['field'] = 'display_name';
 $handler->display->display_options['fields']['display_name']['label'] = 'Name';
-$handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 1;
+$handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 0;
 /* Field: CiviCRM Phone Details: Phone Number */
 $handler->display->display_options['fields']['phone']['id'] = 'phone';
 $handler->display->display_options['fields']['phone']['table'] = 'civicrm_phone';
@@ -331,6 +331,58 @@ $handler->display->display_options['filters']['department']['expose']['autocompl
 $handler->display->display_options['filters']['department']['expose']['autocomplete_raw_suggestion'] = 1;
 $handler->display->display_options['filters']['department']['expose']['autocomplete_raw_dropdown'] = 1;
 $handler->display->display_options['filters']['department']['expose']['autocomplete_dependent'] = 0;
+/* Filter criterion: HRJobContract Details entity: Location */
+$handler->display->display_options['filters']['location']['id'] = 'location';
+$handler->display->display_options['filters']['location']['table'] = 'hrjc_details';
+$handler->display->display_options['filters']['location']['field'] = 'location';
+$handler->display->display_options['filters']['location']['relationship'] = 'hrjc_details';
+$handler->display->display_options['filters']['location']['operator'] = 'contains';
+$handler->display->display_options['filters']['location']['exposed'] = TRUE;
+$handler->display->display_options['filters']['location']['expose']['operator_id'] = 'location_op';
+$handler->display->display_options['filters']['location']['expose']['label'] = 'Location';
+$handler->display->display_options['filters']['location']['expose']['operator'] = 'location_op';
+$handler->display->display_options['filters']['location']['expose']['identifier'] = 'location';
+$handler->display->display_options['filters']['location']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    4 => 0,
+    6 => 0,
+    5 => 0,
+);
+$handler->display->display_options['filters']['location']['expose']['autocomplete_filter'] = 1;
+$handler->display->display_options['filters']['location']['expose']['autocomplete_items'] = '10';
+$handler->display->display_options['filters']['location']['expose']['autocomplete_min_chars'] = '0';
+$handler->display->display_options['filters']['location']['expose']['autocomplete_field'] = 'location';
+$handler->display->display_options['filters']['location']['expose']['autocomplete_raw_suggestion'] = 1;
+$handler->display->display_options['filters']['location']['expose']['autocomplete_raw_dropdown'] = 1;
+$handler->display->display_options['filters']['location']['expose']['autocomplete_dependent'] = 0;
+/* Filter criterion: CiviCRM Contacts: Display Name */
+$handler->display->display_options['filters']['display_name_1']['id'] = 'display_name_1';
+$handler->display->display_options['filters']['display_name_1']['table'] = 'civicrm_contact';
+$handler->display->display_options['filters']['display_name_1']['field'] = 'display_name';
+$handler->display->display_options['filters']['display_name_1']['relationship'] = 'contact_id_b_';
+$handler->display->display_options['filters']['display_name_1']['operator'] = 'contains';
+$handler->display->display_options['filters']['display_name_1']['exposed'] = TRUE;
+$handler->display->display_options['filters']['display_name_1']['expose']['operator_id'] = 'display_name_1_op';
+$handler->display->display_options['filters']['display_name_1']['expose']['label'] = 'Manager';
+$handler->display->display_options['filters']['display_name_1']['expose']['operator'] = 'display_name_1_op';
+$handler->display->display_options['filters']['display_name_1']['expose']['identifier'] = 'display_name_1';
+$handler->display->display_options['filters']['display_name_1']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    4 => 0,
+    6 => 0,
+    5 => 0,
+);
+$handler->display->display_options['filters']['display_name_1']['expose']['autocomplete_filter'] = 1;
+$handler->display->display_options['filters']['display_name_1']['expose']['autocomplete_items'] = '10';
+$handler->display->display_options['filters']['display_name_1']['expose']['autocomplete_min_chars'] = '0';
+$handler->display->display_options['filters']['display_name_1']['expose']['autocomplete_field'] = 'display_name_1';
+$handler->display->display_options['filters']['display_name_1']['expose']['autocomplete_raw_suggestion'] = 1;
+$handler->display->display_options['filters']['display_name_1']['expose']['autocomplete_raw_dropdown'] = 1;
+$handler->display->display_options['filters']['display_name_1']['expose']['autocomplete_dependent'] = 0;
 
 /* Display: Staff directory list page */
 $handler = $view->new_display('page', 'Staff directory list page', 'page');
@@ -371,5 +423,6 @@ $translatables['civihr_staff_directory'] = array(
     t('Department'),
     t('Manager'),
     t('Phone'),
+    t('Location'),
     t('Staff directory list page'),
 );

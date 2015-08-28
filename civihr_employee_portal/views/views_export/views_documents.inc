@@ -19,7 +19,7 @@ $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
 $handler->display->display_options['access']['role'] = array(
-  17087012 => '17087012',
+    17087012 => '17087012',
 );
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
@@ -37,9 +37,9 @@ $handler->display->display_options['style_plugin'] = 'default';
 $handler->display->display_options['style_options']['row_class'] = 'row-fluid';
 $handler->display->display_options['row_plugin'] = 'fields';
 $handler->display->display_options['row_options']['inline'] = array(
-  'id' => 'id',
-  'subject' => 'subject',
-  'details' => 'details',
+    'id' => 'id',
+    'subject' => 'subject',
+    'details' => 'details',
 );
 /* Field: id: value */
 $handler->display->display_options['fields']['id']['id'] = 'id';
@@ -164,111 +164,111 @@ $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'table';
 $handler->display->display_options['style_options']['row_class_special'] = FALSE;
 $handler->display->display_options['style_options']['columns'] = array(
-  'id' => 'id',
-  'activity_type_id' => 'activity_type_id',
-  'case_id' => 'case_id',
-  'subject' => 'subject',
-  'activity_date_time' => 'activity_date_time',
-  'expire_date' => 'expire_date',
-  'details' => 'details',
-  'source_contact_id' => 'source_contact_id',
-  'target_contact_id' => 'target_contact_id',
-  'assignee_contact_id' => 'assignee_contact_id',
-  'file_count' => 'file_count',
-  'status_id' => 'status_id',
-  'document_targets' => 'document_targets',
+    'id' => 'id',
+    'activity_type_id' => 'activity_type_id',
+    'case_id' => 'case_id',
+    'subject' => 'subject',
+    'activity_date_time' => 'activity_date_time',
+    'expire_date' => 'expire_date',
+    'details' => 'details',
+    'source_contact_id' => 'source_contact_id',
+    'target_contact_id' => 'target_contact_id',
+    'assignee_contact_id' => 'assignee_contact_id',
+    'file_count' => 'file_count',
+    'status_id' => 'status_id',
+    'document_targets' => 'document_targets',
 );
 $handler->display->display_options['style_options']['default'] = '-1';
 $handler->display->display_options['style_options']['info'] = array(
-  'id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'activity_type_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'case_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'subject' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'activity_date_time' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'expire_date' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'details' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'source_contact_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'target_contact_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'assignee_contact_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'file_count' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'status_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'document_targets' => array(
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
+    'id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'activity_type_id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'case_id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'subject' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'activity_date_time' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'expire_date' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'details' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'source_contact_id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'target_contact_id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'assignee_contact_id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'file_count' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'status_id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'document_targets' => array(
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
 );
 $handler->display->display_options['defaults']['style_options'] = FALSE;
 $handler->display->display_options['defaults']['row_plugin'] = FALSE;
@@ -401,7 +401,7 @@ $handler->display->display_options['title'] = 'Documents Manager';
 $handler->display->display_options['defaults']['access'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
 $handler->display->display_options['access']['role'] = array(
-  57573969 => '57573969',
+    57573969 => '57573969',
 );
 $handler->display->display_options['defaults']['query'] = FALSE;
 $handler->display->display_options['query']['type'] = 'views_query';
@@ -415,105 +415,105 @@ $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'table';
 $handler->display->display_options['style_options']['row_class_special'] = FALSE;
 $handler->display->display_options['style_options']['columns'] = array(
-  'id' => 'id',
-  'activity_type_id' => 'activity_type_id',
-  'case_id' => 'case_id',
-  'subject' => 'subject',
-  'activity_date_time' => 'activity_date_time',
-  'expire_date' => 'expire_date',
-  'details' => 'details',
-  'source_contact_id' => 'source_contact_id',
-  'target_contact_id' => 'target_contact_id',
-  'assignee_contact_id' => 'assignee_contact_id',
-  'file_count' => 'file_count',
-  'status_id' => 'status_id',
+    'id' => 'id',
+    'activity_type_id' => 'activity_type_id',
+    'case_id' => 'case_id',
+    'subject' => 'subject',
+    'activity_date_time' => 'activity_date_time',
+    'expire_date' => 'expire_date',
+    'details' => 'details',
+    'source_contact_id' => 'source_contact_id',
+    'target_contact_id' => 'target_contact_id',
+    'assignee_contact_id' => 'assignee_contact_id',
+    'file_count' => 'file_count',
+    'status_id' => 'status_id',
 );
 $handler->display->display_options['style_options']['default'] = '-1';
 $handler->display->display_options['style_options']['info'] = array(
-  'id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'activity_type_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'case_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'subject' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'activity_date_time' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'expire_date' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'details' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'source_contact_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'target_contact_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'assignee_contact_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'file_count' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
-  'status_id' => array(
-    'sortable' => 0,
-    'default_sort_order' => 'asc',
-    'align' => '',
-    'separator' => '',
-    'empty_column' => 0,
-  ),
+    'id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'activity_type_id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'case_id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'subject' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'activity_date_time' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'expire_date' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'details' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'source_contact_id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'target_contact_id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'assignee_contact_id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'file_count' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
+    'status_id' => array(
+        'sortable' => 0,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    ),
 );
 $handler->display->display_options['defaults']['style_options'] = FALSE;
 $handler->display->display_options['defaults']['row_plugin'] = FALSE;
@@ -528,6 +528,16 @@ $handler->display->display_options['fields']['id']['label'] = 'Document ID';
 $handler->display->display_options['fields']['id']['element_class'] = 'hidden';
 $handler->display->display_options['fields']['id']['element_label_class'] = 'hidden';
 $handler->display->display_options['fields']['id']['key'] = 'id';
+/* Field: target_contact_id: Document contacts */
+$handler->display->display_options['fields']['document_contacts']['id'] = 'document_contacts';
+$handler->display->display_options['fields']['document_contacts']['table'] = 'json';
+$handler->display->display_options['fields']['document_contacts']['field'] = 'document_contacts';
+$handler->display->display_options['fields']['document_contacts']['label'] = 'Target Contact';
+$handler->display->display_options['fields']['document_contacts']['element_type'] = 'div';
+$handler->display->display_options['fields']['document_contacts']['element_label_type'] = 'strong';
+$handler->display->display_options['fields']['document_contacts']['element_wrapper_type'] = 'div';
+$handler->display->display_options['fields']['document_contacts']['element_wrapper_class'] = 'document-wrapper';
+$handler->display->display_options['fields']['document_contacts']['key'] = 'target_contact_id';
 /* Field: activity_type_id: value */
 $handler->display->display_options['fields']['activity_type_id']['id'] = 'activity_type_id';
 $handler->display->display_options['fields']['activity_type_id']['table'] = 'json';
@@ -612,13 +622,6 @@ $handler->display->display_options['fields']['status_id']['element_label_type'] 
 $handler->display->display_options['fields']['status_id']['element_wrapper_type'] = 'div';
 $handler->display->display_options['fields']['status_id']['element_wrapper_class'] = 'document-wrapper';
 $handler->display->display_options['fields']['status_id']['key'] = 'status_id';
-/* Field: target_contact_id: Document contacts */
-$handler->display->display_options['fields']['document_contacts']['id'] = 'document_contacts';
-$handler->display->display_options['fields']['document_contacts']['table'] = 'json';
-$handler->display->display_options['fields']['document_contacts']['field'] = 'document_contacts';
-$handler->display->display_options['fields']['document_contacts']['label'] = 'Document contacts (target)';
-$handler->display->display_options['fields']['document_contacts']['exclude'] = TRUE;
-$handler->display->display_options['fields']['document_contacts']['key'] = 'target_contact_id';
 /* Field: assignee_contact_id: Document contacts */
 $handler->display->display_options['fields']['document_contacts_1']['id'] = 'document_contacts_1';
 $handler->display->display_options['fields']['document_contacts_1']['table'] = 'json';
@@ -638,39 +641,40 @@ $handler->display->display_options['arguments']['document_targets']['name'] = 'a
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
 $translatables['Documents'] = array(
-  t('Master'),
-  t('Documents and Downloads'),
-  t('more'),
-  t('Search'),
-  t('Reset'),
-  t('Sort by'),
-  t('Asc'),
-  t('Desc'),
-  t('Items per page'),
-  t('- All -'),
-  t('Offset'),
-  t('« first'),
-  t('‹ previous'),
-  t('next ›'),
-  t('last »'),
-  t('Document ID'),
-  t('Activity Type ID'),
-  t('Case ID'),
-  t('Subject'),
-  t('Activity Date'),
-  t('Expire Date'),
-  t('Details'),
-  t('File Count'),
-  t('Status ID'),
-  t('Document contacts (target)'),
-  t('Document contacts (assignee)'),
-  t('All'),
-  t('Documents Dashboard block'),
-  t('Documents'),
-  t('Type'),
-  t('Assignment'),
-  t('Due Date'),
-  t('Status'),
-  t('Documents Dashboard Manager block'),
-  t('Documents Manager'),
+    t('Master'),
+    t('Documents and Downloads'),
+    t('more'),
+    t('Search'),
+    t('Reset'),
+    t('Sort by'),
+    t('Asc'),
+    t('Desc'),
+    t('Items per page'),
+    t('- All -'),
+    t('Offset'),
+    t('« first'),
+    t('‹ previous'),
+    t('next ›'),
+    t('last »'),
+    t('Document ID'),
+    t('Activity Type ID'),
+    t('Case ID'),
+    t('Subject'),
+    t('Activity Date'),
+    t('Expire Date'),
+    t('Details'),
+    t('File Count'),
+    t('Status ID'),
+    t('Document contacts (target)'),
+    t('Document contacts (assignee)'),
+    t('All'),
+    t('Documents Dashboard block'),
+    t('Documents'),
+    t('Type'),
+    t('Assignment'),
+    t('Due Date'),
+    t('Status'),
+    t('Documents Dashboard Manager block'),
+    t('Documents Manager'),
+    t('Target Contact'),
 );

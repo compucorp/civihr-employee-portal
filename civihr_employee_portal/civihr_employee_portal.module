@@ -752,10 +752,18 @@ function civihr_employee_portal_menu() {
         'title' => 'My Details',
         'page callback' => 'civihr_employee_portal_my_details',
         'access callback' => '_user_has_role',
-        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin')),
+        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin', 'administrator')),
         'type' => MENU_NORMAL_ITEM,
         'menu_name' => 'main-menu',
         'weight' => 4
+    );
+
+    $items['ajax/quick_email_notify/%/%'] = array(
+        'title' => 'Quick Approve Leave',
+        'page callback' => '_ajax_quick_email_notify',
+        'page arguments' => array(2, 3),
+        'access callback' => '_user_has_role',
+        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin', 'administrator')),
     );
 
     return $items;
@@ -779,6 +787,77 @@ function _user_has_role($roles = array()) {
 
     return FALSE;
 
+}
+
+/**
+ * Quick Approve/Reject email notifications
+ * Used to trigger rules events from javascript calls
+ * @param $absence_id
+ */
+function _ajax_quick_email_notify($absence_id, $email_type = NULL) {
+
+    global $user;
+
+    // Get additional details about the absence
+    $q = db_select('absence_approval_list', 'aal')
+        ->fields('aal', array('absence_title', 'absence_start_date', 'absence_end_date', 'duration', 'employee_id'))
+        ->condition('id', $absence_id);
+
+    $result = $q->execute()->fetchObject();
+
+    // Loads the target user based on passed user ID
+    $target_user = user_load(_get_uf_match_contact($result->employee_id)['uf_id']);
+
+    // Pass empty manager notes as this is quick approval
+    $manager_notes = '';
+
+    // Calculate total duration
+    $duration = $result->duration / (6 * 80);
+
+    if ($duration > 1) {
+        $day = 'days';
+    }
+    else {
+        $day = 'day';
+    }
+
+    $leave_date = explode(" ", $result->absence_start_date)[0] . ' - ' . explode(" ", $result->absence_end_date)[0] . ' = ' . $duration . ' ' . $day;
+
+    if ($email_type == 'approve') {
+
+        // Fire rules events
+        rules_invoke_event('approve_all_post_event', $user, $target_user, $manager_notes, $result->absence_title, $leave_date);
+
+    }
+
+    if ($email_type == 'reject') {
+
+        // Fire rules events
+        rules_invoke_event('reject_all_post_event', $user, $target_user, $manager_notes, $result->absence_title, $leave_date);
+
+    }
+
+}
+
+/**
+ * Loads civicrm_uf_match data based on passed contact_id
+ * @param $contact_id
+ * @return mixed
+ * @throws CiviCRM_API3_Exception
+ */
+function _get_uf_match_contact($contact_id) {
+
+    $params = array(
+        'contact_id' => $contact_id,
+        'version' => 3,
+        'sequential' => 1,
+    );
+
+    // Get the "civicrm_uf_match" data from the passed target contact ID
+    $res = civicrm_api3('UFMatch', 'Get', $params);
+    $uf_match_data = array_shift($res['values']);
+
+    return $uf_match_data;
 }
 
 /**
@@ -826,7 +905,6 @@ function civihr_employee_portal_absence_calendar_callback($ajax) {
         ctools_include('ajax');
         ctools_include('modal');
 
-        drupal_add_js('misc/jquery.form.js');
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
 
@@ -852,7 +930,6 @@ function civihr_employee_portal_manager_approval_show_calendar_callback($ajax) {
         ctools_include('ajax');
         ctools_include('modal');
 
-        drupal_add_js('misc/jquery.form.js');
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
 
@@ -883,8 +960,6 @@ function civihr_employee_portal_hr_resource_load_callback($ajax, $nid) {
         ctools_include('ajax');
         ctools_include('modal');
 
-        drupal_add_js('misc/jquery.form.js');
-
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
 
@@ -912,8 +987,6 @@ function civihr_employee_portal_absence_all_view_callback($ajax) {
 
         ctools_include('ajax');
         ctools_include('modal');
-
-        drupal_add_js('misc/jquery.form.js');
 
         // Add the responder javascript, required by ctools
         ctools_add_js('ajax-responder');
@@ -1031,8 +1104,6 @@ function civihr_employee_portal_manager_approval_pick_days_callback($ajax, $acti
 
         // If the form has been submitted, there may be additional instructions such as dismissing the modal popup.
         if (!empty($form_state['executed'])) {
-
-            drupal_add_js('misc/jquery.form.js');
 
             // Add the responder javascript, required by ctools
             ctools_add_js('ajax-responder');
@@ -1255,6 +1326,18 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
     // Current USER object
     global $user;
 
+    // Set the target user OBJECT
+    $target_user = user_load(_get_uf_match_contact($form_state['user_data'])['uf_id']);
+
+    // Get the manager notes
+    $manager_notes = drupal_html_to_text(nl2br($form_state['values']['manager_notes']));
+
+    // Get the leave type
+    $leave_type = $form_state['values']['hidden_leave_type'];
+
+    // Get the Start Date / End Date + duration of the leave
+    $leave_date = $form_state['values']['hidden_whole_duration'];
+
     // @TODO -> move to custom rules action (so it will be configurable through UI)
     if ($form_state['values']['op'] == 'Reject all') {
         if (isset($form_state['values']['pick_day_checkboxes'])) {
@@ -1292,28 +1375,6 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
                 'value' => $form_state['values']['manager_notes']
             ));
 
-            $params = array(
-                'contact_id' => $form_state['user_data'],
-                'version' => 3,
-                'sequential' => 1,
-            );
-
-            // Get the USER ID from the passed target contact ID
-            $res = civicrm_api3('UFMatch', 'Get', $params);
-            $contact_data = array_shift($res['values']);
-
-            // Set the target user OBJECT
-            $target_user = user_load($contact_data['uf_id']);
-
-            // Get the manager notes
-            $manager_notes = drupal_html_to_text(nl2br($form_state['values']['manager_notes']));
-
-            // Get the leave type
-            $leave_type = $form_state['values']['hidden_leave_type'];
-
-            // Get the Start Date / End Date + duration of the leave
-            $leave_date = $form_state['values']['hidden_whole_duration'];
-
             // Fire rules events
             rules_invoke_event('reject_all_post_event', $user, $target_user, $manager_notes, $leave_type, $leave_date);
 
@@ -1330,20 +1391,21 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
             foreach ($form_state['values']['pick_day_checkboxes'] as $act_key => $act_value) {
 
                 $result = civicrm_api3('Activity', 'setvalue', array(
-                                                                    'id' => $act_key,
-                                                                    'field' => 'status_id',
-                                                                    'value' => 2
-                                                               ));
+                    'id' => $act_key,
+                    'field' => 'status_id',
+                    'value' => 2
+                ));
 
             }
 
             $result = civicrm_api3('Activity', 'setvalue', array(
-                                                                    'id' => $form_state['values']['main_id'],
-                                                                    'field' => 'status_id',
-                                                                    'value' => 2
-                                                               ));
+                'id' => $form_state['values']['main_id'],
+                'field' => 'status_id',
+                'value' => 2
+            ));
 
-            drupal_set_message(t('Leave successfully approved for the whole duration'), 'success');
+            // Fire rules events
+            rules_invoke_event('approve_all_post_event', $user, $target_user, $manager_notes, $leave_type, $leave_date);
         }
 
     }
@@ -1358,10 +1420,10 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
 
                 if ($act_key == $act_value) {
                     $result = civicrm_api3('Activity', 'setvalue', array(
-                                                                        'id' => $act_key,
-                                                                        'field' => 'status_id',
-                                                                        'value' => 2
-                                                                   ));
+                        'id' => $act_key,
+                        'field' => 'status_id',
+                        'value' => 2
+                    ));
                 }
                 else {
 
@@ -1376,12 +1438,13 @@ function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$
             }
 
             $result = civicrm_api3('Activity', 'setvalue', array(
-                                                                    'id' => $form_state['values']['main_id'],
-                                                                    'field' => 'status_id',
-                                                                    'value' => 10 // Set to the Partially Approved Status
-                                                               ));
+                'id' => $form_state['values']['main_id'],
+                'field' => 'status_id',
+                'value' => 10 // Set to the Partially Approved Status
+            ));
 
-            drupal_set_message(t('Leave successfully approved for the selected days'), 'success');
+            // Fire rules events
+            rules_invoke_event('partially_approve_post_event', $user, $target_user, $manager_notes, $leave_type, $leave_date);
         }
 
     }
@@ -1433,7 +1496,6 @@ function civihr_employee_portal_absence_request_callback($ajax, $absence_type = 
         // such as dismissing the modal popup.
         if (!empty($form_state['executed'])) {
 
-            drupal_add_js('misc/jquery.form.js');
             // Add the responder javascript, required by ctools
             ctools_add_js('ajax-responder');
 
@@ -1755,6 +1817,10 @@ function civihr_employee_portal_absence_request_form_validate($form, &$form_stat
             if ($request_timestamp < strtotime('today') && $form_state['values']['absence_type'] != "sick")
                 form_set_error('absence_request_date_from', t('Only Sickness can be requested with start date in the past!'));
 
+            // If we requested leave with start date in the future (applies only if leave type is "sick")
+            if ($request_timestamp > strtotime('today') && $form_state['values']['absence_type'] == "sick")
+                form_set_error('absence_request_date_from', t('You are not allowed to report Sickness in advance!'));
+
             // Check if we have enough leave left to request this leave (only if leave type is DEBIT or CREDIT_USE) -> deducting days
             if (isset($form_state['values']['absence_type']) && ($form_state['values']['absence_type'] == 'debit' || $form_state['values']['absence_type'] == 'credit_use')) {
 
@@ -2054,7 +2120,6 @@ function civihr_employee_portal_edit_document($ajax, $id) {
         // such as dismissing the modal popup.
         if (!empty($form_state['executed'])) {
 
-            drupal_add_js('misc/jquery.form.js');
             // Add the responder javascript, required by ctools
             ctools_add_js('ajax-responder');
 
@@ -2244,6 +2309,24 @@ function civihr_employee_portal_document_form_submit($form, &$form_state) {
         }
     }
     
+    $documentResult = civicrm_api3('Document', 'get', array(
+        'sequential' => 1,
+        'id' => $id,
+    ));
+    if ($documentResult['count']) {
+        $document = CRM_Utils_Array::first($documentResult['values']);
+        if ($document['file_count']) {
+            $result = civicrm_api3('Document', 'create', array(
+                'sequential' => 1,
+                'id' => $id,
+                'status_id' => 2,
+            ));
+        }
+    }
+    
+    $folder_real_path = drupal_realpath('public://') . '/views_json_query/';
+    _remove_json_cache_files($folder_real_path);
+    
     drupal_set_message(t('Document changes has been saved.'), 'success');
 }
 
@@ -2280,7 +2363,6 @@ function civihr_employee_portal_delete_document($ajax, $id) {
         // such as dismissing the modal popup.
         if (!empty($form_state['executed'])) {
 
-            drupal_add_js('misc/jquery.form.js');
             // Add the responder javascript, required by ctools
             ctools_add_js('ajax-responder');
 
@@ -2372,7 +2454,6 @@ function civihr_employee_portal_send_reminder_document($ajax, $id) {
         // such as dismissing the modal popup.
         if (!empty($form_state['executed'])) {
 
-            drupal_add_js('misc/jquery.form.js');
             // Add the responder javascript, required by ctools
             ctools_add_js('ajax-responder');
 
@@ -2539,7 +2620,6 @@ function civihr_employee_portal_request_new_account($ajax) {
         // such as dismissing the modal popup.
         if (!empty($form_state['executed'])) {
 
-            drupal_add_js('misc/jquery.form.js');
             // Add the responder javascript, required by ctools
             ctools_add_js('ajax-responder');
 
@@ -2671,9 +2751,7 @@ function civihr_employee_portal_request_new_account_validate($form, &$form_state
 }
 
 function civihr_employee_portal_request_new_account_submit($form, &$form_state) {
-    
-    //user_register_submit($form, $form_state);
-    
+
     $edit = array(
         'name' => $form_state['values']['name'],
         'pass' => user_password(),
@@ -2695,7 +2773,10 @@ function civihr_employee_portal_request_new_account_submit($form, &$form_state) 
             ));
         }
     }
-    
+
+    // Fire rules register events
+    rules_invoke_event('user_and_civi_contact_added', $user);
+
     drupal_set_message(t('Request sent! You will receive email notificiation once your account is activated.'), 'success');
 }
 
@@ -3128,6 +3209,12 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
+    // Alter HR documents node creation page
+    if ($form_id == 'hr_documents_node_form') {
+        // Make the fields hidden -> https://compucorp.atlassian.net/browse/PCHR-358
+        $form['field_download']['#attributes'] = array('style' => 'display:none');
+    }
+
     // Alter system settings form and add CiviHR specific settings
     if ($form_id == 'system_site_information_settings') {
 
@@ -3207,7 +3294,6 @@ function civihr_employee_portal_preprocess_user_login(&$vars) {
     ctools_include('ajax');
     ctools_include('modal');
 
-    drupal_add_js('misc/jquery.form.js');
     ctools_add_js('modal');
     ctools_add_js('ajax-responder');
 
