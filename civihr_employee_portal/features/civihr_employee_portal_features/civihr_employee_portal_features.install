@@ -5,6 +5,14 @@
  */
 function civihr_employee_portal_features_install() {
 
+    // Disable not needed blocks
+    db_update('block')
+        ->fields(array('region' => -2))
+        ->condition('theme', 'civihr_default_theme')
+        ->condition('region', 'content')
+        ->condition('delta', 'main', '!=')
+        ->execute();
+
     // Set up front page URLs based on Role IDs (if the site is update not new install this can cause problems)
     // @TODO --> For site updates we will need to find the matching RID's first
     $values = array(
