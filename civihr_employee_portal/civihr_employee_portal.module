@@ -1587,6 +1587,14 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
         '#suffix'=> '</div>'
     );
 
+    $form['absence_file'] = array(
+        '#type' => 'file',
+        '#title' => t('Document'),
+        '#description' => t('Upload supporting documentation if needed, allowed extensions: jpg, jpeg, png, gif'),
+        '#prefix' => '<div class="modal-civihr-custom__section">',
+        '#suffix'=> '</div>'
+     );
+
     $form['absence_request_date_from'] = array(
         '#title' => t('From:'),
         '#type' => 'date_popup',
