@@ -891,7 +891,7 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
         return '' . l($link_text, 'civi_documents/nojs/edit/' . $nid, array('attributes' => array('class' => 'ctools-use-modal ctools-modal-civihr-default-style'))) . '';
     }
 
-    return '' . l($link_text, 'absence_request/nojs/' . $link_type, array('attributes' => array('class' => 'btn btn-custom ctools-use-modal ctools-modal-civihr-default-style'))) . '';
+    return '' . l($link_text, 'absence_request/nojs/' . $link_type, array('attributes' => array('class' => 'btn btn-custom ctools-use-modal ctools-modal-civihr-custom-style'))) . '';
 
 }
 
@@ -1577,11 +1577,13 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
         }
     }
 
+    $form['#attributes']['class'][] = 'civihr_form--modal';
+
     $form['absence_request_type'] = array(
         '#title' => t('Type:'),
         '#type' => 'select',
         '#options' => $options,
-        '#prefix' => '<div class="modal-civihr-default-modal__section--strip">',
+        '#prefix' => '<div class="modal-civihr-custom__section--strip">',
         '#suffix'=> '</div>'
     );
 
@@ -1591,7 +1593,7 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
         '#required' => 'TRUE',
         '#date_format' => 'Y-m-d',
         '#date_year_range' => '-2:+2',
-        '#prefix' => '<div class="modal-civihr-default-modal__section">'
+        '#prefix' => '<div class="modal-civihr-custom__section">'
     );
 
     $form['absence_request_date_to'] = array(
@@ -1609,7 +1611,7 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
     );
 
     $form['absence_request_dates_selected'] = array(
-        '#prefix' => '<div id="absence-request-dates-selected" class="hide modal-civihr-default-modal__section">',
+        '#prefix' => '<div id="absence-request-dates-selected" class="hide modal-civihr-custom__section">',
         '#suffix' => '</div>'
     );
 
@@ -1681,7 +1683,7 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
         '#title' => t('Notes:'),
         '#rows' => 10,
         '#cols' => null,
-        '#prefix' => '<div class="modal-civihr-default-modal__section">',
+        '#prefix' => '<div class="modal-civihr-custom__section">',
         '#suffix'=> '</div>'
     );
 
@@ -1691,7 +1693,7 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => t('Submit'),
-        '#prefix' => '<div class="modal-civihr-default-modal__footer">',
+        '#prefix' => '<div class="modal-civihr-custom__footer">',
         '#suffix'=> '</div>'
     );
 

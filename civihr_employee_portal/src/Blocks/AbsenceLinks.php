@@ -20,7 +20,12 @@ class AbsenceLinks {
                     'opacity' => .5,
                     'background-color' => '#000',
                 ),
+                'modalSize' => array(
+                    'height' => 'auto',
+                    'width' => 'auto'
+                ),
                 'animation' => 'fadeIn',
+                'modalClass' => 'civihr-default-modal'
             ),
         );
         
