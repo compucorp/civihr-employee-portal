@@ -891,7 +891,7 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
         return '' . l($link_text, 'civi_documents/nojs/edit/' . $nid, array('attributes' => array('class' => 'ctools-use-modal ctools-modal-civihr-default-style'))) . '';
     }
 
-    return '' . l($link_text, 'absence_request/nojs/' . $link_type, array('attributes' => array('class' => 'btn btn-custom ctools-use-modal ctools-modal-civihr-default-style'))) . '';
+    return '' . l($link_text, 'absence_request/nojs/' . $link_type, array('attributes' => array('class' => 'btn btn-custom ctools-use-modal ctools-modal-civihr-custom-style'))) . '';
 
 }
 
@@ -1577,17 +1577,24 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
         }
     }
 
+    $form['#attributes']['class'][] = 'civihr_form--modal civihr_form--request-leave';
+
     $form['absence_request_type'] = array(
         '#title' => t('Type:'),
         '#type' => 'select',
         '#options' => $options,
+        '#prefix' => '<div class="modal-civihr-custom__section--strip">',
+        '#suffix'=> '</div>'
     );
 
     $form['absence_file'] = array(
         '#type' => 'file',
         '#title' => t('Document'),
+        '#attributes' => array('size' => ''),
         '#description' => t('Upload supporting documentation if needed, allowed extensions: jpg, jpeg, png, gif'),
-    );
+        '#prefix' => '<div class="modal-civihr-custom__section">',
+        '#suffix'=> '</div>'
+     );
 
     $form['absence_request_date_from'] = array(
         '#title' => t('From:'),
@@ -1595,10 +1602,11 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
         '#required' => 'TRUE',
         '#date_format' => 'Y-m-d',
         '#date_year_range' => '-2:+2',
+        '#prefix' => '<div class="modal-civihr-custom__section">'
     );
 
     $form['absence_request_date_to'] = array(
-        '#title' => t('To:'),
+        '#title' => t('Until:'),
         '#type' => 'date_popup',
         '#required' => 'TRUE',
         '#ajax' => array(
@@ -1608,18 +1616,18 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
         ),
         '#date_format' => 'Y-m-d',
         '#date_year_range' => '-10:+10',
-        '#prefix'   => '<div id="absence-request-from-date-selected">',
-        '#suffix'=> '</div>'
+        '#suffix' => '</div>'
     );
 
     $form['absence_request_dates_selected'] = array(
-        '#type'     => 'fieldset',
-        '#title'    => t('Selected dates'),
+        '#type' => 'fieldset',
+        '#title' => t('Selected dates'),
         '#markup' => '',
         '#collapsible' => TRUE,
         '#collapsed' => FALSE,
-        '#prefix'   => '<div id="absence-request-dates-selected">',
-        '#suffix'=> '</div>'
+        '#attributes' => array('class' => array('civihr_form__fieldset--transparent')),
+        '#prefix' => '<div id="absence-request-dates-selected" class="hide modal-civihr-custom__section">',
+        '#suffix' => '</div>'
     );
 
     $form['absence_request_dates_selected']['dates_counter'] = array(
@@ -1687,9 +1695,11 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
 
     $form['details'] = array(
         '#type' => 'textarea',
-        '#title' => t('Details:'),
+        '#title' => t('Notes:'),
         '#rows' => 10,
-        '#cols' => 100,
+        '#cols' => null,
+        '#prefix' => '<div class="modal-civihr-custom__section">',
+        '#suffix'=> '</div>'
     );
 
     $form['#validate'][] = 'civihr_employee_portal_absence_request_form_validate';
@@ -1698,16 +1708,33 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => t('Submit'),
+        '#prefix' => '<div class="modal-civihr-custom__footer">',
+        '#suffix'=> '</div>'
     );
 
     return $form;
 }
 
 /**
+ * Just a rough test for now. Showing and hiding the selected dates based on their number
+ */
+function show_hide_selected_dates_section(&$field, $dates_number) {
+    $containing_div = $field['#prefix'];
+    $hidden = strpos($containing_div, 'hide');
+
+    if ($dates_number > 0 && $hidden) {
+        $containing_div = str_replace('hide', '', $containing_div);
+    } elseif ($dates_number == 0 && !$hidden) {
+        $containing_div = str_replace('class="', 'class="hide"', $containing_div);
+    }
+
+    $field['#prefix'] = $containing_div;
+}
+
+/**
  * Ajax callback to change the rendered industry lens taxonomy term
  */
 function jms_industry_lens_form_ajax(&$form, &$form_state) {
-
     // Init leave whole duration
     $whole_duration = 0;
 
@@ -1722,24 +1749,23 @@ function jms_industry_lens_form_ajax(&$form, &$form_state) {
     // Get the days
     $whole_duration = $whole_duration / (6 * 80);
 
-    $form['absence_request_dates_selected']['#title'] = t('Dates selected:') . ' ' . $form_state['values']['absence_request_date_from'] . " - " . $form_state['values']['absence_request_date_to'] . " - " . $whole_duration . " " . t("days") ;
+    $form['absence_request_dates_selected']['#title'] = t('Dates selected:') . '<span class="civihr_form--request-leave__period">' . $form_state['values']['absence_request_date_from'] . " - " . $form_state['values']['absence_request_date_to'] . " (" . $whole_duration . " " . t("days") . ')</span>';
 
     $from = $form_state['values']['absence_request_date_from'];
     $to = $form_state['values']['absence_request_date_to'];
     $i = 0;
 
     while ($from <= $to) {
-
         $from = strtotime($from);
         $from = $from + (60 * 60 * 24);
         $from = date('Y-m-d', $from);
 
         $i++;
-
     }
 
     $form['absence_request_dates_selected']['dates_counter']['#value'] = $i;
 
+    show_hide_selected_dates_section($form['absence_request_dates_selected'], $i);
 
     return $form['absence_request_dates_selected'];
 }
