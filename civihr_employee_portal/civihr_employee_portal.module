@@ -1667,11 +1667,9 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
         }
 
         while ($from <= $to) {
+            $check_day = _checkRequestedDay($public_holidays, $from); // Check if the day is public holiday or not working day
 
-            // Check if the day is public holiday or not working day
-            $check_day = _checkRequestedDay($public_holidays, $from);
-
-            $form['absence_request_dates_selected']['_requested_day_' . $i] = array(
+            $form['absence_request_dates_selected']['_requested_day_' . str_replace('-', '', $from)] = array(
                 '#type'     => 'select',
                 '#title' => $from . $check_day['exclude_type'],
                 '#options' => array('480' => t('All day'), '240' => t('Half day'), '0' => t('Excluded @exclude_type', array('@exclude_type' => $check_day['exclude_type']))),
@@ -1681,11 +1679,7 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
             $from = strtotime($from);
             $from = $from + (60 * 60 * 24);
             $from = date('Y-m-d', $from);
-
-            $i++;
-
         }
-
     }
 
     $form['absence_type'] = array(
