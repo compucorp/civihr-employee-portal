@@ -1520,7 +1520,7 @@ function civihr_employee_portal_absence_request_callback($ajax, $absence_type = 
 /**
  * Drupal form to be put in a modal.
  */
-function civihr_employee_portal_absence_request_form($form, $form_state) {
+function civihr_employee_portal_absence_request_form($form, &$form_state) {
 
     $absence_type = 'debit';
 
@@ -1680,6 +1680,12 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
             $from = $from + (60 * 60 * 24);
             $from = date('Y-m-d', $from);
         }
+
+        // Reset the previously build _requested_day_ fields in $form_state
+        // to avoid them being carried over
+        $form_state['values'] = array_filter($form_state['values'], function($key) {
+            return strpos($key, '_requested_day_') === false;
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     $form['absence_type'] = array(
