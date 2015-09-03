@@ -137,6 +137,7 @@ features[variable][] = menu_options_hr_documents
 features[variable][] = menu_options_webform
 features[variable][] = menu_parent_hr_documents
 features[variable][] = menu_parent_webform
+features[variable][] = mimemail_format
 features[variable][] = node_options_hr_documents
 features[variable][] = node_options_webform
 features[variable][] = node_preview_hr_documents

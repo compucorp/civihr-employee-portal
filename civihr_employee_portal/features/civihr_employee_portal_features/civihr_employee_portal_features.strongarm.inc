@@ -211,6 +211,13 @@ function civihr_employee_portal_features_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'mimemail_format';
+  $strongarm->value = 'full_html';
+  $export['mimemail_format'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'node_options_hr_documents';
   $strongarm->value = array(
     0 => 'status',
