@@ -1577,7 +1577,7 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
         }
     }
 
-    $form['#attributes']['class'][] = 'civihr_form--modal';
+    $form['#attributes']['class'][] = 'civihr_form--modal civihr_form--request-leave';
 
     $form['absence_request_type'] = array(
         '#title' => t('Type:'),
@@ -1620,6 +1620,12 @@ function civihr_employee_portal_absence_request_form($form, $form_state) {
     );
 
     $form['absence_request_dates_selected'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Selected dates'),
+        '#markup' => '',
+        '#collapsible' => TRUE,
+        '#collapsed' => FALSE,
+        '#attributes' => array('class' => array('civihr_form__fieldset--transparent')),
         '#prefix' => '<div id="absence-request-dates-selected" class="hide modal-civihr-custom__section">',
         '#suffix' => '</div>'
     );
@@ -1729,6 +1735,22 @@ function show_hide_selected_dates_section(&$field, $dates_number) {
  * Ajax callback to change the rendered industry lens taxonomy term
  */
 function jms_industry_lens_form_ajax(&$form, &$form_state) {
+    // Init leave whole duration
+    $whole_duration = 0;
+
+    // Calculate the leave whole duration
+    foreach ($form_state['values'] as $s_key => $form_s_val) {
+
+        if (strpos($s_key, '_requested_day_') !== false) {
+            $whole_duration += $form_s_val;
+        }
+    }
+
+    // Get the days
+    $whole_duration = $whole_duration / (6 * 80);
+
+    $form['absence_request_dates_selected']['#title'] = t('Dates selected:') . '<span class="civihr_form--request-leave__period">' . $form_state['values']['absence_request_date_from'] . " - " . $form_state['values']['absence_request_date_to'] . " (" . $whole_duration . " " . t("days") . ')</span>';
+
     $from = $form_state['values']['absence_request_date_from'];
     $to = $form_state['values']['absence_request_date_to'];
     $i = 0;
