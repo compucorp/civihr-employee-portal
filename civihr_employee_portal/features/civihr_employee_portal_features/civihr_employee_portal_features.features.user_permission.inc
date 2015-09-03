@@ -152,6 +152,18 @@ function civihr_employee_portal_features_user_default_permissions() {
     'module' => 'civicrm',
   );
 
+  // Exported permission: 'access private file download'.
+  $permissions['access private file download'] = array(
+    'name' => 'access private file download',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
+    ),
+    'module' => 'civihr_employee_portal',
+  );
+
   // Exported permission: 'access uploaded files'.
   $permissions['access uploaded files'] = array(
     'name' => 'access uploaded files',
