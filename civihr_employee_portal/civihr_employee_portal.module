@@ -1681,11 +1681,7 @@ function civihr_employee_portal_absence_request_form($form, &$form_state) {
             $from = date('Y-m-d', $from);
         }
 
-        // Reset the previously build _requested_day_ fields in $form_state
-        // to avoid them being carried over
-        $form_state['values'] = array_filter($form_state['values'], function($key) {
-            return strpos($key, '_requested_day_') === false;
-        }, ARRAY_FILTER_USE_KEY);
+        reset_form_state_requested_days($form_state['values']);
     }
 
     $form['absence_type'] = array(
@@ -1713,6 +1709,18 @@ function civihr_employee_portal_absence_request_form($form, &$form_state) {
     );
 
     return $form;
+}
+
+/**
+ * Reset the previously build _requested_day_ fields in the
+ * $form_state values to avoid them being carried over
+ */
+function reset_form_state_requested_days(&$form_state_values) {
+    foreach ($form_state_values as $s_key => $form_s_val) {
+        if (strpos($s_key, '_requested_day_') !== false) {
+            unset($form_state_values[$s_key]);
+        }
+    }
 }
 
 /**
