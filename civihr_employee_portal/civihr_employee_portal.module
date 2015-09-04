@@ -1673,7 +1673,12 @@ function civihr_employee_portal_absence_request_form($form, &$form_state) {
                 '#type'     => 'select',
                 '#title' => $from . $check_day['exclude_type'],
                 '#options' => array('480' => t('All day'), '240' => t('Half day'), '0' => t('Excluded @exclude_type', array('@exclude_type' => $check_day['exclude_type']))),
-                '#default_value' => $check_day['default_value']
+                '#default_value' => $check_day['default_value'],
+                '#ajax' => array(
+                    'callback'  => 'jms_industry_lens_form_ajax',
+                    'wrapper'   => 'absence-request-dates-selected',
+                    'event'   => 'change',
+                )
             );
 
             $from = strtotime($from);
