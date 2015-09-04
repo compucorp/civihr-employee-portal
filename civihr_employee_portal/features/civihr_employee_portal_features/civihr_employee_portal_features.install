@@ -5,15 +5,6 @@
  */
 function civihr_employee_portal_features_install() {
 
-    // Disable not needed blocks
-    db_update('block')
-        ->fields(array('region' => -2))
-        ->condition('theme', 'civihr_default_theme')
-        ->condition('region', 'content')
-        ->condition('delta', 'main', '!=')
-        ->execute();
-
-
     // Init civi
     civicrm_initialize();
 
