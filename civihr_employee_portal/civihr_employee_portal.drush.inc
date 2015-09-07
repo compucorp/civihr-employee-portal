@@ -71,7 +71,7 @@ function drush_civihr_employee_portal_civihr_blocks_cleanup() {
 
     // Disable not needed blocks
     db_update('block')
-        ->fields(array('region' => -2))
+        ->fields(array('region' => -1))
         ->condition('theme', 'civihr_default_theme')
         ->condition('region', 'content')
         ->condition('delta', 'main', '!=')
