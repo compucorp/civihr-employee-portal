@@ -4,13 +4,17 @@ namespace Drupal\civihr_employee_portal\Forms;
 
 class AbsenceRequestForm {
 
-    protected $form;
     protected $absence_type;
+    protected $form;
     protected $form_state;
 
     /**
+     * Constructor
      *
-     *
+     * @param array $form
+     *   The form structure
+     * @param array $form_state
+     *   The current form values
      */
     public function __construct($form, &$form_state) {
         $this->form = $form;
@@ -18,15 +22,16 @@ class AbsenceRequestForm {
     }
 
     /**
+     * The callback called via the '#ajax.callback' properties of the form fields
      *
-     *
+     * @return array
+     *   The structure of the 'dates selected' form area
      */
     public function ajax_callback() {
         $from = $this->form_state['values']['absence_request_date_from'];
-        $to = $this->form_state['values']['absence_request_date_to'];
         $i = 0;
 
-        while ($from <= $to) {
+        while ($from <= $this->form_state['values']['absence_request_date_to']) {
             $i++;
             $this->add_day_to($from);
         }
@@ -40,8 +45,10 @@ class AbsenceRequestForm {
     }
 
     /**
+     * Build the form structure
      *
-     *
+     * @return array
+     *   The new form structure
      */
     public function build() {
         $this->add_properties();
@@ -55,30 +62,12 @@ class AbsenceRequestForm {
     }
 
     /**
-     *
-     *
+     * Submits the form
      */
     public function submit() {
         global $user;
 
-        $submitted_attachment = new \stdClass();
-
-        if (isset($this->form_state['values']['absence_file']) && $this->form_state['values']['absence_file'] != "") {
-
-            // Unset the file from the form
-            $file = $this->form_state['values']['absence_file'];
-            unset($this->form_state['values']['absence_file']);
-
-            // Change the file to permanent
-            $file->status = FILE_STATUS_PERMANENT;
-            $file->display = 1;
-            $file->description = '';
-
-            $saved_file = file_save($file);
-
-            // Add the attached file
-            $submitted_attachment = (object) $saved_file;
-        }
+        $attachment = $this->process_attachment();
 
         // Set absence type
         $absence_main_type = 'debit';
@@ -92,21 +81,6 @@ class AbsenceRequestForm {
 
         if (isset($this->form_state['values']['details']) && $this->form_state['values']['details'] != '') {
             $absence_details = drupal_html_to_text(nl2br($this->form_state['values']['details']));
-        }
-
-        // Get the absence types
-        $absenceTypes = get_civihr_absence_types();
-
-        // Get leave Type
-        foreach ($absenceTypes as $absenceType) {
-
-            if (isset($absenceType['credit_activity_type_id']) && $absenceType['credit_activity_type_id'] == $this->form_state['values']['absence_request_type']) {
-                $leave_type = $absenceType['title'];
-            }
-
-            if (isset($absenceType['debit_activity_type_id']) && $absenceType['debit_activity_type_id'] == $this->form_state['values']['absence_request_type']) {
-                $leave_type = $absenceType['title'];
-            }
         }
 
         // Send the form submitted values
@@ -125,21 +99,21 @@ class AbsenceRequestForm {
         $leave_date = $absence_date . ' = ' . $this->request_duration() . ' ' . $day;
 
         // Fire rules events
-        rules_invoke_event('absence_request_add', $user, $absence_main_type, $absence_details, $form_object, $leave_type, $leave_date, $submitted_attachment);
+        rules_invoke_event('absence_request_add', $user, $absence_main_type, $absence_details, $form_object, $this->leave_data()['type'], $leave_date, $attachment);
     }
 
     /**
+     * Validates the form
      *
-     *
+     * @return boolean
      */
     public function validate() {
-        global $user;
-
-        $this->validate_file();
+        $this->validate_attachment();
 
         if (isset($this->form_state['values']['absence_request_date_from']) && isset($this->form_state['values']['absence_request_date_to'])) {
-            if ($this->form_state['values']['absence_request_date_to'] < $this->form_state['values']['absence_request_date_from'])
+            if ($this->form_state['values']['absence_request_date_to'] < $this->form_state['values']['absence_request_date_from']) {
                 form_set_error('absence_request_date_to', t('End date must be bigger than the start date!'));
+            }
 
             if (!isset($this->form_state['values']['absence_request_date_from']['date'])) {
                 // Explode the date, convert to timestamp
@@ -147,20 +121,15 @@ class AbsenceRequestForm {
                 $mk_time_end = explode("-", $this->form_state['values']['absence_request_date_to']);
                 $mk_time_start_timestamp = mktime(0, 0, 0, $mk_time_start[1], $mk_time_start[2], $mk_time_start[0]);
 
+                $period_id = $this->period_id($mk_time_start);
+
                 // Not allow the request to overflow to next/different year (how we calculate the available entitlement if we allow this?)
                 if ($mk_time_end[0] != $mk_time_start[0]) {
                     form_set_error('absence_request_date_to', t('Absence request start and end date must be in the same year!'));
                 }
 
-                foreach (get_civihr_date_periods() as $date_period) {
-                    // Check the date periods and compare to the requested absence start date
-                    if (strpos($date_period['start_date'], $mk_time_start[0]) !== false) {
-                        $period_id = $date_period['id'];
-                    }
-                }
-
                 // Check if we have the period ID (based on the passed absence start date year) - if no period ID return error
-                if (!isset($period_id)) {
+                if ($period_id == null) {
                     form_set_error('absence_request_date_from', t('This date period is not yet defined, please contact your Administrator!'));
                     return false;
                 }
@@ -177,39 +146,24 @@ class AbsenceRequestForm {
 
                 // Check if we have enough leave left to request this leave (only if leave type is DEBIT or CREDIT_USE) -> deducting days
                 if (isset($this->form_state['values']['absence_type']) && ($this->form_state['values']['absence_type'] == 'debit' || $this->form_state['values']['absence_type'] == 'credit_use')) {
-                    // Get the absence types
-                    $absenceTypes = get_civihr_absence_types();
+                    $leave = $this->leave_data();
+                    $entitlement = $this->entitlement_data($leave['id'], $period_id);
 
-                    // Get leave Type
-                    foreach ($absenceTypes as $absenceType) {
-                        if (isset($absenceType['credit_activity_type_id']) && $absenceType['credit_activity_type_id'] == $this->form_state['values']['absence_request_type']) {
-                            $leave_type = $absenceType['title'];
-                            $leave_id = $absenceType['id'];
-                        }
-
-                        if (isset($absenceType['debit_activity_type_id']) && $absenceType['debit_activity_type_id'] == $this->form_state['values']['absence_request_type']) {
-                            $leave_type = $absenceType['title'];
-                            $leave_id = $absenceType['id'];
-                        }
-                    }
-
-                    $entitlement_data = $this->entitlement_data($leave_id, $period_id);
-
-                    if ($entitlement_data === null) {
+                    if ($entitlement === null) {
                         return false;
                     }
 
                     $whole_duration = $this->request_duration();
                     $sum_approved_duration = $this->approved_duration($mk_time_start[0]);
-                    $sum_added_credit = $this->credit_for_absence_type($leave_type, $mk_time_start[0]);
-                    $available_days = $this->available_days($sum_added_credit, $entitlement_data['amount'], $sum_approved_duration);
+                    $sum_added_credit = $this->credit_for_absence_type($leave['type'], $mk_time_start[0]);
+                    $available_days = $this->available_days($sum_added_credit, $entitlement['amount'], $sum_approved_duration);
 
                     if ($whole_duration > $available_days) {
                         form_set_error('absence_request_date_from', t("You don't have enough days available to request this leave! (@days_left days left)", array('@days_left' => $available_days)));
                     }
 
                     watchdog('total duration requested', print_r($whole_duration, true));
-                    watchdog('entitlement data', print_r($entitlement_data['amount'], true));
+                    watchdog('entitlement data', print_r($entitlement['amount'], true));
                     watchdog('sum total added credit', print_r($sum_added_credit, true));
                     watchdog('already approved duration', print_r($sum_approved_duration, true));
                 }
@@ -222,10 +176,15 @@ class AbsenceRequestForm {
     }
 
     /**
+     * The current absence_type (cached)
      *
-     *
+     * @return string
      */
-    protected function absence_types() {
+    protected function absence_type() {
+        if ($this->absence_type) {
+            return $this->absence_type;
+        }
+
         $this->absence_type = 'debit';
 
         if (isset($this->form_state['absence_type']) && $this->form_state['absence_type'] != '') {
@@ -234,32 +193,41 @@ class AbsenceRequestForm {
             $this->absence_type = arg(2); // Javascript probably disabled - use the value from arg()
         }
 
+        return $this->absence_type;
+    }
+
+    /**
+     * The list of possible absence types based on the current absent type
+     *
+     * @return array
+     */
+    protected function absence_types() {
         $options = array();
 
-        foreach (get_civihr_absence_types() as $absenceType) {
-            if (isset($absenceType['id']) && $absenceType['is_active'] == 1) {
+        foreach (get_civihr_absence_types() as $absence_type) {
+            if (isset($absence_type['id']) && $absence_type['is_active'] == 1) {
                 // If credit type is allowed show credit types (only if the employee clicked -> Request TOIL)
-                if ($absenceType['allow_credits'] == '1' && $this->absence_type == 'credit') {
+                if ($absence_type['allow_credits'] == '1' && $this->absence_type() == 'credit') {
                     // Default credit types
-                    $options[$absenceType['credit_activity_type_id']] = $absenceType['title'];
+                    $options[$absence_type['credit_activity_type_id']] = $absence_type['title'];
                 }
 
                 // If debit type is allowed show debit types (only if the employee clicked -> Request Leave)
-                if ($absenceType['allow_debits'] == '1' && $this->absence_type == 'debit' && $absenceType['allow_credits'] !== '1' && $absenceType['title'] != 'Sick') {
+                if ($absence_type['allow_debits'] == '1' && $this->absence_type() == 'debit' && $absence_type['allow_credits'] !== '1' && $absence_type['title'] != 'Sick') {
                   // Default debit types
-                    $options[$absenceType['debit_activity_type_id']] = $absenceType['title'];
+                    $options[$absence_type['debit_activity_type_id']] = $absence_type['title'];
                 }
 
                 // If Use TOIL is clicked show only debit types, which has credit type allowed too
-                if ($absenceType['allow_debits'] == '1' && $absenceType['allow_credits'] == '1' && $this->absence_type == 'credit_use' && $absenceType['title'] != 'Sick') {
+                if ($absence_type['allow_debits'] == '1' && $absence_type['allow_credits'] == '1' && $this->absence_type() == 'credit_use' && $absence_type['title'] != 'Sick') {
                     // Default debit types which has credit type too
-                    $options[$absenceType['debit_activity_type_id']] = $absenceType['title'];
+                    $options[$absence_type['debit_activity_type_id']] = $absence_type['title'];
                 }
 
                 // If Report New Sickness is clicked, show the debit types which are selected as the Sickness Absence Type @TODO -> currently hardcoded based on absence title
-                if ($absenceType['allow_debits'] == '1' && $this->absence_type == 'sick' && $absenceType['title'] == 'Sick') {
+                if ($absence_type['allow_debits'] == '1' && $this->absence_type() == 'sick' && $absence_type['title'] == 'Sick') {
                     // Default debit types which has credit type too
-                    $options[$absenceType['debit_activity_type_id']] = $absenceType['title'];
+                    $options[$absence_type['debit_activity_type_id']] = $absence_type['title'];
                 }
             }
         }
@@ -268,16 +236,17 @@ class AbsenceRequestForm {
     }
 
     /**
+     * Adds a day to a given date
      *
-     *
+     * @param string
+     *   The date to add a day to
      */
     protected function add_day_to(&$date) {
         $date = date('Y-m-d', strtotime($date) + (60 * 60 * 24));
     }
 
     /**
-     *
-     *
+     * Adds the fields that make up the form
      */
     protected function add_fields() {
         $this->form['absence_request_type'] = array(
@@ -339,7 +308,7 @@ class AbsenceRequestForm {
 
         $this->form['absence_type'] = array(
             '#type' => 'hidden',
-            '#value' => $this->absence_type,
+            '#value' => $this->absence_type(),
         );
 
         $this->form['details'] = array(
@@ -360,8 +329,7 @@ class AbsenceRequestForm {
     }
 
     /**
-     *
-     *
+     * Adds the properties to the form
      */
     protected function add_properties() {
         $this->form['#attributes']['class'][] = 'civihr_form--modal civihr_form--request-leave';
@@ -370,12 +338,10 @@ class AbsenceRequestForm {
     }
 
     /**
-     *
-     *
+     * Adds the _requested_day_ field to the form, based on the selected absence period
      */
     protected function add_requested_date_fields() {
         $from = $this->form_state['values']['absence_request_date_from'];
-        $to = $this->form_state['values']['absence_request_date_to'];
 
         try {
             $public_holidays = $this->public_holidays();
@@ -386,18 +352,18 @@ class AbsenceRequestForm {
             return;
         }
 
-        while ($from <= $to) {
+        while ($from <= $this->form_state['values']['absence_request_date_to']) {
             $check_day = _checkRequestedDay($public_holidays, $from); // Check if the day is public holiday or not working day
 
             $this->form['absence_request_dates_selected']['_requested_day_' . str_replace('-', '', $from)] = array(
-                '#type'     => 'select',
+                '#type' => 'select',
                 '#title' => $from . $check_day['exclude_type'],
                 '#options' => array('480' => t('All day'), '240' => t('Half day'), '0' => t('Excluded @exclude_type', array('@exclude_type' => $check_day['exclude_type']))),
                 '#default_value' => $check_day['default_value'],
                 '#ajax' => array(
-                    'callback'  => 'jms_industry_lens_form_ajax',
-                    'wrapper'   => 'absence-request-dates-selected',
-                    'event'   => 'change',
+                    'callback' => 'jms_industry_lens_form_ajax',
+                    'wrapper' => 'absence-request-dates-selected',
+                    'event' => 'change'
                 )
             );
 
@@ -410,6 +376,9 @@ class AbsenceRequestForm {
     /**
      * Calculate how many days you already requested which is not (rejected or cancelled) -> those doesn't decrease your available days
      *
+     * @param string $year
+     *   The year of the current request
+     * @return dataset
      */
     protected function approved_duration($year) {
         $q = db_select('absence_list', 'al')
@@ -426,6 +395,10 @@ class AbsenceRequestForm {
     /**
      * Available days = (credit absences added + total_entitlement) - debit_absences
      *
+     * @param int $credit
+     * @param int $entitled
+     * @param int $approved
+     * @return int
      */
     protected function available_days($credit, $entitled, $approved) {
         return ($credit + $entitled) - $approved;
@@ -434,6 +407,10 @@ class AbsenceRequestForm {
     /**
      * Check if we have credit added for that absence type
      *
+     * @param string $type
+     * @param string $year
+     *   The year of the current request
+     * @return dataset
      */
     protected function credit_for_absence_type($type, $year) {
         $q = db_select('absence_list', 'al')
@@ -449,8 +426,11 @@ class AbsenceRequestForm {
     }
 
     /**
+     * The entitlement data of the current user
      *
-     *
+     * @param int $leave_id
+     * @param int $period_id
+     * @return array|null
      */
     protected function entitlement_data($leave_id, $period_id) {
         try {
@@ -471,8 +451,78 @@ class AbsenceRequestForm {
     }
 
     /**
+     * Leave data
      *
+     * @param array
+     */
+    protected function leave_data() {
+        $data = [];
+
+        foreach (get_civihr_absence_types() as $absence_type) {
+            if (isset($absence_type['credit_activity_type_id']) && $absence_type['credit_activity_type_id'] == $this->form_state['values']['absence_request_type']) {
+                $data['type'] = $absence_type['title'];
+                $data['id'] = $absence_type['id'];
+            }
+
+            if (isset($absence_type['debit_activity_type_id']) && $absence_type['debit_activity_type_id'] == $this->form_state['values']['absence_request_type']) {
+                $data['type'] = $absence_type['title'];
+                $data['id'] = $absence_type['id'];
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * The period id
+     * Checks the date periods and compares to the requested absence start date
      *
+     * @param array $start_date
+     * @return int
+     */
+    protected function period_id($start_date) {
+        $period_id = null;
+
+        foreach (get_civihr_date_periods() as $date_period) {
+            if (strpos($date_period['start_date'], $start_date[0]) !== false) {
+                $period_id = $date_period['id'];
+            }
+        }
+
+        return $period_id;
+    }
+
+    /**
+     * Processes the attached file, if present
+     *
+     * @return stdClass
+     */
+    protected function process_attachment() {
+        $attachment = new \stdClass();
+
+        if (isset($this->form_state['values']['absence_file']) && $this->form_state['values']['absence_file'] != "") {
+            // Unset the file from the form
+            $file = $this->form_state['values']['absence_file'];
+            unset($this->form_state['values']['absence_file']);
+
+            // Change the file to permanent
+            $file->status = FILE_STATUS_PERMANENT;
+            $file->display = 1;
+            $file->description = '';
+
+            $saved_file = file_save($file);
+
+            // Add the attached file
+            $attachment = (object) $saved_file;
+        }
+
+        return $attachment;
+    }
+
+    /**
+     * The list of public holidays defined in the system
+     *
+     * @return array
      */
     protected function public_holidays() {
         // Get the activity ID for the public holiday activity type
@@ -501,32 +551,35 @@ class AbsenceRequestForm {
     }
 
     /**
+     * The leave whole duration
      *
-     *
+     * @return float
+     *   The duration in days (2 days, 4.5 days, etc)
      */
     protected function request_duration() {
         $duration = 0;
 
-        // Calculate the leave whole duration
         foreach ($this->form_state['values'] as $s_key => $form_s_val) {
             if (strpos($s_key, '_requested_day_') !== false) {
                 $duration += $form_s_val;
             }
         }
 
-        return $duration / (6 * 80); // Get the days
+        return $duration / (6 * 80);
     }
 
     /**
-     * Showing and hiding the selected dates based on their number
+     * Shows/hides the 'dates selected' area based on their number
+     *
+     * @param int $dates_no
      */
-    protected function show_hide_selected_dates_section($dates_number) {
+    protected function show_hide_selected_dates_section($dates_no) {
         $containing_div = $this->form['absence_request_dates_selected']['#prefix'];
         $hidden = strpos($containing_div, 'hide');
 
-        if ($dates_number > 0 && $hidden) {
+        if ($dates_no > 0 && $hidden) {
             $containing_div = str_replace('hide', '', $containing_div);
-        } elseif ($dates_number == 0 && !$hidden) {
+        } elseif ($dates_no == 0 && !$hidden) {
             $containing_div = str_replace('class="', 'class="hide"', $containing_div);
         }
 
@@ -534,11 +587,9 @@ class AbsenceRequestForm {
     }
 
     /**
-     *
-     *
+     * Validates the attached file, if present (only after final submit)
      */
-    protected function validate_file() {
-        // Validate only after final submit
+    protected function validate_attachment() {
         // This check is required because the validate function is called with each ajax refresh
         // eg. start/end date change during absence request
         if (isset($this->form_state['values']['op']) && isset($this->form_state['values']['absence_file']) && $this->form_state['values']['op'] == 'Submit') {
