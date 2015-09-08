@@ -41,7 +41,7 @@ function civihr_hrjobcontract_entities_init() {
                         FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
                         WHERE r2.effective_date <= NOW( ) 
                         AND r2.jobcontract_id = r.jobcontract_id
-                        ORDER BY r2.effective_date DESC 
+                        ORDER BY r2.effective_date DESC, r2.id DESC 
                         LIMIT 1
                     )
 
@@ -74,7 +74,7 @@ function civihr_hrjobcontract_entities_init() {
                         FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
                         WHERE r2.effective_date <= NOW( ) 
                         AND r2.jobcontract_id = r.jobcontract_id
-                        ORDER BY r2.effective_date DESC 
+                        ORDER BY r2.effective_date DESC, r2.id DESC 
                         LIMIT 1
                     )
                     AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
@@ -108,7 +108,7 @@ function civihr_hrjobcontract_entities_init() {
                         FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
                         WHERE r2.effective_date <= NOW( ) 
                         AND r2.jobcontract_id = r.jobcontract_id
-                        ORDER BY r2.effective_date DESC 
+                        ORDER BY r2.effective_date DESC, r2.id DESC 
                         LIMIT 1
                     )
                     AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
@@ -136,7 +136,7 @@ function civihr_hrjobcontract_entities_init() {
                         FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
                         WHERE r2.effective_date <= NOW( ) 
                         AND r2.jobcontract_id = r.jobcontract_id
-                        ORDER BY r2.effective_date DESC 
+                        ORDER BY r2.effective_date DESC, r2.id DESC 
                         LIMIT 1
                     )
                     AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
@@ -181,7 +181,7 @@ function civihr_hrjobcontract_entities_init() {
                         FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
                         WHERE r2.effective_date <= NOW( ) 
                         AND r2.jobcontract_id = r.jobcontract_id
-                        ORDER BY r2.effective_date DESC 
+                        ORDER BY r2.effective_date DESC, r2.id DESC 
                         LIMIT 1
                     )
                     AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
@@ -214,7 +214,7 @@ function civihr_hrjobcontract_entities_init() {
                         FROM {$civi_db_name}.civicrm_hrjobcontract_revision r2
                         WHERE r2.effective_date <= NOW( ) 
                         AND r2.jobcontract_id = r.jobcontract_id
-                        ORDER BY r2.effective_date DESC 
+                        ORDER BY r2.effective_date DESC, r2.id DESC 
                         LIMIT 1
                     )
                     AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
