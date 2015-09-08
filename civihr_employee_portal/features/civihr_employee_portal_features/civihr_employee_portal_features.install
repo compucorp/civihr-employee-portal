@@ -5,6 +5,21 @@
  */
 function civihr_employee_portal_features_install() {
 
+    // Init civi
+    civicrm_initialize();
+
+    // Create the partially Approved status
+    $option_group = civicrm_api3('OptionGroup', 'get', array(
+        'sequential' => 1,
+        'name' => "activity_status",
+    ));
+
+    $option_value = civicrm_api3('OptionValue', 'create', array(
+        'sequential' => 1,
+        'label' => "Partially Approved",
+        'option_group_id' => $option_group['id'],
+    ));
+
     // Set up front page URLs based on Role IDs (if the site is update not new install this can cause problems)
     // @TODO --> For site updates we will need to find the matching RID's first
     $values = array(
@@ -30,21 +45,21 @@ function civihr_employee_portal_features_install() {
             'weight' => 0
         ),
         array(
-            'rid' => 4,
+            'rid' => 55120974,
             'mode' => 'redirect',
             'data' => 'civicrm',
             'filter_format' => '',
             'weight' => 0
         ),
         array(
-            'rid' => 5,
+            'rid' => 17087012,
             'mode' => 'redirect',
             'data' => 'dashboard',
             'filter_format' => '',
             'weight' => 0
         ),
         array(
-            'rid' => 6,
+            'rid' => 57573969,
             'mode' => 'redirect',
             'data' => 'dashboard',
             'filter_format' => '',
@@ -60,4 +75,14 @@ function civihr_employee_portal_features_install() {
 
     $query->execute();
     
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function civihr_employee_portal_features_uninstall() {
+
+    // Remove and truncate the old records
+    $result = db_truncate('front_page')->execute();
+
 }

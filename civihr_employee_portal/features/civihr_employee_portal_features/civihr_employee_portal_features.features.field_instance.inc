@@ -10,6 +10,48 @@
 function civihr_employee_portal_features_field_default_field_instances() {
   $field_instances = array();
 
+  // Exported field_instance: 'civicrm_activity-civicrm_activity-field_attachment'
+  $field_instances['civicrm_activity-civicrm_activity-field_attachment'] = array(
+    'bundle' => 'civicrm_activity',
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'file',
+        'settings' => array(),
+        'type' => 'file_default',
+        'weight' => 0,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'civicrm_activity',
+    'field_name' => 'field_attachment',
+    'label' => 'Attachments',
+    'required' => 0,
+    'settings' => array(
+      'description_field' => 0,
+      'file_directory' => '',
+      'file_extensions' => 'jpg jpeg png gif pdf txt doc docx',
+      'max_filesize' => '',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'file',
+      'settings' => array(
+        'progress_indicator' => 'throbber',
+      ),
+      'type' => 'file_generic',
+      'weight' => 2,
+    ),
+  );
+
   // Exported field_instance: 'node-hr_documents-body'
   $field_instances['node-hr_documents-body'] = array(
     'bundle' => 'hr_documents',
@@ -82,7 +124,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
     'settings' => array(
       'description_field' => 1,
       'file_directory' => 'hr-documents',
-      'file_extensions' => 'txt pdf csv xls doc',
+      'file_extensions' => 'txt pdf csv xls doc docx jpg jpeg gif mov mp4 png',
       'max_filesize' => '2 MB',
       'user_register_form' => FALSE,
     ),
