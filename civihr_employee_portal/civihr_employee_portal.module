@@ -3522,11 +3522,12 @@ function _absence_start_date_period_change_submit(&$form, &$form_state) {
 function civihr_employee_portal_preprocess_page(&$vars) {
 
     global $user;
+    global $base_url;
 
     $contact_data['display_name'] = t('Anonymus');
 
     // Set empty image URL
-    $vars['image_url'] = drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
+    $vars['image_url'] = $base_url . '/' . drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
 
     if (isset($_SESSION['CiviCRM'])) {
 
