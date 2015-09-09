@@ -3526,7 +3526,7 @@ function civihr_employee_portal_preprocess_page(&$vars) {
     $contact_data['display_name'] = t('Anonymus');
 
     // Set empty image URL
-    $vars['image_url'] = '';
+    $vars['image_url'] = drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
 
     if (isset($_SESSION['CiviCRM'])) {
 
