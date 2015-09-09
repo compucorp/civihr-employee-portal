@@ -162,9 +162,9 @@ $handler->display->display_options['fields']['email']['id'] = 'email';
 $handler->display->display_options['fields']['email']['table'] = 'civicrm_email';
 $handler->display->display_options['fields']['email']['field'] = 'email';
 $handler->display->display_options['fields']['email']['label'] = 'Email';
-$handler->display->display_options['fields']['email']['location_type'] = '1';
+$handler->display->display_options['fields']['email']['location_type'] = '2';
 $handler->display->display_options['fields']['email']['location_op'] = '0';
-$handler->display->display_options['fields']['email']['is_primary'] = 1;
+$handler->display->display_options['fields']['email']['is_primary'] = 0;
 /* Field: HRJobContract Details entity: Location */
 $handler->display->display_options['fields']['location']['id'] = 'location';
 $handler->display->display_options['fields']['location']['table'] = 'hrjc_details';
