@@ -65,7 +65,7 @@
             <div class="well">
                 <div class="profile-image">
                     <?php if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) { ?>
-                        <img src="<?php print $contact_data['image_URL']; ?>" class="custom-scale-image" />
+                        <img src="<?php print $contact_data['image_URL']; ?>" />
                     <?php } else { ?>
                         <img src="<?php print drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png' ?>"/>
                     <?php } ?>
