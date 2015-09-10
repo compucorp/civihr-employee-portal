@@ -3174,6 +3174,19 @@ function civihr_employee_portal_views_api() {
 }
 
 /**
+ * Implements hook_theme_registry_alter().
+ *
+ * Replace default views template for views-exposed-form.tpl.php.
+ */
+function civihr_employee_portal_theme_registry_alter(&$theme_registry) {
+    $module_path = drupal_get_path('module', 'civihr_employee_portal');
+    $views_path = drupal_get_path('module', 'views');
+    if ($theme_registry['views_exposed_form']['path'] == $views_path . '/theme') {
+        $theme_registry['views_exposed_form']['path'] = $module_path . '/templates';
+    }
+}
+
+/**
  * @param $view_name
  * @param string $view_display
  * Load view as html block
@@ -3348,6 +3361,13 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
 // Note: Under "Redirection location" NO redirect option should be select to get the confirmation message with ajax.
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
+
+
+    // Form become outdated fix
+    if ($form_id == 'views_exposed_form') {
+        // https://www.drupal.org/node/2557327
+        unset($form['#token']);
+    }
 
     // Alter HR documents node creation page
     if ($form_id == 'hr_documents_node_form') {
