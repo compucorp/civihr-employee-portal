@@ -749,6 +749,15 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
+    $items['civihr_reports_settings/%ctools_js/view'] = array(
+        'title' => 'CiviHR Reports settings form',
+        'page callback' => 'civihr_employee_portal_report_settings_form_callback',
+        'page arguments' => array(1),
+        'access callback' => '_user_has_role',
+        'access arguments' => array(array('civihr_admin', 'administrator')),
+        'type' => MENU_CALLBACK,
+    );
+
     $items['hr-details'] = array(
         'title' => 'My Details',
         'page callback' => 'civihr_employee_portal_my_details',
@@ -890,6 +899,10 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
     
     if ($link_type == 'document') {
         return '' . l($link_text, 'civi_documents/nojs/edit/' . $nid, array('attributes' => array('class' => 'ctools-use-modal ctools-modal-civihr-default-style'))) . '';
+    }
+
+    if ($link_type == 'civihr_report_settings') {
+        return '' . l($link_text, 'civihr_reports_settings/nojs/view', array('attributes' => array('class' => 'ctools-use-modal ctools-modal-civihr-default-style'))) . '';
     }
 
     return '' . l($link_text, 'absence_request/nojs/' . $link_type, array('attributes' => array('class' => 'btn btn-custom ctools-use-modal ctools-modal-civihr-custom-style'))) . '';
@@ -2821,6 +2834,85 @@ function civihr_employee_portal_request_new_account_submit($form, &$form_state) 
 }
 
 /**
+ * CiviHR Report settings form
+ */
+function civihr_employee_portal_report_settings_form_callback($ajax) {
+
+    if ($ajax) {
+        ctools_include('ajax');
+        ctools_include('modal');
+
+        $title = t('CiviHR Report settings form');
+
+        $form_state = array(
+            'ajax' => TRUE,
+            'is_ajax_update' => TRUE,
+            'title' => $title,
+        );
+
+        // Use ctools to generate ajax instructions for the browser to create a form in a modal popup.
+        $output = ctools_modal_form_wrapper('civihr_employee_portal_report_settings_form', $form_state);
+
+        // If the form has been submitted, there may be additional instructions such as dismissing the modal popup.
+        if (!empty($form_state['executed'])) {
+
+            // Add the responder javascript, required by ctools
+            ctools_add_js('ajax-responder');
+
+            $output[] = ctools_modal_command_dismiss();
+            $output[] = ctools_ajax_command_redirect('civihr_reports');
+
+        }
+
+        // Return the ajax instructions to the browser via ajax_render().
+        print ajax_render($output);
+        drupal_exit();
+
+    }
+    else {
+        return drupal_get_form('civihr_employee_portal_report_settings_form');
+    }
+
+}
+
+function civihr_employee_portal_report_settings_form($form, $form_state) {
+
+    $form['main_filter'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Filters for Y axis?',
+        '#size' => 10,
+    );
+
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Save settings!'),
+    );
+
+    $form['#validate'][] = 'civihr_employee_portal_report_settings_form_validate';
+    $form['#submit'][] = "civihr_employee_portal_report_settings_form_submit";
+
+    return $form;
+}
+
+function civihr_employee_portal_report_settings_form_validate($form, &$form_state) {
+
+    //form_set_error('main_filter', t('Error'));
+
+    return TRUE;
+}
+
+function civihr_employee_portal_report_settings_form_submit($form, &$form_state) {
+
+    drupal_set_message(t('Settings Saved!'), 'success');
+
+    // If no ajax trigger redirect (otherwise the form will redirect after ajax finished
+    if (!isset($form_state['ajax'])) {
+
+        drupal_goto('civihr_reports');
+    }
+}
+
+/**
  * Returns the contact list from CiviCRM in json format
  * The json response will be cached in local file when the VIEWS requests to load data from this endpoint
  */
@@ -3099,6 +3191,9 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
     // No view display the default reports page (reports dashboard)
     if (!$view_name) {
 
+        ctools_include('modal');
+        ctools_modal_add_js();
+
         // Load the reports page
         // Add the javascript library for D3
         drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/d3/d3.v3.min.js');
@@ -3107,7 +3202,8 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         // Output the custom report theme page
         return theme('civihr_employee_portal_custom_reports',
             array(
-                'custom_data' => ''
+                'custom_data' => '',
+                'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
             )
         );
 
@@ -3115,6 +3211,9 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
 
     // Special handling if we paginate, or sort the view
     if (isset($_GET['order']) || isset($_GET['page']) || isset($_GET['sort']) || !isset($_GET['ajax'])) {
+
+        ctools_include('modal');
+        ctools_modal_add_js();
 
         // Load the reports page
         // Add the javascript library for D3
@@ -3139,7 +3238,8 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         // Output the custom report theme page
         return theme('civihr_employee_portal_custom_reports',
             array(
-                'custom_data' => $view_data
+                'custom_data' => $view_data,
+                'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
             )
         );
 

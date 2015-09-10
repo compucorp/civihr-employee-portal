@@ -28,3 +28,11 @@
     </div>
 
 </div>
+
+<div class="panel-pane pane-block custom-settings-block">
+
+    <div class="col-md-10 column2 panel-panel">
+        <?php print $settings_url; ?>
+    </div>
+
+</div>
