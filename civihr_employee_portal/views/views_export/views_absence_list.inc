@@ -318,6 +318,7 @@ $handler->display->display_options['defaults']['footer'] = FALSE;
 $handler->display->display_options['footer']['balance_totals']['id'] = 'balance_totals';
 $handler->display->display_options['footer']['balance_totals']['table'] = 'absence_list';
 $handler->display->display_options['footer']['balance_totals']['field'] = 'balance_totals';
+$handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Absence entity: Absence entity ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'absence_list';
@@ -481,6 +482,7 @@ $handler->display->display_options['path'] = 'absence-list';
 $handler = $view->new_display('page', 'Sickness report', 'page_1');
 $handler->display->display_options['exposed_block'] = TRUE;
 $handler->display->display_options['defaults']['footer'] = FALSE;
+$handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Absence entity: Absence entity ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'absence_list';
