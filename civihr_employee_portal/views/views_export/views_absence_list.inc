@@ -318,13 +318,6 @@ $handler->display->display_options['defaults']['footer'] = FALSE;
 $handler->display->display_options['footer']['balance_totals']['id'] = 'balance_totals';
 $handler->display->display_options['footer']['balance_totals']['table'] = 'absence_list';
 $handler->display->display_options['footer']['balance_totals']['field'] = 'balance_totals';
-/* Footer: Global: Block area */
-$handler->display->display_options['footer']['block']['id'] = 'block';
-$handler->display->display_options['footer']['block']['table'] = 'views';
-$handler->display->display_options['footer']['block']['field'] = 'block';
-$handler->display->display_options['footer']['block']['empty'] = TRUE;
-$handler->display->display_options['footer']['block']['block_to_insert'] = 'civihr_employee_portal:absence_links';
-$handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Absence entity: Absence entity ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'absence_list';
@@ -488,13 +481,6 @@ $handler->display->display_options['path'] = 'absence-list';
 $handler = $view->new_display('page', 'Sickness report', 'page_1');
 $handler->display->display_options['exposed_block'] = TRUE;
 $handler->display->display_options['defaults']['footer'] = FALSE;
-/* Footer: Global: Block area */
-$handler->display->display_options['footer']['block']['id'] = 'block';
-$handler->display->display_options['footer']['block']['table'] = 'views';
-$handler->display->display_options['footer']['block']['field'] = 'block';
-$handler->display->display_options['footer']['block']['empty'] = TRUE;
-$handler->display->display_options['footer']['block']['block_to_insert'] = 'civihr_employee_portal:sickness_links';
-$handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Absence entity: Absence entity ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'absence_list';

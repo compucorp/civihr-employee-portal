@@ -44,7 +44,10 @@ class Sick {
         $view->display_handler->set_option('filters', $filters);
         $view->pre_execute();
 
-        return $view->render($display);
+        // Render sickness links block
+        $sickness_links = render(module_invoke('civihr_employee_portal', 'block_view', 'sickness_links')['content']);
+
+        return $view->render($display) . $sickness_links;
 
     }
 }
