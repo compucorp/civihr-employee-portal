@@ -47,9 +47,11 @@
 ?>
 
 <?php
-
     // Show only if we have the logged in user
     global $user;
+
+    $actions_classes = 'btn btn-custom ctools-use-modal ctools-modal-civihr-default-style chr_panel__actions__action--icon--edit';
+
     if ($user->uid) {
 ?>
 
@@ -93,15 +95,9 @@
 
     </div>
 
-    <div class="row">
-
-        <div class="col-md-12">
-            <div class="splitter-top text-right actions">
-                <?php print l(t('Edit my details'), 'my_details/nojs/view', array('attributes' => array('class' => array('btn btn-custom ctools-use-modal ctools-modal-civihr-default-style')))); ?>
-                <?php print l(t('Edit emergency contact'), 'emergency_contacts/nojs/view', array('attributes' => array('class' => array('btn btn-custom ctools-use-modal ctools-modal-civihr-default-style')))); ?>
-            </div>
-        </div>
-
+    <div class="chr_panel__actions">
+        <?php print l(t('Edit my details'), 'my_details/nojs/view', array('attributes' => array('class' => $actions_classes))); ?>
+        <?php print l(t('Edit emergency contact'), 'emergency_contacts/nojs/view', array('attributes' => array('class' => $actions_classes))); ?>
     </div>
 
 </div>
