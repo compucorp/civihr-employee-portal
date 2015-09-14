@@ -871,8 +871,19 @@ function _get_uf_match_contact($contact_id) {
 }
 
 /**
-* Helper function to make a link.
-*/
+ * Helper function to make a link.
+ *
+ * The links that are known to be a .chr_action element, have their text wrapper in a <span>
+ * so that they can be responsive if the class .chr_action--icon--responsive is applied
+ *
+ *
+ * @param string $link_text
+ * @param string $link_type
+ * @param string $nid
+ * @param string $class
+ *   Any additional css classes that the links must have
+ * @return string
+ */
 function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid = '', $class = '') {
 
     // Set a default value if no text in supplied.
@@ -881,16 +892,20 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
     }
 
     if ($link_type == 'calendar') {
-        return '' . l($link_text, 'absence_calendar/nojs/show',
-            array('attributes' => array('class' => "chr_action--icon--calendar ctools-use-modal ctools-modal-civihr-default-style $class"))
+        return '' . l("<span>$link_text</span>", 'absence_calendar/nojs/show',
+            array(
+                'attributes' => array('class' => "chr_action--icon--calendar ctools-use-modal ctools-modal-civihr-default-style $class"),
+                'html' => true
+            )
         ) . '';
     }
 
     if ($link_type == 'leave_report') {
-        return '' . l($link_text, 'print-leave-report/',
+        return '' . l("<span>$link_text</span>", 'print-leave-report/',
             array(
                 'query' => array('absence_start_date_period_filter' => $nid),
-                'attributes' => array('class' => "chr_action--icon--print $class", 'target'=>'_blank')
+                'attributes' => array('class' => "chr_action--icon--print $class", 'target'=>'_blank'),
+                'html' => true
             )
         ) . '';
     }
@@ -913,8 +928,11 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
         ) . '';
     }
 
-    return '' . l($link_text, 'absence_request/nojs/' . $link_type,
-        array('attributes' => array('class' => "chr_action ctools-use-modal ctools-modal-civihr-custom-style $class"))
+    return '' . l("<span>$link_text</span>", 'absence_request/nojs/' . $link_type,
+        array(
+            'attributes' => array('class' => "chr_action ctools-use-modal ctools-modal-civihr-custom-style $class"),
+            'html' => true
+        )
     ) . '';
 }
 
@@ -3601,11 +3619,11 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
         }
 
         $form['open_calendar'] = array(
-            '#markup' => civihr_employee_portal_make_link(t('Open calendar'), 'calendar', null, 'chr_action--transparent')
+            '#markup' => civihr_employee_portal_make_link(t('Open calendar'), 'calendar', null, 'chr_action--transparent chr_action--icon--responsive')
         );
 
         $form['leave_report'] = array(
-            '#markup' => civihr_employee_portal_make_link(t('Print leave report'), 'leave_report', $request_date, 'chr_action--transparent')
+            '#markup' => civihr_employee_portal_make_link(t('Print leave report'), 'leave_report', $request_date, 'chr_action--transparent hidden-xs')
         );
 
         // Replace the print leave report URL with the selected date period URL
