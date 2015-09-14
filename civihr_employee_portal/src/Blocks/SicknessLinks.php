@@ -12,7 +12,7 @@ class SicknessLinks {
 
         $links = '';
         $links .= '<div class="chr_panel__actions">';
-        $links .= civihr_employee_portal_make_link(t('Report new sickness'), 'sick', null, 'chr_panel__actions__action');
+        $links .= civihr_employee_portal_make_link(t('Report new sickness'), 'sick');
         $links .= '</div>';
 
         return $links;

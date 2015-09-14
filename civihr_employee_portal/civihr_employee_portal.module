@@ -882,7 +882,7 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
 
     if ($link_type == 'calendar') {
         return '' . l($link_text, 'absence_calendar/nojs/show',
-            array('attributes' => array('class' => "btn btn-custom ctools-use-modal ctools-modal-civihr-default-style $class"))
+            array('attributes' => array('class' => "chr_action--icon--calendar ctools-use-modal ctools-modal-civihr-default-style $class"))
         ) . '';
     }
 
@@ -890,7 +890,7 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
         return '' . l($link_text, 'print-leave-report/',
             array(
                 'query' => array('absence_start_date_period_filter' => $nid),
-                'attributes' => array('class' => "btn btn-custom $class", 'target'=>'_blank')
+                'attributes' => array('class' => "chr_action--icon--print $class", 'target'=>'_blank')
             )
         ) . '';
     }
@@ -914,7 +914,7 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
     }
 
     return '' . l($link_text, 'absence_request/nojs/' . $link_type,
-        array('attributes' => array('class' => "btn btn-custom ctools-use-modal ctools-modal-civihr-custom-style $class"))
+        array('attributes' => array('class' => "chr_action ctools-use-modal ctools-modal-civihr-custom-style $class"))
     ) . '';
 }
 
@@ -3327,7 +3327,7 @@ function civihr_employee_portal_directory_block_form($form, &$form_state) {
     );
 
     $form['submit'] = array(
-        '#attributes' => array('class' => array('chr_panel__actions__action')),
+        '#attributes' => array('class' => array('chr_action')),
         '#type' => 'submit',
         '#value' => t('Go!'),
         '#prefix' => '<div class="chr_panel__actions">',

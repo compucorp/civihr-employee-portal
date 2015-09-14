@@ -50,7 +50,7 @@
     // Show only if we have the logged in user
     global $user;
 
-    $actions_classes = 'btn btn-custom ctools-use-modal ctools-modal-civihr-default-style chr_panel__actions__action--icon--edit';
+    $actions_classes = 'ctools-use-modal ctools-modal-civihr-default-style chr_action--icon--edit';
 
     if ($user->uid) {
 ?>
