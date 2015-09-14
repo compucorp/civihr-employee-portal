@@ -2,6 +2,8 @@
 
 use Drupal\civihr_employee_portal\Blocks\Base;
 use Drupal\civihr_employee_portal\Blocks\Leave;
+use Drupal\civihr_employee_portal\Forms\BaseForm;
+use Drupal\civihr_employee_portal\Forms\ReportSettingsForm;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 
@@ -2333,67 +2335,24 @@ function civihr_employee_portal_request_new_account_submit($form, &$form_state) 
  */
 function civihr_employee_portal_report_settings_form_callback($ajax) {
 
-    if ($ajax) {
-        ctools_include('ajax');
-        ctools_include('modal');
-
-        $title = t('CiviHR Report settings form');
-
-        $form_state = array(
-            'ajax' => TRUE,
-            'is_ajax_update' => TRUE,
-            'title' => $title,
-        );
-
-        // Use ctools to generate ajax instructions for the browser to create a form in a modal popup.
-        $output = ctools_modal_form_wrapper('civihr_employee_portal_report_settings_form', $form_state);
-
-        // If the form has been submitted, there may be additional instructions such as dismissing the modal popup.
-        if (!empty($form_state['executed'])) {
-
-            // Add the responder javascript, required by ctools
-            ctools_add_js('ajax-responder');
-
-            $output[] = ctools_modal_command_dismiss();
-            $output[] = ctools_ajax_command_redirect('civihr_reports');
-
-        }
-
-        // Return the ajax instructions to the browser via ajax_render().
-        print ajax_render($output);
-        drupal_exit();
-
-    }
-    else {
-        return drupal_get_form('civihr_employee_portal_report_settings_form');
-    }
+    $reports = new ReportSettingsForm('report_settings_form');
+    return $reports->initModal($ajax, t('CiviHR Report settings form'));
 
 }
 
-function civihr_employee_portal_report_settings_form($form, $form_state) {
+function civihr_employee_portal_report_settings_form($form, $form_state, $object) {
 
-    $form['main_filter'] = array(
-        '#type' => 'textfield',
-        '#title' => 'Filters for Y axis?',
-        '#size' => 10,
-    );
-
-    $form['submit'] = array(
-        '#type' => 'submit',
-        '#value' => t('Save settings!'),
-    );
-
-    $form['#validate'][] = 'civihr_employee_portal_report_settings_form_validate';
-    $form['#submit'][] = "civihr_employee_portal_report_settings_form_submit";
-
-    return $form;
+    // Returns the form
+    return $object['form_object']->getForm();
 }
 
 function civihr_employee_portal_report_settings_form_validate($form, &$form_state) {
 
-    //form_set_error('main_filter', t('Error'));
+    // Get our custom object
+    $reports = array_shift($form_state['build_info']['args'])['form_object'];
 
-    return TRUE;
+    // Validates the form
+    return $reports->validateForm($form, $form_state);
 }
 
 function civihr_employee_portal_report_settings_form_submit($form, &$form_state) {
