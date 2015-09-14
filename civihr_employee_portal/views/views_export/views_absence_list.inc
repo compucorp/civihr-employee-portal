@@ -440,7 +440,6 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
 $handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['operator'] = 'absence_start_date_period_filter_op';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['identifier'] = 'absence_start_date_period_filter';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['is_grouped'] = TRUE;
-$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['label'] = 'My leave';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['identifier'] = 'absence_start_date_period_filter';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['optional'] = FALSE;
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['default_group'] = '1';
@@ -559,7 +558,6 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
 $handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['operator'] = 'absence_start_date_period_filter_op';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['identifier'] = 'absence_start_date_period_filter';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['is_grouped'] = TRUE;
-$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['label'] = 'My sickness report';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['identifier'] = 'absence_start_date_period_filter';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['optional'] = FALSE;
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['default_group'] = '1';
