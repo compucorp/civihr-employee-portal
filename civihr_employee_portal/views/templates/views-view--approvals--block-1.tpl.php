@@ -28,96 +28,78 @@
  */
 ?>
 <div class="<?php print $classes; ?>">
-  <?php print render($title_prefix); ?>
-  <?php if ($title): ?>
-    <?php print $title; ?>
-  <?php endif; ?>
-  <?php print render($title_suffix); ?>
-  <?php if ($header): ?>
-    <div class="absence-approval-actions">
+    <?php print render($title_prefix); ?>
+    <?php if ($title) { print $title; } ?>
+    <?php print render($title_suffix); ?>
 
-      <div class="view-header">
-        <?php print $header; ?>
-      </div>
-
-      <?php if ($rows): ?>
-        <div class="view-content panel-panel">
-            <div class="well-small">
-
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="btn input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
-                        <input class="form-control" id="manager-approval-search" placeholder="Enter name">
+    <?php if ($header): ?>
+        <div class="absence-approval-actions">
+            <div class="view-header">
+                <?php print $header; ?>
+            </div>
+            <?php if ($rows): ?>
+                <div class="view-content panel-panel">
+                    <div class="well-small">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="btn input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+                                <input class="form-control" id="manager-approval-search" placeholder="Enter name">
+                            </div>
+                        </div>
                     </div>
                 </div>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
 
+    <?php if ($exposed): ?>
+        <div class="view-filters">
+            <?php print $exposed; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($attachment_before): ?>
+        <div class="attachment attachment-before">
+            <?php print $attachment_before; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($rows): ?>
+        <div class="row">
+            <div class="approval-filters col-sm-3">
+                <!-- content injected via JS -->
+            </div>
+            <div class="col-sm-9">
+                <div class ="approval-overflow-content" style="overflow-y: scroll; height: 220px;">
+                    <?php print $rows; ?>
+                </div>
             </div>
         </div>
-      <?php endif; ?>
+    <?php elseif ($empty): ?>
+        <div class="view-empty">
+            <?php print $empty; ?>
+        </div>
+    <?php endif; ?>
 
-    </div>
+    <?php if ($pager) { print $pager; } ?>
 
-  <?php endif; ?>
+    <?php if ($attachment_after): ?>
+        <div class="attachment attachment-after">
+            <?php print $attachment_after; ?>
+        </div>
+    <?php endif; ?>
 
-  <?php if ($exposed): ?>
-    <div class="view-filters">
-      <?php print $exposed; ?>
-    </div>
-  <?php endif; ?>
+    <?php if ($more){ print $more; } ?>
 
-  <?php if ($attachment_before): ?>
-    <div class="attachment attachment-before">
-      <?php print $attachment_before; ?>
-    </div>
-  <?php endif; ?>
+    <?php if ($footer): ?>
+        <div class="view-footer">
+            <?php print $footer; ?>
+        </div>
+    <?php endif; ?>
 
-  <?php if ($rows): ?>
-
-    <div class="row">
-
-      <div class="approval-filters col-sm-3 column1 panel-panel">
-
-      </div>
-
-      <div class="view-content col-sm-9 column2 panel-panel">
-
-          <div class ="approval-overflow-content" style="overflow-y: scroll; height: 220px;">
-              <?php print $rows; ?>
-          </div>
-
-      </div>
-
-    </div>
-  <?php elseif ($empty): ?>
-    <div class="view-empty">
-      <?php print $empty; ?>
-    </div>
-  <?php endif; ?>
-
-  <?php if ($pager): ?>
-    <?php print $pager; ?>
-  <?php endif; ?>
-
-  <?php if ($attachment_after): ?>
-    <div class="attachment attachment-after">
-      <?php print $attachment_after; ?>
-    </div>
-  <?php endif; ?>
-
-  <?php if ($more): ?>
-    <?php print $more; ?>
-  <?php endif; ?>
-
-  <?php if ($footer): ?>
-    <div class="view-footer">
-      <?php print $footer; ?>
-    </div>
-  <?php endif; ?>
-
-  <?php if ($feed_icon): ?>
-    <div class="feed-icon">
-      <?php print $feed_icon; ?>
-    </div>
-  <?php endif; ?>
-
+    <?php if ($feed_icon): ?>
+        <div class="feed-icon">
+            <?php print $feed_icon; ?>
+        </div>
+    <?php endif; ?>
 </div><?php /* class view */ ?>
