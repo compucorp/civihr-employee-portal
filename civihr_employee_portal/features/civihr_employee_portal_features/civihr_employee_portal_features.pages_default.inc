@@ -261,8 +261,8 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->shown = TRUE;
     $pane->access = array();
     $pane->configuration = array(
-      'override_title' => 0,
-      'override_title_text' => '',
+      'override_title' => 1,
+      'override_title_text' => t('My Leave'),
     );
     $pane->cache = array();
     $pane->style = array(
@@ -308,8 +308,8 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->shown = TRUE;
     $pane->access = array();
     $pane->configuration = array(
-      'override_title' => 0,
-      'override_title_text' => '',
+      'override_title' => 1,
+      'override_title_text' => t('My Sickness Report'),
     );
     $pane->cache = array();
     $pane->style = array(
