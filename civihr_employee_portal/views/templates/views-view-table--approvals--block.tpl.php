@@ -19,11 +19,11 @@
  * @ingroup views_templates
  */
 
-$approval_table_class = 'manager-approval-main-table tablesaw tablesaw-swipe';
+$approval_table_class = 'manager-approval-main-table';
 
 ?>
 
-<table <?php if ($classes) { print 'class="'. $classes . ' ' . $approval_table_class . '"'; } ?>data-mode="columntoggle" data-minimap<?php print $attributes; ?>>
+<table <?php if ($classes) { print 'class="'. $classes . ' ' . $approval_table_class . '"'; } ?>>
     <?php if (!empty($title) || !empty($caption)) : ?>
         <caption><?php print $caption . $title; ?></caption>
     <?php endif; ?>
