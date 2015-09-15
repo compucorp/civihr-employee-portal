@@ -59,6 +59,7 @@ $handler->display->display_options['fields']['department']['separator'] = '';
 /* Display: Gender / Location (count) */
 $handler = $view->new_display('page', 'Gender / Location (count)', 'page');
 $handler->display->display_options['defaults']['group_by'] = FALSE;
+$handler->display->display_options['group_by'] = TRUE;
 $handler->display->display_options['defaults']['relationships'] = FALSE;
 /* Relationship: HRJobContract Role entity: Contact_id */
 $handler->display->display_options['relationships']['contact_id']['id'] = 'contact_id';
@@ -100,25 +101,25 @@ $handler->display->display_options['pager']['options']['quantity'] = '9';
 $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'table';
 $handler->display->display_options['style_options']['columns'] = array(
-'department_1' => 'department_1',
-'contact_id' => 'contact_id',
+  'department_1' => 'department_1',
+  'contact_id' => 'contact_id',
 );
 $handler->display->display_options['style_options']['default'] = '-1';
 $handler->display->display_options['style_options']['info'] = array(
-'department_1' => array(
-'sortable' => 1,
-'default_sort_order' => 'asc',
-'align' => '',
-'separator' => '',
-'empty_column' => 0,
-),
-'contact_id' => array(
-'sortable' => 0,
-'default_sort_order' => 'asc',
-'align' => '',
-'separator' => '',
-'empty_column' => 0,
-),
+  'department_1' => array(
+    'sortable' => 1,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'contact_id' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
 );
 $handler->display->display_options['defaults']['style_options'] = FALSE;
 $handler->display->display_options['defaults']['row_plugin'] = FALSE;
