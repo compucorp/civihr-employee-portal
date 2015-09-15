@@ -39,11 +39,12 @@ class AbsenceLinks {
         drupal_add_js($civihr_style, 'setting');
 
         $links = '';
-        $links .= '<div id="absence-links" class="list-group" style="height: 50px;">';
+        $links .= '<div class="chr_panel__actions">';
+        $links .= '<div class="chr_panel__actions__inline-duo">';
         $links .= civihr_employee_portal_make_link(t('Request TOIL'), 'credit');
         $links .= civihr_employee_portal_make_link(t('Request leave'), 'debit');
+        $links .= '</div>';
         $links .= civihr_employee_portal_make_link(t('Use TOIL'), 'credit_use');
-
         $links .= '</div>';
 
         return $links;

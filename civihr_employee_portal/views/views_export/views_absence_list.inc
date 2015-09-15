@@ -17,6 +17,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 /* Display: Master */
 $handler = $view->new_display('default', 'Master', 'default');
 $handler->display->display_options['title'] = 'Absence list';
+$handler->display->display_options['css_class'] = 'view--w-table';
 $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
@@ -439,7 +440,6 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
 $handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['operator'] = 'absence_start_date_period_filter_op';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['identifier'] = 'absence_start_date_period_filter';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['is_grouped'] = TRUE;
-$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['label'] = 'My leave';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['identifier'] = 'absence_start_date_period_filter';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['optional'] = FALSE;
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['default_group'] = '1';
@@ -558,7 +558,6 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
 $handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['operator'] = 'absence_start_date_period_filter_op';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['identifier'] = 'absence_start_date_period_filter';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['is_grouped'] = TRUE;
-$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['label'] = 'My sickness report';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['identifier'] = 'absence_start_date_period_filter';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['optional'] = FALSE;
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['default_group'] = '1';
