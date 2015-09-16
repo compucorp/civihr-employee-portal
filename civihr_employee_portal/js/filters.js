@@ -26,67 +26,64 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                 }
 
                 CRM.api3('Activity', 'get', {
-                        "sequential": 1,
-                        "source_record_id": clicked_object,
-                    }).done(function(result) {
+                    "sequential": 1,
+                    "source_record_id": clicked_object,
+                }).done(function(result) {
 
-                        for (index = 0; index < result.count; ++index) {
+                    for (index = 0; index < result.count; ++index) {
 
-                            CRM.api3('Activity', 'setvalue', {
-                                "sequential": 1,
-                                "id": result.values[index].id,
-                                "field": "status_id",
-                                "value": status_value
-                            }).done(function(result) {
+                        CRM.api3('Activity', 'setvalue', {
+                            "sequential": 1,
+                            "id": result.values[index].id,
+                            "field": "status_id",
+                            "value": status_value
+                        }).done(function(result) {
 
-                            });
-                        }
+                        });
+                    }
 
-                    });
+                });
 
                 CRM.api3('Activity', 'setvalue', {
-                        "sequential": 1,
-                        "id": clicked_object,
-                        "field": "status_id",
-                        "value": status_value
-                    }).done(function(result) {
+                    "sequential": 1,
+                    "id": clicked_object,
+                    "field": "status_id",
+                    "value": status_value
+                }).done(function(result) {
 
-                        if (result.is_error == 1) {
-                            swal("Failed!", result.error_message, "error");
-                        }
-                        else {
+                    if (result.is_error == 1) {
+                        swal("Failed!", result.error_message, "error");
+                    }
+                    else {
 
-                            // Update absence status on the screen
-                            $("#act-id-" + clicked_object).html(status_type);
+                        // Update absence status on the screen
+                        $("#act-id-" + clicked_object).html(status_type);
 
-                            // Remove the row (so it will not be loaded when rebuilding the filters)
-                            $("#act-id-" + clicked_object).closest('tr').remove();
+                        // Remove the row (so it will not be loaded when rebuilding the filters)
+                        $("#act-id-" + clicked_object).closest('tr').remove();
 
-                            // Rebuild filters
-                            loadFilters();
+                        // Rebuild filters
+                        loadFilters();
 
-                            console.log(Drupal.settings.basePath + 'ajax/quick_email_notify/' + clicked_object + '/' + type);
+                        console.log(Drupal.settings.basePath + 'ajax/quick_email_notify/' + clicked_object + '/' + type);
 
-                            // Notify by email
-                            $.ajax({
-                                type: 'GET',
-                                url: Drupal.settings.basePath + 'ajax/quick_email_notify/' + clicked_object + '/' + type,
-                                success: function(data) {
-                                    console.log('Email sent');
-                                },
-                                error: function(data) {
-                                    console.log(data);
-                                    console.log('Email not sent!');
-                                }
-                            });
+                        // Notify by email
+                        $.ajax({
+                            type: 'GET',
+                            url: Drupal.settings.basePath + 'ajax/quick_email_notify/' + clicked_object + '/' + type,
+                            success: function(data) {
+                                console.log('Email sent');
+                            },
+                            error: function(data) {
+                                console.log(data);
+                                console.log('Email not sent!');
+                            }
+                        });
 
-                            // Notify with popup
-                            swal(status_type + "!", status_message, "success");
-                        }
-
-
-                    });
-
+                        // Notify with popup
+                        swal(status_type + "!", status_message, "success");
+                    }
+                });
             }
 
             /**
@@ -100,85 +97,57 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     var length = inputArray.length;
                     var outputArray = [];
                     var temp = {};
-                    for (i = 0; i < length; i++) {
 
+                    for (i = 0; i < length; i++) {
                         // Count the values based on their key
                         if (typeof temp[inputArray[i]] !== 'undefined') {
                             temp[inputArray[i]] = temp[inputArray[i]] + 1;
-                        }
-                        else {
+                        } else {
                             temp[inputArray[i]] = 1;
                         }
-
                     }
 
                     return temp;
                 }
 
-                // Map the classes for each item into a new array
-                classes = $(".manager-approval-main-table > tbody tr").map(function () {
-
-                    // If data attribute is defined
+                // Create list of distinct items only
+                var classList = distinctList($(".manager-approval-main-table > tbody tr").map(function () {
                     if ($(this).attr("data") !== undefined) {
                         return $(this).attr("data").split('@');
                     }
+                }));
 
-                });
+                if (classList.length !== 0) {
+                    var excluded_values = ["approvals table", "Approved", "Rejected"]; // Check for the enabled absence types only
+                    var included_values = ["Approved", "Rejected"]; // Check for the enabled approved / rejected only
 
-                // Create list of distinct items only
-                var classList = distinctList(classes);
+                    var tagList = '<ul id="tag-list" class="nav nav-pills nav-stacked"></ul>';
+                    var tagItem = '<li class="active"><a href >all&nbsp;<span class="badge badge-primary pull-right">' + classList['approvals-table'] + '</span></a></li>';
 
-                // Generate the list of filter links
-                var tagList = '<ul id="tag-list" class="nav nav-pills nav-stacked"></ul>';
-
-                // Check if we need to display the filter options
-                if (classes.length !== 0) {
-
-                    // All filter
-                    tagItem = '<li class="active"><a href >all&nbsp;<span class="badge badge-primary pull-right">' + classList['approvals-table'] + '</span></a></li>';
-
-                    // Check for the enabled absence types only
-                    var excluded_values = ["approvals table", "Approved", "Rejected"];
-
-                    // Check for the enabled approved / rejected only
-                    var included_values = ["Approved", "Rejected"];
-
-                    // Loop through the list of classes & add link
                     $.each(classList, function (index, value) {
-
                         var index = index.replace("-", " ");
 
-                        // Build the approval filters
                         if ($.inArray(index, excluded_values) == -1) {
                             tagItem += '<li><a href="#">' + index + '&nbsp;<span class="badge badge-primary pull-right">' + value + '</span></a></li>';
                         }
-
                     });
 
-                    // Loop through the list of classes & add link
                     $.each(classList, function (index, value) {
-
                         var index = index.replace("-", " ");
 
-                        // Build the approved / rejected filters
                         if ($.inArray(index, included_values) !== -1) {
                             tagItem += '<li><a href="#">' + index + '&nbsp;<span class="badge badge-primary pull-right">' + value + '</span></a></li>';
                         }
-
                     });
 
                     // Add the filter links before the list of items
                     $("div.approval-filters").html($(tagList).append(tagItem));
-
-                }
-                else {
-
+                } else {
                     // Clear filters if there is no more absence to approve
                     $("div.approval-filters").html('');
                 }
 
                 $('#tag-list a').click(function (e) {
-
                     // allows filter categories using multiple words
                     var getText = $(this).text().replace(/ /g, "-");
 
@@ -190,7 +159,6 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     } else {
                         $(".manager-approval-main-table > tbody tr").fadeOut(10);
                         $(".manager-approval-main-table > tbody tr").each(function () {
-
                             var data_array = $(this).attr('data').split("@");
                             var index = string[0].replace(/-/g, " ");
 
@@ -198,7 +166,6 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                             if ($.inArray(index, data_array) !== -1) {
                                 $(this).fadeIn(10);
                             }
-
                         });
                     }
 
@@ -209,13 +176,11 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     // Prevent the page scrolling to the top of the screen
                     e.preventDefault();
                 });
-
-
             }
 
             $( ".manager-approval-main-table__actions__action--approve" ).click(function() {
+                var action = $(this).attr('id');
 
-                var clicked_object = $(this).attr('id');
                 swal({
                     title: "Approve all leave",
                     text: "Are you sure you want to approve this leave?",
@@ -224,17 +189,14 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     confirmButtonColor: "#DD6B55",
                     confirmButtonText: "Yes, approve all!",
                     closeOnConfirm: false,
-                },
-                function() {
-
-                    civiUpdateActivity(clicked_object, 'approve');
-
+                }, function() {
+                    civiUpdateActivity(action, 'approve');
                 });
             });
 
             $( ".manager-approval-main-table__actions__action--deny" ).click(function() {
+                var action = $(this).attr('id');
 
-                var clicked_object = $(this).attr('id');
                 swal({
                     title: "Reject all leave",
                     text: "Are you sure you want to reject this leave?",
@@ -243,21 +205,15 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     confirmButtonColor: "#DD6B55",
                     confirmButtonText: "Yes, reject all!",
                     closeOnConfirm: false
-                  },
-                  function(){
-
-                    civiUpdateActivity(clicked_object, 'reject');
-
-                  });
+                }, function(){
+                    civiUpdateActivity(action, 'reject');
+                });
             });
 
             if ($('table').hasClass('manager-approval-main-table') && $('div').hasClass('ctools-modal-dialog') == false) {
-
                 // Header table sorter
                 $(".manager-approval-main-table").tablesorter();
-
             }
-
         }
 
         var ApprovalFilter = function () {
