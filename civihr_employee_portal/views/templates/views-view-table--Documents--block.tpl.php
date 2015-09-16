@@ -49,7 +49,15 @@ endforeach;
 ?>
 <div class="chr_table-w-filters chr_table-w-filters--documents row">
     <div class="chr_table-w-filters__filters col-md-3">
-        <ul id="nav-documents-status" class="chr_table-w-filters__filters__nav nav nav-pills nav-stacked">
+        <!-- .form-item is necessary for how we implement customSelect() -->
+        <div class="chr_table-w-filters__filters__dropdown-wrapper form-item">
+            <select class="chr_table-w-filters__filters__dropdown">
+                <?php foreach ($statuses as $key => $value): ?>
+                    <option value="<?php print $key; ?>"><?php print $value; ?> (<?php print $statusesCount[$key]; ?>)</option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <ul class="chr_table-w-filters__filters__nav nav nav-pills nav-stacked">
             <?php $classActive = ' class="active"'; ?>
             <?php foreach ($statuses as $key => $value): ?>
                 <li<?php print $classActive; ?>><a href data-document-status="<?php print $key; ?>"><?php print $value; ?> <span class="badge badge-primary pull-right"><?php print $statusesCount[$key]; ?></span></a></li>
@@ -143,6 +151,7 @@ endforeach;
         }
 
         var $tableFilters = $('.chr_table-w-filters--documents'),
+            $filtersDropdown = $tableFilters.find('.chr_table-w-filters__filters__dropdown'),
             $filtersNav = $tableFilters.find('.chr_table-w-filters__filters__nav'),
             $tableDocStaff = $tableFilters.find('.chr_table-w-filters__table'),
             $tableDocStaffRows = $tableDocStaff.find('.document-row');
@@ -156,6 +165,10 @@ endforeach;
             $this.parent().addClass('active');
 
             filterTable($this.data('documentStatus'));
+        });
+
+        $filtersDropdown.on('change', function (e) {
+            filterTable($(this).val());
         });
     }(CRM.$));
 </script>
