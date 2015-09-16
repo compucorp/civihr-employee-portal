@@ -65,12 +65,12 @@
     <?php endif; ?>
 
     <?php if ($rows): ?>
-        <div class="row">
-            <div class="approval-filters col-sm-3">
+        <div class="chr_table-w-filters row">
+            <div class="chr_table-w-filters__filters approval-filters col-md-3">
                 <!-- content injected via JS -->
             </div>
-            <div class="col-sm-9">
-                <div class ="approval-overflow-content" style="overflow-y: scroll; height: 220px;">
+            <div class="chr_table-w-filters__table-wrapper col-md-9">
+                <div class="chr_table-w-filters__table">
                     <?php print $rows; ?>
                 </div>
             </div>

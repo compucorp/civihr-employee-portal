@@ -35,7 +35,7 @@ $approval_table_class = 'manager-approval-main-table';
                 <?php $data_priority += 1; ?>
                 <?php if ($field == 'tooltip') { $sortable = ''; $persist = 'data-priority="persist"'; } else { $persist = ''; } ?>
 
-                <th <?php if ($header_classes[$field]) { print $persist . ' data-priority=' . "'$data_priority'"; } ?>>
+                <th <?php if ($header_classes[$field]) { print 'class="' . $header_classes[$field] . '"' . $persist . ' data-priority=' . "'$data_priority'"; } ?>>
                     <?php print $label; ?>
                 </th>
             <?php endforeach; ?>

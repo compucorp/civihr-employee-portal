@@ -213,7 +213,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
 
             }
 
-            $( ".glyphicon-ok-sign" ).click(function() {
+            $( ".manager-approval-main-table__actions__action--approve" ).click(function() {
 
                 var clicked_object = $(this).attr('id');
                 swal({
@@ -232,7 +232,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                 });
             });
 
-            $( ".glyphicon-remove-sign" ).click(function() {
+            $( ".manager-approval-main-table__actions__action--deny" ).click(function() {
 
                 var clicked_object = $(this).attr('id');
                 swal({
