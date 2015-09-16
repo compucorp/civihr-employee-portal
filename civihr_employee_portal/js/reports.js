@@ -837,11 +837,47 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             var viewDisplay = report.getViewDisplayName();
 
             console.log(d);
-            var viewArgument = d.data.department;
+
+            var getCleanData = {
+                gender: function (gender) {
+
+                    if (gender == 'Female') {
+                        return 1;
+                    }
+
+                    if (gender == 'Male') {
+                        return 2;
+                    }
+
+                    if (gender == 'Transgender') {
+                        return 3;
+                    }
+
+                }
+            }
+
+            // If any value cleanup needs to be done it need to be done at this stage
+            var x_axis = d.data.department;
+            var y_axis = getCleanData['gender'](d.data.gender) || '';
+
+            console.log(getCleanData['gender'](5));
+
+            // Returns the URL for the ajax call
+            function buildURL() {
+
+                var base_path = Drupal.settings.basePath;
+                var menu_route = 'civihr_reports';
+                var separator = '/';
+                var arguments = '?x_axis=' + x_axis + '&y_axis=' + y_axis + '&ajax=true';
+
+                return base_path + menu_route + separator + viewName + separator + viewDisplay + arguments;
+            }
+
+            console.log(buildURL());
 
             $.ajax({
                 type: 'GET',
-                url: Drupal.settings.basePath + 'civihr_reports/' + viewName + '/' + viewDisplay + '?value=' + viewArgument + '&ajax=true',
+                url: buildURL(),
                 success: function(data) {
 
                     var viewHtml = data;
