@@ -249,7 +249,10 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->style = array(
       'settings' => NULL,
     );
-    $pane->css = array();
+    $pane->css = array(
+      'css_id' => '',
+      'css_class' => 'chr_panel--no-padding',
+    );
     $pane->extras = array();
     $pane->position = 0;
     $pane->locks = array();
