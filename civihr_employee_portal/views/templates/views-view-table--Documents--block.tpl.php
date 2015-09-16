@@ -47,8 +47,8 @@ foreach ($rows as $row):
 endforeach;
 
 ?>
-<div class="row">
-    <div class="col-xs-12 col-sm-4 col-lg-3">
+<div class="chr_table-w-filters row">
+    <div class="chr_table-w-filters__filters col-md-3">
         <ul id="nav-documents-status" class="nav nav-pills nav-stacked">
 <?php $classActive = ' class="active"'; ?>
 <?php foreach ($statuses as $key => $value): ?>
@@ -57,72 +57,74 @@ endforeach;
 <?php endforeach; ?>
         </ul>
     </div>
-    <div class="col-xs-12 col-sm-8 col-lg-9">
-        <table id="documents-dashboard-table-staff" <?php if ($classes) { print 'class="'. $classes . '" '; } ?><?php print $attributes; ?>>
-            <?php if (!empty($title) || !empty($caption)) : ?>
-                <caption><?php print $caption . $title; ?></caption>
-            <?php endif; ?>
-            <?php if (!empty($header)) : ?>
-                <thead>
-                    <tr>
-                    <?php foreach ($header as $field => $label): ?>
-                        <th <?php if ($header_classes[$field]) { print 'class="'. $header_classes[$field] . '" '; } ?>>
-                            <?php print $label; ?>
-                        </th>
-                    <?php endforeach; ?>
-                        <th></th>
+    <div class="chr_table-w-filters__table-wrapper col-md-9">
+        <div class="chr_table-w-filters__table">
+            <table id="documents-dashboard-table-staff" <?php if ($classes) { print 'class="'. $classes . '" '; } ?><?php print $attributes; ?>>
+                <?php if (!empty($title) || !empty($caption)) : ?>
+                    <caption><?php print $caption . $title; ?></caption>
+                <?php endif; ?>
+                <?php if (!empty($header)) : ?>
+                    <thead>
+                        <tr>
+                        <?php foreach ($header as $field => $label): ?>
+                            <th <?php if ($header_classes[$field]) { print 'class="'. $header_classes[$field] . '" '; } ?>>
+                                <?php print $label; ?>
+                            </th>
+                        <?php endforeach; ?>
+                            <th></th>
+                        </tr>
+                    </thead>
+                <?php endif; ?>
+                <tbody>
+                <?php foreach ($rows as $row_count => $row): ?>
+                    <?php $class = 'document-row status-id-' . strip_tags($row['status_id']); ?>
+                    <tr <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?>>
+                        <?php foreach ($row as $field => $content): ?>
+                            <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
+                                <?php if ($field === 'activity_type_id'):
+                                    print $types[strip_tags($content)];
+                                    continue;
+                                endif;
+                                ?>
+                                <?php if ($field === 'activity_date_time' && trim(strip_tags($content))):
+                                    print date('M d Y', strtotime(strip_tags($content)));
+                                    continue;
+                                endif; ?>
+                                <?php if ($field === 'expire_date' && trim(strip_tags($content))):
+                                    print date('M d Y', strtotime(strip_tags($content)));
+                                    continue;
+                                endif; ?>
+                                <?php if ($field === 'status_id'):
+                                    print $statuses[strip_tags($content)];
+                                    continue;
+                                endif; ?>
+                                <?php if ($field === 'document_contacts' || $field === 'document_contacts_1'):
+                                    print $content;
+                                    continue;
+                                endif; ?>
+                                <?php print $content; ?>
+                            </td>
+                        <?php endforeach; ?>
+                            <td>
+                                <?php if (strip_tags($row['status_id']) == 3): ?>
+                                    <button
+                                        class="btn btn-sm btn-default ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"
+                                        disabled="disabled">
+                                        <i class="fa fa-upload"></i> Upload
+                                    </button>
+                                <?php else: ?>
+                                    <a
+                                        href="/civi_documents/nojs/edit/<?php print strip_tags($row['id']); ?>"
+                                        class="btn btn-sm btn-default ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">
+                                        <i class="fa fa-upload"></i> Upload
+                                    </a>
+                                <?php endif; ?>
+                            </td>
                     </tr>
-                </thead>
-            <?php endif; ?>
-            <tbody>
-            <?php foreach ($rows as $row_count => $row): ?>
-                <?php $class = 'document-row status-id-' . strip_tags($row['status_id']); ?>
-                <tr <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?>>
-                    <?php foreach ($row as $field => $content): ?>
-                        <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
-                            <?php if ($field === 'activity_type_id'):
-                                print $types[strip_tags($content)];
-                                continue;
-                            endif;
-                            ?>
-                            <?php if ($field === 'activity_date_time' && trim(strip_tags($content))):
-                                print date('M d Y', strtotime(strip_tags($content)));
-                                continue;
-                            endif; ?>
-                            <?php if ($field === 'expire_date' && trim(strip_tags($content))):
-                                print date('M d Y', strtotime(strip_tags($content)));
-                                continue;
-                            endif; ?>
-                            <?php if ($field === 'status_id'):
-                                print $statuses[strip_tags($content)];
-                                continue;
-                            endif; ?>
-                            <?php if ($field === 'document_contacts' || $field === 'document_contacts_1'):
-                                print $content;
-                                continue;
-                            endif; ?>
-                            <?php print $content; ?>
-                        </td>
-                    <?php endforeach; ?>
-                        <td>
-                            <?php if (strip_tags($row['status_id']) == 3): ?>
-                                <button
-                                    class="btn btn-sm btn-default ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"
-                                    disabled="disabled">
-                                    <i class="fa fa-upload"></i> Upload
-                                </button>
-                            <?php else: ?>
-                                <a
-                                    href="/civi_documents/nojs/edit/<?php print strip_tags($row['id']); ?>"
-                                    class="btn btn-sm btn-default ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">
-                                    <i class="fa fa-upload"></i> Upload
-                                </a>
-                            <?php endif; ?>
-                        </td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
