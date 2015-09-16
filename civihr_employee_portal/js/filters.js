@@ -110,51 +110,11 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     return temp;
                 }
 
-                // Create list of distinct items only
-                var classList = distinctList($(".manager-approval-main-table > tbody tr").map(function () {
-                    if ($(this).attr("data") !== undefined) {
-                        return $(this).attr("data").split('@');
-                    }
-                }));
+                //
+                function filterTable(filter) {
+                    var string = filter.match(/\S+/g);
 
-                if (classList.length !== 0) {
-                    var excluded_values = ["approvals table", "Approved", "Rejected"]; // Check for the enabled absence types only
-                    var included_values = ["Approved", "Rejected"]; // Check for the enabled approved / rejected only
-
-                    var tagList = '<ul id="tag-list" class="nav nav-pills nav-stacked"></ul>';
-                    var tagItem = '<li class="active"><a href >all&nbsp;<span class="badge badge-primary pull-right">' + classList['approvals-table'] + '</span></a></li>';
-
-                    $.each(classList, function (index, value) {
-                        var index = index.replace("-", " ");
-
-                        if ($.inArray(index, excluded_values) == -1) {
-                            tagItem += '<li><a href="#">' + index + '&nbsp;<span class="badge badge-primary pull-right">' + value + '</span></a></li>';
-                        }
-                    });
-
-                    $.each(classList, function (index, value) {
-                        var index = index.replace("-", " ");
-
-                        if ($.inArray(index, included_values) !== -1) {
-                            tagItem += '<li><a href="#">' + index + '&nbsp;<span class="badge badge-primary pull-right">' + value + '</span></a></li>';
-                        }
-                    });
-
-                    // Add the filter links before the list of items
-                    $("div.approval-filters").html($(tagList).append(tagItem));
-                } else {
-                    // Clear filters if there is no more absence to approve
-                    $("div.approval-filters").html('');
-                }
-
-                $('#tag-list a').click(function (e) {
-                    // allows filter categories using multiple words
-                    var getText = $(this).text().replace(/ /g, "-");
-
-                    // Get the value name from the string (it includes the count value, so this removes it) -> similar to php explode function
-                    var string = getText.match(/\S+/g);
-
-                    if (string[0] == 'all') {
+                    if (string[0] === 'all') {
                         $(".manager-approval-main-table > tbody tr").fadeIn(10);
                     } else {
                         $(".manager-approval-main-table > tbody tr").fadeOut(10);
@@ -168,6 +128,55 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                             }
                         });
                     }
+                }
+
+                var $filtersNav = $("div.approval-filters").find('.chr_table-w-filters__filters__nav');
+                var $filtersSelect = $("div.approval-filters").find('.chr_table-w-filters__filters__dropdown');
+
+                // Create list of distinct items only
+                var classList = distinctList($(".manager-approval-main-table > tbody tr").map(function () {
+                    if ($(this).attr("data") !== undefined) {
+                        return $(this).attr("data").split('@');
+                    }
+                }));
+
+                if (classList.length !== 0) {
+                    var excluded_values = ["approvals table", "Approved", "Rejected"]; // Check for the enabled absence types only
+                    var included_values = ["Approved", "Rejected"]; // Check for the enabled approved / rejected only
+
+                    var tagItems = '<li class="active"><a href >all&nbsp;<span class="badge badge-primary pull-right">' + classList['approvals-table'] + '</span></a></li>';
+                    var tagOptions = '<option value="all">all (' + classList['approvals-table'] + ')</option>';
+
+                    $.each(classList, function (index, value) {
+                        var index = index.replace("-", " ");
+
+                        if ($.inArray(index, excluded_values) == -1) {
+                            tagItems += '<li><a href="#">' + index + '&nbsp;<span class="badge badge-primary pull-right">' + value + '</span></a></li>';
+                            tagOptions += '<option value="' + index + '">' + index + ' (' + value + ')</option>';
+                        }
+                    });
+
+                    $.each(classList, function (index, value) {
+                        var index = index.replace("-", " ");
+
+                        if ($.inArray(index, included_values) !== -1) {
+                            tagItems += '<li><a href="#">' + index + '&nbsp;<span class="badge badge-primary pull-right">' + value + '</span></a></li>';
+                            tagOptions += '<option value="' + index + '">' + index + ' (' + value + ')</option>';
+                        }
+                    });
+
+                    // Add the filter links before the list of items
+                    $filtersNav.append(tagItems).removeClass('hide');
+                    $filtersSelect.append(tagOptions).removeClass('hide');
+                } else {
+                    // Clear filters if there is no more absence to approve
+                    $filtersNav.html('').addClass('hide');
+                    $filtersSelect.html('').addClass('hide');
+                }
+
+                $filtersNav.on('click', 'a', function (e) {
+                    // allows filter categories using multiple words
+                    filterTable($(this).text().replace(/ /g, "-"));
 
                     // Add class "active" to current filter item
                     $('#tag-list li').removeClass('active');
@@ -176,6 +185,10 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     // Prevent the page scrolling to the top of the screen
                     e.preventDefault();
                 });
+
+                $filtersSelect.on('change', function () {
+                    filterTable($(this).val().replace(/ /g, "-"));
+                })
             }
 
             $( ".manager-approval-main-table__actions__action--approve" ).click(function() {

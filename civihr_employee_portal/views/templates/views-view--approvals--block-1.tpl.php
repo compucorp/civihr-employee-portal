@@ -67,7 +67,14 @@
     <?php if ($rows): ?>
         <div class="chr_table-w-filters row">
             <div class="chr_table-w-filters__filters approval-filters col-md-3">
-                <!-- content injected via JS -->
+                <div class="chr_table-w-filters__filters__dropdown-wrapper form-item">
+                    <select class="chr_table-w-filters__filters__dropdown">
+                        <!-- content injected via JS -->
+                    </select>
+                </div>
+                <ul id="tag-list" class="chr_table-w-filters__filters__nav nav nav-pills nav-stacked">
+                    <!-- content injected via JS -->
+                </ul>
             </div>
             <div class="chr_table-w-filters__table-wrapper col-md-9">
                 <div class="chr_table-w-filters__table">
