@@ -47,14 +47,14 @@ foreach ($rows as $row):
 endforeach;
 
 ?>
-<div class="chr_table-w-filters row">
+<div class="chr_table-w-filters chr_table-w-filters--documents row">
     <div class="chr_table-w-filters__filters col-md-3">
-        <ul id="nav-documents-status" class="nav nav-pills nav-stacked">
-<?php $classActive = ' class="active"'; ?>
-<?php foreach ($statuses as $key => $value): ?>
-            <li<?php print $classActive; ?>><a href data-document-status="<?php print $key; ?>"><?php print $value; ?> <span class="badge pull-right"><?php print $statusesCount[$key]; ?></span></a></li>
-<?php $classActive = ''; ?>
-<?php endforeach; ?>
+        <ul id="nav-documents-status" class="chr_table-w-filters__filters__nav nav nav-pills nav-stacked">
+            <?php $classActive = ' class="active"'; ?>
+            <?php foreach ($statuses as $key => $value): ?>
+                <li<?php print $classActive; ?>><a href data-document-status="<?php print $key; ?>"><?php print $value; ?> <span class="badge badge-primary pull-right"><?php print $statusesCount[$key]; ?></span></a></li>
+                <?php $classActive = ''; ?>
+            <?php endforeach; ?>
         </ul>
     </div>
     <div class="chr_table-w-filters__table-wrapper col-md-9">
@@ -130,26 +130,32 @@ endforeach;
 
 <script>
     (function($){
-        var $navDocStatus = $('#nav-documents-status'),
-            $tableDocStaff = $('#documents-dashboard-table-staff'),
+        'use strict';
+
+        function filterTable(statusId) {
+            if (parseInt(statusId, 10) === 0) {
+                $tableDocStaffRows.show();
+                return;
+            }
+
+            $tableDocStaffRows.hide();
+            $tableDocStaff.find('.status-id-' + statusId).show();
+        }
+
+        var $tableFilters = $('.chr_table-w-filters--documents'),
+            $filtersNav = $tableFilters.find('.chr_table-w-filters__filters__nav'),
+            $tableDocStaff = $tableFilters.find('.chr_table-w-filters__table'),
             $tableDocStaffRows = $tableDocStaff.find('.document-row');
 
-            $navDocStatus.find('a').bind('click', function(e) {
-                e.preventDefault();
+        $filtersNav.find('a').bind('click', function (e) {
+            e.preventDefault();
 
-                var $this = $(this),
-                    documentStatus = $this.data('documentStatus');
+            var $this = $(this);
 
-                $navDocStatus.find('> li').removeClass('active');
-                $this.parent().addClass('active');
+            $filtersNav.find('> li').removeClass('active');
+            $this.parent().addClass('active');
 
-                if (!documentStatus) {
-                    $tableDocStaffRows.show();
-                    return
-                }
-
-                $tableDocStaffRows.hide();
-                $tableDocStaff.find('.status-id-' + documentStatus).show();
+            filterTable($this.data('documentStatus'));
         });
     }(CRM.$));
 </script>
