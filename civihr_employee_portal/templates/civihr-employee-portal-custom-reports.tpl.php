@@ -6,11 +6,11 @@
         <button id="age" class="mainFilter btn btn-primary btn-reports">Age</button>
     </div>
 
-    <div class="col-md-10 column2 panel-panel">
+    <div class="col-md-8 column2 panel-panel">
         <div id="custom-report"></div>
     </div>
 
-    <div class="col-md-12 column1 panel-panel report-x-filters">
+    <div class="col-md-8 column1 panel-panel report-x-filters">
         <button id="all" class="subFilter btn btn-primary btn-reports">All</button>
         <button id="location" class="subFilter btn btn-primary btn-reports">Location</button>
         <button id="department" class="subFilter btn btn-primary btn-reports">Department</button>
@@ -31,7 +31,7 @@
 
 <div class="panel-pane pane-block custom-settings-block">
 
-    <div class="col-md-10 column2 panel-panel">
+    <div class="col-md-8 column2 panel-panel">
         <?php print $settings_url; ?>
     </div>
 

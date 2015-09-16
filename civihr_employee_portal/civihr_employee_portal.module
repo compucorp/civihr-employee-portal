@@ -2700,8 +2700,13 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
     $args = [];
 
     // Set the contextual filters (if any)
-    if (isset($_GET['value'])) {
-        $args[] = $_GET['value'];
+    if (isset($_GET['x_axis'])) {
+        $args[] = $_GET['x_axis'];
+    }
+
+    // Set the contextual filters (if any)
+    if (isset($_GET['y_axis'])) {
+        $args[] = $_GET['y_axis'];
     }
 
     // No view display the default reports page (reports dashboard)
@@ -2772,7 +2777,7 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         // Set dom_id otherwise notice message is displayed from Drupal
         $view->dom_id = 'filter-results';
 
-        // Set the contextual filters from graph (passed in GET['value'])
+        // Set the contextual filters from graph (passed in GET['x_axis'] or GET['y_axis'])
         $view->set_arguments($args);
 
         $view->execute();
