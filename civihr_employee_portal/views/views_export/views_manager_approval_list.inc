@@ -282,9 +282,8 @@ $handler->display->display_options['header']['area']['id'] = 'area';
 $handler->display->display_options['header']['area']['table'] = 'views';
 $handler->display->display_options['header']['area']['field'] = 'area';
 $handler->display->display_options['header']['area']['empty'] = TRUE;
-$handler->display->display_options['header']['area']['content'] = '<a href="manager_approval/nojs/calendar/show" class="ctools-use-modal ctools-modal-civihr-default-style">Open Manager Calendar</a>
-<a href="absence_all/nojs/view" class="ctools-use-modal ctools-modal-civihr-default-style show-all-absences">Show all Absences</a>';
-$handler->display->display_options['header']['area']['format'] = 'filtered_html';
+$handler->display->display_options['header']['area']['content'] = '<a href="absence_all/nojs/view" class="chr_action--icon--list chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-default-style"><span>Show all Absences</span></a><a href="manager_approval/nojs/calendar/show" class="chr_action--icon--calendar chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-default-style"><span>Open Calendar</span></a>';
+$handler->display->display_options['header']['area']['format'] = 'full_html';
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
 /* Filter criterion: Absence approval entity: Absence status */

@@ -38,14 +38,10 @@
                 <?php print $header; ?>
             </div>
             <?php if ($rows): ?>
-                <div class="view-content panel-panel">
-                    <div class="well-small">
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="btn input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
-                                <input class="form-control" id="manager-approval-search" placeholder="Enter name">
-                            </div>
-                        </div>
+                <div class="view-content">
+                    <div class="input-group">
+                        <div class="btn input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+                        <input class="form-control" id="manager-approval-search" placeholder="Enter name">
                     </div>
                 </div>
             <?php endif; ?>
