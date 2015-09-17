@@ -68,7 +68,7 @@
                         <!-- content injected via JS -->
                     </select>
                 </div>
-                <ul id="tag-list" class="chr_table-w-filters__filters__nav nav nav-pills nav-stacked">
+                <ul id="tag-list" class="chr_table-w-filters__filters__nav">
                     <!-- content injected via JS -->
                 </ul>
             </div>

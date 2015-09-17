@@ -57,7 +57,7 @@ endforeach;
                 <?php endforeach; ?>
             </select>
         </div>
-        <ul class="chr_table-w-filters__filters__nav nav nav-pills nav-stacked">
+        <ul class="chr_table-w-filters__filters__nav">
             <?php $classActive = ' class="active"'; ?>
             <?php foreach ($statuses as $key => $value): ?>
                 <li<?php print $classActive; ?>><a href data-document-status="<?php print $key; ?>"><?php print $value; ?> <span class="badge badge-primary pull-right"><?php print $statusesCount[$key]; ?></span></a></li>
