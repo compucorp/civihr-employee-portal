@@ -44,7 +44,10 @@ class Leave {
         $view->display_handler->set_option('filters', $filters);
         $view->pre_execute();
 
-        return $view->render($display);
+        // Render absence links block
+        $absence_links = render(module_invoke('civihr_employee_portal', 'block_view', 'absence_links')['content']);
+
+        return $view->render($display) . $absence_links;
                 
     }
 }

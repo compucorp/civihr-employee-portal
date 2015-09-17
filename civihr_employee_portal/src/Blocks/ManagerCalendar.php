@@ -30,16 +30,17 @@ class ManagerCalendar {
             $check_end_day = intval(date('d', $record->absence_end_date_timestamp + 3600));
             
             if ($check_start_month == $check_end_month) {
-                $months_data[$check_start_month][$check_start_day][$record->employee_id][$record->id] = array(
-                                                                                                            'name' => get_civihr_contact_data($record->employee_id)['display_name'], 
-                                                                                                            'title' => $record->absence_title,
-                                                                                                            'type' => $record->activity_type_id,
-                                                                                                            'start_month' => $check_start_month, 
-                                                                                                            'end_month' => $check_end_month, 
-                                                                                                            'start_day' => $check_start_day,
-                                                                                                            'end_day' => $check_end_day,
-                                                                                                            'duration' => $record->duration <= 480 ? $record->duration / (6 * 80) . ' day' : $record->duration / (6 * 80) . ' days'
-                                                                                                        );
+                $months_data[$check_start_month][$check_start_day][$record->employee_id][$record->id] =
+                    array(
+                        'name' => get_civihr_contact_data($record->employee_id)['display_name'],
+                        'title' => $record->absence_title,
+                        'type' => $record->activity_type_id,
+                        'start_month' => $check_start_month,
+                        'end_month' => $check_end_month,
+                        'start_day' => $check_start_day,
+                        'end_day' => $check_end_day,
+                        'duration' => $record->duration <= 480 ? $record->duration / (6 * 80) . ' day' : $record->duration / (6 * 80) . ' days'
+                    );
             }
             else {
                  
@@ -63,16 +64,17 @@ class ManagerCalendar {
                         
                     }
                     
-                    $months_data[$check_start_month+$num_of_iterations][$new_start_day][$record->employee_id][$record->id] = array(
-                                                                                                                                'name' => get_civihr_contact_data($record->employee_id)['display_name'], 
-                                                                                                                                'title' => $record->absence_title,
-                                                                                                                                'type' => $record->activity_type_id, 
-                                                                                                                                'start_month' => $check_start_month + $num_of_iterations, 
-                                                                                                                                'end_month' => $new_end_month, 
-                                                                                                                                'start_day' => $new_start_day,
-                                                                                                                                'end_day' => $new_end_day,
-                                                                                                                                'duration' => $record->duration <= 480 ? $record->duration / (6 * 80) . ' day' : $record->duration / (6 * 80) . ' days'
-                                                                                                                            );
+                    $months_data[$check_start_month+$num_of_iterations][$new_start_day][$record->employee_id][$record->id] =
+                        array(
+                            'name' => get_civihr_contact_data($record->employee_id)['display_name'],
+                            'title' => $record->absence_title,
+                            'type' => $record->activity_type_id,
+                            'start_month' => $check_start_month + $num_of_iterations,
+                            'end_month' => $new_end_month,
+                            'start_day' => $new_start_day,
+                            'end_day' => $new_end_day,
+                            'duration' => $record->duration <= 480 ? $record->duration / (6 * 80) . ' day' : $record->duration / (6 * 80) . ' days'
+                        );
                     
                 }
                

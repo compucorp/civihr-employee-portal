@@ -11,10 +11,8 @@ class SicknessLinks {
     public function generateBlock() {
 
         $links = '';
-        $links .= '<div id="absence-links" class="list-group" style="height: 50px;">';
+        $links .= '<div class="chr_panel__actions">';
         $links .= civihr_employee_portal_make_link(t('Report new sickness'), 'sick');
-
-
         $links .= '</div>';
 
         return $links;

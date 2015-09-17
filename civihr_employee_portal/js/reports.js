@@ -595,10 +595,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .key(function(d) {
                     return d.data.department;
                 })
-                // We should remove duplicated results if contact is assigned to same group multiple times
-                //.key(function(d) {
-                //    return d.data.contact_id;
-                //})
                 .rollup(function(d) {
                     return d3.sum(d, function(g) {
                         return 1;
@@ -719,7 +715,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             svg.append("g").selectAll("g")
                 .data(nested_data)
                 .enter().append("g")
-                .style("fill", function(d, i) { return z(i); })
+                .style("fill", function(d, i) {
+                    return z(d.key);
+                })
                 .attr("transform", function(d, i) {
                     return "translate(" + x1(i) + ",0)";
                 })
@@ -743,12 +741,30 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return height - report.settings.hpadding - y(d.values);
 
                 })
+                .on("mouseover", function() {
+                    d3.select(this)
+                        .attr("cursor", "pointer")
+                        .attr("fill", "orange");
+                })
+                .on("mouseout", function(d, i) {
+                    d3.select(this)
+                        .transition()
+                        .duration(report.settings.duration)
+                        .attr("fill", function() {
+                            return z(d3.select(this.parentNode).attr("data-legend"));
+                        })
+                })
                 .on("click", function(d, i) {
-                    
-                    console.log(d3.select(this.parentNode).attr("data-legend"));
-                    console.log(d);
-                    console.log(i);
-                    //_displayFilterData(d.data, report);
+
+                    d.data = [];
+
+                    // Get x axis value (Location, Department..)
+                    d.data.department = d['key'];
+
+                    // Get the y axis filter value (Gender, Age)
+                    d.data.gender = d3.select(this.parentNode).attr("data-legend");
+
+                    _displayFilterData(d, report);
 
                 })
                 .attr("x", function(d, i) {
@@ -771,7 +787,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .enter().append("text")
                 .attr("font-family", "sans-serif")
                 .attr("font-size", "9px")
-                .attr("fill", function(d, i) { return z(i); })
+                .attr("fill", function(d, i) {
+                    return z(d.key);
+                })
                 .attr("text-anchor", "middle")
                 .text(function(d) {
                     return d.key;
@@ -789,10 +807,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .enter().append("rect")
                 .attr("width", 15)
                 .attr("height", 15)
-                .attr("fill", function(d, i) { return z(i); })
-                .style("fill", function(d, i) {
-                    return z(i);
-                })
+                .attr("fill", function(d, i) { return z(d.key); })
                 .attr("x", function(d, i) {
                     return width - 50  - report.settings.barPadding;
                 })
@@ -821,11 +836,48 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             var viewName = report.getViewMachineName();
             var viewDisplay = report.getViewDisplayName();
 
-            var viewArgument = d.data.department;
+            console.log(d);
+
+            var getCleanData = {
+                gender: function (gender) {
+
+                    if (gender == 'Female') {
+                        return 1;
+                    }
+
+                    if (gender == 'Male') {
+                        return 2;
+                    }
+
+                    if (gender == 'Transgender') {
+                        return 3;
+                    }
+
+                }
+            }
+
+            // If any value cleanup needs to be done it need to be done at this stage
+            var x_axis = d.data.department;
+            var y_axis = getCleanData['gender'](d.data.gender) || '';
+
+            console.log(getCleanData['gender'](5));
+
+            // Returns the URL for the ajax call
+            function buildURL() {
+
+                var base_path = Drupal.settings.basePath;
+                var menu_route = 'civihr_reports';
+                var separator = '/';
+                var arguments = '?x_axis=' + x_axis + '&y_axis=' + y_axis + '&ajax=true';
+
+                return base_path + menu_route + separator + viewName + separator + viewDisplay + arguments;
+            }
+
+            console.log(buildURL());
 
             $.ajax({
                 type: 'GET',
-                url: Drupal.settings.basePath + 'civihr_reports/' + viewName + '/' + viewDisplay + '?value=' + viewArgument + '&ajax=true',
+                url: buildURL(),
                 success: function(data) {
 
                     var viewHtml = data;

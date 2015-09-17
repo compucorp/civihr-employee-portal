@@ -47,67 +47,43 @@
 ?>
 
 <?php
+    global $user; // Show only if we have the logged in user
 
-    // Show only if we have the logged in user
-    global $user;
+    $actions_classes = 'ctools-use-modal ctools-modal-civihr-default-style chr_action--icon--edit';
+
     if ($user->uid) {
 ?>
 
 <div class="<?php print $classes; ?>"<?php print $attributes; ?>>
-
     <div class="row relative">
-<!--
-        <?php print render($title_prefix); ?>
-            <h2<?php print $title_attributes; ?>></h2>
-        <?php print render($title_suffix); ?>
- -->
-        <div class="col-md-2 column1 panel-panel">
-            <div class="well">
-                <div class="profile-image">
-                    <?php if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) { ?>
-                        <img src="<?php print $contact_data['image_URL']; ?>" class="custom-scale-image" />
-                    <?php } else { ?>
-                        <img src="http://blogdailyherald.com/wp-content/uploads/2014/10/wallpaper-for-facebook-profile-photo.jpg"/>
-                    <?php } ?>
-                </div>
-
+        <div class="col-md-2">
+            <div class="chr_panel--my-details__profile-image hidden-xs hidden-sm">
+                <?php if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) { ?>
+                    <img src="<?php print $contact_data['image_URL']; ?>" />
+                <?php } else { ?>
+                    <img src="<?php print drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png' ?>"/>
+                <?php } ?>
             </div>
         </div>
-
-        <div class="col-md-5 column2 panel-panel">
-            <div class="well">
-                <h5><?php print t('My Details'); ?></h5>
+        <div class="col-md-5 chr_panel--my-details__data-group">
+            <h5 class="chr_panel--my-details__data-group__title"><?php print t('My Details'); ?></h5>
+            <div class="chr_panel--my-details__data-group__content">
                 <?php print $contact_details; ?>
             </div>
-
         </div>
-
-        <div class="col-md-offset-7 vertical-splitter"></div>
-
-        <div class="col-md-5 column3 panel-panel">
-            <div class="well">
-                <h5><?php print $address_data_title ?></h5>
+        <div class="col-md-offset-7 vertical-splitter hidden-xs hidden-sm"></div>
+        <div class="col-md-5 chr_panel--my-details__data-group">
+            <h5 class="chr_panel--my-details__data-group__title"><?php print $address_data_title ?></h5>
+            <div class="chr_panel--my-details__data-group__content">
                 <?php print $address_data; ?>
             </div>
         </div>
-
     </div>
-
-    <div class="row">
-
-        <div class="col-md-12">
-            <div class="splitter-top text-right actions">
-                <?php print l(t('Edit my details'), 'my_details/nojs/view', array('attributes' => array('class' => array('btn btn-custom ctools-use-modal ctools-modal-civihr-default-style')))); ?>
-                <?php print l(t('Edit emergency contact'), 'emergency_contacts/nojs/view', array('attributes' => array('class' => array('btn btn-custom ctools-use-modal ctools-modal-civihr-default-style')))); ?>
-            </div>
-        </div>
-
+    <div class="chr_panel__actions">
+        <?php print l(t('Edit my details'), 'my_details/nojs/view', array('attributes' => array('class' => $actions_classes))); ?>
+        <?php print l(t('Edit emergency contact'), 'emergency_contacts/nojs/view', array('attributes' => array('class' => $actions_classes))); ?>
     </div>
-
 </div>
-
 <?php
-
     }
-
 ?>

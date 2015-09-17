@@ -17,6 +17,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 /* Display: Master */
 $handler = $view->new_display('default', 'Master', 'default');
 $handler->display->display_options['title'] = 'Absence list';
+$handler->display->display_options['css_class'] = 'view--w-table';
 $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
@@ -318,12 +319,6 @@ $handler->display->display_options['defaults']['footer'] = FALSE;
 $handler->display->display_options['footer']['balance_totals']['id'] = 'balance_totals';
 $handler->display->display_options['footer']['balance_totals']['table'] = 'absence_list';
 $handler->display->display_options['footer']['balance_totals']['field'] = 'balance_totals';
-/* Footer: Global: Block area */
-$handler->display->display_options['footer']['block']['id'] = 'block';
-$handler->display->display_options['footer']['block']['table'] = 'views';
-$handler->display->display_options['footer']['block']['field'] = 'block';
-$handler->display->display_options['footer']['block']['empty'] = TRUE;
-$handler->display->display_options['footer']['block']['block_to_insert'] = 'civihr_employee_portal:absence_links';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Absence entity: Absence entity ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
@@ -445,7 +440,6 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
 $handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['operator'] = 'absence_start_date_period_filter_op';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['identifier'] = 'absence_start_date_period_filter';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['is_grouped'] = TRUE;
-$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['label'] = 'My leave';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['identifier'] = 'absence_start_date_period_filter';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['optional'] = FALSE;
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['default_group'] = '1';
@@ -488,12 +482,6 @@ $handler->display->display_options['path'] = 'absence-list';
 $handler = $view->new_display('page', 'Sickness report', 'page_1');
 $handler->display->display_options['exposed_block'] = TRUE;
 $handler->display->display_options['defaults']['footer'] = FALSE;
-/* Footer: Global: Block area */
-$handler->display->display_options['footer']['block']['id'] = 'block';
-$handler->display->display_options['footer']['block']['table'] = 'views';
-$handler->display->display_options['footer']['block']['field'] = 'block';
-$handler->display->display_options['footer']['block']['empty'] = TRUE;
-$handler->display->display_options['footer']['block']['block_to_insert'] = 'civihr_employee_portal:sickness_links';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Absence entity: Absence entity ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
@@ -570,7 +558,6 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
 $handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['operator'] = 'absence_start_date_period_filter_op';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['expose']['identifier'] = 'absence_start_date_period_filter';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['is_grouped'] = TRUE;
-$handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['label'] = 'My sickness report';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['identifier'] = 'absence_start_date_period_filter';
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['optional'] = FALSE;
 $handler->display->display_options['filters']['absence_start_date_period_filter']['group_info']['default_group'] = '1';
