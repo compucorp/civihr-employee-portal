@@ -2689,12 +2689,67 @@ function civihr_employee_portal_user_update(&$edit, $account, $category) {
     }
 }
 
+function _getGenderReportOptions() {
+
+    $gender_data = '';
+
+    try {
+        $option_group = civicrm_api3('OptionGroup', 'get', array(
+            'sequential' => 1,
+            'name' => "gender",
+        ));
+
+        // Get the Gender IDs
+        $gender_data = civicrm_api3('OptionValue', 'get', array(
+            'sequential' => 1,
+            'option_group_id' => $option_group['id'],
+        ));
+
+        function cleanGenderData($input_data) {
+
+            if (isset($input_data[0])) {
+
+                $output_data = [];
+
+                // Prepare data
+                $output_data[$input_data[0]['label']] = $input_data[0]['value'];
+
+                // Remove the first element after it's appended in the output
+                $input_data = array_splice($input_data, 1);
+
+                if (count($input_data) >= 0) {
+                    // Return until array is not empty
+                    return array_merge_recursive($output_data, cleanGenderData($input_data));
+                }
+
+            }
+
+            // This will end the recursive call
+            return [];
+        }
+
+        return cleanGenderData($gender_data['values']);
+
+
+    }
+    catch (CiviCRM_API3_Exception $e) {
+        $error = $e->getMessage();
+        watchdog('REPORTS', $error);
+    }
+
+}
+
 /**
  * @param $view_name
  * @param string $view_display
  * Load view as html block
  */
 function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 'default') {
+
+    $gender_options_data =  _getGenderReportOptions();
+
+    // Pass our custom data to js
+    drupal_add_js(array('civihr_employee_portal_reports' => array('gender_options_data' => $gender_options_data)), 'setting');
 
     // Array for contextual filters
     $args = [];

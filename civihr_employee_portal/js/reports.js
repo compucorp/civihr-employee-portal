@@ -2,6 +2,8 @@
 Drupal.behaviors.civihr_employee_portal_reports = {
     attach: function (context, settings) {
 
+        console.log(settings);
+
         var data; // Will hold our loaded json data later
 
         // Init the main filters
@@ -838,21 +840,10 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             console.log(d);
 
+            // Wrapper around the settings js values
             var getCleanData = {
                 gender: function (gender) {
-
-                    if (gender == 'Female') {
-                        return 1;
-                    }
-
-                    if (gender == 'Male') {
-                        return 2;
-                    }
-
-                    if (gender == 'Transgender') {
-                        return 3;
-                    }
-
+                    return settings.civihr_employee_portal_reports.gender_options_data[gender];
                 }
             }
 
@@ -860,7 +851,8 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             var x_axis = d.data.department;
             var y_axis = getCleanData['gender'](d.data.gender) || '';
 
-            console.log(getCleanData['gender'](5));
+            console.log(d.data.gender);
+            console.log(getCleanData['gender'](d.data.gender));
 
             // Returns the URL for the ajax call
             function buildURL() {
