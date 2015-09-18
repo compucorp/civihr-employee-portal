@@ -259,7 +259,7 @@ class AbsenceRequestForm {
 
         $this->form['absence_file'] = array(
             '#type' => 'file',
-            '#title' => t('Document'),
+            '#title' => t('Document:'),
             '#attributes' => array('size' => ''),
             '#description' => t('Upload supporting documentation if needed, allowed extensions: jpg, jpeg, png, gif'),
             '#prefix' => '<div class="modal-civihr-custom__section">',
