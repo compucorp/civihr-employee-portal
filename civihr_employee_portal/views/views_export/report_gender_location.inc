@@ -43,6 +43,10 @@ $handler->display->display_options['style_options']['pretty_print'] = 0;
 $handler->display->display_options['style_options']['unescaped_slashes'] = 0;
 $handler->display->display_options['style_options']['unescaped_unicode'] = 0;
 $handler->display->display_options['style_options']['char_encoding'] = array();
+/* Relationship: HRJobContract Role entity: Contact_id */
+$handler->display->display_options['relationships']['contact_id']['id'] = 'contact_id';
+$handler->display->display_options['relationships']['contact_id']['table'] = 'hrjc_role';
+$handler->display->display_options['relationships']['contact_id']['field'] = 'contact_id';
 /* Field: HRJobContract Role entity: Department */
 $handler->display->display_options['fields']['department_1']['id'] = 'department_1';
 $handler->display->display_options['fields']['department_1']['table'] = 'hrjc_role';
@@ -149,6 +153,15 @@ $handler->display->display_options['arguments']['location']['summary']['number_o
 $handler->display->display_options['arguments']['location']['summary']['format'] = 'default_summary';
 $handler->display->display_options['arguments']['location']['summary_options']['items_per_page'] = '25';
 $handler->display->display_options['arguments']['location']['limit'] = '0';
+/* Contextual filter: CiviCRM Contacts: Gender */
+$handler->display->display_options['arguments']['gender']['id'] = 'gender';
+$handler->display->display_options['arguments']['gender']['table'] = 'civicrm_contact';
+$handler->display->display_options['arguments']['gender']['field'] = 'gender';
+$handler->display->display_options['arguments']['gender']['relationship'] = 'contact_id';
+$handler->display->display_options['arguments']['gender']['default_argument_type'] = 'fixed';
+$handler->display->display_options['arguments']['gender']['summary']['number_of_records'] = '0';
+$handler->display->display_options['arguments']['gender']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['gender']['summary_options']['items_per_page'] = '25';
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
 
@@ -184,36 +197,36 @@ $handler->display->display_options['arguments']['location']['summary_options']['
 $handler->display->display_options['arguments']['location']['limit'] = '0';
 $handler->display->display_options['path'] = 'gender-location-export';
 $handler->display->display_options['displays'] = array(
-'filter_gender_location' => 'filter_gender_location',
-'default' => 0,
-'page' => 0,
+  'filter_gender_location' => 'filter_gender_location',
+  'default' => 0,
+  'page' => 0,
 );
 $translatables['gender_location'] = array(
-t('Master'),
-t('Gender / Filter by Location'),
-t('more'),
-t('Apply'),
-t('Reset'),
-t('Sort by'),
-t('Asc'),
-t('Desc'),
-t('Items per page'),
-t('- All -'),
-t('Offset'),
-t('« first'),
-t('‹ previous'),
-t('next ›'),
-t('last »'),
-t('department'),
-t('count'),
-t('Gender / Location (count)'),
-t('CiviCRM Contact'),
-t('gender'),
-t('contact_id'),
-t('.'),
-t('Filter by Location'),
-t('Contact_id'),
-t('Location'),
-t('All'),
-t('CSV data export'),
+  t('Master'),
+  t('Gender / Filter by Location'),
+  t('more'),
+  t('Apply'),
+  t('Reset'),
+  t('Sort by'),
+  t('Asc'),
+  t('Desc'),
+  t('Items per page'),
+  t('- All -'),
+  t('Offset'),
+  t('« first'),
+  t('‹ previous'),
+  t('next ›'),
+  t('last »'),
+  t('CiviCRM Contact'),
+  t('department'),
+  t('count'),
+  t('Gender / Location (count)'),
+  t('gender'),
+  t('contact_id'),
+  t('.'),
+  t('Filter by Location'),
+  t('Contact_id'),
+  t('Location'),
+  t('All'),
+  t('CSV data export'),
 );

@@ -2746,6 +2746,7 @@ function _getGenderReportOptions() {
  */
 function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 'default') {
 
+    // Get available gender options from CiviCRM
     $gender_options_data =  _getGenderReportOptions();
 
     // Pass our custom data to js
