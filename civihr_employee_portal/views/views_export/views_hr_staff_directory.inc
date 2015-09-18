@@ -127,15 +127,8 @@ $handler->display->display_options['fields']['image_URL']['id'] = 'image_URL';
 $handler->display->display_options['fields']['image_URL']['table'] = 'civicrm_contact';
 $handler->display->display_options['fields']['image_URL']['field'] = 'image_URL';
 $handler->display->display_options['fields']['image_URL']['label'] = '';
-$handler->display->display_options['fields']['image_URL']['exclude'] = TRUE;
+$handler->display->display_options['fields']['image_URL']['exclude'] = FALSE;
 $handler->display->display_options['fields']['image_URL']['element_label_colon'] = FALSE;
-/* Field: Global: Custom text */
-$handler->display->display_options['fields']['nothing']['id'] = 'nothing';
-$handler->display->display_options['fields']['nothing']['table'] = 'views';
-$handler->display->display_options['fields']['nothing']['field'] = 'nothing';
-$handler->display->display_options['fields']['nothing']['label'] = '';
-$handler->display->display_options['fields']['nothing']['alter']['text'] = '<img src="[image_URL]" width="35px" height="25px" />';
-$handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
 /* Field: CiviCRM Contacts: Display Name */
 $handler->display->display_options['fields']['display_name']['id'] = 'display_name';
 $handler->display->display_options['fields']['display_name']['table'] = 'civicrm_contact';
