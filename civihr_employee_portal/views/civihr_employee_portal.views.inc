@@ -11,6 +11,30 @@
  * Implements hook_views_data_alter().
  */
 function civihr_employee_portal_views_data_alter(&$data) {
+
+
+    /**
+     * Custom field handler which will create age group based on the contact birth date
+     */
+    $data['civicrm_contact']['age_group'] = array(
+        'title' => t('Age Group'),
+        'help' => t('Age group for the contact'),
+        'real field' => 'birth_date',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_age_group',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_handler_argument_string',
+            'name_field' => 'title',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_string',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_handler_sort'),
+    );
         
     $data['json']['absence_entitlement'] = array(
         'title' => t('Absence entitlement value'),
