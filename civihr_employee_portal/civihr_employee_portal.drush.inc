@@ -99,20 +99,28 @@ function drush_civihr_employee_portal_civihr_blocks_cleanup() {
  *
  */
 function drush_civihr_employee_portal_update_external_ids() {
-    $uf_data = civicrm_api3('UFMatch', 'get', array(
-        'sequential' => 1,
-        'return' => "contact_id,uf_id,contact_type",
-    ));
-
-    foreach($uf_data['values'] as $uf_item){
-        $user=user_load($uf_item['uf_id']);
-
-        $result = civicrm_api3('Contact', 'create', array(
+    try {
+        $uf_data = civicrm_api3('UFMatch', 'get', array(
             'sequential' => 1,
-            'contact_type' => $uf_item['contact_type'],
-            'id' => $uf_item['contact_id'],
-            'external_identifier' => $user->name,
+            'return' => "contact_id,uf_id,contact_type",
         ));
+
+        foreach ($uf_data['values'] as $uf_item) {
+            $user = user_load($uf_item['uf_id']);
+
+            $result = civicrm_api3('Contact', 'create', array(
+                'sequential' => 1,
+                'contact_type' => $uf_item['contact_type'],
+                'id' => $uf_item['contact_id'],
+                'external_identifier' => $user->name,
+            ));
+        }
+    }
+    catch (CiviCRM_API3_Exception $e) {
+        $error = $e->getMessage();
+        drush_log(dt('Error communicating with CiVi API: @err', array('@err' => $error)), 'error');
+        drush_user_abort();
+        return;
     }
 
     // Log to the command line with an OK status
