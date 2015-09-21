@@ -9,6 +9,8 @@ function civihr_employee_portal_drush_help($command) {
             return dt('Refreshes the node webform files');
         case 'drush:civihr-blocks-cleanup':
             return dt('Hides the blocks not used for CiviHR employee portal');
+        case 'drush:update-external-ids':
+            return dt('Sets usernames into external IDs');
     }
 }
 
@@ -34,6 +36,15 @@ function civihr_employee_portal_drush_command() {
             'Standard example' => 'drush civihr-blocks-cleanup',
         ),
         'aliases' => array('civihrbc'),
+    );
+
+    $items['update-external-ids'] = array(
+        'description' => dt('Sets usernames into external IDs'),
+        'arguments'   => array(),
+        'examples' => array(
+            'Standard example' => 'drush update-external-ids',
+        ),
+        'aliases' => array('drush-ueids'),
     );
     return $items;
 }
@@ -79,4 +90,31 @@ function drush_civihr_employee_portal_civihr_blocks_cleanup() {
 
     // Log to the command line with an OK status
     drush_log('CiviHR not used blocks were hidden', 'ok');
+}
+
+/**
+ * Callback function for drush update-external-ids.
+ * Callback is called by using drush_hook_command() where
+ * the Drush command with all "-" characters converted to "_" characters (update-external-ids)
+ *
+ */
+function drush_civihr_employee_portal_update_external_ids() {
+    $uf_data = civicrm_api3('UFMatch', 'get', array(
+        'sequential' => 1,
+        'return' => "contact_id,uf_id,contact_type",
+    ));
+
+    foreach($uf_data['values'] as $uf_item){
+        $user=user_load($uf_item['uf_id']);
+
+        $result = civicrm_api3('Contact', 'create', array(
+            'sequential' => 1,
+            'contact_type' => $uf_item['contact_type'],
+            'id' => $uf_item['contact_id'],
+            'external_identifier' => $user->name,
+        ));
+    }
+
+    // Log to the command line with an OK status
+    drush_log('External ID parameters were updated', 'ok');
 }
