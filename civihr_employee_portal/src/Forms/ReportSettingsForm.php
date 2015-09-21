@@ -18,6 +18,46 @@ class ReportSettingsForm extends BaseForm {
             '#type' => 'textfield',
             '#title' => 'sss Filters for Y axis?' . $this->getFormName(),
             '#size' => 10,
+            '#suffix' => '<div class="container">
+
+  <div id="table">
+    <span class="table-add glyphicon glyphicon-plus"></span>
+    <table class="table-editable">
+      <tr>
+        <th>Description</th>
+        <th>Start Age</th>
+        <th>End Age</th>
+        <th></th>
+        <th></th>
+      </tr>
+      <tr>
+        <td class="changeable" contenteditable="true">desc</td>
+        <td class="changeable" contenteditable="true">start</td>
+        <td class="changeable" contenteditable="true">end</td>
+        <td>
+          <span class="table-remove glyphicon glyphicon-remove"></span>
+        </td>
+        <td>
+          <span class="table-up glyphicon glyphicon-arrow-up"></span>
+          <span class="table-down glyphicon glyphicon-arrow-down"></span>
+        </td>
+      </tr>
+      <!-- This is our clonable table line -->
+      <tr class="hide">
+        <td class="changeable" contenteditable="true">Untitled</td>
+        <td class="changeable" contenteditable="true">undefined</td>
+        <td class="changeable" contenteditable="true">undefined</td>
+        <td>
+          <span class="table-remove glyphicon glyphicon-remove"></span>
+        </td>
+        <td>
+          <span class="table-up glyphicon glyphicon-arrow-up"></span>
+          <span class="table-down glyphicon glyphicon-arrow-down"></span>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>'
         );
 
         $this->form_data['submit'] = array(
@@ -46,6 +86,8 @@ class ReportSettingsForm extends BaseForm {
      */
     public function validateForm($form, &$form_state) {
 
+
+        watchdog('values passed', print_r($form_state, TRUE));
 
         form_set_error('main_filter', t('New error from class'));
 

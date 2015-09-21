@@ -2,7 +2,88 @@
 Drupal.behaviors.civihr_employee_portal_reports = {
     attach: function (context, settings) {
 
-        console.log(settings);
+        $('.table-add', context).once('editableBehaviour', function () {
+
+            // Apply the myCustomBehaviour effect to the elements only once.
+            var $TABLE = $('#table');
+            var $BTN = $('#export-btn');
+            var $EXPORT = $("input[name='main_filter']");
+
+            function _exportAgeGroups() {
+
+                var $rows = $TABLE.find('tr:not(:hidden)');
+                var headers = [];
+                var data = [];
+
+                // Get the headers (add special header logic here)
+                $($rows.shift()).find('th:not(:empty)').each(function () {
+                    headers.push($(this).text().toLowerCase());
+                });
+
+                // Turn all existing rows into a loopable array
+                $rows.each(function () {
+                    var $td = $(this).find('td');
+                    var h = {};
+
+                    // Use the headers from earlier to name our hash keys
+                    headers.forEach(function (header, i) {
+                        h[header] = $td.eq(i).text();
+                    });
+
+                    data.push(h);
+                });
+
+                // Output the result
+                $EXPORT.val(JSON.stringify(data));
+
+            }
+
+            $('.table-add').click(function () {
+                var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line');
+                $TABLE.find('table').append($clone);
+
+                // Update the hidden string
+                _exportAgeGroups();
+
+            });
+
+            $('.table-remove').click(function () {
+                $(this).parents('tr').detach();
+
+                // Update the hidden string
+                _exportAgeGroups();
+
+            });
+
+            $('.table-up').click(function () {
+                var $row = $(this).parents('tr');
+                if ($row.index() === 1) return; // Don't go above the header
+                $row.prev().before($row.get(0));
+            });
+
+            $('.table-down').click(function () {
+                var $row = $(this).parents('tr');
+                $row.next().after($row.get(0));
+            });
+
+            // A few jQuery helpers for exporting only
+            jQuery.fn.pop = [].pop;
+            jQuery.fn.shift = [].shift;
+
+            var contents = $('.changeable').html();
+            $('.changeable').blur(function() {
+                if (contents != $(this).html()) {
+
+                    // Update the hidden string
+                    _exportAgeGroups();
+
+                    contents = $(this).html();
+                }
+            });
+
+        });
+
+        console.log('here');
 
         var data; // Will hold our loaded json data later
 
