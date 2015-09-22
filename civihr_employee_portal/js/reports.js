@@ -7,7 +7,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             // Apply the myCustomBehaviour effect to the elements only once.
             var $TABLE = $('#table');
             var $BTN = $('#export-btn');
-            var $EXPORT = $("input[name='main_filter']");
+            var $EXPORT = $("input[name='age_group_vals']");
 
             function _exportAgeGroups() {
 
@@ -17,7 +17,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
                 // Get the headers (add special header logic here)
                 $($rows.shift()).find('th:not(:empty)').each(function () {
-                    headers.push($(this).text().toLowerCase());
+                    headers.push($(this).attr('id'));
                 });
 
                 // Turn all existing rows into a loopable array

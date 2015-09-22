@@ -9,7 +9,7 @@
 namespace Drupal\civihr_employee_portal\Forms;
 
 trait modalCallback {
-    public function initModal($ajax, $modalTitle = '') {
+    public function initModal($ajax, $modalTitle = '', $redirect = '') {
         if ($ajax) {
             ctools_include('ajax');
             ctools_include('modal');
@@ -35,7 +35,7 @@ trait modalCallback {
                 ctools_add_js('ajax-responder');
 
                 $output[] = ctools_modal_command_dismiss();
-                $output[] = ctools_ajax_command_redirect('civihr_reports');
+                $output[] = ctools_ajax_command_redirect($redirect);
 
             }
 
