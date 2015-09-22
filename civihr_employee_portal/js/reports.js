@@ -591,7 +591,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             var svg = d3.select('#custom-report')
                 .append('svg')
-                .attr('width', report.settings.outerWidth + report.settings.padding)
+                .attr('width', report.settings.outerWidth + report.settings.padding + 70)
                 .attr('height', report.settings.outerHeight)
                 .append('g');
 
@@ -630,24 +630,43 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return report.settings.color(d.data.data.department);
                 });
 
-            var label = svg.selectAll("label")
-                .data(pie(data));
 
-            // Add text label for each slice...
-            label.enter()
-                .append("text")
+            // Add legend labels
+            svg.append("g").selectAll("g")
+                .data(pie(data))
+                .enter().append("text")
                 .attr("font-family", "sans-serif")
-                .attr("x", report.settings.innerWidth / 2)
-                .attr("y", report.settings.innerHeight / 2)
                 .attr("font-size", "9px")
-                .attr("fill", "black")
-                .attr("text-anchor", "middle")
-                .attr("transform", function(d) {
-                    // Sets the text outside from the circle
-                    d.innerRadius = report.settings.radius + 30;
-                    return "translate(" + arc.centroid(d) + ")";
+                .attr("fill", function(d, i) {
+                    return report.settings.color(d.data.data.department);
                 })
-                .text(function(d, i) { return d.data.data.department; });
+                .attr("text-anchor", "middle")
+                .text(function(d) {
+                    return d.data.data.department;
+                })
+                .attr("x", function(d, i) {
+                    return report.settings.outerWidth + report.settings.padding - report.settings.barPadding;
+                })
+                .attr("y", function(d, i) {
+                    return (i * report.settings.hpadding) + report.settings.outerHeight - 100;
+                });
+
+            // Add legend small image icons
+            svg.append("g").selectAll("g")
+                .data(pie(data))
+                .enter().append("rect")
+                .attr("width", 15)
+                .attr("height", 15)
+                .attr("fill", function(d, i) {
+                    return report.settings.color(d.data.data.department);
+                })
+                .attr("x", function(d, i) {
+                    return report.settings.outerWidth - 80 + report.settings.padding - report.settings.barPadding;
+                })
+                .attr("y", function(d, i) {
+                    return (i * report.settings.hpadding - 10) + report.settings.outerHeight - 100;
+                });
+
 
             var count = svg.selectAll("count")
                 .data(pie(data));
@@ -901,7 +920,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .attr("height", 15)
                 .attr("fill", function(d, i) { return z(d.key); })
                 .attr("x", function(d, i) {
-                    return width - 50  - report.settings.barPadding;
+                    return width - 50 - report.settings.barPadding;
                 })
                 .attr("y", function(d, i) {
                     return (i * report.settings.hpadding - 10) + report.settings.outerHeight - 10;
