@@ -146,7 +146,6 @@ class ReportSettingsForm extends BaseForm {
 
         // If no ajax trigger redirect (otherwise the form will redirect after ajax finished
         if (!isset($form_state['ajax'])) {
-            print 'here'; die();
             drupal_goto('civihr_reports');
         }
 

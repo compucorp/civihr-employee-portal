@@ -59,11 +59,19 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 var $row = $(this).parents('tr');
                 if ($row.index() === 1) return; // Don't go above the header
                 $row.prev().before($row.get(0));
+
+                // Update the hidden string
+                _exportAgeGroups();
+
             });
 
             $('.table-down').click(function () {
                 var $row = $(this).parents('tr');
                 $row.next().after($row.get(0));
+
+                // Update the hidden string
+                _exportAgeGroups();
+
             });
 
             // A few jQuery helpers for exporting only

@@ -43,11 +43,8 @@ class civihr_employee_portal_handler_age_group extends views_handler_field {
             $age_groups = variable_get('age_group_vals');
 
             if (isset($age_groups) && !empty($age_groups)) {
-                watchdog('sss', print_r($age_groups, TRUE));
 
                 foreach (json_decode($age_groups, TRUE) as $age_group) {
-
-                    watchdog('age', print_r($age_group, TRUE));
 
                     // Find which age group the contact age belongs to
                     if ((int)$age >= (int)$age_group['start_period'] && (int)$age <= (int)$age_group['end_period']) {
