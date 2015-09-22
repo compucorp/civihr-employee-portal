@@ -79,7 +79,7 @@
             </div>
         </div>
     </div>
-    <div class="chr_panel__actions">
+    <div class="chr_actions-wrapper">
         <?php print l(t('Edit my details'), 'my_details/nojs/view', array('attributes' => array('class' => $actions_classes))); ?>
         <?php print l(t('Edit emergency contact'), 'emergency_contacts/nojs/view', array('attributes' => array('class' => $actions_classes))); ?>
     </div>

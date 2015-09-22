@@ -2890,7 +2890,7 @@ function civihr_employee_portal_directory_block_form($form, &$form_state) {
         '#attributes' => array('class' => array('chr_action')),
         '#type' => 'submit',
         '#value' => t('Go!'),
-        '#prefix' => '<div class="chr_panel__actions">',
+        '#prefix' => '<div class="chr_actions-wrapper">',
         '#suffix' => '</div>'
     );
 
@@ -3189,7 +3189,7 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
         $form['#attributes']['class'][] = 'row';
 
         $form['submit']['#attributes'] = array('class' => array('chr_action'));
-        $form['submit']['#prefix'] = '<div class="col-sm-12"><div class="chr_panel__actions">';
+        $form['submit']['#prefix'] = '<div class="col-sm-12"><div class="chr_actions-wrapper">';
         $form['submit']['#suffix'] = '</div></div>';
 
         foreach ($form as $key => $value) {
