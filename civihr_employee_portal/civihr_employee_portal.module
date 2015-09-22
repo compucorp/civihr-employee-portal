@@ -3115,7 +3115,8 @@ function webform_client_form_ajax_callback($form, &$form_state) {
 
         $commands[] = ctools_modal_command_dismiss();
         $commands[] = ctools_ajax_command_redirect('dashboard');
-        $commands[] = ajax_command_prepend('#content', '<div id="messages">' . theme('status_messages') . '</div>');
+        $commands[] = ajax_command_remove('#messages');
+        $commands[] = ajax_command_after('#breadcrumb', '<div id="messages">' . theme('status_messages') . '</div>');
 
         // Try to remove the cached data for this contact as the values were updated
         cache_clear_all($contact_value, 'cache');
