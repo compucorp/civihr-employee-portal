@@ -3180,9 +3180,31 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
 
         // Autosubmit the form after date_period select change
         $form['absence_start_date_period_filter']['#attributes'] = array('onchange' => "jQuery('#edit-submit-absence-list').click()");
-
     }
 
+    /**
+     *  Staff Directory filters form
+     */
+    if (isset($form['#id']) && $form['#id'] == 'views-exposed-form-civihr-staff-directory-page') {
+        $form['#attributes']['class'][] = 'row';
+
+        $form['submit']['#attributes'] = array('class' => array('chr_action'));
+        $form['submit']['#prefix'] = '<div class="col-sm-12"><div class="chr_panel__actions">';
+        $form['submit']['#suffix'] = '</div></div>';
+
+        foreach ($form as $key => $value) {
+            if (isset($form['#info']["filter-$key"])) {
+                $form[$key]['#prefix'] = '<div class="col-sm-6">';
+                $form[$key]['#suffix'] = '</div>';
+
+                // Take the <label> value and use it as placeholder instead
+                if ($value['#type'] == 'textfield') {
+                    $form[$key]['#attributes'] = array('placeholder' => $form['#info']["filter-$key"]['label']);
+                    $form['#info']["filter-$key"]['label'] = '';
+                }
+            }
+        }
+    }
 }
 
 function _absence_start_date_period_change_submit(&$form, &$form_state) {
