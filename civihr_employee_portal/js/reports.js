@@ -596,7 +596,8 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .append('g');
 
             var arc = d3.svg.arc()
-                .outerRadius(report.settings.radius);
+                .outerRadius(report.settings.radius - 10)
+                .innerRadius(report.settings.radius - 50);
 
             var pie = d3.layout.pie()
                 .value(function(d) {
