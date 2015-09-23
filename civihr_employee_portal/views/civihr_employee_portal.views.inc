@@ -25,9 +25,9 @@ function civihr_employee_portal_views_data_alter(&$data) {
             'click sortable' => TRUE,
         ),
         'argument' => array(
-            'handler' => 'views_handler_argument_string',
-            'name_field' => 'title',
-            'string' => TRUE
+            'handler' => 'views_handler_argument',
+            'name field' => 'birth_date',
+            'numeric' => FALSE
         ),
         'filter' => array(
             'handler' => 'views_handler_filter_string',

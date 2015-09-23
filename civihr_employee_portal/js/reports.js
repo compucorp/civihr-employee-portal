@@ -958,7 +958,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             // If any value cleanup needs to be done it need to be done at this stage
             var x_axis = d.data.department;
-            var y_axis = getCleanData['gender'](d.data.gender) || '';
+            var y_axis = getCleanData['gender'](d.data.gender) || d.data.gender;
 
             console.log(d.data.gender);
             console.log(getCleanData['gender'](d.data.gender));
@@ -982,6 +982,8 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 success: function(data) {
 
                     var viewHtml = data;
+
+                    console.log(viewHtml);
                     target.children().fadeOut(300, function() {
                         target.html(viewHtml);
 
