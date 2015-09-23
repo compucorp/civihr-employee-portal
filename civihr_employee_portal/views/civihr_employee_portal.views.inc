@@ -25,7 +25,7 @@ function civihr_employee_portal_views_data_alter(&$data) {
             'click sortable' => TRUE,
         ),
         'argument' => array(
-            'handler' => 'views_handler_argument',
+            'handler' => 'civihr_employee_portal_argument_age_group',
             'name field' => 'birth_date',
             'numeric' => FALSE
         ),

@@ -6,7 +6,7 @@
  * Custom argument handler for the age group contextual filters
  */
 
-class civihr_employee_portal_argument_age_group extends views_handler_argument
+class civihr_employee_portal_argument_age_group extends views_handler_argument {
 
     /**
      * Set up the query for this argument.
