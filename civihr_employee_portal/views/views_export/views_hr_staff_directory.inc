@@ -127,7 +127,7 @@ $handler->display->display_options['fields']['image_URL']['id'] = 'image_URL';
 $handler->display->display_options['fields']['image_URL']['table'] = 'civicrm_contact';
 $handler->display->display_options['fields']['image_URL']['field'] = 'image_URL';
 $handler->display->display_options['fields']['image_URL']['label'] = '';
-$handler->display->display_options['fields']['image_URL']['exclude'] = FALSE;
+$handler->display->display_options['fields']['image_URL']['exclude'] = TRUE;
 $handler->display->display_options['fields']['image_URL']['element_label_colon'] = FALSE;
 /* Field: CiviCRM Contacts: Display Name */
 $handler->display->display_options['fields']['display_name']['id'] = 'display_name';
@@ -163,7 +163,7 @@ $handler->display->display_options['fields']['location']['id'] = 'location';
 $handler->display->display_options['fields']['location']['table'] = 'hrjc_details';
 $handler->display->display_options['fields']['location']['field'] = 'location';
 $handler->display->display_options['fields']['location']['relationship'] = 'hrjc_details';
-$handler->display->display_options['fields']['location']['label'] = 'Location / Place of Work';
+$handler->display->display_options['fields']['location']['label'] = 'Location';
 /* Field: HRJobContract Details entity: Contract_type */
 $handler->display->display_options['fields']['contract_type']['id'] = 'contract_type';
 $handler->display->display_options['fields']['contract_type']['table'] = 'hrjc_details';
