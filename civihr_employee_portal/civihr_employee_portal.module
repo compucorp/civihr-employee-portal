@@ -3184,9 +3184,11 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
     }
 
     /**
-     *  Staff Directory filters form
+     *  Staff Directory filters form, HR Documents filters form
      */
-    if (isset($form['#id']) && $form['#id'] == 'views-exposed-form-civihr-staff-directory-page') {
+    $exposed_filters_forms = array('views-exposed-form-civihr-staff-directory-page', 'views-exposed-form-hr-documents-hr-resources');
+
+    if (isset($form['#id']) && in_array($form['#id'], $exposed_filters_forms)) {
         $form['#attributes']['class'][] = 'row';
 
         $form['submit']['#attributes'] = array('class' => array('chr_action'));
@@ -3201,8 +3203,9 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
                 // Take the <label> value and use it as placeholder instead
                 if ($value['#type'] == 'textfield') {
                     $form[$key]['#attributes'] = array('placeholder' => $form['#info']["filter-$key"]['label']);
-                    $form['#info']["filter-$key"]['label'] = '';
                 }
+
+                $form['#info']["filter-$key"]['label'] = '';
             }
         }
     }
