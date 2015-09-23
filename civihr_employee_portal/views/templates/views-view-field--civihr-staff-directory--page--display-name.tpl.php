@@ -22,7 +22,11 @@
  * the view is modified.
  */
 
-$profile_image = $row->{$field->field_alias} ? $row->{$field->field_alias} : drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
+$profile_image = $row->civicrm_contact_image_url ? $row->civicrm_contact_image_url : drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
 ?>
-
-<img src="<?php print $profile_image; ?>" width="35" height="35" />
+<div class="chr_profile-pic chr_profile-pic--small">
+    <img src="<?php print $profile_image; ?>" />
+</div>
+<span>
+    <?php print $row->{$field->field_alias} ?>
+</span>
