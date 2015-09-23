@@ -24,24 +24,21 @@
 ?>
 
 <?php
-    
     $total_count = t('No attachments');
-    
-    $resource_type = isset($row->field_field_resource_type[0])? $row->field_field_resource_type[0]['rendered']['#markup'] : t('No resource type selected!');
-    $title = $row->node_title;
-    
+    $resource_type = isset($row->field_field_resource_type[0]) ? $row->field_field_resource_type[0]['rendered']['#markup'] : t('No resource type selected!');
+
     // Get the total count of all attachments
     if (isset($row->field_field_attachment) && !empty($row->field_field_attachment[0]['rendered']['#items'])) {
         $total_count = count($row->field_field_attachment[0]['rendered']['#items']);
     }
-    
+
     // Get the download link if we have anything to download
-    $download_link = isset($row->field_field_download[0])? l(' ' . $row->field_field_download[0]['rendered']['#text'] . ' (' . $total_count . ')', $row->field_field_download[0]['rendered']['#path'], array('attributes' => array('class' => 'hr-resouce-download-all glyphicon glyphicon-paperclip', 'aria-hidden' => 'true'))) : '';
-    
+    $download_link = isset($row->field_field_download[0]) ? l(' ' . $row->field_field_download[0]['rendered']['#text'] . ' (' . $total_count . ')', $row->field_field_download[0]['rendered']['#path'], array('attributes' => array('class' => 'chr_action--transparent chr_action--icon--download', 'aria-hidden' => 'true'))) : '';
+
     $custom_output = '<span class="col-md-2"><blockquote>' . $resource_type . '</blockquote></span>
-               <span id="resource-modal" class="col-md-8"><strong>' . civihr_employee_portal_make_link($title, 'hr-resource', $row->nid) . '</strong></span>
+               <span id="resource-modal" class="col-md-8"><strong>' . civihr_employee_portal_make_link($row->node_title, 'hr-resource', $row->nid) . '</strong></span>
                <span class="col-md-2">' . $download_link . '</span>';
-    
+
 ?>
 
 <?php print $custom_output; ?>
