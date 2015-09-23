@@ -57,7 +57,7 @@
 <div class="<?php print $classes; ?>"<?php print $attributes; ?>>
     <div class="row relative">
         <div class="col-md-2">
-            <div class="chr_panel--my-details__profile-image hidden-xs hidden-sm">
+            <div class="chr_profile-pic hidden-xs hidden-sm">
                 <?php if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) { ?>
                     <img src="<?php print $contact_data['image_URL']; ?>" />
                 <?php } else { ?>
