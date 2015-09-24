@@ -32,6 +32,8 @@ dependencies[] = views_autocomplete_filters
 dependencies[] = views_merge_rows
 
 ; Views Handlers
+files[] = views/includes/civihr_employee_portal_handler_age_group.inc
+files[] = views/includes/civihr_employee_portal_argument_age_group.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_duration.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_entitlement.inc
 files[] = views/includes/civihr_employee_portal_handler_area_totals.inc

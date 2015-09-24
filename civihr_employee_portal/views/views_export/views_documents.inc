@@ -397,6 +397,8 @@ $handler->display->display_options['defaults']['filters'] = FALSE;
 /* Display: Documents Dashboard Manager block */
 $handler = $view->new_display('block', 'Documents Dashboard Manager block', 'block_1');
 $handler->display->display_options['defaults']['title'] = FALSE;
+$handler->display->display_options['defaults']['css_class'] = FALSE;
+$handler->display->display_options['css_class'] = 'view--w-table';
 $handler->display->display_options['title'] = 'Documents Manager';
 $handler->display->display_options['defaults']['access'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';

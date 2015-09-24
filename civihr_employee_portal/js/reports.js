@@ -2,6 +2,97 @@
 Drupal.behaviors.civihr_employee_portal_reports = {
     attach: function (context, settings) {
 
+        $('.table-add', context).once('editableBehaviour', function () {
+
+            // Apply the myCustomBehaviour effect to the elements only once.
+            var $TABLE = $('#table');
+            var $BTN = $('#export-btn');
+            var $EXPORT = $("input[name='age_group_vals']");
+
+            function _exportAgeGroups() {
+
+                var $rows = $TABLE.find('tr:not(:hidden)');
+                var headers = [];
+                var data = [];
+
+                // Get the headers (add special header logic here)
+                $($rows.shift()).find('th:not(:empty)').each(function () {
+                    headers.push($(this).attr('id'));
+                });
+
+                // Turn all existing rows into a loopable array
+                $rows.each(function () {
+                    var $td = $(this).find('td');
+                    var h = {};
+
+                    // Use the headers from earlier to name our hash keys
+                    headers.forEach(function (header, i) {
+                        h[header] = $td.eq(i).text();
+                    });
+
+                    data.push(h);
+                });
+
+                // Output the result
+                $EXPORT.val(JSON.stringify(data));
+
+            }
+
+            $('.table-add').click(function () {
+                var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line');
+                $TABLE.find('table').append($clone);
+
+                // Update the hidden string
+                _exportAgeGroups();
+
+            });
+
+            $('.table-remove').click(function () {
+                $(this).parents('tr').detach();
+
+                // Update the hidden string
+                _exportAgeGroups();
+
+            });
+
+            $('.table-up').click(function () {
+                var $row = $(this).parents('tr');
+                if ($row.index() === 1) return; // Don't go above the header
+                $row.prev().before($row.get(0));
+
+                // Update the hidden string
+                _exportAgeGroups();
+
+            });
+
+            $('.table-down').click(function () {
+                var $row = $(this).parents('tr');
+                $row.next().after($row.get(0));
+
+                // Update the hidden string
+                _exportAgeGroups();
+
+            });
+
+            // A few jQuery helpers for exporting only
+            jQuery.fn.pop = [].pop;
+            jQuery.fn.shift = [].shift;
+
+            var contents = $('.changeable').html();
+            $('.changeable').blur(function() {
+                if (contents != $(this).html()) {
+
+                    // Update the hidden string
+                    _exportAgeGroups();
+
+                    contents = $(this).html();
+                }
+            });
+
+        });
+
+        console.log('here');
+
         var data; // Will hold our loaded json data later
 
         // Init the main filters
@@ -500,12 +591,13 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             var svg = d3.select('#custom-report')
                 .append('svg')
-                .attr('width', report.settings.outerWidth + report.settings.padding)
+                .attr('width', report.settings.outerWidth + report.settings.padding + 70)
                 .attr('height', report.settings.outerHeight)
                 .append('g');
 
             var arc = d3.svg.arc()
-                .outerRadius(report.settings.radius);
+                .outerRadius(report.settings.radius - 10)
+                .innerRadius(report.settings.radius - 50);
 
             var pie = d3.layout.pie()
                 .value(function(d) {
@@ -538,24 +630,43 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return report.settings.color(d.data.data.department);
                 });
 
-            var label = svg.selectAll("label")
-                .data(pie(data));
 
-            // Add text label for each slice...
-            label.enter()
-                .append("text")
+            // Add legend labels
+            svg.append("g").selectAll("g")
+                .data(pie(data))
+                .enter().append("text")
                 .attr("font-family", "sans-serif")
-                .attr("x", report.settings.innerWidth / 2)
-                .attr("y", report.settings.innerHeight / 2)
                 .attr("font-size", "9px")
-                .attr("fill", "black")
-                .attr("text-anchor", "middle")
-                .attr("transform", function(d) {
-                    // Sets the text outside from the circle
-                    d.innerRadius = report.settings.radius + 30;
-                    return "translate(" + arc.centroid(d) + ")";
+                .attr("fill", function(d, i) {
+                    return report.settings.color(d.data.data.department);
                 })
-                .text(function(d, i) { return d.data.data.department; });
+                .attr("text-anchor", "middle")
+                .text(function(d) {
+                    return d.data.data.department;
+                })
+                .attr("x", function(d, i) {
+                    return report.settings.outerWidth + report.settings.padding - report.settings.barPadding;
+                })
+                .attr("y", function(d, i) {
+                    return (i * report.settings.hpadding) + report.settings.outerHeight - 100;
+                });
+
+            // Add legend small image icons
+            svg.append("g").selectAll("g")
+                .data(pie(data))
+                .enter().append("rect")
+                .attr("width", 15)
+                .attr("height", 15)
+                .attr("fill", function(d, i) {
+                    return report.settings.color(d.data.data.department);
+                })
+                .attr("x", function(d, i) {
+                    return report.settings.outerWidth - 80 + report.settings.padding - report.settings.barPadding;
+                })
+                .attr("y", function(d, i) {
+                    return (i * report.settings.hpadding - 10) + report.settings.outerHeight - 100;
+                });
+
 
             var count = svg.selectAll("count")
                 .data(pie(data));
@@ -595,10 +706,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .key(function(d) {
                     return d.data.department;
                 })
-                // We should remove duplicated results if contact is assigned to same group multiple times
-                //.key(function(d) {
-                //    return d.data.contact_id;
-                //})
                 .rollup(function(d) {
                     return d3.sum(d, function(g) {
                         return 1;
@@ -719,7 +826,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             svg.append("g").selectAll("g")
                 .data(nested_data)
                 .enter().append("g")
-                .style("fill", function(d, i) { return z(i); })
+                .style("fill", function(d, i) {
+                    return z(d.key);
+                })
                 .attr("transform", function(d, i) {
                     return "translate(" + x1(i) + ",0)";
                 })
@@ -743,12 +852,30 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return height - report.settings.hpadding - y(d.values);
 
                 })
+                .on("mouseover", function() {
+                    d3.select(this)
+                        .attr("cursor", "pointer")
+                        .attr("fill", "orange");
+                })
+                .on("mouseout", function(d, i) {
+                    d3.select(this)
+                        .transition()
+                        .duration(report.settings.duration)
+                        .attr("fill", function() {
+                            return z(d3.select(this.parentNode).attr("data-legend"));
+                        })
+                })
                 .on("click", function(d, i) {
-                    
-                    console.log(d3.select(this.parentNode).attr("data-legend"));
-                    console.log(d);
-                    console.log(i);
-                    //_displayFilterData(d.data, report);
+
+                    d.data = [];
+
+                    // Get x axis value (Location, Department..)
+                    d.data.department = d['key'];
+
+                    // Get the y axis filter value (Gender, Age)
+                    d.data.gender = d3.select(this.parentNode).attr("data-legend");
+
+                    _displayFilterData(d, report);
 
                 })
                 .attr("x", function(d, i) {
@@ -771,7 +898,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .enter().append("text")
                 .attr("font-family", "sans-serif")
                 .attr("font-size", "9px")
-                .attr("fill", function(d, i) { return z(i); })
+                .attr("fill", function(d, i) {
+                    return z(d.key);
+                })
                 .attr("text-anchor", "middle")
                 .text(function(d) {
                     return d.key;
@@ -789,12 +918,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .enter().append("rect")
                 .attr("width", 15)
                 .attr("height", 15)
-                .attr("fill", function(d, i) { return z(i); })
-                .style("fill", function(d, i) {
-                    return z(i);
-                })
+                .attr("fill", function(d, i) { return z(d.key); })
                 .attr("x", function(d, i) {
-                    return width - 50  - report.settings.barPadding;
+                    return width - 50 - report.settings.barPadding;
                 })
                 .attr("y", function(d, i) {
                     return (i * report.settings.hpadding - 10) + report.settings.outerHeight - 10;
@@ -821,14 +947,43 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             var viewName = report.getViewMachineName();
             var viewDisplay = report.getViewDisplayName();
 
-            var viewArgument = d.data.department;
+            console.log(d);
+
+            // Wrapper around the settings js values
+            var getCleanData = {
+                gender: function (gender) {
+                    return settings.civihr_employee_portal_reports.gender_options_data[gender];
+                }
+            }
+
+            // If any value cleanup needs to be done it need to be done at this stage
+            var x_axis = d.data.department;
+            var y_axis = getCleanData['gender'](d.data.gender) || d.data.gender;
+
+            console.log(d.data.gender);
+            console.log(getCleanData['gender'](d.data.gender));
+
+            // Returns the URL for the ajax call
+            function buildURL() {
+
+                var base_path = Drupal.settings.basePath;
+                var menu_route = 'civihr_reports';
+                var separator = '/';
+                var arguments = '?x_axis=' + x_axis + '&y_axis=' + y_axis + '&ajax=true';
+
+                return base_path + menu_route + separator + viewName + separator + viewDisplay + arguments;
+            }
+
+            console.log(buildURL());
 
             $.ajax({
                 type: 'GET',
-                url: Drupal.settings.basePath + 'civihr_reports/' + viewName + '/' + viewDisplay + '?value=' + viewArgument + '&ajax=true',
+                url: buildURL(),
                 success: function(data) {
 
                     var viewHtml = data;
+
+                    console.log(viewHtml);
                     target.children().fadeOut(300, function() {
                         target.html(viewHtml);
 
