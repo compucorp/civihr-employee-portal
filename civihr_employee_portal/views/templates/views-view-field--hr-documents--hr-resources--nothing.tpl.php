@@ -24,21 +24,38 @@
 ?>
 
 <?php
-    $total_count = t('No attachments');
+    $total_count = isset($row->field_field_attachment) ? count($row->field_field_attachment) : t('No attachments');;
     $resource_type = isset($row->field_field_resource_type[0]) ? $row->field_field_resource_type[0]['rendered']['#markup'] : t('No resource type selected!');
 
-    // Get the total count of all attachments
-    if (isset($row->field_field_attachment) && !empty($row->field_field_attachment[0]['rendered']['#items'])) {
-        $total_count = count($row->field_field_attachment[0]['rendered']['#items']);
+    // Get the download link if we have anything to download
+    if (isset($row->field_field_download[0])) {
+        $download_link = l(
+            $row->field_field_download[0]['rendered']['#text'] . " ($total_count)",
+            $row->field_field_download[0]['rendered']['#path'],
+            array('attributes' => array('class' => 'chr_action--transparent chr_action--icon--download', 'aria-hidden' => 'true'))
+        );
     }
 
-    // Get the download link if we have anything to download
-    $download_link = isset($row->field_field_download[0]) ? l(' ' . $row->field_field_download[0]['rendered']['#text'] . ' (' . $total_count . ')', $row->field_field_download[0]['rendered']['#path'], array('attributes' => array('class' => 'chr_action--transparent chr_action--icon--download', 'aria-hidden' => 'true'))) : '';
+    $custom_output = '
+        <div class="chr_hr-resource__header col-xs-6 col-sm-3 col-md-2">
+            <h3 class="chr_hr-resource__name" id="resource-modal">'
+                . civihr_employee_portal_make_link($row->node_title, 'hr-resource', $row->nid) .
+            '</h3>
+            <span class="chr_hr-resource__type">' . $resource_type . '</span>
+        </div>
+        <div class="clearfix visible-xs-block"></div>
+        <div class="chr_hr-resource__description col-sm-6 col-md-7">'
+            . ( isset($row->field_body[0]) ? $row->field_body[0]['rendered']['#markup'] : '' ) .
+        '</div>
+    ';
 
-    $custom_output = '<span class="col-md-2"><blockquote>' . $resource_type . '</blockquote></span>
-               <span id="resource-modal" class="col-md-8"><strong>' . civihr_employee_portal_make_link($row->node_title, 'hr-resource', $row->nid) . '</strong></span>
-               <span class="col-md-2">' . $download_link . '</span>';
-
+    if (isset($download_link)) {
+        $custom_output .= '
+            <div class="chr_hr-resource__download col-sm-3">'
+                . $download_link .
+            '</div>
+        ';
+    }
 ?>
 
 <?php print $custom_output; ?>
