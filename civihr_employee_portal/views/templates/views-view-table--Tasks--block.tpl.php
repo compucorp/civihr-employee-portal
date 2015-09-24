@@ -27,14 +27,6 @@ $typeResult = civicrm_api3('Activity', 'getoptions', array(
 ));
 $types = $typeResult['values'];
 
-$statusesResult = civicrm_api3('Task', 'getstatuses', array(
-    'sequential' => 1,
-));
-$statuses = array(0 => 'All');
-foreach ($statusesResult['values'] as $status):
-    $statuses[$status['value']] = $status['label'];
-endforeach;
-
 $taskFilters = array(
     0 => 'All',
     1 => 'Overdue',
@@ -99,7 +91,7 @@ function _get_task_filter_by_date($date) {
                 <thead>
                     <tr>
                     <?php foreach ($header as $field => $label): ?>
-                        <?php if ($field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2'):
+                        <?php if ($field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2' || $field == 'activity_date_time'):
                             continue;
                         endif; ?>
                         <th <?php if ($header_classes[$field]) { print 'class="'. $header_classes[$field] . '" '; } ?>>
@@ -126,26 +118,13 @@ function _get_task_filter_by_date($date) {
                 <?php $class = 'task-row task-filter-id-' . _get_task_filter_by_date($row['activity_date_time']) . ' ' . $rowType; ?>
                 <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?>>
                     <?php foreach ($row as $field => $content): ?>
-                        <?php if ($field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2'):
+                        <?php if ($field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2' || $field == 'activity_date_time'):
                             continue;
                         endif; ?>
                         <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
                             <a
                                 href="/civi_tasks/nojs/edit/<?php print strip_tags($row['id']); ?>"
                                 class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">
-                            <?php if ($field === 'activity_type_id'):
-                                print $types[strip_tags($content)];
-                                continue;
-                            endif;
-                            ?>
-                            <?php if ($field === 'activity_date_time' && trim(strip_tags($content))):
-                                print date('M d Y', strtotime(strip_tags($content)));
-                                continue;
-                            endif; ?>
-                            <?php if ($field === 'status_id'):
-                                print $statuses[strip_tags($content)];
-                                continue;
-                            endif; ?>
                             <?php print strip_tags(html_entity_decode($content)); ?>
                             </a>
                         </td>
@@ -154,10 +133,6 @@ function _get_task_filter_by_date($date) {
                             <?php
                             $checked = '';
                             $disabled = '';
-                            if (strip_tags($row['status_id']) == 2):
-                                $checked = ' checked="checked" ';
-                                $disabled = ' disabled="disabled" ';
-                            endif;
                             if (!user_access('can create and edit tasks')):
                                 $disabled = ' disabled="disabled" ';
                             endif;

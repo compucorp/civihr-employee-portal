@@ -540,13 +540,52 @@ function get_task_statuses($status_id = NULL) {
     }
     
     if ($status_id === null) {
-        return $taskStatuses;
+        return $taskStatuses['values'];
     }
 
     // Get the status values based on the status_id
-    $status_id_value = CRM_Utils_Array::value($status_id, $taskStatuses);
+    $status_id_value = CRM_Utils_Array::value($status_id, $taskStatuses['values']);
 
     return $status_id_value;
+}
+
+function get_task_type($type_id = NULL) {
+    
+    $taskTypes = &drupal_static(__FUNCTION__);
+
+    if (!isset($taskTypes)) {
+
+        if ($cache = cache_get('civihr_task_types')) {
+            $taskTypes = $cache->data;
+        }
+        else {
+            try {
+                // Civi init
+                civicrm_initialize();
+
+                // Task types array
+                $taskTypes = civicrm_api3('Activity', 'getoptions', array(
+                    'field' => "activity_type_id",
+                ));
+            }
+
+            catch (CiviCRM_API3_Exception $e) {
+                $error = $e->getMessage();
+            }
+
+            // Cache the task types for 5 minutes
+            cache_set('civihr_task_types', $taskTypes, 'cache', time() + 360);
+        }
+    }
+    
+    if ($type_id === null) {
+        return $taskTypes['values'];
+    }
+
+    // Get the type values based on the type_id
+    $type_id_value = CRM_Utils_Array::value($type_id, $taskTypes['values']);
+
+    return $type_id_value;
 }
 
 /**
@@ -2553,7 +2592,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
     $form['status_id'] = array(
         '#type' => 'select',
         '#title' => t('Status'),
-        '#options' => $taskStatuses['values'],
+        '#options' => $taskStatuses,
         '#prefix' => '<div class="row"><div class="col-md-12">',
         '#suffix' => '</div></div>',
         '#default_value' => isset($task['status_id']) ? $task['status_id'] : '',

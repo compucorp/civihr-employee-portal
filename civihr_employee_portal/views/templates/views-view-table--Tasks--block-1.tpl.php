@@ -46,7 +46,7 @@ endforeach;
                 <thead>
                     <tr>
                     <?php foreach ($header as $field => $label): ?>
-                        <?php if ($field == 'task_contacts' || $field == 'task_contacts_1'):
+                        <?php if ($field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'activity_date_time'):
                             continue;
                         endif; ?>
                         <th <?php if ($header_classes[$field]) { print 'class="'. $header_classes[$field] . '" '; } ?>>
@@ -66,23 +66,10 @@ endforeach;
                 <?php $class = 'task-row status-id-' . strip_tags($row['status_id']) . ' ' . $rowType; ?>
                 <tr <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?>>
                     <?php foreach ($row as $field => $content): ?>
-                        <?php if ($field == 'task_contacts' || $field == 'task_contacts_1'):
+                        <?php if ($field == 'task_contacts' || $field == 'task_contacts_1' ||  $field == 'activity_date_time'):
                             continue;
                         endif; ?>
                         <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
-                            <?php if ($field === 'activity_type_id'):
-                                print $types[strip_tags($content)] . ' ' . $rowType;
-                                continue;
-                            endif;
-                            ?>
-                            <?php if ($field === 'activity_date_time' && trim(strip_tags($content))):
-                                print date('M d Y', strtotime(strip_tags($content)));
-                                continue;
-                            endif; ?>
-                            <?php if ($field === 'status_id'):
-                                print $statuses[strip_tags($content)];
-                                continue;
-                            endif; ?>
                             <?php print strip_tags(html_entity_decode($content)); ?>
                         </td>
                     <?php endforeach; ?>

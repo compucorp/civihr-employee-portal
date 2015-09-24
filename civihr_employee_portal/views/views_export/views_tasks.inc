@@ -292,16 +292,10 @@ $handler->display->display_options['fields']['id']['label'] = 'Task ID';
 $handler->display->display_options['fields']['id']['element_class'] = 'hidden';
 $handler->display->display_options['fields']['id']['element_label_class'] = 'hidden';
 $handler->display->display_options['fields']['id']['key'] = 'id';
-/* Field: activity_type_id: value */
-$handler->display->display_options['fields']['activity_type_id']['id'] = 'activity_type_id';
-$handler->display->display_options['fields']['activity_type_id']['table'] = 'json';
-$handler->display->display_options['fields']['activity_type_id']['field'] = 'value';
-$handler->display->display_options['fields']['activity_type_id']['label'] = 'Type';
-$handler->display->display_options['fields']['activity_type_id']['element_type'] = 'div';
-$handler->display->display_options['fields']['activity_type_id']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['activity_type_id']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['activity_type_id']['element_wrapper_class'] = 'task-wrapper';
-$handler->display->display_options['fields']['activity_type_id']['key'] = 'activity_type_id';
+/* Field: Json: Task type */
+$handler->display->display_options['fields']['task_type']['id'] = 'task_type';
+$handler->display->display_options['fields']['task_type']['table'] = 'json';
+$handler->display->display_options['fields']['task_type']['field'] = 'task_type';
 /* Field: case_id: value */
 $handler->display->display_options['fields']['case_id']['id'] = 'case_id';
 $handler->display->display_options['fields']['case_id']['table'] = 'json';
@@ -345,28 +339,11 @@ $handler->display->display_options['fields']['expire_date']['element_label_type'
 $handler->display->display_options['fields']['expire_date']['element_wrapper_type'] = 'div';
 $handler->display->display_options['fields']['expire_date']['element_wrapper_class'] = 'task-wrapper';
 $handler->display->display_options['fields']['expire_date']['key'] = 'expire_date';
-/* Field: file_count: value */
-$handler->display->display_options['fields']['file_count']['id'] = 'file_count';
-$handler->display->display_options['fields']['file_count']['table'] = 'json';
-$handler->display->display_options['fields']['file_count']['field'] = 'value';
-$handler->display->display_options['fields']['file_count']['label'] = 'File Count';
-$handler->display->display_options['fields']['file_count']['exclude'] = TRUE;
-$handler->display->display_options['fields']['file_count']['element_type'] = 'div';
-$handler->display->display_options['fields']['file_count']['element_class'] = 'hidden';
-$handler->display->display_options['fields']['file_count']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['file_count']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['file_count']['element_wrapper_class'] = 'task-wrapper';
-$handler->display->display_options['fields']['file_count']['key'] = 'file_count';
-/* Field: status_id: value */
-$handler->display->display_options['fields']['status_id']['id'] = 'status_id';
-$handler->display->display_options['fields']['status_id']['table'] = 'json';
-$handler->display->display_options['fields']['status_id']['field'] = 'value';
-$handler->display->display_options['fields']['status_id']['label'] = 'Status';
-$handler->display->display_options['fields']['status_id']['element_type'] = 'div';
-$handler->display->display_options['fields']['status_id']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['status_id']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['status_id']['element_wrapper_class'] = 'task-wrapper';
-$handler->display->display_options['fields']['status_id']['key'] = 'status_id';
+/* Field: Json: Task status */
+$handler->display->display_options['fields']['task_status']['id'] = 'task_status';
+$handler->display->display_options['fields']['task_status']['table'] = 'json';
+$handler->display->display_options['fields']['task_status']['field'] = 'task_status';
+$handler->display->display_options['fields']['task_status']['label'] = 'Status';
 /* Field: details: value */
 $handler->display->display_options['fields']['details']['id'] = 'details';
 $handler->display->display_options['fields']['details']['table'] = 'json';
@@ -389,6 +366,11 @@ $handler->display->display_options['fields']['task_contacts_1']['table'] = 'json
 $handler->display->display_options['fields']['task_contacts_1']['field'] = 'task_contacts';
 $handler->display->display_options['fields']['task_contacts_1']['label'] = 'Task contacts (assignee)';
 $handler->display->display_options['fields']['task_contacts_1']['key'] = 'assignee_contact_id';
+/* Field: source_contact_id: Task contacts */
+$handler->display->display_options['fields']['task_contacts_2']['id'] = 'task_contacts_2';
+$handler->display->display_options['fields']['task_contacts_2']['table'] = 'json';
+$handler->display->display_options['fields']['task_contacts_2']['field'] = 'task_contacts';
+$handler->display->display_options['fields']['task_contacts_2']['key'] = 'source_contact_id';
 $handler->display->display_options['defaults']['arguments'] = FALSE;
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
@@ -556,16 +538,10 @@ $handler->display->display_options['fields']['id']['label'] = 'Task ID';
 $handler->display->display_options['fields']['id']['element_class'] = 'hidden';
 $handler->display->display_options['fields']['id']['element_label_class'] = 'hidden';
 $handler->display->display_options['fields']['id']['key'] = 'id';
-/* Field: activity_type_id: value */
-$handler->display->display_options['fields']['activity_type_id']['id'] = 'activity_type_id';
-$handler->display->display_options['fields']['activity_type_id']['table'] = 'json';
-$handler->display->display_options['fields']['activity_type_id']['field'] = 'value';
-$handler->display->display_options['fields']['activity_type_id']['label'] = 'Type';
-$handler->display->display_options['fields']['activity_type_id']['element_type'] = 'div';
-$handler->display->display_options['fields']['activity_type_id']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['activity_type_id']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['activity_type_id']['element_wrapper_class'] = 'task-wrapper';
-$handler->display->display_options['fields']['activity_type_id']['key'] = 'activity_type_id';
+/* Field: Json: Task type */
+$handler->display->display_options['fields']['task_type']['id'] = 'task_type';
+$handler->display->display_options['fields']['task_type']['table'] = 'json';
+$handler->display->display_options['fields']['task_type']['field'] = 'task_type';
 /* Field: case_id: value */
 $handler->display->display_options['fields']['case_id']['id'] = 'case_id';
 $handler->display->display_options['fields']['case_id']['table'] = 'json';
@@ -610,16 +586,11 @@ $handler->display->display_options['fields']['expire_date']['element_label_type'
 $handler->display->display_options['fields']['expire_date']['element_wrapper_type'] = 'div';
 $handler->display->display_options['fields']['expire_date']['element_wrapper_class'] = 'task-wrapper';
 $handler->display->display_options['fields']['expire_date']['key'] = 'expire_date';
-/* Field: status_id: value */
-$handler->display->display_options['fields']['status_id']['id'] = 'status_id';
-$handler->display->display_options['fields']['status_id']['table'] = 'json';
-$handler->display->display_options['fields']['status_id']['field'] = 'value';
-$handler->display->display_options['fields']['status_id']['label'] = 'Status';
-$handler->display->display_options['fields']['status_id']['element_type'] = 'div';
-$handler->display->display_options['fields']['status_id']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['status_id']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['status_id']['element_wrapper_class'] = 'task-wrapper';
-$handler->display->display_options['fields']['status_id']['key'] = 'status_id';
+/* Field: Json: Task status */
+$handler->display->display_options['fields']['task_status']['id'] = 'task_status';
+$handler->display->display_options['fields']['task_status']['table'] = 'json';
+$handler->display->display_options['fields']['task_status']['field'] = 'task_status';
+$handler->display->display_options['fields']['task_status']['label'] = 'Status';
 /* Field: details: value */
 $handler->display->display_options['fields']['details']['id'] = 'details';
 $handler->display->display_options['fields']['details']['table'] = 'json';
@@ -685,9 +656,10 @@ $translatables['Tasks'] = array(
   t('All'),
   t('Tasks Dashboard block'),
   t('<div class="tasks-list-actions"><div id="nav-tasks-types" class="btn-group btn-group-sm"><a href class="btn btn-gray" data-task-type="my">My Tasks</a><a href class="btn btn-gray" data-task-type="delegated">Delegated Tasks</a><a href class="btn btn-gray active" data-task-type="all">All</a></div><div id="tasks-list-header-additional"><a href="/civi_tasks/nojs/view_completed" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Show completed tasks</a><input type="text" name="task-filter-name" value="" placeholder="Enter name" /></div></div>'),
-  t('Type'),
+  t('Task type'),
   t('Assignment'),
   t('Due Date'),
   t('Status'),
+  t('Task contacts'),
   t('Completed Tasks block'),
 );
