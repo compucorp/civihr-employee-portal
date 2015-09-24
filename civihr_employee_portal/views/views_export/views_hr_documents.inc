@@ -235,11 +235,11 @@ $handler->display->display_options['fields']['body']['settings'] = array(
 $handler->display->display_options['fields']['fieldset']['id'] = 'fieldset';
 $handler->display->display_options['fields']['fieldset']['table'] = 'views';
 $handler->display->display_options['fields']['fieldset']['field'] = 'fieldset';
-$handler->display->display_options['fields']['fieldset']['label'] = 'See resources';
+$handler->display->display_options['fields']['fieldset']['label'] = 'See Resources';
 $handler->display->display_options['fields']['fieldset']['children'] = array(
     0 => 'field_attachment',
 );
-$handler->display->display_options['fields']['fieldset']['fieldset']['classes'] = 'col-md-12';
+$handler->display->display_options['fields']['fieldset']['fieldset']['classes'] = 'civihr_form__fieldset--transparent';
 $handler->display->display_options['fields']['fieldset']['fieldset']['id'] = '[nid]';
 $handler->display->display_options['fields']['fieldset']['fieldset']['collapsible'] = 1;
 $handler->display->display_options['fields']['fieldset']['fieldset']['collapsed'] = 1;
