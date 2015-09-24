@@ -1,0 +1,13 @@
+.pane-views-tasks-block {
+    position: relative;
+}
+
+div.tasks-list-actions {
+    position: absolute;
+    top: 13px;
+    right: 35px;
+}
+
+div#tasks-list-header-additional {
+    display: inline;
+}

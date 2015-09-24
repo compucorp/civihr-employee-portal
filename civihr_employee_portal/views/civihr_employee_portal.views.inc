@@ -50,6 +50,25 @@ function civihr_employee_portal_views_data_alter(&$data) {
         'sort' => array('handler' => 'views_json_query_handler_sort'),
     );
     
+    $data['json']['task_contacts'] = array(
+        'title' => t('Task contacts'),
+        'help' => t('Task contacts'),
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_task_contacts',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_task_contacts_request_handler',
+            'name_field' => 'task_targets',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
     $data['json']['period_html'] = array(
         'title' => t('Html field for period date'),
         'help' => t('Displays html field based on period ID'),

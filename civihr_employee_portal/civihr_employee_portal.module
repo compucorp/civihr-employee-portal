@@ -50,6 +50,7 @@ function civihr_employee_portal_init() {
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweet-alert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/documents.css");
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/tasks.css");
 
     // Check the variable and decide if we need to rebuild the absence_list mysql view
     $rebuild_absence_list_view = variable_get('rebuild_absence_list_view', 'TRUE');
@@ -236,6 +237,10 @@ function civihr_employee_portal_permission() {
     'access private file download' => array(
       'title' => t('Access CiviHR absence attached files'),
       'description' => t('Availability to access the files attached for Absence.'),
+    ),
+    'can create and edit tasks' => array(
+      'title' => t('Create and edit Tasks'),
+      'description' => t('Availability to create and edit Tasks.'),
     ),
   );
 }
@@ -505,6 +510,45 @@ function get_document_statuses($status_id = NULL) {
     return $status_id_value;
 }
 
+function get_task_statuses($status_id = NULL) {
+    
+    $taskStatuses = &drupal_static(__FUNCTION__);
+
+    if (!isset($taskStatuses)) {
+
+        if ($cache = cache_get('civihr_task_statuses')) {
+            $taskStatuses = $cache->data;
+        }
+        else {
+            try {
+                // Civi init
+                civicrm_initialize();
+
+                // Task statuses array
+                $taskStatuses = civicrm_api3('Task', 'getoptions', array(
+                    'field' => "status_id",
+                ));
+            }
+
+            catch (CiviCRM_API3_Exception $e) {
+                $error = $e->getMessage();
+            }
+
+            // Cache the task statuses for 5 minutes
+            cache_set('civihr_task_statuses', $taskStatuses, 'cache', time() + 360);
+        }
+    }
+    
+    if ($status_id === null) {
+        return $taskStatuses;
+    }
+
+    // Get the status values based on the status_id
+    $status_id_value = CRM_Utils_Array::value($status_id, $taskStatuses);
+
+    return $status_id_value;
+}
+
 /**
  * Function for caching civicrm_uf_match table from CiviCRM
  */
@@ -651,6 +695,36 @@ function civihr_employee_portal_menu() {
     $items['civi_documents/%ctools_js/reminder/%'] = array(
         'title' => 'Send Reminder',
         'page callback' => 'civihr_employee_portal_send_reminder_document',
+        'page arguments' => array(1, 3),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    $items['civi_tasks'] = array(
+        'title' => 'Task list',
+        'page callback' => 'civihr_employee_portal_get_task_list',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['civi_tasks/%ctools_js/view_completed'] = array(
+        'page callback' => 'civihr_employee_portal_civi_tasks_view_completed_callback',
+        'page arguments' => array(1),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    $items['civi_tasks/%ctools_js/create'] = array(
+        'title' => 'Create new Task',
+        'page callback' => 'civihr_employee_portal_civi_tasks_create',
+        'page arguments' => array(1),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    $items['civi_tasks/%ctools_js/edit/%'] = array(
+        'title' => 'Edit Task',
+        'page callback' => 'civihr_employee_portal_civi_tasks_create',
         'page arguments' => array(1, 3),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
@@ -871,6 +945,30 @@ function _get_uf_match_contact($contact_id) {
     $uf_match_data = array_shift($res['values']);
 
     return $uf_match_data;
+}
+
+/**
+ * Gets CiviCRM contact ID based on passed drupal UID
+ * @param $uid
+ * @return int | null
+ */
+function _get_civicrm_contact_id_by_drupal_uid($uid) {
+
+    $params = array(
+        'uf_id' => $uid,
+        'version' => 3,
+        'sequential' => 1,
+    );
+
+    // Get the "civicrm_uf_match" data from the passed target contact ID
+    $res = civicrm_api3('UFMatch', 'Get', $params);
+    if (empty($res['values'])) {
+        return null;
+    }
+    
+    $uf_match_data = array_shift($res['values']);
+
+    return $uf_match_data['contact_id'];
 }
 
 /**
@@ -2164,6 +2262,415 @@ function civihr_employee_portal_document_form_send_reminder_submit($form, &$form
     
     drupal_set_message(t('Reminder has been sent.'), 'success');
 }
+
+/**
+ * SSP Tasks functions
+ */
+
+/**
+ * Returns the document list
+ */
+function civihr_employee_portal_get_task_list() {
+    
+    $result_output = array(
+        'values' => array(),
+    );
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (!empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+        $result_output = civicrm_api3('Task', 'get', array(
+            'sequential' => 1,
+            'is_deleted' => 0,
+            'is_current_revision' => 1,
+            'return' => "id,activity_type_id,activity_subject,activity_date_time,expire_date,activity_details,activity_status_id,activity_is_deleted,case_id,file_count,source_contact_id,target_contact_id,assignee_contact_id",
+        ));
+    }
+
+    // Output json
+    drupal_json_output($result_output);
+    drupal_exit();
+}
+
+/**
+ * Show all completed Tasks in modal window and not seperate page
+ * @param $ajax
+ */
+function civihr_employee_portal_civi_tasks_view_completed_callback($ajax) {
+
+    if ($ajax) {
+
+        ctools_include('ajax');
+        ctools_include('modal');
+
+        // Add the responder javascript, required by ctools
+        ctools_add_js('ajax-responder');
+
+        // Get the view for approved absences
+        $output[] = ctools_modal_command_display(t('My Completed Tasks'), views_embed_view('Tasks', 'block_1'));
+
+        print ajax_render($output);
+        drupal_exit();
+    }
+    else {
+        return 'Javascript not enabled';
+    }
+
+}
+
+/**
+* Ajax menu callback.
+*/
+function civihr_employee_portal_civi_tasks_create($ajax, $id = null) {
+
+    if ($ajax) {
+        ctools_include('ajax');
+        ctools_include('modal');
+
+        $title = t('Create new Task');
+
+        $form_state = array(
+            'ajax' => TRUE,
+            'is_ajax_update' => TRUE,
+            'title' => $title,
+            'id' => $id,
+        );
+
+        // Since this will run again on form rebuild while still in the modal, prevent
+        // form IDs from being incremented.
+        // @todo https://drupal.org/node/1305882
+        if (!empty($_POST['ajax_html_ids'])) {
+            unset($_POST['ajax_html_ids']);
+        }
+
+        // Use ctools to generate ajax instructions for the browser to create
+        // a form in a modal popup.
+        $output = ctools_modal_form_wrapper('civihr_employee_portal_civi_tasks_form', $form_state);
+
+        // If the form has been submitted, there may be additional instructions
+        // such as dismissing the modal popup.
+        if (!empty($form_state['executed'])) {
+
+            // Add the responder javascript, required by ctools
+            ctools_add_js('ajax-responder');
+
+            $output[] = ajax_command_replace('.messages', 'all good');
+            $output[] = ctools_modal_command_dismiss();
+            $output[] = ctools_ajax_command_redirect('dashboard');
+
+        }
+
+        // Return the ajax instructions to the browser via ajax_render().
+        print ajax_render($output);
+        drupal_exit();
+
+    }
+
+    else {
+        return drupal_get_form('civihr_employee_portal_civi_tasks_form');
+    }
+
+}
+
+/**
+ * Custom Document dashboard block form.
+ */
+function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
+
+    global $user;
+    $contactId = _get_civicrm_contact_id_by_drupal_uid($user->uid);
+    $targetId = $contactId;
+    $assignmentsSelectOptions = array();
+    $assigneeSelected = null;
+    $targetSelected = null;
+    $assignmentSelected = null;
+    
+    $disabledAttr = array();
+    if (!user_access('can create and edit tasks')) {
+        //$disabledAttr['#attributes'] = array('readonly' => 'readonly');
+        $disabledAttr = array('disabled' => 'disabled');
+    }
+    
+    $result_output = array();
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+        return $form;
+    }
+    
+    $id = $form_state['id'];
+    if ($id) {
+        $result = civicrm_api3('Task', 'get', array(
+            'sequential' => 1,
+            'id' => $id,
+            'return' => "id,activity_type_id,subject,activity_date_time,details,status_id,priority_id,is_current_revision,is_deleted,assignee_contact_id,source_contact_id,target_contact_id,case_id",
+        ));
+        $task = CRM_Utils_Array::first($result['values']);
+        $assigneeId = CRM_Utils_array::first($task['assignee_contact_id']);
+        $targetId = CRM_Utils_Array::first($task['target_contact_id']);
+        
+        // Getting Assignee data:
+        $result = civicrm_api3('Contact', 'get', array(
+            'sequential' => 1,
+            'id' => $assigneeId,
+        ));
+        $assignee = CRM_Utils_Array::first($result['values']);
+        $assigneeSelected = array(
+            'id' => $assigneeId,
+            'text' => $assignee['sort_name'],
+        );
+        
+        // Getting Target data:
+        $result = civicrm_api3('Contact', 'get', array(
+            'sequential' => 1,
+            'id' => $targetId,
+        ));
+        $target = CRM_Utils_Array::first($result['values']);
+        $targetSelected = array(
+            'id' => $targetId,
+            'text' => $target['sort_name'],
+        );
+        
+        // Getting Assignment data:
+        if ($task['case_id']) {
+            $result = civicrm_api3('Assignment', 'get', array(
+                'sequential' => 1,
+                'id' => $task['case_id'],
+            ));
+            $assignment = CRM_Utils_Array::first($result['values']);
+            $assignmentSelected = array(
+                'id' => $assignment['id'],
+                'text' => $target['sort_name'] . ' - '. $assignment['subject'],
+            );
+        }
+    }
+    
+    $result = civicrm_api3('Contact', 'get', array(
+        'sequential' => 1,
+        'id' => $targetId,
+    ));
+    $target = CRM_Utils_Array::first($result['values']);
+    
+    // get all Assignments of the target:
+    $result = civicrm_api3('Assignment', 'get', array(
+        'sequential' => 1,
+        'contact_id' => $targetId,
+    ));
+    foreach ($result['values'] as $assignment) {
+        $assignmentsSelectOptions[] = array(
+            'id' => $assignment['id'],
+            'text' => $target['sort_name'] . ' - ' . $assignment['subject'],
+        );
+    }
+    
+    $taskTypes = civicrm_api3('Task', 'getoptions', array(
+      'field' => "activity_type_id",
+    ));
+    
+    $taskStatuses = get_task_statuses();
+    
+    $activityOptions = array();
+    $typeResult = civicrm_api3('Activity', 'getoptions', array(
+        'field' => "activity_type_id",
+    ));
+    $activityOptions['type'] = $typeResult['values'];
+    
+    $form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
+    $form['#suffix'] = '</div></article>';
+    
+    $form['id'] = array(
+        '#type' => 'hidden',
+        '#value' => $id,
+    );
+
+    $form['activity_type_id'] = array(
+        '#type' => 'select',
+        '#title' => t('Task type'),
+        '#options' => $taskTypes['values'],
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div></div>',
+        '#attributes' => $disabledAttr,
+    );
+    if ($id) {
+        $form['activity_type_id']['#default_value'] = $task['activity_type_id'];
+    }
+    
+    $form['activity_date_time'] = array(
+        '#type' => 'date_popup',
+        '#title' => t('Due:'),
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div></div>',
+        '#date_format' => 'Y-m-d',
+        '#date_year_range' => '-10:+10',
+        '#default_value' => isset($task['activity_date_time']) ? strip_tags($task['activity_date_time']) : '',
+        '#attributes' => $disabledAttr,
+    );
+    
+    $form['subject'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Subject'),
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div></div>',
+        '#default_value' => isset($task['subject']) ? strip_tags($task['subject']) : '',
+        '#attributes' => $disabledAttr,
+    );
+    
+    $assigneeRemoveBtn = '';
+    if (user_access('can create and edit tasks')) {
+        $assigneeRemoveBtn = '<span class="input-group-btn">'
+            . '<a class="btn btn-default assignee-remove">'
+            . '<span class="fa fa-remove"></span>'
+            . '</a>'
+            . '</span>';
+    }
+    $form['assignee'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Assignee'),
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => $assigneeRemoveBtn
+            . '</div>'
+            . '</div>',
+        '#default_value' => '',
+        '#attributes' => $disabledAttr,
+    );
+    
+    $targetRemoveBtn = '';
+    if (user_access('can create and edit tasks')) {
+        $targetRemoveBtn = '<span class="input-group-btn">'
+            . '<a class="btn btn-default target-remove">'
+            . '<span class="fa fa-remove"></span>'
+            . '</a>'
+            . '</span>';
+    }
+    $form['target'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Target'),
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => $targetRemoveBtn
+            . '</div>'
+            . '</div>',
+        '#default_value' => '',
+        '#attributes' => $disabledAttr,
+    );
+    
+    $form['status_id'] = array(
+        '#type' => 'select',
+        '#title' => t('Status'),
+        '#options' => $taskStatuses['values'],
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div></div>',
+        '#default_value' => isset($task['status_id']) ? $task['status_id'] : '',
+        '#attributes' => $disabledAttr,
+    );
+    
+    $form['details'] = array(
+        '#type' => 'textarea',
+        '#title' => t('Details'),
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div></div>',
+        '#rows' => 10,
+        '#cols' => 100,
+        '#default_value' => isset($task['details']) ? strip_tags($task['details']) : '',
+        '#attributes' => $disabledAttr,
+    );
+    
+    $assignmentRemoveBtn = '';
+    if (user_access('can create and edit tasks')) {
+        $assignmentRemoveBtn = '<span class="input-group-btn"><a class="btn btn-default assignment-remove">'
+            . '<span class="fa fa-remove"></span>'
+            . '</a></span>';
+    }
+    $form['assignment'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Assignment'),
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => $assignmentRemoveBtn
+            . '</div>'
+            . '</div>',
+        '#default_value' => '',
+        '#attributes' => $disabledAttr,
+    );
+
+    $form['save'] = array(
+        '#type' => 'submit',
+        '#value' => t('Save'),
+        '#attributes' => array(
+            'class' => array(
+                'btn',
+                'btn-primary'
+            ),
+        ),
+    );
+
+    // Add the validation function
+    $form['#validate'][] = 'civihr_employee_portal_civi_tasks_form_validate';
+
+    // Add the submit function
+    $form['#submit'][] = 'civihr_employee_portal_civi_tasks_form_submit';
+    
+    $form['javascript'] = array(
+        '#markup' => 
+          '<script type="text/javascript">'
+        . 'Drupal.behaviors.civihr_employee_portal_tasks.buildAssigneeSelect(' . json_encode($assigneeSelected) . ');'
+        . 'Drupal.behaviors.civihr_employee_portal_tasks.buildTargetSelect(' . json_encode($targetSelected) . ');'
+        . 'Drupal.behaviors.civihr_employee_portal_tasks.buildAssignmentsSelect(' . json_encode($assignmentsSelectOptions) . ', ' . json_encode($assignmentSelected) . ');'
+        . '</script>',
+    );
+    
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/tasks.js');
+
+    return $form;
+}
+
+function civihr_employee_portal_civi_tasks_form_validate($form, &$form_state) {
+}
+
+function civihr_employee_portal_civi_tasks_form_submit($form, &$form_state) {
+    
+    global $user;
+    
+    if (user_access('can create and edit tasks')) {
+        $result_output = array();
+        $extensions = CRM_Core_PseudoConstant::getExtensions();
+        if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+            return false;
+        }
+
+        $id = $form_state['values']['id'];
+
+        $params = array(
+            'sequential' => 1,
+            'debug' => false,
+            'assignee_contact_id' => array($form_state['values']['assignee']),
+            'source_contact_id' => _get_civicrm_contact_id_by_drupal_uid($user->uid),
+            'target_contact_id' => array($form_state['values']['target']),
+            'activity_type_id' => $form_state['values']['activity_type_id'],
+            'activity_date_time' => $form_state['values']['activity_date_time'],
+            'subject' => $form_state['values']['subject'],
+            'status_id' => $form_state['values']['status_id'],
+            'details' => $form_state['values']['details'],
+            'case_id' => $form_state['values']['assignment'],
+        );
+        if ($id) {
+            $params['id'] = $id;
+        }
+
+        $result = civicrm_api3('Task', 'create', $params);
+
+        $folder_real_path = drupal_realpath('public://') . '/views_json_query/';
+        _remove_json_cache_files($folder_real_path);
+
+        if (!$result['is_error']) {
+            if ($id) {
+                drupal_set_message('Task has been updated.', 'success');
+            } else {
+                drupal_set_message('Task has been created.', 'success');
+            }
+        } else {
+            drupal_set_message('An error occured when saving the Task.', 'error');
+        }
+    } else {
+        drupal_set_message('You do not have permissions to create or edit Task.', 'error');
+    }
+}
+
 
 /**
 * Ajax menu callback.
