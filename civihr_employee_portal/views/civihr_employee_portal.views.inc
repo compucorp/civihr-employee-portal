@@ -74,6 +74,26 @@ function civihr_employee_portal_views_data_alter(&$data) {
         'sort' => array('handler' => 'views_json_query_handler_sort'),
     );
     
+    $data['json']['document_status'] = array(
+        'title' => t('Document status'),
+        'help' => t('Document status'),
+        'real field' => 'status_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_document_status',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'subject',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
     $data['json']['period_html'] = array(
         'title' => t('Html field for period date'),
         'help' => t('Displays html field based on period ID'),

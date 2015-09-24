@@ -12,7 +12,7 @@ class civihr_employee_portal_handler_document_status extends views_handler_field
         $value = $this->get_value($values);
         
         // Find the document status based on status_id
-        $document_status_value = get_civihr_document_statuses($value);
+        $document_status_value = get_document_statuses($value);
         
         return $document_status_value;
     }
