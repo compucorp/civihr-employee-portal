@@ -983,7 +983,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
                     var viewHtml = data;
 
-                    console.log(viewHtml);
                     target.children().fadeOut(300, function() {
                         target.html(viewHtml);
 
@@ -997,13 +996,32 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
                         target.children().delay(150).fadeIn(300);
 
-                        // If we need to reload js behaviours call this function
-                        // Drupal.attachBehaviors(target);
+                        if (Drupal.vbo) {
+
+                            // Reload js behaviours for views bulk operations
+                            $('.vbo-views-form', context).each(function() {
+                                Drupal.vbo.initTableBehaviors(this);
+                                Drupal.vbo.initGenericBehaviors(this);
+                            });
+
+                        }
+
+                        if (Drupal.civihr_theme) {
+                            // Apply theme related js
+                            console.log('theme refresh');
+
+                        }
+
+
                     });
                 },
                 error: function(data) {
                     target.html('An error occured!');
                 }
+            }).done(function(data) {
+                console.log(Drupal.civihr_theme);
+                console.log('done func');
+                //Drupal.civihr_theme.applyCustomSelect();
             });
 
         }
