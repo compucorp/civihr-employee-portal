@@ -500,7 +500,7 @@ function get_document_statuses($status_id = NULL) {
     }
 
     // Get the status values based on the status_id
-    $status_id_value = CRM_Utils_Array::value($status_id, $documentStatuses);
+    $status_id_value = CRM_Utils_Array::value($status_id, $documentStatuses['values']);
 
     return $status_id_value;
 }
