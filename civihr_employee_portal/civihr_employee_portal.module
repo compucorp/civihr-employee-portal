@@ -947,7 +947,7 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
 
     if ($link_type == 'hr-resource') {
         return '' . l($link_text, 'hr_resources/nojs/resource/' . $nid,
-            array('attributes' => array('class' => "ctools-use-modal ctools-modal-civihr-default-style $class"))
+            array('attributes' => array('class' => "ctools-use-modal ctools-modal-civihr-custom-style $class"))
         ) . '';
     }
 
