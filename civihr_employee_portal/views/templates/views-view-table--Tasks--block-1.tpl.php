@@ -76,7 +76,7 @@ endforeach;
                         <td>
                             <?php
                             $checked = '';
-                            if (strip_tags($row['status_id']) == 2):
+                            if (strip_tags($row['task_status']) == 'Completed'):
                                 $checked = ' checked="checked" ';
                             endif;
                             ?>

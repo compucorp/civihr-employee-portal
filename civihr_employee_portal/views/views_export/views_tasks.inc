@@ -281,7 +281,7 @@ $handler->display->display_options['defaults']['header'] = FALSE;
 $handler->display->display_options['header']['area']['id'] = 'area';
 $handler->display->display_options['header']['area']['table'] = 'views';
 $handler->display->display_options['header']['area']['field'] = 'area';
-$handler->display->display_options['header']['area']['content'] = '<div class="tasks-list-actions"><div id="nav-tasks-types" class="btn-group btn-group-sm"><a href class="btn btn-gray" data-task-type="my">My Tasks</a><a href class="btn btn-gray" data-task-type="delegated">Delegated Tasks</a><a href class="btn btn-gray active" data-task-type="all">All</a></div><div id="tasks-list-header-additional"><a href="/civi_tasks/nojs/view_completed" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Show completed tasks</a><input type="text" name="task-filter-name" value="" placeholder="Enter name" /></div></div>';
+$handler->display->display_options['header']['area']['content'] = '<div class="tasks-list-actions"><div id="nav-tasks-types" class="btn-group btn-group-sm"><a href class="btn btn-gray" data-task-type="my">My Tasks</a><a href class="btn btn-gray" data-task-type="delegated">Delegated Tasks</a><a href class="btn btn-gray active" data-task-type="all">All</a></div><div id="tasks-list-header-additional"><a href="/civi_tasks/nojs/view_completed" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Show completed tasks</a><input type="text" name="task-filter-contact" id="task-filter-contact"value="" placeholder="Enter name" /><span class="input-group-btn"><a class="btn btn-default task-filter-contact-remove"><span class="">clear</span></a></span></div></div>';
 $handler->display->display_options['header']['area']['format'] = 'full_html';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: id: value */
@@ -655,7 +655,7 @@ $translatables['Tasks'] = array(
   t('Task contacts (assignee)'),
   t('All'),
   t('Tasks Dashboard block'),
-  t('<div class="tasks-list-actions"><div id="nav-tasks-types" class="btn-group btn-group-sm"><a href class="btn btn-gray" data-task-type="my">My Tasks</a><a href class="btn btn-gray" data-task-type="delegated">Delegated Tasks</a><a href class="btn btn-gray active" data-task-type="all">All</a></div><div id="tasks-list-header-additional"><a href="/civi_tasks/nojs/view_completed" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Show completed tasks</a><input type="text" name="task-filter-name" value="" placeholder="Enter name" /></div></div>'),
+  t('<div class="tasks-list-actions"><div id="nav-tasks-types" class="btn-group btn-group-sm"><a href class="btn btn-gray" data-task-type="my">My Tasks</a><a href class="btn btn-gray" data-task-type="delegated">Delegated Tasks</a><a href class="btn btn-gray active" data-task-type="all">All</a></div><div id="tasks-list-header-additional"><a href="/civi_tasks/nojs/view_completed" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Show completed tasks</a><input type="text" name="task-filter-contact" id="task-filter-contact"value="" placeholder="Enter name" /><span class="input-group-btn"><a class="btn btn-default task-filter-contact-remove"><span class="">clear</span></a></span></div></div>'),
   t('Task type'),
   t('Assignment'),
   t('Due Date'),

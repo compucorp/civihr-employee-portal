@@ -2555,14 +2555,14 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
     if (user_access('can create and edit tasks')) {
         $assigneeRemoveBtn = '<span class="input-group-btn">'
             . '<a class="btn btn-default assignee-remove">'
-            . '<span class="fa fa-remove"></span>'
+            . '<span class="">clear</span>'
             . '</a>'
             . '</span>';
     }
     $form['assignee'] = array(
         '#type' => 'textfield',
         '#title' => t('Assignee'),
-        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#prefix' => '<div class="row input-with-clear"><div class="col-md-12">',
         '#suffix' => $assigneeRemoveBtn
             . '</div>'
             . '</div>',
@@ -2574,14 +2574,14 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
     if (user_access('can create and edit tasks')) {
         $targetRemoveBtn = '<span class="input-group-btn">'
             . '<a class="btn btn-default target-remove">'
-            . '<span class="fa fa-remove"></span>'
+            . '<span class="">clear</span>'
             . '</a>'
             . '</span>';
     }
     $form['target'] = array(
         '#type' => 'textfield',
         '#title' => t('Target'),
-        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#prefix' => '<div class="row input-with-clear"><div class="col-md-12">',
         '#suffix' => $targetRemoveBtn
             . '</div>'
             . '</div>',
@@ -2613,13 +2613,13 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
     $assignmentRemoveBtn = '';
     if (user_access('can create and edit tasks')) {
         $assignmentRemoveBtn = '<span class="input-group-btn"><a class="btn btn-default assignment-remove">'
-            . '<span class="fa fa-remove"></span>'
+            . '<span class="">clear</span>'
             . '</a></span>';
     }
     $form['assignment'] = array(
         '#type' => 'textfield',
         '#title' => t('Assignment'),
-        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#prefix' => '<div class="row input-with-clear"><div class="col-md-12">',
         '#suffix' => $assignmentRemoveBtn
             . '</div>'
             . '</div>',
