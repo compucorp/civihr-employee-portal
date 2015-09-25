@@ -33,7 +33,17 @@
 
     // Get the download link if we have anything to download
     $download_link = isset($row->field_field_download[0])? l(' ' . $row->field_field_download[0]['rendered']['#text'] . ' (' . $total_count . ')', $row->field_field_download[0]['rendered']['#path'], array('attributes' => array('class' => 'chr_action--icon--download', 'aria-hidden' => 'true'))) : '';
-    $custom_output = '<div class="row"><div class="col-xs-6 resource-uploaded-date text-left">' . t('Uploaded on: ') . format_date($row->node_created, 'custom', t('d/m/Y', array(), array('context' => 'php date format'))) . '</div><div class="col-xs-6 resource-download-all text-right">' . $download_link . '</div></div>';
+    $custom_output = '
+        <div class="row">
+            <div class="col-xs-3 col-sm-6 resource-uploaded-date">
+                <span class="hidden-xs">' . t('Uploaded on: ') . '</span>'
+                . format_date($row->node_created, 'custom', t('d/m/Y', array(), array('context' => 'php date format'))) .
+            '</div>
+            <div class="col-xs-9 col-sm-6 resource-download-all text-right">'
+                . $download_link .
+            '</div>
+        </div>
+    ';
 ?>
 
 <?php print $custom_output; ?>
