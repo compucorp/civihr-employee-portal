@@ -33,6 +33,30 @@ function civihr_employee_portal_js_alter(&$javascript) {
 
     }
 
+    // Create our own javascript that will be used to theme a modal.
+    $civihr_style = array(
+        'civihr-default-style' => array(
+            'modalOptions' => array(
+                'opacity' => .5,
+                'background-color' => '#000',
+            ),
+            'animation' => 'fadeIn'
+        ),
+        'civihr-custom-style' => array(
+            'modalOptions' => array(
+                'opacity' => .5,
+                'background-color' => '#000',
+            ),
+            'modalSize' => array(
+                'height' => 'auto',
+                'width' => 'auto'
+            ),
+            'animation' => 'fadeIn',
+            'modalClass' => 'civihr-custom'
+        ),
+    );
+
+    drupal_add_js($civihr_style, 'setting');
 }
 
 /**
