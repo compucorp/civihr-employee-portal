@@ -159,16 +159,15 @@ $handler->display->display_options['fields']['nothing']['element_label_colon'] =
 
 /* Display: HR Resources page */
 $handler = $view->new_display('page', 'HR Resources page', 'hr_resources');
+$handler->display->display_options['defaults']['css_class'] = FALSE;
+$handler->display->display_options['css_class'] = 'view-full-hr-documents';
 $handler->display->display_options['defaults']['pager'] = FALSE;
 $handler->display->display_options['pager']['type'] = 'mini';
 $handler->display->display_options['pager']['options']['items_per_page'] = '20';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['pager']['options']['id'] = '0';
-$handler->display->display_options['pager']['options']['expose']['items_per_page'] = TRUE;
-$handler->display->display_options['pager']['options']['expose']['items_per_page_options_all'] = TRUE;
 $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'default';
-$handler->display->display_options['style_options']['row_class'] = 'row-hr-resource';
 $handler->display->display_options['defaults']['style_options'] = FALSE;
 $handler->display->display_options['defaults']['row_plugin'] = FALSE;
 $handler->display->display_options['row_plugin'] = 'fields';
@@ -217,15 +216,13 @@ $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
 $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = '';
-$handler->display->display_options['fields']['nothing']['alter']['text'] = '<span class="col-md-2"><blockquote>[field_resource_type]</blockquote></span>
-<span class="col-md-8">[title]</span>
-<span class="col-md-2">[field_download]</span>';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
 /* Field: Content: Body */
 $handler->display->display_options['fields']['body']['id'] = 'body';
 $handler->display->display_options['fields']['body']['table'] = 'field_data_body';
 $handler->display->display_options['fields']['body']['field'] = 'body';
 $handler->display->display_options['fields']['body']['label'] = '';
+$handler->display->display_options['fields']['body']['exclude'] = TRUE;
 $handler->display->display_options['fields']['body']['alter']['alter_text'] = TRUE;
 $handler->display->display_options['fields']['body']['alter']['text'] = '<div class="col-md-2"></div>
 <div class="col-md-10">[body]</div>';
@@ -238,11 +235,11 @@ $handler->display->display_options['fields']['body']['settings'] = array(
 $handler->display->display_options['fields']['fieldset']['id'] = 'fieldset';
 $handler->display->display_options['fields']['fieldset']['table'] = 'views';
 $handler->display->display_options['fields']['fieldset']['field'] = 'fieldset';
-$handler->display->display_options['fields']['fieldset']['label'] = 'See resources';
+$handler->display->display_options['fields']['fieldset']['label'] = 'See Resources';
 $handler->display->display_options['fields']['fieldset']['children'] = array(
     0 => 'field_attachment',
 );
-$handler->display->display_options['fields']['fieldset']['fieldset']['classes'] = 'col-md-12';
+$handler->display->display_options['fields']['fieldset']['fieldset']['classes'] = 'civihr_form__fieldset--transparent';
 $handler->display->display_options['fields']['fieldset']['fieldset']['id'] = '[nid]';
 $handler->display->display_options['fields']['fieldset']['fieldset']['collapsible'] = 1;
 $handler->display->display_options['fields']['fieldset']['fieldset']['collapsed'] = 1;
@@ -250,12 +247,13 @@ $handler->display->display_options['fields']['fieldset']['fieldset']['collapsed'
 $handler->display->display_options['fields']['field_attachment']['id'] = 'field_attachment';
 $handler->display->display_options['fields']['field_attachment']['table'] = 'field_data_field_attachment';
 $handler->display->display_options['fields']['field_attachment']['field'] = 'field_attachment';
+$handler->display->display_options['fields']['field_attachment']['label'] = '';
 $handler->display->display_options['fields']['field_attachment']['element_label_class'] = 'hr-doc-label';
 $handler->display->display_options['fields']['field_attachment']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['field_attachment']['empty'] = 'No resource file attached!';
 $handler->display->display_options['fields']['field_attachment']['click_sort_column'] = 'fid';
-$handler->display->display_options['fields']['field_attachment']['type'] = 'file_table';
 $handler->display->display_options['fields']['field_attachment']['delta_offset'] = '0';
+$handler->display->display_options['fields']['field_attachment']['multi_type'] = 'ul';
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
 /* Filter criterion: Content: Published */
@@ -427,9 +425,6 @@ $translatables['hr_documents'] = array(
     t('last »'),
     t('<strong><h4>[title]</h4></strong>
 '),
-    t('<span class="col-md-2"><blockquote>[field_resource_type]</blockquote></span>
-<span class="col-md-8">[title]</span>
-<span class="col-md-2">[field_download]</span>'),
     t('<div class="col-md-2"></div>
 <div class="col-md-10">[body]</div>'),
     t('See resources'),

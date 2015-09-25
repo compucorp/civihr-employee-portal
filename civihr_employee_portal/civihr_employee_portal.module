@@ -33,6 +33,30 @@ function civihr_employee_portal_js_alter(&$javascript) {
 
     }
 
+    // Create our own javascript that will be used to theme a modal.
+    $civihr_style = array(
+        'civihr-default-style' => array(
+            'modalOptions' => array(
+                'opacity' => .5,
+                'background-color' => '#000',
+            ),
+            'animation' => 'fadeIn'
+        ),
+        'civihr-custom-style' => array(
+            'modalOptions' => array(
+                'opacity' => .5,
+                'background-color' => '#000',
+            ),
+            'modalSize' => array(
+                'height' => 'auto',
+                'width' => 'auto'
+            ),
+            'animation' => 'fadeIn',
+            'modalClass' => 'civihr-custom'
+        ),
+    );
+
+    drupal_add_js($civihr_style, 'setting');
 }
 
 /**
@@ -923,7 +947,7 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
 
     if ($link_type == 'hr-resource') {
         return '' . l($link_text, 'hr_resources/nojs/resource/' . $nid,
-            array('attributes' => array('class' => "ctools-use-modal ctools-modal-civihr-default-style $class"))
+            array('attributes' => array('class' => "ctools-use-modal ctools-modal-civihr-custom-style $class"))
         ) . '';
     }
 
@@ -3176,9 +3200,11 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
     }
 
     /**
-     *  Staff Directory filters form
+     *  Staff Directory filters form, HR Documents filters form
      */
-    if (isset($form['#id']) && $form['#id'] == 'views-exposed-form-civihr-staff-directory-page') {
+    $exposed_filters_forms = array('views-exposed-form-civihr-staff-directory-page', 'views-exposed-form-hr-documents-hr-resources');
+
+    if (isset($form['#id']) && in_array($form['#id'], $exposed_filters_forms)) {
         $form['#attributes']['class'][] = 'row';
 
         $form['submit']['#attributes'] = array('class' => array('chr_action'));
@@ -3193,8 +3219,9 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
                 // Take the <label> value and use it as placeholder instead
                 if ($value['#type'] == 'textfield') {
                     $form[$key]['#attributes'] = array('placeholder' => $form['#info']["filter-$key"]['label']);
-                    $form['#info']["filter-$key"]['label'] = '';
                 }
+
+                $form['#info']["filter-$key"]['label'] = '';
             }
         }
     }
