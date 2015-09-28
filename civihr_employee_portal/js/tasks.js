@@ -56,7 +56,7 @@
                 }
             }).on("change", function(e) {
                 var assignmentSelectOptions = [];
-                CRM.api3('Contact', 'get', {
+                CRM.api3('Task', 'getcontact', {
                     "sequential": 1,
                     "id": e.val
                 }).done(function(result) {
