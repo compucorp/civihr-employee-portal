@@ -45,6 +45,7 @@ $handler->display->display_options['style_options']['columns'] = array(
     'location' => 'location',
     'contract_type' => 'contract_type',
     'department' => 'department',
+    'last_name' => 'last_name'
 );
 $handler->display->display_options['style_options']['info'] = array(
     'display_name' => array(
@@ -96,6 +97,13 @@ $handler->display->display_options['style_options']['info'] = array(
         'separator' => '',
         'empty_column' => 0,
     ),
+    'last_name' => array(
+        'sortable' => 1,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    )
 );
 /* Relationship: CiviCRM Contacts: HRJobContract Details entity */
 $handler->display->display_options['relationships']['hrjc_details']['id'] = 'hrjc_details';
@@ -134,7 +142,14 @@ $handler->display->display_options['fields']['display_name']['id'] = 'display_na
 $handler->display->display_options['fields']['display_name']['table'] = 'civicrm_contact';
 $handler->display->display_options['fields']['display_name']['field'] = 'display_name';
 $handler->display->display_options['fields']['display_name']['label'] = 'Name';
+$handler->display->display_options['fields']['display_name']['exclude'] = TRUE;
 $handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 0;
+/* Field: CiviCRM Contacts: Last Name */
+$handler->display->display_options['fields']['last_name']['id'] = 'last_name';
+$handler->display->display_options['fields']['last_name']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['last_name']['field'] = 'last_name';
+$handler->display->display_options['fields']['last_name']['label'] = 'Name';
+$handler->display->display_options['fields']['last_name']['link_to_civicrm_contact'] = 0;
 /* Field: CiviCRM Phone Details: Phone Number */
 $handler->display->display_options['fields']['phone']['id'] = 'phone';
 $handler->display->display_options['fields']['phone']['table'] = 'civicrm_phone';
@@ -486,6 +501,7 @@ $translatables['civihr_staff_directory'] = array(
     t('.'),
     t('<img src="[image_URL]" width="35px" height="25px" />'),
     t('Name'),
+    t('Last Name'),
     t('Work Phone'),
     t('Job Title'),
     t('Email'),

@@ -28,5 +28,5 @@ $profile_image = $row->civicrm_contact_image_url ? $row->civicrm_contact_image_u
     <img src="<?php print $profile_image; ?>" />
 </div>
 <span>
-    <?php print $row->{$field->field_alias} ?>
+    <?php print $row->civicrm_contact_display_name ?>
 </span>
