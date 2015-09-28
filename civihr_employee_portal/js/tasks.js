@@ -5,13 +5,13 @@
             //});
         },
         contactAjax: {
-            url: '/index.php?q=civicrm/ajax/rest&entity=contact&action=getquick&format=json',
+            url: '/index.php?q=civicrm/ajax/rest&entity=task&action=getcontactlist&format=json',
             dataType: 'json',
             type: 'POST',
             delay: 250,
             data: function (params) {
                 return {
-                    json: '{"name":"' + params + '"}',
+                    json: '{"sort_name":"' + params + '"}',
                     page: 1
                 };
             },
