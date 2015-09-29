@@ -19,54 +19,46 @@
  * @ingroup views_templates
  */
 
-$approval_table_class = 'manager-approval-main-table tablesaw tablesaw-swipe';
+$approval_table_class = 'manager-approval-main-table';
 
 ?>
 
-<table <?php if ($classes) { print 'class="'. $classes . ' ' . $approval_table_class . '"'; } ?>data-mode="columntoggle" data-minimap<?php print $attributes; ?>>
-   <?php if (!empty($title) || !empty($caption)) : ?>
-     <caption><?php print $caption . $title; ?></caption>
-  <?php endif; ?>
-  <?php if (!empty($header)) : ?>
+<table <?php if ($classes) { print 'class="'. $classes . ' ' . $approval_table_class . '"'; } ?>>
+    <?php if (!empty($title) || !empty($caption)) : ?>
+        <caption><?php print $caption . $title; ?></caption>
+    <?php endif; ?>
+    <?php if (!empty($header)) : ?>
     <thead>
-      <tr>
-         
-        <?php $data_priority = 0; ?>
-        <?php foreach ($header as $field => $label): ?>
-          
-          <?php //print $field; 
-            $data_priority += 1; 
-          ?>
-          
-          <?php if ($field == 'tooltip') { $sortable = ''; $persist = 'data-priority="persist"'; } else { $persist = ''; } ?>
-          
-          <th <?php if ($header_classes[$field]) { print $persist . ' data-priority=' . "'$data_priority'"; } ?>>
-            <?php print $label; ?>
-          </th>
-        <?php endforeach; ?>
-      </tr>
+        <tr>
+            <?php $data_priority = 0; ?>
+            <?php foreach ($header as $field => $label): ?>
+                <?php $data_priority += 1; ?>
+                <?php if ($field == 'tooltip') { $sortable = ''; $persist = 'data-priority="persist"'; } else { $persist = ''; } ?>
+
+                <th <?php if ($header_classes[$field]) { print 'class="' . $header_classes[$field] . '"' . $persist . ' data-priority=' . "'$data_priority'"; } ?>>
+                    <?php print $label; ?>
+                </th>
+            <?php endforeach; ?>
+        </tr>
     </thead>
-  <?php endif; ?>
-  <tbody>
-    <?php foreach ($rows as $row_count => $row): ?>
-      
-      <?php 
-        
-        if (trim(strip_tags($row['absence_status']) == 'Awaiting approval')) {
-            $row_data_class = strip_tags($row['absence_title']) . ' ' . strip_tags($row['absence_status']);
-        }
-        else {
-            $row_data_class = strip_tags($row['absence_status']);
-        }
-        
-      ?>
-      <tr <?php if ($row_classes[$row_count]) { print 'data="approvals-table@' . $row_data_class . '" class="' . implode(' ', $row_classes[$row_count]) .'"';  } ?>>
-        <?php foreach ($row as $field => $content): ?>
-          <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
-            <?php print $content; ?>
-          </td>
+    <?php endif; ?>
+    <tbody>
+        <?php foreach ($rows as $row_count => $row): ?>
+            <?php
+                if (trim(strip_tags($row['absence_status']) == 'Awaiting approval')) {
+                    $row_data_class = strip_tags($row['absence_title']) . ' ' . strip_tags($row['absence_status']);
+                }
+                else {
+                    $row_data_class = strip_tags($row['absence_status']);
+                }
+            ?>
+            <tr <?php if ($row_classes[$row_count]) { print 'data="approvals-table@' . $row_data_class . '" class="' . implode(' ', $row_classes[$row_count]) .'"';  } ?>>
+                <?php foreach ($row as $field => $content): ?>
+                    <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
+                        <?php print $content; ?>
+                    </td>
+                <?php endforeach; ?>
+            </tr>
         <?php endforeach; ?>
-      </tr>
-    <?php endforeach; ?>
-  </tbody>
+    </tbody>
 </table>

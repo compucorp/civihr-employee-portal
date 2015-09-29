@@ -45,6 +45,7 @@ $handler->display->display_options['style_options']['columns'] = array(
     'location' => 'location',
     'contract_type' => 'contract_type',
     'department' => 'department',
+    'last_name' => 'last_name'
 );
 $handler->display->display_options['style_options']['info'] = array(
     'display_name' => array(
@@ -96,6 +97,13 @@ $handler->display->display_options['style_options']['info'] = array(
         'separator' => '',
         'empty_column' => 0,
     ),
+    'last_name' => array(
+        'sortable' => 1,
+        'default_sort_order' => 'asc',
+        'align' => '',
+        'separator' => '',
+        'empty_column' => 0,
+    )
 );
 /* Relationship: CiviCRM Contacts: HRJobContract Details entity */
 $handler->display->display_options['relationships']['hrjc_details']['id'] = 'hrjc_details';
@@ -129,19 +137,19 @@ $handler->display->display_options['fields']['image_URL']['field'] = 'image_URL'
 $handler->display->display_options['fields']['image_URL']['label'] = '';
 $handler->display->display_options['fields']['image_URL']['exclude'] = TRUE;
 $handler->display->display_options['fields']['image_URL']['element_label_colon'] = FALSE;
-/* Field: Global: Custom text */
-$handler->display->display_options['fields']['nothing']['id'] = 'nothing';
-$handler->display->display_options['fields']['nothing']['table'] = 'views';
-$handler->display->display_options['fields']['nothing']['field'] = 'nothing';
-$handler->display->display_options['fields']['nothing']['label'] = '';
-$handler->display->display_options['fields']['nothing']['alter']['text'] = '<img src="[image_URL]" width="35px" height="25px" />';
-$handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
 /* Field: CiviCRM Contacts: Display Name */
 $handler->display->display_options['fields']['display_name']['id'] = 'display_name';
 $handler->display->display_options['fields']['display_name']['table'] = 'civicrm_contact';
 $handler->display->display_options['fields']['display_name']['field'] = 'display_name';
 $handler->display->display_options['fields']['display_name']['label'] = 'Name';
+$handler->display->display_options['fields']['display_name']['exclude'] = TRUE;
 $handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 0;
+/* Field: CiviCRM Contacts: Last Name */
+$handler->display->display_options['fields']['last_name']['id'] = 'last_name';
+$handler->display->display_options['fields']['last_name']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['last_name']['field'] = 'last_name';
+$handler->display->display_options['fields']['last_name']['label'] = 'Name';
+$handler->display->display_options['fields']['last_name']['link_to_civicrm_contact'] = 0;
 /* Field: CiviCRM Phone Details: Phone Number */
 $handler->display->display_options['fields']['phone']['id'] = 'phone';
 $handler->display->display_options['fields']['phone']['table'] = 'civicrm_phone';
@@ -170,7 +178,7 @@ $handler->display->display_options['fields']['location']['id'] = 'location';
 $handler->display->display_options['fields']['location']['table'] = 'hrjc_details';
 $handler->display->display_options['fields']['location']['field'] = 'location';
 $handler->display->display_options['fields']['location']['relationship'] = 'hrjc_details';
-$handler->display->display_options['fields']['location']['label'] = 'Location / Place of Work';
+$handler->display->display_options['fields']['location']['label'] = 'Location';
 /* Field: HRJobContract Details entity: Contract_type */
 $handler->display->display_options['fields']['contract_type']['id'] = 'contract_type';
 $handler->display->display_options['fields']['contract_type']['table'] = 'hrjc_details';
@@ -493,6 +501,7 @@ $translatables['civihr_staff_directory'] = array(
     t('.'),
     t('<img src="[image_URL]" width="35px" height="25px" />'),
     t('Name'),
+    t('Last Name'),
     t('Work Phone'),
     t('Job Title'),
     t('Email'),
