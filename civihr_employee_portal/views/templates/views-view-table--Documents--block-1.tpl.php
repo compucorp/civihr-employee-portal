@@ -125,34 +125,30 @@ $statuses = array(
 </table>
 
 <script>
-    (function ($) {
-        Drupal.behaviors.civihr_employee_portal = {
-            attach: function (context, settings) {
-                var $tableDocManager = $('#documents-dashboard-table-manager');
+    (function($, CRM){
+        var $tableDocManager = $('#documents-dashboard-table-manager');
 
-                $tableDocManager.find('.document-status').change(function(e){
-                    var selectEl = e.delegateTarget,
-                        $select = $(selectEl);
+        $tableDocManager.find('.document-status').change(function(e){
+            var selectEl = e.delegateTarget,
+                $select = $(selectEl);
 
-                    $select.attr('disabled', 'disabled');
+            $select.attr('disabled', 'disabled');
 
-                    $.ajax({
-                        url: '/civi_documents/ajax/change_document_status/' + $select.data('id') + '/' + selectEl.value,
-                        success: function(result) {
-                            $select.removeAttr('disabled');
+            $.ajax({
+                url: '/civi_documents/ajax/change_document_status/' + $select.data('id') + '/' + selectEl.value,
+                success: function(result) {
+                    $select.removeAttr('disabled');
 
-                            if (!result.success) {
-                                alert(result.message);
-                                $select.val($select.data('originalValue'));
-                                return
-                            }
+                    if (!result.success) {
+                        CRM.alert(result.message, 'Error', 'error');
+                        $select.val($select.data('originalValue'));
+                        return
+                    }
 
-                            $select.data('originalValue',selectEl.value);
+                    $select.data('originalValue',selectEl.value);
 
-                        }
-                    });
-                });
-            }
-        };
-    })(jQuery);
+                }
+            });
+        });
+    }(CRM.$, CRM));
 </script>
