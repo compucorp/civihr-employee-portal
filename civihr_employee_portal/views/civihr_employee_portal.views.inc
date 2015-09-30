@@ -11,6 +11,30 @@
  * Implements hook_views_data_alter().
  */
 function civihr_employee_portal_views_data_alter(&$data) {
+
+
+    /**
+     * Custom field handler which will create age group based on the contact birth date
+     */
+    $data['civicrm_contact']['age_group'] = array(
+        'title' => t('Age Group'),
+        'help' => t('Age group for the contact'),
+        'real field' => 'birth_date',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_age_group',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'civihr_employee_portal_argument_age_group',
+            'name field' => 'birth_date',
+            'numeric' => FALSE
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_string',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_handler_sort'),
+    );
         
     $data['json']['absence_entitlement'] = array(
         'title' => t('Absence entitlement value'),
@@ -41,6 +65,85 @@ function civihr_employee_portal_views_data_alter(&$data) {
         'argument' => array(
             'handler' => 'views_json_query_argument_document_contacts_request_handler',
             'name_field' => 'document_targets',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['json']['document_status'] = array(
+        'title' => t('Document status'),
+        'help' => t('Document status'),
+        'real field' => 'status_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_document_status',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'subject',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+
+    $data['json']['task_contacts'] = array(
+        'title' => t('Task contacts'),
+        'help' => t('Task contacts'),
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_task_contacts',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_task_contacts_request_handler',
+            'name_field' => 'task_targets',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['json']['task_status'] = array(
+        'title' => t('Task status'),
+        'help' => t('Task status'),
+        'real field' => 'status_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_task_status',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'task_status',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['json']['task_type'] = array(
+        'title' => t('Task type'),
+        'help' => t('Task type'),
+        'real field' => 'activity_type_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_task_type',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'task_type',
             'string' => TRUE
         ),
         'filter' => array(

@@ -224,8 +224,9 @@ function civihr_hrjobcontract_entities_init() {
         db_query('DROP VIEW IF EXISTS hrjc_role');
         db_query("CREATE OR REPLACE VIEW hrjc_role AS
                     SELECT
+                    t.id,
                     c.contact_id,
-                    t.job_contract_id,
+                    t.job_contract_id AS jobcontract_id,
                     t.title,
                     t.description,
                     t.hours,
@@ -643,12 +644,12 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'not null' => TRUE,
         'description' => 'Job Contract ID.',
     );
-    /*$schema['hrjc_role']['fields']['id'] = array(
+    $schema['hrjc_role']['fields']['id'] = array(
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'Role ID.',
-    );*/
+    );
     $schema['hrjc_role']['fields']['title'] = array(
         'type' => 'varchar',
         'not null' => FALSE,
@@ -711,11 +712,6 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
     );
     $schema['hrjc_role']['fields']['percent_pay_funder'] = array(
         'type' => 'varchar',
-        'not null' => FALSE,
-        'description' => 'Percent pay funder.',
-    );
-    $schema['hrjc_role']['fields']['percent_pay_role'] = array(
-        'type' => 'int',
         'not null' => FALSE,
         'description' => 'Percent pay funder.',
     );

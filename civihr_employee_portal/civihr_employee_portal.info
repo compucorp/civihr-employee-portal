@@ -30,8 +30,12 @@ dependencies[] = civicrm_entity
 dependencies[] = civihr_hrjobcontract_entities
 dependencies[] = views_autocomplete_filters
 dependencies[] = views_merge_rows
+dependencies[] = views_datasource
+dependencies[] = views_data_export
 
 ; Views Handlers
+files[] = views/includes/civihr_employee_portal_handler_age_group.inc
+files[] = views/includes/civihr_employee_portal_argument_age_group.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_duration.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_entitlement.inc
 files[] = views/includes/civihr_employee_portal_handler_area_totals.inc
@@ -39,9 +43,14 @@ files[] = views/includes/civihr_employee_portal_handler_absence_period.inc
 files[] = views/includes/civihr_employee_portal_filter_absence_period.inc
 files[] = views/includes/civihr_employee_portal_handler_employee_id.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_status.inc
+files[] = views/includes/civihr_employee_portal_handler_document_status.inc
 files[] = views/includes/civihr_employee_portal_handler_document_contacts.inc
+files[] = views/includes/civihr_employee_portal_handler_task_contacts.inc
+files[] = views/includes/civihr_employee_portal_handler_task_status.inc
+files[] = views/includes/civihr_employee_portal_handler_task_type.inc
 files[] = views/includes/views_json_query_argument_request_handler.inc
 files[] = views/includes/views_json_query_argument_document_contacts_request_handler.inc
+files[] = views/includes/views_json_query_argument_task_contacts_request_handler.inc
 
 ; Custom js
 scripts[] = js/scripts.js

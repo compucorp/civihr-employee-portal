@@ -95,13 +95,13 @@ $handler->display->display_options['row_options']['inline'] = array(
 );
 $handler->display->display_options['row_options']['colors']['legend'] = 'absence_type';
 $handler->display->display_options['row_options']['colors']['calendar_colors_absence_type'] = array(
-  52 => '#fb7171',
-  53 => '#47d03c',
-  54 => '#205acd',
-  55 => '#2eede6',
-  57 => '#1606c3',
-  56 => '#ffc21c',
-  58 => '#e9e798',
+  52 => '#E48282', // sick
+  53 => '#4D6C81', // vacation
+  54 => '#EBA782', // maternity
+  55 => '#91C68E', // paternity
+  57 => '#1606c3', // TOIL (CREDIT)
+  56 => '#977CA9', // TOIL
+  58 => '#C198AC', // Other
 );
 $handler->display->display_options['defaults']['row_options'] = FALSE;
 $handler->display->display_options['defaults']['footer'] = FALSE;

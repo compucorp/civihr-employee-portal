@@ -13,11 +13,73 @@ class ReportSettingsForm extends BaseForm {
     // This will hold the form data
     private $form_data = array();
 
+    /**
+     * Returns defined age groups (json stringified values)
+     * @return null
+     */
+    public function getRawAgeGroups() {
+        return variable_get('age_group_vals', []);
+    }
+
+    /**
+     * Returns the defined age groups (if any)
+     */
+    public function getAgeGroupsHTML() {
+
+        $html = '';
+
+        // Decode string as associative array
+        foreach (json_decode($this->getRawAgeGroups(), TRUE) as $age_group) {
+            $html .= '<tr>';
+            $html .= '<td class="changeable" contenteditable="true">' . $age_group['description'] . '</td>';
+            $html .= '<td class="changeable" contenteditable="true">' . $age_group['start_period'] . '</td>';
+            $html .= '<td class="changeable" contenteditable="true">' . $age_group['end_period'] . '</td>';
+            $html .= '<td><span class="table-remove glyphicon glyphicon-remove"></span></td>';
+            $html .= '<td><span class="table-up glyphicon glyphicon-arrow-up"></span><span class="table-down glyphicon glyphicon-arrow-down"></span></td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
+
+    }
+
     public function setForm() {
-        $this->form_data['main_filter'] = array(
-            '#type' => 'textfield',
-            '#title' => 'sss Filters for Y axis?' . $this->getFormName(),
-            '#size' => 10,
+        $this->form_data['age_group_vals'] = array(
+            '#type' => 'hidden',
+            '#title' => $this->getFormName(),
+            '#default_value' => $this->getRawAgeGroups(),
+            '#maxlength' => 1024,
+            '#suffix' => '<div class="container">
+
+                              <div id="table">
+                                <span class="table-add glyphicon glyphicon-plus"></span>
+                                <table class="table-editable">
+                                  <tr>
+                                    <th id="description">Description</th>
+                                    <th id="start_period">Start Age</th>
+                                    <th id="end_period">End Age</th>
+                                    <th></th>
+                                    <th></th>
+                                  </tr>
+
+                                    ' . $this->getAgeGroupsHTML() . '
+
+                                  <!-- This is our clonable table line -->
+                                  <tr class="hide">
+                                    <td class="changeable" contenteditable="true">0 - 99</td>
+                                    <td class="changeable" contenteditable="true">0</td>
+                                    <td class="changeable" contenteditable="true">99</td>
+                                    <td>
+                                      <span class="table-remove glyphicon glyphicon-remove"></span>
+                                    </td>
+                                    <td>
+                                      <span class="table-up glyphicon glyphicon-arrow-up"></span>
+                                      <span class="table-down glyphicon glyphicon-arrow-down"></span>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </div>
+                        </div>'
         );
 
         $this->form_data['submit'] = array(
@@ -44,15 +106,49 @@ class ReportSettingsForm extends BaseForm {
      * @param $form_state
      * @return bool
      */
-    public function validateForm($form, &$form_state) {
+    public function validateForm($form, &$form_state, $object) {
 
+        watchdog('form state', print_r($form_state['values'], TRUE));
 
-        form_set_error('main_filter', t('New error from class'));
+        // Pass the custom form object data (if it's not passed we can't see our object in the submit phase)
+        $form_state['build_info']['args'] = array(array('form_object' => $object));
 
-        // No errors found
-        return TRUE;
+        if (isset($form_state['values']['age_group_vals'])) {
+
+            if (empty($form_state['values']['age_group_vals']) || $form_state['values']['age_group_vals'] == '[]') {
+                form_set_error('main_filter', t('Age Groups cannot be empty!'));
+            }
+
+            // All validation passed
+            return TRUE;
+        }
+
+        // Error found
+        return FALSE;
 
     }
 
+    /**
+     * Function to save our form data
+     * @param $form
+     * @param $form_state
+     */
+    public function submitForm($form, &$form_state) {
+
+        watchdog('new submit', print_r($form_state['values'], TRUE));
+
+        if (isset($form_state['values']['age_group_vals'])) {
+            // Saves the age group settings
+            variable_set('age_group_vals', $form_state['values']['age_group_vals']);
+        }
+
+        drupal_set_message(t('Settings Saved!'), 'success');
+
+        // If no ajax trigger redirect (otherwise the form will redirect after ajax finished
+        if (!isset($form_state['ajax'])) {
+            drupal_goto('civihr_reports');
+        }
+
+    }
 
 }

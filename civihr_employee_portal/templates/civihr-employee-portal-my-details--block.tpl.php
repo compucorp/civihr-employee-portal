@@ -57,7 +57,7 @@
 <div class="<?php print $classes; ?>"<?php print $attributes; ?>>
     <div class="row relative">
         <div class="col-md-2">
-            <div class="chr_panel--my-details__profile-image hidden-xs hidden-sm">
+            <div class="chr_profile-pic hidden-xs hidden-sm">
                 <?php if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) { ?>
                     <img src="<?php print $contact_data['image_URL']; ?>" />
                 <?php } else { ?>
@@ -79,7 +79,7 @@
             </div>
         </div>
     </div>
-    <div class="chr_panel__actions">
+    <div class="chr_actions-wrapper">
         <?php print l(t('Edit my details'), 'my_details/nojs/view', array('attributes' => array('class' => $actions_classes))); ?>
         <?php print l(t('Edit emergency contact'), 'emergency_contacts/nojs/view', array('attributes' => array('class' => $actions_classes))); ?>
     </div>

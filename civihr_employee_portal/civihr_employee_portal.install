@@ -14,14 +14,6 @@ function civihr_employee_portal_install() {
 }
 
 function _civi_setup() {
-
-    $result = civicrm_api3('ContactType', 'create', array(
-        'sequential' => 1,
-        'name' => 'Emergency contact',
-        'parent_id' => 1,
-            'label' => 'Emergency Contact',
-            'is_active' => 1
-    ));
             
     $result = civicrm_api3('RelationshipType', 'create', array(
         'sequential' => 1,
