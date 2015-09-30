@@ -1,0 +1,60 @@
+.pane-views-tasks-block {
+    position: relative;
+}
+
+div.tasks-list-actions {
+    position: absolute;
+    top: 13px;
+    right: 35px;
+}
+
+div#tasks-list-header-additional {
+    display: inline;
+    margin-left: 40px;
+}
+
+div#tasks-list-header-additional > div {
+    margin-left: 40px;
+}
+
+div#tasks-list-header-additional .input-group-btn a {
+    border: 0px none;
+    padding: 3px 6px;
+}
+
+div.input-with-clear .form-item {
+    margin-bottom: 0px;
+}
+
+div.input-with-clear .input-group-btn {
+    display: block;
+    width: 100%;
+    height: 34px;
+    margin-bottom: 20px;
+}
+
+div.input-with-clear a {
+    border: 0px none;
+}
+
+div.input-with-clear .btn {
+    padding: 3px 6px;
+}
+
+div.container-inline-date .form-item {
+    width: 100%;
+}
+
+div.container-inline-date #edit-activity-date-time {
+    padding: 0px;
+}
+
+div.container-inline-date .form-item.form-type-textfield.form-item-activity-date-time-date.form-group > label {
+    display: none;
+}
+
+div.container-inline-date .help-block {
+    clear: left;
+    font-size: 12px;
+    float: left;
+}
