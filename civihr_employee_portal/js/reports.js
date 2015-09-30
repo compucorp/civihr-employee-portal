@@ -998,7 +998,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                             if (Drupal.civihr_theme) {
                                 // Apply theme related js
                                 Drupal.civihr_theme.applyCustomSelect();
-
                             }
 
                         });
