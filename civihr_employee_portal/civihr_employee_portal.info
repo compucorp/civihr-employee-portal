@@ -30,6 +30,8 @@ dependencies[] = civicrm_entity
 dependencies[] = civihr_hrjobcontract_entities
 dependencies[] = views_autocomplete_filters
 dependencies[] = views_merge_rows
+dependencies[] = views_datasource
+dependencies[] = views_data_export
 
 ; Views Handlers
 files[] = views/includes/civihr_employee_portal_handler_age_group.inc
