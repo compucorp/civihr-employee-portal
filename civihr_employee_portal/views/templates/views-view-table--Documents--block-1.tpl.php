@@ -125,31 +125,34 @@ $statuses = array(
 </table>
 
 <script>
-    (function($, CRM){
-        var $tableDocManager = $('#documents-dashboard-table-manager');
+    (function ($) {
+        Drupal.behaviors.civihr_employee_portal = {
+            attach: function (context, settings) {
+                var $tableDocManager = $('#documents-dashboard-table-manager');
 
-        $tableDocManager.find('.document-status').change(function(e){
-            var selectEl = e.delegateTarget,
-                $select = $(selectEl);
+                $tableDocManager.find('.document-status').change(function(e){
+                    var selectEl = e.delegateTarget,
+                        $select = $(selectEl);
 
-            $select.attr('disabled', 'disabled');
+                    $select.attr('disabled', 'disabled');
 
-            CRM.api3('Document', 'create', {
-                "sequential": 1,
-                "id": $select.data('id'),
-                "status_id": selectEl.value
-            }).done(function(result) {
-                $select.removeAttr('disabled');
+                    $.ajax({
+                        url: '/civi_documents/ajax/change_document_status/' + $select.data('id') + '/' + selectEl.value,
+                        success: function(result) {
+                            $select.removeAttr('disabled');
 
-                if (+result.is_error) {
-                    CRM.alert(result.error_message, 'Error', 'error');
-                    $select.val($select.data('originalValue'));
-                    return
-                }
+                            if (!result.success) {
+                                alert(result.message, 'Error', 'error');
+                                $select.val($select.data('originalValue'));
+                                return
+                            }
 
-                $select.data('originalValue',selectEl.value);
+                            $select.data('originalValue',selectEl.value);
 
-            });
-        });
-    }(CRM.$, CRM));
+                        }
+                    });
+                });
+            }
+        };
+    })(jQuery);
 </script>
