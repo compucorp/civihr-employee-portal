@@ -142,7 +142,7 @@ $statuses = array(
                             $select.removeAttr('disabled');
 
                             if (!result.success) {
-                                alert(result.message, 'Error', 'error');
+                                alert(result.message);
                                 $select.val($select.data('originalValue'));
                                 return
                             }
