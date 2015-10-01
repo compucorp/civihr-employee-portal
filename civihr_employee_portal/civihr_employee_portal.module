@@ -2925,7 +2925,6 @@ function civihr_employee_portal_request_new_account_submit($form, &$form_state) 
                 'id' => $uf['contact_id'],
                 'first_name' => $form_state['values']['first_name'],
                 'last_name' => $form_state['values']['last_name'],
-                'external_identifier' => $form_state['values']['name'],
             ));
         }
     }
@@ -3326,26 +3325,6 @@ function civihr_employee_portal_theme_registry_alter(&$theme_registry) {
     }
 }
 
-/**
- * Implements hook_user_update
- */
-function civihr_employee_portal_user_update(&$edit, $account, $category) {
-    try{
-        $uf = get_civihr_uf_match_data($account->uid);
-        if (!empty($uf['contact_id'])) {
-            $result = civicrm_api3('Contact', 'create', array(
-                'sequential' => 1,
-                'id' => $uf['contact_id'],
-                'external_identifier' => $account->name,
-            ));
-        }
-    }
-
-    catch (CiviCRM_API3_Exception $e) {
-        $error = $e->getMessage();
-    }
-}
-
 function _getGenderReportOptions() {
 
     $gender_data = '';
@@ -3396,7 +3375,6 @@ function _getGenderReportOptions() {
 
 }
 
-/**
  * @param $view_name
  * @param string $view_display
  * Load view as html block
