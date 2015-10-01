@@ -3375,6 +3375,7 @@ function _getGenderReportOptions() {
 
 }
 
+/**
  * @param $view_name
  * @param string $view_display
  * Load view as html block
