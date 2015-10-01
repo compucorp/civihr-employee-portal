@@ -201,14 +201,12 @@ function civihr_employee_portal_cron() {
 
 function _run_civihr_tasks() {
 
-    // @ TODO -> get the sites/default/files location from proper drupal function
-    $folder_real_path = drupal_realpath('public://') . '/views_json_query/';
-
+    //clear views cache to reflect changes
     if (drupal_is_cli()) {
-        _remove_json_cache_files($folder_real_path, TRUE);
+        _clear_json_cache(TRUE);
     }
     else {
-        _remove_json_cache_files($folder_real_path);
+        _clear_json_cache();
     }
 
     // Set variable to TRUE so the mysql database views will be refreshed
@@ -247,6 +245,12 @@ function _remove_json_cache_files($folder_path = null, $cli = FALSE) {
 
     }
 
+}
+
+function _clear_json_cache($cli = FALSE) {
+    // @ TODO -> get the sites/default/files location from proper drupal function
+    $folder_real_path = drupal_realpath('public://') . '/views_json_query/';
+    _remove_json_cache_files($folder_real_path, $cli);
 }
 
 /**
@@ -744,6 +748,15 @@ function civihr_employee_portal_menu() {
         'title' => 'Document list',
         'page callback' => 'civihr_employee_portal_get_document_list',
         'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['civi_documents/ajax/change_document_status/%/%'] = array(
+        'title' => 'Change Document Status',
+        'page callback' => 'civihr_employee_portal_change_document_status',
+		'access arguments' => array(array('civihr_manager', 'civihr_admin', 'administrator')),
+        'page arguments' => array(3, 4),
+        'access callback' => '_user_has_role',
         'type' => MENU_CALLBACK,
     );
 
@@ -1834,6 +1847,98 @@ function civihr_employee_portal_get_document_list() {
 }
 
 /**
+ * Ajax menu callback for dashboard document status change.
+ * 
+ * @param int $document_id
+ *  ID of changed document
+ * 
+ * @param int $status_id
+ *  ID of new status
+ */
+function civihr_employee_portal_change_document_status($document_id, $status_id) {
+    $res = array(
+        'success' => 0,
+        'document_id' => $document_id,
+        'status_id' => $status_id,
+        'message' => t("Error processing status change."),
+    );
+
+    try {
+        //check whether curent user is assignee of document
+        if (_document_can_be_modified($document_id)) {
+            $result = civicrm_api3('Document', 'create', array(
+                'sequential' => 1,
+                'id' => $document_id,
+                'status_id' => $status_id,
+            ));
+
+            if ($result['is_error'] !== 1) {
+                $res['success'] = 1;
+                $res['message'] = t("Document status changed.");
+            }
+        } else {
+            $res['message'] = t("Lack of permission to change document status.");
+        }
+    } catch (CiviCRM_API3_Exception $e) {
+        $error = $e->getMessage();
+        $res['message'] = t("Error communicating with API.");
+    }
+
+    //clear views cache to reflect changes
+    _clear_json_cache();
+
+    // Output json
+    drupal_json_output($res);
+    drupal_exit();
+}
+
+/**
+ * Check whether user is entitled to change document status
+ * 
+ * @param int $document_id
+ *  ID of modified document
+ * 
+ * @param int $user_id
+ *  ID of user to check against or not filled for current user
+ * 
+ * @return bool
+ *  TRUE if user has needed permission(s), FALSE if he doesn't
+ */
+function _document_can_be_modified($document_id, $user_id = NULL) {
+    $res = FALSE;
+
+    if ($user_id === NULL) {
+        global $user;
+    } else {
+        $user = user_load($user_id);
+    }
+
+    //TODO: change permission check to new permission for document modification after Kacper implements it
+    if (in_array('civihr_admin', $user->roles) || in_array('administrator', $user->roles)) {
+        $res = TRUE;
+    } else if (in_array('civihr_manager', $user->roles)) {
+        try {
+            $result = civicrm_api3('Document', 'get', array(
+                'sequential' => 1,
+                'return' => "id,assignee_contact_id",
+                'id' => $document_id,
+            ));
+
+            $uf = get_civihr_uf_match_data($user->uid);
+            $result_values = reset($result['values']);
+
+            if (in_array($uf['contact_id'], $result_values['assignee_contact_id'])) {
+                $res = TRUE;
+            }
+        } catch (CiviCRM_API3_Exception $e) {
+            $error = $e->getMessage();
+        }
+    }
+
+    return $res;
+}
+
+/**
 * Ajax menu callback.
 */
 function civihr_employee_portal_edit_document($ajax, $id) {
@@ -2070,8 +2175,8 @@ function civihr_employee_portal_document_form_submit($form, &$form_state) {
         }
     }
     
-    $folder_real_path = drupal_realpath('public://') . '/views_json_query/';
-    _remove_json_cache_files($folder_real_path);
+    //clear views cache to reflect changes
+    _clear_json_cache();
     
     drupal_set_message(t('Document changes has been saved.'), 'success');
 }
