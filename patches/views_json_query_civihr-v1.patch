@@ -1,0 +1,118 @@
+commit e85be7e99b75780a85b8a7d64cc986ab8f688ea8
+Author: Gergely Meszaros <greg@compucorp.co.uk>
+Date:   Wed Sep 30 18:22:13 2015 +0100
+
+    views_json_query civihr patch
+
+diff --git a/handlers/views_json_query_handler_filter.inc b/handlers/views_json_query_handler_filter.inc
+index f8f0358..4eb4523 100755
+--- a/handlers/views_json_query_handler_filter.inc
++++ b/handlers/views_json_query_handler_filter.inc
+@@ -50,6 +50,12 @@ class views_json_query_handler_filter extends views_handler_filter_string {
+         'method' => 'op_not',
+         'values' => 1,
+       ),
++      'array_contains' => array(
++        'title' => t('Array Contains'),
++        'short' => t('array_contains'),
++        'method' => 'op_array_contains',
++        'values' => 1,
++      ),
+       'shorterthan' => array(
+         'title' => t('Length is shorter than'),
+         'short' => t('shorter than'),
+@@ -118,6 +124,10 @@ class views_json_query_handler_filter extends views_handler_filter_string {
+     $key = $this->options['key'];
+     $value = $this->options['value'];
+ 
++    // watchdog('original', print_r($value, TRUE));
++    // Not sure if any difference, keep it for now if needed later
++    // watchdog('new', print_r($this->value, TRUE));
++
+     return array($key, $operator, $value);
+   }
+ 
+diff --git a/views_json_query_plugin_query_json.inc b/views_json_query_plugin_query_json.inc
+index 2590d25..80e4317 100755
+--- a/views_json_query_plugin_query_json.inc
++++ b/views_json_query_plugin_query_json.inc
+@@ -4,6 +4,39 @@
+  * Query plugin for views_json_query.
+  */
+ 
++class CountQuery {
++  /**
++   * Count
++   * @var int
++   */
++  private $total_count = 0;
++
++  public function __construct($total_count = 0) {
++    $this->total_count = $total_count;
++  }
++
++  public function getTotalCount() {
++    return $this->total_count;
++  }
++
++  public function countQuery() {
++    return new CountQueryExecute($this->getTotalCount());
++  }
++
++}
++
++class CountQueryExecute extends CountQuery {
++  public function execute() {
++    return new CountQueryExecuteFetchField($this->getTotalCount());
++  }
++}
++
++class CountQueryExecuteFetchField extends CountQueryExecute {
++  public function fetchField() {
++    return $this->getTotalCount();
++  }
++}
++
+ class views_json_query_plugin_query_json extends views_plugin_query {
+ 
+   /**
+@@ -72,13 +105,20 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+       }
+     }
+ 
++    /**
++     * Do we have the local cached file? Return it and save us from the expensive drupal_http_request call
++     */
++    $cache_file_uri = "$destination/$cache_file";
++    if (file_exists($cache_file_uri)) {
++      return file_get_contents($cache_file_uri);
++    }
++
+     $result = drupal_http_request($uri, array('headers' => $headers));
+     if (isset($result->error)) {
+       $args = array('%error' => $result->error, '%uri' => $uri);
+       $message = t('HTTP response: %error. URI: %uri', $args);
+       throw new Exception($message);
+     }
+-    $cache_file_uri = "$destination/$cache_file";
+ 
+     if ($result->code == 304) {
+       if (file_exists($cache_file_uri)) {
+@@ -203,6 +243,7 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+       '!=' => create_function('$l,$r', 'return $l !== $r;'),
+       'contains' => create_function('$l, $r', 'return strpos($l, $r) !== false;'),
+       '!contains' => create_function('$l, $r', 'return strpos($l, $r) === false;'),
++      'array_contains' => create_function('$l, $r', 'return in_array($r, $l) !== false;'),
+       'shorterthan' => create_function('$l, $r', 'return strlen($l) < $r;'),
+       'longerthan' => create_function('$l, $r', 'return strlen($l) > $r;'),
+     );
+@@ -269,6 +310,9 @@ class views_json_query_plugin_query_json extends views_plugin_query {
+       $view->result = $result;
+       $view->total_rows = count($result);
+ 
++      // Prepare the views json count results
++      $view->build_info['count_query'] = new CountQuery($view->total_rows);
++
+       $this->pager->post_execute($view->result);
+ 
+       return TRUE;
