@@ -2925,7 +2925,6 @@ function civihr_employee_portal_request_new_account_submit($form, &$form_state) 
                 'id' => $uf['contact_id'],
                 'first_name' => $form_state['values']['first_name'],
                 'last_name' => $form_state['values']['last_name'],
-                'external_identifier' => $form_state['values']['name'],
             ));
         }
     }
@@ -3323,26 +3322,6 @@ function civihr_employee_portal_theme_registry_alter(&$theme_registry) {
     $views_path = drupal_get_path('module', 'views');
     if ($theme_registry['views_exposed_form']['path'] == $views_path . '/theme') {
         $theme_registry['views_exposed_form']['path'] = $module_path . '/templates';
-    }
-}
-
-/**
- * Implements hook_user_update
- */
-function civihr_employee_portal_user_update(&$edit, $account, $category) {
-    try{
-        $uf = get_civihr_uf_match_data($account->uid);
-        if (!empty($uf['contact_id'])) {
-            $result = civicrm_api3('Contact', 'create', array(
-                'sequential' => 1,
-                'id' => $uf['contact_id'],
-                'external_identifier' => $account->name,
-            ));
-        }
-    }
-
-    catch (CiviCRM_API3_Exception $e) {
-        $error = $e->getMessage();
     }
 }
 

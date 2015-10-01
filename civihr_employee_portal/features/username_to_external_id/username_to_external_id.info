@@ -1,0 +1,12 @@
+name = Username to external ID
+description = Rules setting value of civi external ID to usernaname by user creation or update
+core = 7.x
+package = Compucorp
+version = 7.x-1.0
+project = username_to_external_id
+dependencies[] = civicrm
+dependencies[] = entity
+dependencies[] = rules
+features[features_api][] = api:2
+features[rules_config][] = rules_user_reflect_external_id
+features[rules_config][] = rules_user_update_reflect_external_id
