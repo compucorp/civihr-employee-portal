@@ -33,30 +33,33 @@ function civihr_employee_portal_js_alter(&$javascript) {
 
     }
 
-    // Create our own javascript that will be used to theme a modal.
-    $civihr_style = array(
-        'civihr-default-style' => array(
-            'modalOptions' => array(
-                'opacity' => .5,
-                'background-color' => '#000',
-            ),
-            'animation' => 'fadeIn'
-        ),
-        'civihr-custom-style' => array(
-            'modalOptions' => array(
-                'opacity' => .5,
-                'background-color' => '#000',
-            ),
-            'modalSize' => array(
-                'height' => 'auto',
-                'width' => 'auto'
-            ),
-            'animation' => 'fadeIn',
-            'modalClass' => 'civihr-custom'
-        ),
+    _setup_modals();
+}
+
+/**
+ * Sets up all the different type of ctools modals that are used on the site
+ */
+function _setup_modals() {
+    $basic_modal = array(
+        'modalOptions' => array('opacity' => .5, 'background-color' => '#000'),
+        'animation' => 'fadeIn'
     );
 
-    drupal_add_js($civihr_style, 'setting');
+    $custom_modal = array_replace_recursive($basic_modal, array(
+        'modalSize' => array('height' => 'auto', 'width' => 'auto'),
+        'animation' => 'fadeIn',
+        'modalClass' => 'civihr-custom'
+    ));
+
+    $custom_modal__large = array_replace_recursive($custom_modal, array(
+        'modalClass' => 'civihr-custom--large'
+    ));
+
+    drupal_add_js(array(
+        'civihr-default-style' => $basic_modal,
+        'civihr-custom-style' => $custom_modal,
+        'civihr-custom-large-style' => $custom_modal__large
+    ), 'setting');
 }
 
 /**
