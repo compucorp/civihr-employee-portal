@@ -133,6 +133,10 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                 var $filtersNav = $("div.approval-filters").find('.chr_table-w-filters__filters__nav');
                 var $filtersSelect = $("div.approval-filters").find('.chr_table-w-filters__filters__dropdown');
 
+                // Reset the filters
+                $filtersNav.html('').addClass('hide');
+                $filtersSelect.html('').addClass('hide');
+
                 // Create list of distinct items only
                 var classList = distinctList($(".manager-approval-main-table > tbody tr").map(function () {
                     if ($(this).attr("data") !== undefined) {
@@ -140,7 +144,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     }
                 }));
 
-                if (classList.length !== 0) {
+                if (Object.keys(classList).length !== 0) {
                     var excluded_values = ["approvals table", "Approved", "Rejected"]; // Check for the enabled absence types only
                     var included_values = ["Approved", "Rejected"]; // Check for the enabled approved / rejected only
 
@@ -168,10 +172,6 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     // Add the filter links before the list of items
                     $filtersNav.append(tagItems).removeClass('hide');
                     $filtersSelect.append(tagOptions).removeClass('hide');
-                } else {
-                    // Clear filters if there is no more absence to approve
-                    $filtersNav.html('').addClass('hide');
-                    $filtersSelect.html('').addClass('hide');
                 }
 
                 $filtersNav.on('click', 'a', function (e) {
