@@ -3696,6 +3696,9 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
+    if ($form_id == 'webform_client_form_' . variable_get('my_details_webform_nid')) {
+        $form['#attributes']['class'][] = 'civihr_form civihr_form--reset form-horizontal';
+    }
 
     // Form become outdated fix
     if ($form_id == 'views_exposed_form') {
