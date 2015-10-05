@@ -3,7 +3,7 @@ Drupal.behaviors.civihr_employee_portal = {
     attach: function (context, settings) {
 
         // Hide if not needed
-        $('.form-item-manager-notes').hide();
+        $('.form-item-manager-notes').parent().hide();
 
         // This is the reject all modal form submit button
         $('#edit-reject-all').hide();
@@ -12,7 +12,7 @@ Drupal.behaviors.civihr_employee_portal = {
         $('#manager-reject-all').click(function() {
 
             // Show the manager notes edit field
-            $('.form-item-manager-notes').show();
+            $('.form-item-manager-notes').parent().show();
 
             // Hide the reject jquery action button
             $('#manager-reject-all').hide();
@@ -21,27 +21,21 @@ Drupal.behaviors.civihr_employee_portal = {
             $('#edit-reject-all').show();
 
         });
-        
+
         $("#edit-absence-request-date-from-datepicker-popup-0", context).change(function() {
-      
+
             // Change min to-date to from-date the same as from date
             if ($("#edit-absence-request-date-to-datepicker-popup-0" ).hasClass('hasDatepicker')) {
-                console.log('if');
-                
                 $("#edit-absence-request-date-to-datepicker-popup-0" ).datepicker( "option", "minDate", addDays($(this).val(), 0) ); // This method if to datepicker already initialised
-           
             } else {
-                console.log('else');
-        
                 $("#edit-absence-request-date-to-datepicker-popup-0" ).datepicker({changeMonth: true, changeYear: true});
                 $("#edit-absence-request-date-to-datepicker-popup-0" ).datepicker( "option", "dateFormat", "yy-mm-dd");
                 $("#edit-absence-request-date-to-datepicker-popup-0" ).datepicker( "option", "minDate", addDays($(this).val(), 0) ); // This method if to datepicker already initialised
-                
             }
 
             // Change to-date to from-date
             $('#edit-absence-request-date-to-datepicker-popup-0', context).val($(this).val());
-           
+
             // Trigger onclick event
             $('.ui-datepicker-current-day').trigger('click');
 
@@ -68,7 +62,7 @@ Drupal.behaviors.civihr_employee_portal = {
                 return number;
             }
         }
-        
+
         $(window).load(function(){
             $('a.ctools-use-modal').each( function() {
                 var $this = $(this);
