@@ -1395,7 +1395,11 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
         $duration = $absence_value['duration'] / (6 * 80);
         $all_duration += $duration;
         $date = new DateTime($absence_value['activity_date_time']);
-        $disputes[$absence_value['id']] = array($date->format('Y-m-d'), $duration, get_civihr_absence_statuses($absence_value['status_id']));
+        $disputes[$absence_value['id']] = array(
+            $date->format('Y-m-d'),
+            $duration,
+            get_civihr_absence_statuses($absence_value['status_id'])
+        );
     }
 
     if ($all_duration <= 1) {
@@ -1431,10 +1435,17 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
         '#type'     => 'hidden',
         '#title' => 'Main absence ID',
         '#default_value' => $form_state['main_absence_id'],
+        '#prefix' => '<div class="modal-civihr-custom__section"><div class="row">'
     );
 
     $form['leave_type'] = array(
-        '#markup' => '<div class="approval-leave-type"><b>' . t('Leave type:') . '</b> ' . $leave_type . '</div>',
+        '#markup' => '
+            <div class="col-sm-6">
+                <div class="approval-leave-type">
+                    <b>' . t('Leave type:') . '</b> '
+                    . $leave_type . '
+                </div>
+            </div>',
     );
 
     $form['hidden_leave_type'] = array(
@@ -1445,25 +1456,35 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
 
     // Start / End date of the absence duration - temporarily removed according to PCHR-346 task
     $form['whole_duration'] = array(
-        '#markup' => '<div class="whole-duration"><b>Date: </b>' . $duration_date . ' = ' . $all_duration . ' ' . $day . '</div>',
+        '#markup' => '
+            <div class="col-sm-6">
+                <div class="whole-duration">
+                    <b>Date: </b>'
+                    . $duration_date . ' (' . $all_duration . ' ' . $day . ')
+                </div>
+            </div>
+        ',
     );
 
     $form['hidden_whole_duration'] = array(
         '#type'     => 'hidden',
         '#title' => 'Duration and Date (showed in emails)',
         '#default_value' => $duration_date . ' = ' . $all_duration . ' ' . $day,
+        '#suffix' => '</div></div>'
     );
 
     $form['pick_day_checkboxes'] = array(
+        '#attributes' => array('class' => array('manager-pick-days-table')),
         '#type' => 'tableselect',
         '#header' => $header,
         '#options' => $disputes,
-        '#empty' => 'No users were found.'
+        '#empty' => 'No users were found.',
+        '#prefix' => '<div class="modal-civihr-custom__section--no-padding">',
+        '#suffix' => '</div>'
     );
 
     // Check if the user has the permissions to see the attachments
     if (user_access('access private file download')) {
-
         // Load the activity entity
         $main_activity = entity_load_single('civicrm_activity', $form_state['main_absence_id']);
 
@@ -1472,16 +1493,35 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
             $imgpath = $main_activity->field_attachment['und'][0]['uri'];
 
             $form['show_attached_file'] = array(
-                '#markup' => '<div class="show-attached-file"><div class="show-attached-file-label"><b>' . t('Attached file: ') . '</b></div>' . l("View Attachment", file_create_url($imgpath), array('html' => TRUE, 'attributes' => array('target' => '_blank'))) . '</div>'
+                '#markup' => '
+                    <div class="modal-civihr-custom__section">
+                        <div class="show-attached-file">
+                            <div class="show-attached-file-label">
+                                <b>' . t('Attached file: ') . '</b>
+                            </div>'
+                            . l("View Attachment", file_create_url($imgpath), array('html' => TRUE, 'attributes' => array('target' => '_blank'))) . '
+                        </div>
+                    </div>
+                '
             );
         }
-
     }
 
     // Output staff comments (if any)
-    $form['staff_comments'] = array(
-        '#markup' => '<div class="staff-comments"><div class="staff-notes-label"><b>' . t('Staff notes: ') . '</b></div>' . $additional_info['details'] . '</div>'
-    );
+    if ($additional_info['details']) {
+        $form['staff_comments'] = array(
+            '#markup' => '
+                <div class="modal-civihr-custom__section">
+                    <div class="staff-comments">
+                        <div class="staff-notes-label">
+                            <b>' . t('Staff notes: ') . '</b>
+                        </div>'
+                        . $additional_info['details'] . '
+                    </div>
+                </div>
+            '
+        );
+    }
 
     // Get manager notes data (if any)
     $manager_notes_data = isset($additional_info['api.CustomValue.get']) && !empty($additional_info['api.CustomValue.get']['values']) ? $additional_info['api.CustomValue.get']['values'][0]['latest'] : '';
@@ -1496,45 +1536,64 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
             '#rows' => 2,
             '#description' => t('Additional manager notes. (These will be visible for staff!)'),
             '#default_value' => $manager_notes_data,
+            '#prefix' => '<div class="modal-civihr-custom__section">',
+            '#suffix' => '</div>'
         );
 
-        // This is a jquery button, which will be replaced onclick with the real Reject All form button (+it will show the manager comments form)
-        $form['manager_actions'] = array(
-            '#markup' => '<div id="manager-reject-all" class="form-submit btn btn-default">' . t('Reject all') . '</div>'
-        );
-
-        $form['reject_all'] = array(
-            '#type' => 'submit',
-            '#value' => t('Reject all'),
-        );
-
-        $form['approve_all'] = array(
-            '#type' => 'submit',
-            '#value' => t('Approve all'),
+        $form['actions_wrapper_open'] = array(
+            '#markup' => '
+                <div class="modal-civihr-custom__footer">
+                    <div class="chr_actions-wrapper chr_actions-wrapper--plain">
+            '
         );
 
         $form['approve_selected'] = array(
+            '#attributes' => array('class' => array('chr_action')),
             '#type' => 'submit',
             '#value' => t('Approve selected'),
         );
 
-        $form['#validate'][] = 'civihr_employee_portal_manager_approval_pick_days_form_validate';
-        $form['#submit'][] = "civihr_employee_portal_manager_approval_pick_days_form_submit";
-
-    }
-    else {
-
-        // Still show the read only manager notes
-        $form['show_manager_notes'] = array(
-            '#markup' => '<div class="show-manager-comments"><div class="show-manager-notes-label"><b>' . t('Manager notes: ') . '</b></div>' . $manager_notes_data . '</div>'
+        $form['approve_all'] = array(
+            '#attributes' => array('class' => array('chr_action')),
+            '#type' => 'submit',
+            '#value' => t('Approve all'),
         );
 
+        $form['reject_all'] = array(
+            '#attributes' => array('class' => array('chr_action')),
+            '#type' => 'submit',
+            '#value' => t('Reject all'),
+        );
+
+        // This is a jquery button, which will be replaced onclick with the real Reject All form button (+it will show the manager comments form)
+        $form['manager_actions'] = array(
+            '#markup' => '<div id="manager-reject-all" class="form-submit chr_action">' . t('Reject all') . '</div>'
+        );
+
+        $form['actions_wrapper_close'] = array(
+            '#markup' => '</div></div>'
+        );
+
+        $form['#validate'][] = 'civihr_employee_portal_manager_approval_pick_days_form_validate';
+        $form['#submit'][] = "civihr_employee_portal_manager_approval_pick_days_form_submit";
+    }
+    else {
+        // Still show the read only manager notes
+        $form['show_manager_notes'] = array(
+            '#markup' => '
+                <div class="modal-civihr-custom__section">
+                    <div class="show-manager-comments">
+                        <div class="show-manager-notes-label">
+                            <b>' . t('Manager notes: ') . '</b>
+                        </div>'
+                        . $manager_notes_data . '
+                    </div>
+                </div>
+            '
+        );
     }
 
-
-
     return $form;
-
 }
 
 function civihr_employee_portal_manager_approval_pick_days_form_validate($form, &$form_state) {
