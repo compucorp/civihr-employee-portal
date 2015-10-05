@@ -12,6 +12,30 @@ class ReportSettingsForm extends BaseForm {
 
     // This will hold the form data
     private $form_data = array();
+    private $y_axis_filter_types = array();
+
+    /**
+     * Sets default Y axis filter types
+     */
+    public function setYAxisFilterTypes($additional_filters = array()) {
+
+        $filters = array(
+            'headcount' => t('Headcount'),
+            'gender' => t('Gender'),
+            'age' => t('Age')
+        );
+
+        // This function allows to add any new Y Axis types if needed and passed to the function properly
+        $this->y_axis_filter_types = array_merge($filters, $additional_filters);
+    }
+
+    /**
+     * Returns the Y Axis filter types
+     * @return array
+     */
+    public function getYAxisFilterTypes() {
+        return $this->y_axis_filter_types;
+    }
 
     /**
      * Returns defined age groups (json stringified values)
@@ -44,6 +68,19 @@ class ReportSettingsForm extends BaseForm {
     }
 
     public function setForm() {
+
+        // Sets the Y Axis filter types
+        // Optionally can pass new Y Axis filter type for example: $this->setYAxisFilterTypes(array('headcount2' => 'new headcount filter type'));
+        $this->setYAxisFilterTypes();
+
+        $this->form_data['enabled_y_axis_filters'] = array(
+            '#type' => 'checkboxes',
+            '#title' => t('Y Axis Filters'),
+            '#description' => t('Select Y Axis Group By options'),
+            '#options' => $this->getYAxisFilterTypes(),
+            '#default_value' => array_keys(variable_get('enabled_y_axis_filters', array()))
+        );
+
         $this->form_data['age_group_vals'] = array(
             '#type' => 'hidden',
             '#title' => $this->getFormName(),
@@ -136,6 +173,11 @@ class ReportSettingsForm extends BaseForm {
     public function submitForm($form, &$form_state) {
 
         watchdog('new submit', print_r($form_state['values'], TRUE));
+
+        if (isset($form_state['values']['enabled_y_axis_filters'])) {
+            // Saves the enabled Y Axis filters
+            variable_set('enabled_y_axis_filters', $form_state['values']['enabled_y_axis_filters']);
+        }
 
         if (isset($form_state['values']['age_group_vals'])) {
             // Saves the age group settings
