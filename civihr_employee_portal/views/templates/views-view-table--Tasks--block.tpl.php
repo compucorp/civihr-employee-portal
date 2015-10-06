@@ -192,6 +192,7 @@ function _get_task_filter_by_date($date) {
         var $navDocFilter = $('#nav-tasks-filter'),
             $dropdownFilter = $('#select-tasks-filter'),
             $navDocTypes = $('#nav-tasks-types'),
+            $dropdownTypes = $('#select-tasks-types'),
             $tableDocStaff = $('#tasks-dashboard-table-staff'),
             $tableDocStaffRows = $tableDocStaff.find('.task-row');
 
@@ -243,6 +244,22 @@ function _get_task_filter_by_date($date) {
 
             $navDocTypes.children().removeClass('active');
             $this.addClass('active');
+            if (taskType === 'all') {
+                $selectedRowType = $tableDocStaff.find('.task-row');
+                currentTaskTypeClass = '';
+                refreshTasksCounter(currentTaskTypeClass);
+            } else {
+                currentTaskTypeClass = '.task-' + taskType;
+                $selectedRowType = $tableDocStaff.find(currentTaskTypeClass);
+                refreshTasksCounter(currentTaskTypeClass);
+            }
+
+            showFilteredTaskRows();
+        });
+
+        $dropdownTypes.on('change', function (e) {
+            var taskType = $(this).val();
+
             if (taskType === 'all') {
                 $selectedRowType = $tableDocStaff.find('.task-row');
                 currentTaskTypeClass = '';
