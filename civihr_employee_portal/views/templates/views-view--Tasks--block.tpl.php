@@ -33,16 +33,21 @@
     <?php print render($title_suffix); ?>
 
     <?php if ($header): ?>
-        <div class="absence-approval-actions">
-            <div class="view-header">
+        <div class="chr_panel__toolbar">
+            <?php if ($rows): ?>
+                <div class="chr_panel__toolbar__filter">
+                    <div id="nav-tasks-types" class="btn-group btn-group-sm">
+                        <a href class="btn btn-default" data-task-type="my">My Tasks</a>
+                        <a href class="btn btn-default" data-task-type="delegated">Delegated Tasks</a>
+                        <a href class="btn btn-default" data-task-type="all">All</a>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <div class="chr_panel__toolbar__actions">
                 <?php print $header; ?>
-
-                <a href="/civi_tasks/nojs/view_completed" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed chr_action--transparent chr_action--icon--list chr_action--icon--responsive show-complete-tasks">
-                    <span>Show completed tasks</span>
-                </a>
             </div>
             <?php if ($rows): ?>
-                <div class="view-content">
+                <div class="chr_panel__toolbar__filter">
                     <div class="input-group">
                         <input type="text" name="task-filter-contact" id="task-filter-contact" value="" placeholder="Enter name" />
                     </div>

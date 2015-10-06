@@ -33,12 +33,12 @@
     <?php print render($title_suffix); ?>
 
     <?php if ($header): ?>
-        <div class="absence-approval-actions">
-            <div class="view-header">
+        <div class="chr_panel__toolbar">
+            <div class="chr_panel__toolbar__actions">
                 <?php print $header; ?>
             </div>
             <?php if ($rows): ?>
-                <div class="view-content">
+                <div class="chr_panel__toolbar__filter">
                     <div class="input-group">
                         <div class="btn input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
                         <input class="form-control" id="manager-approval-search" placeholder="Enter name">

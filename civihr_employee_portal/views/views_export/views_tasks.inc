@@ -165,7 +165,6 @@ $handler->display->display_options['pager']['type'] = 'none';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'table';
-$handler->display->display_options['style_options']['row_class_special'] = FALSE;
 $handler->display->display_options['style_options']['columns'] = array(
   'id' => 'id',
   'activity_type_id' => 'activity_type_id',
@@ -281,7 +280,7 @@ $handler->display->display_options['defaults']['header'] = FALSE;
 $handler->display->display_options['header']['area']['id'] = 'area';
 $handler->display->display_options['header']['area']['table'] = 'views';
 $handler->display->display_options['header']['area']['field'] = 'area';
-$handler->display->display_options['header']['area']['content'] = '<div id="nav-tasks-types" class="btn-group btn-group-sm"><a href class="btn btn-default" data-task-type="my">My Tasks</a><a href class="btn btn-default" data-task-type="delegated">Delegated Tasks</a><a href class="btn btn-default" data-task-type="all">All</a></div>';
+$handler->display->display_options['header']['area']['content'] = '<a href="/civi_tasks/nojs/view_completed" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed chr_action--transparent chr_action--icon--list chr_action--icon--responsive show-complete-tasks"><span>Show completed tasks</span></a>';
 $handler->display->display_options['header']['area']['format'] = 'full_html';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: id: value */
