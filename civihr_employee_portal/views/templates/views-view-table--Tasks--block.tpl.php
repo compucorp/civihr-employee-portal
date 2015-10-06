@@ -88,9 +88,25 @@ function _get_task_filter_by_date($date) {
 }
 
 ?>
+
+
 <div class="row">
-    <div class="col-xs-12 col-sm-4 col-lg-3">
-        <ul id="nav-tasks-filter" class="nav nav-pills nav-stacked">
+    <div class="col-xs-12 col-sm-3 col-md-3">
+        <a href="/civi_tasks/nojs/view_completed" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed chr_action--icon--list show-complete-tasks"><span>Show completed tasks</span></a>
+    </div>
+    <div class="col-xs-12 col-sm-3 col-md-3 text-left task-filter-input">
+        <div class="input-group">
+            <input type="text" name="task-filter-contact" id="task-filter-contact" class="form-control" value="" placeholder="Enter name" />
+        </div>
+    </div>
+    <div class="col-xs-6"></div>
+</div>
+
+
+
+<div class="chr_table-w-filters row">
+    <div class="chr_table-w-filters__filters col-md-3">
+        <ul id="nav-tasks-filter" class="chr_table-w-filters__filters__nav">
 <?php $classActive = ' class="active"'; ?>
 <?php foreach ($taskFilters as $key => $value): ?>
             <li<?php print $classActive; ?>><a href data-task-filter="<?php print $key; ?>"><?php print $value; ?> <span class="badge pull-right task-counter-filter-<?php print $key; ?>"><?php print $taskFiltersCount[$key]; ?></span></a></li>
@@ -98,8 +114,8 @@ function _get_task_filter_by_date($date) {
 <?php endforeach; ?>
         </ul>
     </div>
-    <div class="col-xs-12 col-sm-8 col-lg-9">
-        <table id="tasks-dashboard-table-staff" <?php if ($classes) { print 'class="'. $classes . '" '; } ?><?php print $attributes; ?>>
+    <div class="chr_table-w-filters__table-wrapper col-md-9">
+        <table id="tasks-dashboard-table-staff" <?php print $attributes; ?>>
             <?php if (!empty($title) || !empty($caption)) : ?>
                 <caption><?php print $caption . $title; ?></caption>
             <?php endif; ?>
@@ -161,11 +177,13 @@ function _get_task_filter_by_date($date) {
             </tbody>
         </table>
     </div>
-    <?php if (user_access('can create and edit tasks')): ?>
-    <a href="/civi_tasks/nojs/create" class="btn btn-sm btn-custom ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Create new task</a>
-    <?php endif; ?>
 </div>
+<?php if (user_access('can create and edit tasks')): ?>
+<div class="chr_actions-wrapper">
+        <a href="/civi_tasks/nojs/create" class="btn btn-sm btn-custom ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Create new task</a>
 
+</div>
+<?php endif; ?>
 <script>
     (function($){
         var $navDocFilter = $('#nav-tasks-filter'),
@@ -261,6 +279,7 @@ function _get_task_filter_by_date($date) {
         function buildTaskContactFilter(defaultValue) {
             $tableDocStaffRows.addClass('selected-by-contact');
             $('#task-filter-contact').select2({
+                allowClear: true,
                 placeholder: "Enter name",
                 data: <?php print json_encode($contacts, true); ?>
             }).on('change', function(e) {
@@ -275,7 +294,7 @@ function _get_task_filter_by_date($date) {
         
         function _taskRowsFilterByContact(text) {
             $tableDocStaffRows.removeClass('selected-by-contact');
-            if (text === null) {
+            if (!text) {
                 $tableDocStaffRows.addClass('selected-by-contact');
             } else {
                 $('.task-row').each(function() {
