@@ -179,10 +179,11 @@ function _get_task_filter_by_date($date) {
     </div>
 </div>
 <?php if (user_access('can create and edit tasks')): ?>
-<div class="chr_actions-wrapper">
-        <a href="/civi_tasks/nojs/create" class="btn btn-sm btn-custom ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Create new task</a>
-
-</div>
+    <div class="chr_panel__footer">
+        <div class="chr_actions-wrapper">
+            <a href="/civi_tasks/nojs/create" class="chr_action ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Create new task</a>
+        </div>
+    </div>
 <?php endif; ?>
 <script>
     (function($){
