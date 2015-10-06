@@ -161,7 +161,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     );
     $pane->css = array(
       'css_id' => '',
-      'css_class' => 'chr_panel--no-padding',
+      'css_class' => 'chr_panel chr_panel--no-padding',
     );
     $pane->extras = array();
     $pane->position = 2;
@@ -226,7 +226,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     );
     $pane->css = array(
       'css_id' => '',
-      'css_class' => 'chr_panel--my-details',
+      'css_class' => 'chr_panel chr_panel--my-details',
     );
     $pane->extras = array();
     $pane->position = 0;
@@ -252,7 +252,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
   );
   $pane->css = array(
     'css_id' => '',
-    'css_class' => 'chr_panel--tasks',
+    'css_class' => 'chr_panel chr_panel--no-padding chr_panel--tasks',
   );
   $pane->extras = array();
   $pane->position = 1;
@@ -277,7 +277,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     );
     $pane->css = array(
       'css_id' => '',
-      'css_class' => 'chr_panel--no-padding',
+      'css_class' => 'chr_panel chr_panel--no-padding',
     );
     $pane->extras = array();
     $pane->position = 0;
@@ -302,7 +302,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     );
     $pane->css = array(
       'css_id' => '',
-      'css_class' => 'chr_panel__header--w-actions',
+      'css_class' => 'chr_panel chr_panel__header--w-actions',
     );
     $pane->extras = array();
     $pane->position = 0;
@@ -349,7 +349,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     );
     $pane->css = array(
       'css_id' => '',
-      'css_class' => 'chr_panel__header--w-actions',
+      'css_class' => 'chr_panel chr_panel__header--w-actions',
     );
     $pane->extras = array();
     $pane->position = 0;
