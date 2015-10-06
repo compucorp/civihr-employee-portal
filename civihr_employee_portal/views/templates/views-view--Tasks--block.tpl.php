@@ -35,11 +35,11 @@
     <?php if ($header): ?>
         <div class="chr_panel__toolbar">
             <?php if ($rows): ?>
-                <div class="chr_panel__toolbar__filter">
+                <div class="chr_panel__toolbar__filter hidden-xs">
                     <div id="nav-tasks-types" class="btn-group btn-group-sm">
-                        <a href class="btn btn-default" data-task-type="my">My Tasks</a>
-                        <a href class="btn btn-default" data-task-type="delegated">Delegated Tasks</a>
-                        <a href class="btn btn-default" data-task-type="all">All</a>
+                        <button class="btn btn-default" data-task-type="my">My Tasks</button>
+                        <button class="btn btn-default" data-task-type="delegated">Delegated Tasks</button>
+                        <button class="btn btn-default active" data-task-type="all">All</button>
                     </div>
                 </div>
             <?php endif; ?>

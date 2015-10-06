@@ -235,13 +235,13 @@ function _get_task_filter_by_date($date) {
             showFilteredTaskRows();
         });
 
-        $navDocTypes.find('a').bind('click', function(e) {
+        $navDocTypes.find('button').bind('click', function(e) {
             e.preventDefault();
 
             var $this = $(this),
                 taskType = $this.data('taskType');
 
-            $navDocTypes.find('a').removeClass('active');
+            $navDocTypes.children().removeClass('active');
             $this.addClass('active');
             if (taskType === 'all') {
                 $selectedRowType = $tableDocStaff.find('.task-row');
