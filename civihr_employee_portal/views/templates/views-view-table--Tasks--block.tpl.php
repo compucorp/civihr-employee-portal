@@ -91,6 +91,13 @@ function _get_task_filter_by_date($date) {
 
 <div class="chr_table-w-filters row">
     <div class="chr_table-w-filters__filters col-md-3">
+        <div class="chr_table-w-filters__filters__dropdown-wrapper form-item">
+            <select id="select-tasks-filter" class="chr_table-w-filters__filters__dropdown">
+                <?php foreach ($taskFilters as $key => $value): ?>
+                    <option value="<?php print $key; ?>"><?php print $value; ?> (<?php print $taskFiltersCount[$key]; ?>)</option>
+                <?php endforeach; ?>
+            </select>
+        </div>
         <ul id="nav-tasks-filter" class="chr_table-w-filters__filters__nav">
             <?php $classActive = ' class="active"'; ?>
             <?php foreach ($taskFilters as $key => $value): ?>
@@ -183,6 +190,8 @@ function _get_task_filter_by_date($date) {
 <script>
     (function($){
         var $navDocFilter = $('#nav-tasks-filter'),
+            $dropdownFilter = $('#select-tasks-filter'),
+            $navDocTypes = $('#nav-tasks-types'),
             $tableDocStaff = $('#tasks-dashboard-table-staff'),
             $tableDocStaffRows = $tableDocStaff.find('.task-row');
 
@@ -212,7 +221,19 @@ function _get_task_filter_by_date($date) {
             showFilteredTaskRows();
         });
 
-        var $navDocTypes = $('#nav-tasks-types');
+        $dropdownFilter.on('change', function (e) {
+            var taskFilter = $(this).val();
+
+            if (parseInt(taskFilter, 10) === 0) {
+                $selectedRowFilter = $tableDocStaff.find('.task-row');
+                selectedRowFilterSelector = '.task-row';
+            } else {
+                $selectedRowFilter = $tableDocStaff.find('.task-filter-id-' + taskFilter);
+                selectedRowFilterSelector = '.task-filter-id-' + taskFilter;
+            }
+
+            showFilteredTaskRows();
+        });
 
         $navDocTypes.find('a').bind('click', function(e) {
             e.preventDefault();
