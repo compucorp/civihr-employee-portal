@@ -38,6 +38,43 @@ class ReportSettingsForm extends BaseForm {
     }
 
     /**
+     * Returns the Y Axis filter types default values or empty array
+     */
+    public function getYAxisFilterTypesDefaults() {
+        return variable_get('enabled_y_axis_filters', array());
+    }
+
+    /**
+     * Sets default X axis filter types
+     */
+    public function setXAxisFilterTypes($additional_filters = array()) {
+
+        $filters = array(
+            'all' => t('All'),
+            'location' => t('Location'),
+            'department' => t('Department')
+        );
+
+        // This function allows to add any new X Axis types if needed and passed to the function properly
+        $this->x_axis_filter_types = array_merge($filters, $additional_filters);
+    }
+
+    /**
+     * Returns the X Axis filter types
+     * @return array
+     */
+    public function getXAxisFilterTypes() {
+        return $this->x_axis_filter_types;
+    }
+
+    /**
+     * Returns the X Axis filter types default values or empty array
+     */
+    public function getXAxisFilterTypesDefaults($type = 'all') {
+        return variable_get('enabled_x_axis_filters_' . $type, array());
+    }
+
+    /**
      * Returns defined age groups (json stringified values)
      * @return null
      */
@@ -69,17 +106,35 @@ class ReportSettingsForm extends BaseForm {
 
     public function setForm() {
 
-        // Sets the Y Axis filter types
+        // Sets the Y Axis group types
         // Optionally can pass new Y Axis filter type for example: $this->setYAxisFilterTypes(array('headcount2' => 'new headcount filter type'));
         $this->setYAxisFilterTypes();
 
+        // Sets the X Axis group types
+        // Optionally can pass new X Axis type same as for Y Axis groupings
+        $this->setXAxisFilterTypes();
+
         $this->form_data['enabled_y_axis_filters'] = array(
             '#type' => 'checkboxes',
-            '#title' => t('Y Axis Filters'),
+            '#title' => t('Y Axis Group By options'),
             '#description' => t('Select Y Axis Group By options'),
             '#options' => $this->getYAxisFilterTypes(),
-            '#default_value' => array_keys(variable_get('enabled_y_axis_filters', array()))
+            '#default_value' => $this->getYAxisFilterTypesDefaults(),
         );
+
+        foreach ($this->getYAxisFilterTypes() as $key => $value) {
+            $this->form_data['enabled_x_axis_filters_' . $key] = array(
+                '#type' => 'checkboxes',
+                '#options' => $this->getXAxisFilterTypes(),
+                '#default_value' => $this->getXAxisFilterTypesDefaults($key),
+                '#title' => t('X Axis Group By settings for ' . $key . '!'),
+                '#states' => array(
+                    'visible' => array(
+                        ':input[name="enabled_y_axis_filters[' . $key . ']"]' => array('checked' => TRUE),
+                    ),
+                ),
+            );
+        }
 
         $this->form_data['age_group_vals'] = array(
             '#type' => 'hidden',
@@ -175,8 +230,15 @@ class ReportSettingsForm extends BaseForm {
         watchdog('new submit', print_r($form_state['values'], TRUE));
 
         if (isset($form_state['values']['enabled_y_axis_filters'])) {
-            // Saves the enabled Y Axis filters
+
+            // Saves the enabled Y Axis group by settings
             variable_set('enabled_y_axis_filters', $form_state['values']['enabled_y_axis_filters']);
+
+            // Saves the X Axis group by settings
+            foreach ($this->getYAxisFilterTypes() as $key => $value) {
+                variable_set('enabled_x_axis_filters_' . $key, $form_state['values']['enabled_x_axis_filters_' . $key]);
+            }
+
         }
 
         if (isset($form_state['values']['age_group_vals'])) {
