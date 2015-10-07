@@ -14,12 +14,14 @@ class AbsenceLinks {
         ctools_modal_add_js();
 
         $links = '';
+        $links .= '<div class="chr_panel__footer">';
         $links .= '<div class="chr_actions-wrapper">';
         $links .= '<div class="chr_actions-wrapper__inline-duo">';
         $links .= civihr_employee_portal_make_link(t('Request TOIL'), 'credit');
         $links .= civihr_employee_portal_make_link(t('Request leave'), 'debit');
         $links .= '</div>';
         $links .= civihr_employee_portal_make_link(t('Use TOIL'), 'credit_use');
+        $links .= '</div>';
         $links .= '</div>';
 
         return $links;

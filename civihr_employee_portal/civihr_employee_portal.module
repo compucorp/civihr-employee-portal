@@ -1543,7 +1543,7 @@ function civihr_employee_portal_manager_approval_pick_days_form($form, $form_sta
         $form['actions_wrapper_open'] = array(
             '#markup' => '
                 <div class="modal-civihr-custom__footer">
-                    <div class="chr_actions-wrapper chr_actions-wrapper--plain">
+                    <div class="chr_actions-wrapper">
             '
         );
 
@@ -2750,40 +2750,20 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
         '#attributes' => $disabledAttr,
     );
     
-    $assigneeRemoveBtn = '';
-    if (user_access('can create and edit tasks')) {
-        $assigneeRemoveBtn = '<span class="input-group-btn">'
-            . '<a class="btn btn-default assignee-remove">'
-            . '<span class="">clear</span>'
-            . '</a>'
-            . '</span>';
-    }
     $form['assignee'] = array(
         '#type' => 'textfield',
         '#title' => t('Assignee'),
-        '#prefix' => '<div class="row input-with-clear"><div class="col-md-12">',
-        '#suffix' => $assigneeRemoveBtn
-            . '</div>'
-            . '</div>',
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div></div>',
         '#default_value' => '',
         '#attributes' => $disabledAttr,
     );
     
-    $targetRemoveBtn = '';
-    if (user_access('can create and edit tasks')) {
-        $targetRemoveBtn = '<span class="input-group-btn">'
-            . '<a class="btn btn-default target-remove">'
-            . '<span class="">clear</span>'
-            . '</a>'
-            . '</span>';
-    }
     $form['target'] = array(
         '#type' => 'textfield',
         '#title' => t('Target'),
-        '#prefix' => '<div class="row input-with-clear"><div class="col-md-12">',
-        '#suffix' => $targetRemoveBtn
-            . '</div>'
-            . '</div>',
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div></div>',
         '#default_value' => '',
         '#attributes' => $disabledAttr,
     );
@@ -2809,19 +2789,11 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
         '#attributes' => $disabledAttr,
     );
     
-    $assignmentRemoveBtn = '';
-    if (user_access('can create and edit tasks')) {
-        $assignmentRemoveBtn = '<span class="input-group-btn"><a class="btn btn-default assignment-remove">'
-            . '<span class="">clear</span>'
-            . '</a></span>';
-    }
     $form['assignment'] = array(
         '#type' => 'textfield',
         '#title' => t('Assignment'),
-        '#prefix' => '<div class="row input-with-clear"><div class="col-md-12">',
-        '#suffix' => $assignmentRemoveBtn
-            . '</div>'
-            . '</div>',
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div></div>',
         '#default_value' => '',
         '#attributes' => $disabledAttr,
     );
@@ -3680,8 +3652,8 @@ function civihr_employee_portal_directory_block_form($form, &$form_state) {
         '#attributes' => array('class' => array('chr_action')),
         '#type' => 'submit',
         '#value' => t('Go!'),
-        '#prefix' => '<div class="chr_actions-wrapper">',
-        '#suffix' => '</div>'
+        '#prefix' => '<div class="chr_panel__footer"><div class="chr_actions-wrapper">',
+        '#suffix' => '</div></div>'
     );
 
     // Add the validation function
@@ -3983,8 +3955,8 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
         $form['#attributes']['class'][] = 'row';
 
         $form['submit']['#attributes'] = array('class' => array('chr_action'));
-        $form['submit']['#prefix'] = '<div class="col-sm-12"><div class="chr_actions-wrapper">';
-        $form['submit']['#suffix'] = '</div></div>';
+        $form['submit']['#prefix'] = '<div class="col-sm-12"><div class="chr_panel__footer"><div class="chr_actions-wrapper">';
+        $form['submit']['#suffix'] = '</div></div></div>';
 
         foreach ($form as $key => $value) {
             if (isset($form['#info']["filter-$key"])) {
