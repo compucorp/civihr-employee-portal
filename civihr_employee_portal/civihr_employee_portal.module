@@ -4375,3 +4375,11 @@ function civihr_employee_portal_file_download_access_alter(&$grants, $file_item,
     }
 
 }
+
+function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+    if ($op === 'create' || $op === 'edit') {
+        if (in_array($objectName, array('Document', 'Task'))) {
+            _clear_json_cache();
+        }
+    }
+}
