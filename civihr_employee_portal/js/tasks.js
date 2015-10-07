@@ -11,7 +11,7 @@
             delay: 250,
             data: function (params) {
                 return {
-                    json: '{"sort_name":"' + params + '"}',
+                    json: '{"sort_name":"' + params + '", "relationship_name": "Line Manager is", "related_contact_id": ' + Drupal.settings.currentCiviCRMUserId + ', "include_related_contact": true}',
                     page: 1
                 };
             },
@@ -32,6 +32,7 @@
         },
         buildAssigneeSelect: function (defaultValue) {
             CRM.$('#edit-assignee').select2({
+                allowClear: true,
                 placeholder: "Search for assignee",
                 minimumInputLength: 1,
                 multiple: false,
@@ -47,6 +48,7 @@
         },
         buildTargetSelect: function (defaultValue) {
             CRM.$('#edit-target').select2({
+                allowClear: true,
                 placeholder: "Search for target",
                 minimumInputLength: 1,
                 multiple: false,

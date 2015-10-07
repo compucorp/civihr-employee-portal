@@ -39,7 +39,7 @@ trait modalCallback {
                 $output[] = ajax_command_after('#breadcrumb', '<div id="messages">' . theme('status_messages') . '</div>');
 
                 // If we need to redirect
-                //$output[] = ctools_ajax_command_redirect($redirect);
+                $output[] = ctools_ajax_command_redirect($redirect);
 
             }
 

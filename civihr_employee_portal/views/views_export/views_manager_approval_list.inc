@@ -141,7 +141,7 @@ $handler->display->display_options['fields']['tooltip']['table'] = 'views';
 $handler->display->display_options['fields']['tooltip']['field'] = 'tooltip';
 $handler->display->display_options['fields']['tooltip']['label'] = 'Pick days';
 $handler->display->display_options['fields']['tooltip']['exclude'] = TRUE;
-$handler->display->display_options['fields']['tooltip']['alter']['text'] = '<a href="manager_approval/nojs/pick_days/[employee_id]/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style fa fa-calendar"></a>';
+$handler->display->display_options['fields']['tooltip']['alter']['text'] = '<a href="manager_approval/nojs/pick_days/[employee_id]/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-custom-large-style fa fa-calendar"></a>';
 $handler->display->display_options['fields']['tooltip']['tooltip_text'] = 'Choose days';
 $handler->display->display_options['fields']['tooltip']['tooltip_hide_if_equal'] = 1;
 /* Field: Global: Custom text */
@@ -282,7 +282,7 @@ $handler->display->display_options['header']['area']['id'] = 'area';
 $handler->display->display_options['header']['area']['table'] = 'views';
 $handler->display->display_options['header']['area']['field'] = 'area';
 $handler->display->display_options['header']['area']['empty'] = TRUE;
-$handler->display->display_options['header']['area']['content'] = '<a href="absence_all/nojs/view" class="chr_action--icon--list chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-default-style"><span>Show all Absences</span></a><a href="manager_approval/nojs/calendar/show" class="chr_action--icon--calendar chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-default-style"><span>Open Calendar</span></a>';
+$handler->display->display_options['header']['area']['content'] = '<a href="absence_all/nojs/view" class="chr_action--icon--list chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-custom-large-style"><span>Show all Absences</span></a><a href="manager_approval/nojs/calendar/show" class="chr_action--icon--calendar chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-default-style"><span>Open Calendar</span></a>';
 $handler->display->display_options['header']['area']['format'] = 'full_html';
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;

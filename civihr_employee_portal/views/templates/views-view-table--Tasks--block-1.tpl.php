@@ -36,8 +36,8 @@ foreach ($statusesResult['values'] as $status):
 endforeach;
 
 ?>
-<div class="row">
-    <div class="col-xs-12 col-sm-12 col-lg-12">
+<div class="modal-civihr-custom__section--no-padding">
+    <div class="table-responsive">
         <table id="tasks-dashboard-table-staff" <?php if ($classes) { print 'class="'. $classes . '" '; } ?><?php print $attributes; ?>>
             <?php if (!empty($title) || !empty($caption)) : ?>
                 <caption><?php print $caption . $title; ?></caption>
@@ -87,4 +87,7 @@ endforeach;
             </tbody>
         </table>
     </div>
+</div>
+<div class="modal-civihr-custom__footer">
+  <button class="chr_action ctools-close-modal">Close</button>
 </div>
