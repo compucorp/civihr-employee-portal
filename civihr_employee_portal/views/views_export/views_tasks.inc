@@ -280,7 +280,7 @@ $handler->display->display_options['defaults']['header'] = FALSE;
 $handler->display->display_options['header']['area']['id'] = 'area';
 $handler->display->display_options['header']['area']['table'] = 'views';
 $handler->display->display_options['header']['area']['field'] = 'area';
-$handler->display->display_options['header']['area']['content'] = '<a href="/civi_tasks/nojs/view_completed" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed chr_action--transparent chr_action--icon--list chr_action--icon--responsive show-complete-tasks"><span>Show completed tasks</span></a>';
+$handler->display->display_options['header']['area']['content'] = '<a href="/civi_tasks/nojs/view_completed" class="ctools-use-modal ctools-modal-civihr-custom-large-style ctools-use-modal-processed chr_action--transparent chr_action--icon--list chr_action--icon--responsive show-complete-tasks"><span>Show completed tasks</span></a>';
 $handler->display->display_options['header']['area']['format'] = 'full_html';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: id: value */
