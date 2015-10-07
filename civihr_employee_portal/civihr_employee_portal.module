@@ -293,11 +293,11 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
     $view_displays_to_rewrite = array();
 
     // Headcount groups
-    $view_displays_to_rewrite['views_view__filter_headcount_location'] = 1;
-    $view_displays_to_rewrite['views_view__filter_headcount_department'] = 1;
+    //$view_displays_to_rewrite['views_view__filter_headcount_location'] = 1;
+    //$view_displays_to_rewrite['views_view__filter_headcount_department'] = 1;
 
     // Gender groups
-    $view_displays_to_rewrite['views_view__filter_gender_location'] = 1;
+    //$view_displays_to_rewrite['views_view__filter_gender_location'] = 1;
 
     // Age groups
     //$view_displays_to_rewrite['views_view__filter_age_location'] = 1;
