@@ -32,6 +32,7 @@
         },
         buildAssigneeSelect: function (defaultValue) {
             CRM.$('#edit-assignee').select2({
+                allowClear: true,
                 placeholder: "Search for assignee",
                 minimumInputLength: 1,
                 multiple: false,
@@ -47,6 +48,7 @@
         },
         buildTargetSelect: function (defaultValue) {
             CRM.$('#edit-target').select2({
+                allowClear: true,
                 placeholder: "Search for target",
                 minimumInputLength: 1,
                 multiple: false,

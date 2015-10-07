@@ -154,7 +154,7 @@ $handler->display->display_options['arguments']['task_targets']['name'] = 'task_
 /* Display: Tasks Dashboard block */
 $handler = $view->new_display('block', 'Tasks Dashboard block', 'block');
 $handler->display->display_options['defaults']['title'] = FALSE;
-$handler->display->display_options['title'] = 'Tasks';
+$handler->display->display_options['title'] = 'My Tasks';
 $handler->display->display_options['defaults']['query'] = FALSE;
 $handler->display->display_options['query']['type'] = 'views_query';
 $handler->display->display_options['query']['options']['json_file'] = $base_url . '/civi_tasks/';
@@ -165,7 +165,6 @@ $handler->display->display_options['pager']['type'] = 'none';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'table';
-$handler->display->display_options['style_options']['row_class_special'] = FALSE;
 $handler->display->display_options['style_options']['columns'] = array(
   'id' => 'id',
   'activity_type_id' => 'activity_type_id',
@@ -281,7 +280,7 @@ $handler->display->display_options['defaults']['header'] = FALSE;
 $handler->display->display_options['header']['area']['id'] = 'area';
 $handler->display->display_options['header']['area']['table'] = 'views';
 $handler->display->display_options['header']['area']['field'] = 'area';
-$handler->display->display_options['header']['area']['content'] = '<div class="tasks-list-actions"><div id="nav-tasks-types" class="btn-group btn-group-sm"><a href class="btn btn-gray" data-task-type="my">My Tasks</a><a href class="btn btn-gray" data-task-type="delegated">Delegated Tasks</a><a href class="btn btn-gray active" data-task-type="all">All</a></div><div id="tasks-list-header-additional"><a href="/civi_tasks/nojs/view_completed" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Show completed tasks</a><input type="text" name="task-filter-contact" id="task-filter-contact"value="" placeholder="Enter name" /><span class="input-group-btn"><a class="btn btn-default task-filter-contact-remove"><span class="">clear</span></a></span></div></div>';
+$handler->display->display_options['header']['area']['content'] = '<a href="/civi_tasks/nojs/view_completed" class="ctools-use-modal ctools-modal-civihr-custom-large-style ctools-use-modal-processed chr_action--transparent chr_action--icon--list chr_action--icon--responsive show-complete-tasks"><span>Show completed tasks</span></a>';
 $handler->display->display_options['header']['area']['format'] = 'full_html';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: id: value */
@@ -655,7 +654,7 @@ $translatables['Tasks'] = array(
   t('Task contacts (assignee)'),
   t('All'),
   t('Tasks Dashboard block'),
-  t('<div class="tasks-list-actions"><div id="nav-tasks-types" class="btn-group btn-group-sm"><a href class="btn btn-gray" data-task-type="my">My Tasks</a><a href class="btn btn-gray" data-task-type="delegated">Delegated Tasks</a><a href class="btn btn-gray active" data-task-type="all">All</a></div><div id="tasks-list-header-additional"><a href="/civi_tasks/nojs/view_completed" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">Show completed tasks</a><input type="text" name="task-filter-contact" id="task-filter-contact"value="" placeholder="Enter name" /><span class="input-group-btn"><a class="btn btn-default task-filter-contact-remove"><span class="">clear</span></a></span></div></div>'),
+  t('<div class="tasks-actions col-xs-10 col-sm-9 text-left"><div id="nav-tasks-types" class="btn-group btn-group-sm"><a href class="btn btn-default" data-task-type="my">My Tasks</a><a href class="btn btn-default" data-task-type="delegated">Delegated Tasks</a><a href class="btn btn-default" data-task-type="all">All</a></div></div>'),
   t('Task type'),
   t('Assignment'),
   t('Due Date'),
