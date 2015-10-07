@@ -74,7 +74,7 @@ function _get_task_filter_by_date($date) {
     $sunday->modify('+' . (7 - $nbDay) . ' days');
     $weekEnd = $sunday->format('Y-m-d');
     $taskDate = date('Y-m-d', strtotime(strip_tags($date)));
-
+    
     if ($taskDate < $today) {
         return 1;
     }
@@ -156,18 +156,22 @@ function _get_task_filter_by_date($date) {
                                 continue;
                             endif; ?>
                             <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
+								<?php if (_task_can_be_edited($row['id'])): ?>
                                 <a
                                     href="/civi_tasks/nojs/edit/<?php print strip_tags($row['id']); ?>"
                                     class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">
+								<?php endif; ?>
                                     <?php print strip_tags(html_entity_decode($content)); ?>
+								<?php if (_task_can_be_edited($row['id'])): ?>
                                 </a>
+								<?php endif; ?>
                             </td>
                         <?php endforeach; ?>
                             <td>
                                 <?php
                                 $checked = '';
                                 $disabled = '';
-                                if (!user_access('can create and edit tasks')):
+                                if (!_task_can_be_marked_as_complete($row['id'])):
                                     $disabled = ' disabled="disabled" ';
                                 endif;
                                 ?>
@@ -195,11 +199,11 @@ function _get_task_filter_by_date($date) {
             $dropdownTypes = $('#select-tasks-types'),
             $tableDocStaff = $('#tasks-dashboard-table-staff'),
             $tableDocStaffRows = $tableDocStaff.find('.task-row');
-
+            
         var $selectedRowFilter =  $tableDocStaff.find('.task-row'),
             $selectedRowType = $tableDocStaff.find('.task-row'),
             selectedRowFilterSelector = null;
-
+            
         var currentTaskTypeClass = '';
 
         $navDocFilter.find('a').bind('click', function(e) {
@@ -210,7 +214,7 @@ function _get_task_filter_by_date($date) {
 
             $navDocFilter.find('> li').removeClass('active');
             $this.parent().addClass('active');
-
+            
             if (!taskFilter) {
                 $selectedRowFilter = $tableDocStaff.find('.task-row');
                 selectedRowFilterSelector = '.task-row';
@@ -218,7 +222,7 @@ function _get_task_filter_by_date($date) {
                 $selectedRowFilter = $tableDocStaff.find('.task-filter-id-' + taskFilter);
                 selectedRowFilterSelector = '.task-filter-id-' + taskFilter;
             }
-
+            
             showFilteredTaskRows();
         });
 
@@ -253,7 +257,7 @@ function _get_task_filter_by_date($date) {
                 $selectedRowType = $tableDocStaff.find(currentTaskTypeClass);
                 refreshTasksCounter(currentTaskTypeClass);
             }
-
+            
             showFilteredTaskRows();
         });
 
@@ -289,9 +293,9 @@ function _get_task_filter_by_date($date) {
                 }
             });
         });
-
+        
         buildTaskContactFilter();
-
+        
         function showFilteredTaskRows() {
             $tableDocStaffRows.hide();
             $tableDocStaffRows.removeClass('selected-by-type').removeClass('selected-by-filter');
@@ -299,7 +303,7 @@ function _get_task_filter_by_date($date) {
             $selectedRowFilter.addClass('selected-by-filter');
             $('.selected-by-type.selected-by-filter.selected-by-contact', $tableDocStaff).show();
         }
-
+        
         function refreshTasksCounter(taskTypeClass) {
             var sum = 0;
             for (var i = 1; i < <?php print count($taskFilters); ?>; i++) {
@@ -309,7 +313,7 @@ function _get_task_filter_by_date($date) {
             }
             $('#nav-tasks-filter .task-counter-filter-0').text(sum);
         }
-
+        
         function buildTaskContactFilter(defaultValue) {
             $tableDocStaffRows.addClass('selected-by-contact');
             $('#task-filter-contact').select2({
@@ -325,7 +329,7 @@ function _get_task_filter_by_date($date) {
                 _taskRowsFilterByContact(null);
             });
         }
-
+        
         function _taskRowsFilterByContact(text) {
             $tableDocStaffRows.removeClass('selected-by-contact');
             if (!text) {
