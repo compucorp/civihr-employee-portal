@@ -34,19 +34,34 @@
 
     <?php if ($header): ?>
         <div class="chr_panel__toolbar">
+            <?php if ($rows): ?>
+                <div class="chr_panel__toolbar__filter hidden-xs">
+                    <div id="nav-tasks-types" class="btn-group btn-group-sm">
+                        <button class="btn btn-default" data-task-type="my">My Tasks</button>
+                        <button class="btn btn-default" data-task-type="delegated">Delegated Tasks</button>
+                        <button class="btn btn-default active" data-task-type="all">All</button>
+                    </div>
+                </div>
+                <div class="chr_panel__toolbar__filter visible-xs-block form-item">
+                    <select id="select-tasks-types">
+                        <option value="my">My Tasks</option>
+                        <option value="delegated">Delegated Tasks</option>
+                        <option value="all" selected>All</option>
+                    </select>
+                </div>
+            <?php endif; ?>
             <div class="chr_panel__toolbar__actions">
                 <?php print $header; ?>
             </div>
             <?php if ($rows): ?>
                 <div class="chr_panel__toolbar__filter">
                     <div class="input-group">
-                        <div class="btn input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
-                        <input class="form-control" id="manager-approval-search" placeholder="Enter name">
+                        <input type="text" name="task-filter-contact" id="task-filter-contact" value="" placeholder="Enter name" />
                     </div>
                 </div>
             <?php endif; ?>
         </div>
-    <?php endif; ?>
+  <?php endif; ?>
 
     <?php if ($exposed): ?>
         <div class="view-filters">
@@ -61,30 +76,18 @@
     <?php endif; ?>
 
     <?php if ($rows): ?>
-        <div class="chr_table-w-filters row">
-            <div class="chr_table-w-filters__filters approval-filters col-md-3">
-                <div class="chr_table-w-filters__filters__dropdown-wrapper form-item">
-                    <select class="chr_table-w-filters__filters__dropdown">
-                        <!-- content injected via JS -->
-                    </select>
-                </div>
-                <ul id="tag-list" class="chr_table-w-filters__filters__nav">
-                    <!-- content injected via JS -->
-                </ul>
-            </div>
-            <div class="chr_table-w-filters__table-wrapper col-md-9">
-                <div class="chr_table-w-filters__table">
-                    <?php print $rows; ?>
-                </div>
-            </div>
+        <div class="view-content">
+            <?php print $rows; ?>
         </div>
     <?php elseif ($empty): ?>
-        <div class="view-empty">
-            <?php print $empty; ?>
-        </div>
+            <div class="view-empty">
+                <?php print $empty; ?>
+            </div>
     <?php endif; ?>
 
-    <?php if ($pager) { print $pager; } ?>
+    <?php if ($pager): ?>
+        <?php print $pager; ?>
+    <?php endif; ?>
 
     <?php if ($attachment_after): ?>
         <div class="attachment attachment-after">
@@ -92,7 +95,9 @@
         </div>
     <?php endif; ?>
 
-    <?php if ($more){ print $more; } ?>
+    <?php if ($more): ?>
+        <?php print $more; ?>
+    <?php endif; ?>
 
     <?php if ($footer): ?>
         <div class="view-footer">
@@ -105,4 +110,5 @@
             <?php print $feed_icon; ?>
         </div>
     <?php endif; ?>
+
 </div><?php /* class view */ ?>
