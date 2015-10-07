@@ -1,0 +1,35 @@
+<?php
+
+class LocationTypeNotFoundException extends Exception {}
+
+/**
+ * Implements hook_install().
+ */
+function username_to_external_id_install() {
+    try {
+        $result = civicrm_api3('LocationType', 'get', array(
+            'sequential' => 1,
+            'return' => "id",
+            'name' => "Work",
+        ));
+
+        $values = reset($result['values']);
+
+        if (isset($values['id'])) {
+            $id = $values['id'];
+
+            $result = civicrm_api3('LocationType', 'create', array(
+                'sequential' => 1,
+                'id' => $id,
+                'is_default' => 1,
+            ));
+        }
+        else {
+            throw new LocationTypeNotFoundException("Needed 'Work' location type not found.");
+        }
+    }
+    catch (CiviCRM_API3_Exception $e) {
+        $error = $e->getMessage();
+        watchdog('REPORTS', $error);
+    }
+}
