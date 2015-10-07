@@ -11,7 +11,7 @@
             delay: 250,
             data: function (params) {
                 return {
-                    json: '{"sort_name":"' + params + '"}',
+                    json: '{"sort_name":"' + params + '", "relationship_name": "Line Manager is", "related_contact_id": ' + Drupal.settings.currentCiviCRMUserId + ', "include_related_contact": true}',
                     page: 1
                 };
             },
