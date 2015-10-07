@@ -32,6 +32,11 @@ function civihr_employee_portal_js_alter(&$javascript) {
         }
 
     }
+    
+    global $user;
+    $uf = get_civihr_uf_match_data($user->uid);
+    drupal_add_js(array('currentDrupalUserId' => $user->uid), 'setting');
+    drupal_add_js(array('currentCiviCRMUserId' => $uf['contact_id']), 'setting');
 
     _setup_modals();
 }
@@ -2843,15 +2848,14 @@ function civihr_employee_portal_civi_tasks_form_validate($form, &$form_state) {
 function civihr_employee_portal_civi_tasks_form_submit($form, &$form_state) {
     
     global $user;
+    $id = $form_state['values']['id'];
     
-    if (user_access('can create and edit tasks')) {
+    if (_task_can_be_edited($id)) {
         $result_output = array();
         $extensions = CRM_Core_PseudoConstant::getExtensions();
         if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
             return false;
         }
-
-        $id = $form_state['values']['id'];
 
         $params = array(
             'sequential' => 1,
@@ -2960,6 +2964,42 @@ function _task_can_be_marked_as_complete($taskId) {
         }
     } catch (CiviCRM_API3_Exception $e) {
         $error = $e->getMessage();
+    }
+
+    return $result;
+}
+
+/**
+ * Check if user has permissions to edit the task.
+ * 
+ * @param int $taskId
+ * 
+ * @return bool
+ */
+function _task_can_be_edited($taskId) {
+    
+    global $user;
+    $result = false;
+    
+    try {
+        $apiResult = civicrm_api3('Task', 'get', array(
+            'sequential' => 1,
+            'return' => "id,source_contact_id",
+            'id' => $taskId,
+        ));
+
+        $uf = get_civihr_uf_match_data($user->uid);
+        $apiResultValue = CRM_Utils_Array::first($apiResult['values']);
+
+        if (in_array($uf['contact_id'], array($apiResultValue['source_contact_id']))) {
+            $result = true;
+        }
+    } catch (CiviCRM_API3_Exception $e) {
+        $error = $e->getMessage();
+    }
+    
+    if (!user_access('can create and edit tasks')) {
+        $result = false;
     }
 
     return $result;

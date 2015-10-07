@@ -155,11 +155,15 @@ function _get_task_filter_by_date($date) {
                             continue;
                         endif; ?>
                         <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
+                            <?php if (_task_can_be_edited($row['id'])): ?>
                             <a
                                 href="/civi_tasks/nojs/edit/<?php print strip_tags($row['id']); ?>"
                                 class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">
+                            <?php endif; ?>
                             <?php print strip_tags(html_entity_decode($content)); ?>
+                            <?php if (_task_can_be_edited($row['id'])): ?>
                             </a>
+                            <?php endif; ?>
                         </td>
                     <?php endforeach; ?>
                         <td>
