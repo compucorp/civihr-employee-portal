@@ -21,6 +21,7 @@ function username_to_external_id_install() {
             $result = civicrm_api3('LocationType', 'create', array(
                 'sequential' => 1,
                 'id' => $id,
+                'is_active' => 1,
                 'is_default' => 1,
             ));
         }
