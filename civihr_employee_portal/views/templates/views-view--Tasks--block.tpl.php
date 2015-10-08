@@ -57,7 +57,7 @@
                 <div class="chr_panel__toolbar__filter">
                     <div class="input-group">
                         <div class="btn input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
-                        <input type="text" name="task-filter-contact" id="task-filter-contact" value="" placeholder="Enter name" />
+                        <input type="text" class="form-control" name="task-filter-contact" id="task-filter-contact" value="" placeholder="Enter name" />
                     </div>
                 </div>
             <?php endif; ?>
