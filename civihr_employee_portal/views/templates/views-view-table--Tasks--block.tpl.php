@@ -275,17 +275,18 @@ function _get_task_filter_by_date($date) {
 
         var chk = CRM.$('.checkbox-task-completed');
         chk.unbind('change').bind('change', function(e) {
-            var checkedTaskId = CRM.$(this).val();
-            CRM.api3('Task', 'create', {
-                "sequential": 1,
-                "id": checkedTaskId,
-                "status_id": 1
-            }).done(function(result) {
-                if (!result.is_error) {
-                    CRM.$('#row-task-id-' + checkedTaskId).fadeOut(500, function() {
-                        CRM.$(this).remove();
+            var checkedTaskId = $(this).val();
+            $.ajax({
+                url: '/civi_tasks/ajax/complete/' + checkedTaskId,
+                success: function(result) {
+                    if (!result.success) {
+                        CRM.alert(result.message, 'Error', 'error');
+                        return;
+                    }
+                    $('#row-task-id-' + checkedTaskId).fadeOut(500, function() {
+                        $(this).remove();
                         refreshTasksCounter(currentTaskTypeClass);
-                    })
+                    });
                 }
             });
         });
