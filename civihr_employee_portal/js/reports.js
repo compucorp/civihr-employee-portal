@@ -93,10 +93,75 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
         console.log('here');
 
+        // Wrapper around the settings js values
+        var getCleanData = {
+
+            // Gender values
+            gender: function (gender) {
+                return settings.civihr_employee_portal_reports.gender_options_data[gender];
+            },
+
+            // Enabled X Axis Group By settings (need to pass Y Group By machine name/type)
+            enabled_x_axis_defaults: function(type) {
+                return settings.civihr_employee_portal_reports.enabled_x_axis_defaults['enabled_x_axis_filters_' + type];
+            }
+        }
+
         var data; // Will hold our loaded json data later
+
+        /**
+         * This function will generate the X Axis buttons, based on available X Axis Grouping options
+         * @param data
+         * @private
+         */
+        function _generateSubFilters(data, subFilters) {
+
+            // Make array from object keys
+            var dataGroups = Object.keys(getCleanData.enabled_x_axis_defaults(data.target.id));
+
+            // Remove previous buttons if any
+            $('.subFilter').remove();
+
+            // Generate the available X Group By buttons
+            dataGroups.forEach(function (value, key) {
+                $('.report-x-filters').append('<button id="' + value + '" class="subFilter btn btn-primary btn-reports">' + value + '</button>');
+            });
+
+            // Init the sub filters
+            subFilters = document.querySelectorAll(".subFilter");
+
+            // Loop the buttons and attach the onclick function
+            for (i = 0; i < subFilters.length; i++) {
+                subFilters[i].onclick = function (data) {
+
+                    if (data.target !== null) {
+
+                        // Set the subfilter
+                        customReport.setSubFilter(data.target.id);
+
+                        // Add default classes
+                        _checkDefaultClasses(subFilters, data);
+
+                        // Re-draw graph
+                        customReport.drawGraph(customReport.getJsonUrl(), customReport.getChartType());
+
+                    }
+
+                    return false;
+                }
+            }
+
+            console.log(subFilters);
+            // Set default classes on initial load
+            _setDefaultClass(mainFilters, subFilters, customReport);
+
+        }
 
         // Init the main filters
         var mainFilters = document.querySelectorAll(".mainFilter");
+
+        // Init the subFilters as global and leave empty for now
+        var subFilters = '';
 
         // Loop the buttons and attach the onclick function
         for (i = 0; i < mainFilters.length; i++) {
@@ -107,6 +172,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     // Set the mainFilter
                     customReport.setMainFilter(data.target.id);
 
+                    // Force change to location filter (when filters are updated)
+                    customReport.setSubFilter('location');
+
                     // Add default classes
                     _checkDefaultClasses(mainFilters, data);
 
@@ -115,29 +183,8 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     // Re-draw graph
                     customReport.drawGraph(customReport.getJsonUrl(), customReport.getChartType());
 
-                }
-
-                return false;
-            }
-        }
-
-        // Init the sub filters
-        var subFilters = document.querySelectorAll(".subFilter");
-
-        // Loop the buttons and attach the onclick function
-        for (i = 0; i < subFilters.length; i++) {
-            subFilters[i].onclick = function (data) {
-
-                if (data.target !== null) {
-
-                    // Set the subfilter
-                    customReport.setSubFilter(data.target.id);
-
-                    // Add default classes
-                    _checkDefaultClasses(subFilters, data);
-
-                    // Re-draw graph
-                    customReport.drawGraph(customReport.getJsonUrl(), customReport.getChartType());
+                    // Generate X Axis Group By buttons, when Y Axis Group By is clicked
+                    _generateSubFilters(data, subFilters);
 
                 }
 
@@ -186,6 +233,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 }
 
             }
+
+            console.log(subFilters);
+            console.log(customReport.getSubFilter());
 
             for (check = 0; check < subFilters.length; check++) {
 
@@ -307,7 +357,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             else {
 
                 // Provide default sub filter type
-                return 'department';
+                return 'location';
             }
 
         };
@@ -697,8 +747,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             $('#custom-report').empty();
 
-            console.log(data);
-
             var nested_data = d3.nest()
                 .key(function(d) {
                     return d.data.gender;
@@ -712,8 +760,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     });
                 })
                 .entries(data);
-
-            console.log(nested_data);
 
             var tracker = 0;
             var assigned_key = '';
@@ -739,8 +785,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             var n = tracking_array['grouped_charts_num'], // Number of grouped charts
                 m = nested_data.length; // Number of columns / chart
-
-            console.log(tracking_array);
 
             // Sorts data
             nested_data.forEach(function(s, main_key) {
@@ -946,15 +990,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             var target = $('#custom-report-details');
             var viewName = report.getViewMachineName();
             var viewDisplay = report.getViewDisplayName();
-
-            console.log(d);
-
-            // Wrapper around the settings js values
-            var getCleanData = {
-                gender: function (gender) {
-                    return settings.civihr_employee_portal_reports.gender_options_data[gender];
-                }
-            }
 
             // If any value cleanup needs to be done it need to be done at this stage
             var x_axis = d.data.department;

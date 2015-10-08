@@ -107,3 +107,10 @@ and open the template in the editor.
      color: #0b0;
  }
 }
+
+/**
+ * Don't show the CSV icon
+ */
+.feed-icon {
+    display: none;
+}
