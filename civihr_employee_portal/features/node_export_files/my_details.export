@@ -111,28 +111,8 @@ array(
         ),
         'emails' => array(),
         'components' => array(
-          1 => array(
-            'nid' => 2,
-            'cid' => '1',
-            'pid' => '0',
-            'form_key' => 'civicrm_1_contact_1_fieldset_fieldset',
-            'name' => 'Contact details',
-            'type' => 'fieldset',
-            'value' => '',
-            'extra' => array(
-              'title_display' => 'none',
-              'private' => 0,
-              'css_classes' => '',
-              'collapsible' => 0,
-              'collapsed' => 0,
-              'description' => '',
-            ),
-            'required' => '0',
-            'weight' => '1',
-            'page_num' => 1,
-          ),
           2 => array(
-            'nid' => 2,
+            'nid' => 6,
             'cid' => '2',
             'pid' => '0',
             'form_key' => 'civicrm_1_contact_1_contact_existing',
@@ -489,7 +469,7 @@ array(
             'page_num' => 1,
           ),
           17 => array(
-            'nid' => 2,
+            'nid' => 6,
             'cid' => '17',
             'pid' => '1',
             'form_key' => 'civicrm_1_contact_2_email_email',
