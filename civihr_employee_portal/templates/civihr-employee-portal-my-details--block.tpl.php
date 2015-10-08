@@ -49,7 +49,7 @@
 <?php
     global $user; // Show only if we have the logged in user
 
-    $actions_classes = 'ctools-use-modal ctools-modal-civihr-default-style chr_action--icon--edit';
+    $actions_classes = 'ctools-use-modal ctools-modal-civihr-custom-style chr_action--icon--edit';
 
     if ($user->uid) {
 ?>

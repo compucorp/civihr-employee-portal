@@ -53,9 +53,10 @@
             <div class="chr_panel__toolbar__actions">
                 <?php print $header; ?>
             </div>
-            <?php if ($rows): ?>
+            <?php if ($rows && _user_has_role(array('civihr_manager', 'civihr_admin', 'administrator'))): ?>
                 <div class="chr_panel__toolbar__filter">
                     <div class="input-group">
+                        <div class="btn input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
                         <input type="text" name="task-filter-contact" id="task-filter-contact" value="" placeholder="Enter name" />
                     </div>
                 </div>

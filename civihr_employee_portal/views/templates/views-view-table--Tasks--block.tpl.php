@@ -37,6 +37,7 @@ $taskFilters = array(
 $taskFiltersCount = array_combine(array_keys($taskFilters), array_fill(0, count($taskFilters), 0));
 $contactsIds = array();
 $contacts = array();
+$contactsFilterValues = array();
 
 foreach ($rows as $row):
     $rowType = null;
@@ -50,21 +51,16 @@ foreach ($rows as $row):
         continue;
     endif;
     $contactsIds[strip_tags($row['task_contacts'])] = 1;
-    $contactsIds[strip_tags($row['task_contacts_1'])] = 1;
-    $contactsIds[strip_tags($row['task_contacts_2'])] = 1;
     $taskFiltersCount[_get_task_filter_by_date($row['activity_date_time'])]++;
     $taskFiltersCount[0]++;
 endforeach;
 
 $contactsResult = civicrm_api3('Contact', 'get', array(
   'id' => array('IN' => array_keys($contactsIds)),
-  'return' => "sort_name,display_name",
+  'return' => "sort_name",
 ));
 foreach ($contactsResult['values'] as $key => $value) {
-    $contacts[] = array(
-        'id' => $key,
-        'text' => $value['sort_name'] . ' (' . $value['display_name'] . ')',
-    );
+    $contactsFilterValues[$key] = $value['sort_name'];
 }
 
 function _get_task_filter_by_date($date) {
@@ -150,7 +146,7 @@ function _get_task_filter_by_date($date) {
                     $rowContacts = strip_tags($row['task_contacts']) . ',' . strip_tags($row['task_contacts_1']) . ',' . strip_tags($row['task_contacts_2']);
                     ?>
                     <?php $class = 'task-row task-filter-id-' . _get_task_filter_by_date($row['activity_date_time']) . ' ' . $rowType; ?>
-                    <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $rowContacts; ?>">
+                    <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $contactsFilterValues[strip_tags($row['task_contacts'])]; ?>">
                         <?php foreach ($row as $field => $content): ?>
                             <?php if ($field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2' || $field == 'activity_date_time'):
                                 continue;
@@ -279,17 +275,18 @@ function _get_task_filter_by_date($date) {
 
         var chk = CRM.$('.checkbox-task-completed');
         chk.unbind('change').bind('change', function(e) {
-            var checkedTaskId = CRM.$(this).val();
-            CRM.api3('Task', 'create', {
-                "sequential": 1,
-                "id": checkedTaskId,
-                "status_id": 1
-            }).done(function(result) {
-                if (!result.is_error) {
-                    CRM.$('#row-task-id-' + checkedTaskId).fadeOut(500, function() {
-                        CRM.$(this).remove();
+            var checkedTaskId = $(this).val();
+            $.ajax({
+                url: '/civi_tasks/ajax/complete/' + checkedTaskId,
+                success: function(result) {
+                    if (!result.success) {
+                        CRM.alert(result.message, 'Error', 'error');
+                        return;
+                    }
+                    $('#row-task-id-' + checkedTaskId).fadeOut(500, function() {
+                        $(this).remove();
                         refreshTasksCounter(currentTaskTypeClass);
-                    })
+                    });
                 }
             });
         });
@@ -314,35 +311,27 @@ function _get_task_filter_by_date($date) {
             $('#nav-tasks-filter .task-counter-filter-0').text(sum);
         }
         
-        function buildTaskContactFilter(defaultValue) {
+        function buildTaskContactFilter() {
             $tableDocStaffRows.addClass('selected-by-contact');
-            $('#task-filter-contact').select2({
-                allowClear: true,
-                placeholder: "Enter name",
-                data: <?php print json_encode($contacts, true); ?>
-            }).on('change', function(e) {
-                _taskRowsFilterByContact(e.val);
-            });
-            $('#task-filter-contact').select2("data", defaultValue);
-            $('.btn.task-filter-contact-remove').click( function() {
-                $('#task-filter-contact').select2('data', null);
-                _taskRowsFilterByContact(null);
-            });
-        }
-        
-        function _taskRowsFilterByContact(text) {
-            $tableDocStaffRows.removeClass('selected-by-contact');
-            if (!text) {
-                $tableDocStaffRows.addClass('selected-by-contact');
-            } else {
-                $('.task-row').each(function() {
-                    var rowContactsIds = $(this).data('rowContacts').split(',');
-                    if (rowContactsIds.indexOf(text) > -1) {
-                        $(this).addClass('selected-by-contact');
+            $('#task-filter-contact').on("keyup", function() {
+                var value = $(this).val();
+                
+                $tableDocStaffRows.removeClass('selected-by-contact');
+                $("#tasks-dashboard-table-staff > tbody > tr.task-row").each(function(index) {
+                    var $row = $(this);
+                    var text = $row.data('rowContacts');
+                    
+                    if (!text) {
+                        $tableDocStaffRows.addClass('selected-by-contact');
+                    } else {
+                        var matchedIndex = text.indexOf(value);
+                        if (matchedIndex === 0) {
+                            $(this).addClass('selected-by-contact');
+                        }
                     }
                 });
-            }
-            showFilteredTaskRows();
+                showFilteredTaskRows();
+            });
         }
     }(CRM.$));
 </script>

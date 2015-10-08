@@ -293,11 +293,11 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
     $view_displays_to_rewrite = array();
 
     // Headcount groups
-    $view_displays_to_rewrite['views_view__filter_headcount_location'] = 1;
-    $view_displays_to_rewrite['views_view__filter_headcount_department'] = 1;
+    //$view_displays_to_rewrite['views_view__filter_headcount_location'] = 1;
+    //$view_displays_to_rewrite['views_view__filter_headcount_department'] = 1;
 
     // Gender groups
-    $view_displays_to_rewrite['views_view__filter_gender_location'] = 1;
+    //$view_displays_to_rewrite['views_view__filter_gender_location'] = 1;
 
     // Age groups
     //$view_displays_to_rewrite['views_view__filter_age_location'] = 1;
@@ -3639,6 +3639,40 @@ function _getGenderReportOptions() {
 }
 
 /**
+ * Get all default X Axis Group by settings
+ * @return array
+ */
+function _getXAxisDefaults() {
+
+    // All the variables for defined X Axis settings
+    $name = 'enabled_x_axis_filters_';
+
+    // Get additional details about the absence
+    $q = db_select('variable', 'var')
+        ->fields('var', array('name'))
+        ->condition('name', '%' . db_like($name) . '%', 'LIKE');
+
+    $result = $q->execute()->fetchAllAssoc('name');
+
+    // Build the available X Axis options
+    $return = [];
+
+    foreach ($result as $key => $x_axis) {
+        $return[$key] = variable_get($key);
+
+        // Unset not available values
+        foreach ($return[$key] as $val_key => $val) {
+            if ($val == '0') {
+                unset($return[$key][$val_key]);
+            }
+        }
+
+    }
+
+    return $return;
+}
+
+/**
  * @param $view_name
  * @param string $view_display
  * Load view as html block
@@ -3648,8 +3682,11 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
     // Get available gender options from CiviCRM
     $gender_options_data =  _getGenderReportOptions();
 
+    // Get available X Axis Group by options
+    $enabled_x_axis_defaults = _getXAxisDefaults();
+
     // Pass our custom data to js
-    drupal_add_js(array('civihr_employee_portal_reports' => array('gender_options_data' => $gender_options_data)), 'setting');
+    drupal_add_js(array('civihr_employee_portal_reports' => array('gender_options_data' => $gender_options_data, 'enabled_x_axis_defaults' => $enabled_x_axis_defaults)), 'setting');
 
     // Array for contextual filters
     $args = [];
@@ -3820,6 +3857,10 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
+    if ($form_id == 'webform_client_form_' . variable_get('my_details_webform_nid') ||
+        $form_id == 'webform_client_form_' . variable_get('emergency_contact_webform_nid')) {
+        $form['#attributes']['class'][] = 'civihr_form civihr_form--reset form-horizontal';
+    }
 
     // Form become outdated fix
     if ($form_id == 'views_exposed_form') {
