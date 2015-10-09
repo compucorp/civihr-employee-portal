@@ -2577,6 +2577,9 @@ function civihr_employee_portal_civi_tasks_create($ajax, $id = null) {
         ctools_include('modal');
 
         $title = t('Create new Task');
+        if ($id) {
+            $title = t('Task Details');
+        }
 
         $form_state = array(
             'ajax' => TRUE,
@@ -2633,11 +2636,11 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
     $assigneeSelected = null;
     $targetSelected = null;
     $assignmentSelected = null;
+    $id = $form_state['id'];
 
-    $disabledAttr = array();
-    if (!user_access('can create and edit tasks')) {
-        //$disabledAttr['#attributes'] = array('readonly' => 'readonly');
-        $disabledAttr = array('disabled' => 'disabled');
+    $disabledAttr = array('disabled' => 'disabled');
+    if (_task_can_be_edited($id)) {
+        $disabledAttr = array();
     }
 
     $result_output = array();
@@ -2646,7 +2649,6 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
         return $form;
     }
 
-    $id = $form_state['id'];
     if ($id) {
         $result = civicrm_api3('Task', 'get', array(
             'sequential' => 1,
@@ -2736,7 +2738,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
 
     $form['activity_type_id'] = array(
         '#type' => 'select',
-        '#title' => t('Task type'),
+        '#title' => t('Task type:'),
         '#options' => $taskTypes['values'],
         '#attributes' => $disabledAttr,
         '#label_class' => 'col-sm-3 control-label',
@@ -2764,7 +2766,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
 
     $form['subject'] = array(
         '#type' => 'textfield',
-        '#title' => t('Subject'),
+        '#title' => t('Subject:'),
         '#default_value' => isset($task['subject']) ? strip_tags($task['subject']) : '',
         '#attributes' => $disabledAttr,
         '#label_class' => 'col-sm-3 control-label',
@@ -2774,7 +2776,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
 
     $form['assignee'] = array(
         '#type' => 'textfield',
-        '#title' => t('Assignee'),
+        '#title' => t('Assignee:'),
         '#default_value' => '',
         '#attributes' => $disabledAttr,
         '#label_class' => 'col-sm-3 control-label',
@@ -2784,7 +2786,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
 
     $form['target'] = array(
         '#type' => 'textfield',
-        '#title' => t('Target'),
+        '#title' => t('Target:'),
         '#default_value' => '',
         '#attributes' => $disabledAttr,
         '#label_class' => 'col-sm-3 control-label',
@@ -2794,7 +2796,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
 
     $form['status_id'] = array(
         '#type' => 'select',
-        '#title' => t('Status'),
+        '#title' => t('Status:'),
         '#options' => $taskStatuses,
         '#default_value' => isset($task['status_id']) ? $task['status_id'] : '',
         '#attributes' => $disabledAttr,
@@ -2805,7 +2807,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
 
     $form['details'] = array(
         '#type' => 'textarea',
-        '#title' => t('Details'),
+        '#title' => t('Details:'),
         '#rows' => 10,
         '#cols' => 100,
         '#default_value' => isset($task['details']) ? strip_tags($task['details']) : '',
@@ -2817,7 +2819,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
 
     $form['assignment'] = array(
         '#type' => 'textfield',
-        '#title' => t('Assignment'),
+        '#title' => t('Assignment:'),
         '#default_value' => '',
         '#attributes' => $disabledAttr,
         '#label_class' => 'col-sm-3 control-label',
@@ -2828,14 +2830,16 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
     $form['section_close'] = array(
         '#markup' => '</div>'
     );
-
-    $form['save'] = array(
-        '#type' => 'submit',
-        '#value' => t('Save'),
-        '#attributes' => array('class' => array('chr_action')),
-        '#prefix' => '<div class="modal-civihr-custom__footer"><div class="chr_actions-wrapper">',
-        '#suffix'=> '</div></div>'
-    );
+    
+    if (_task_can_be_edited($id)) {
+        $form['save'] = array(
+            '#type' => 'submit',
+            '#value' => t('Save'),
+            '#attributes' => array('class' => array('chr_action')),
+            '#prefix' => '<div class="modal-civihr-custom__footer"><div class="chr_actions-wrapper">',
+            '#suffix'=> '</div></div>'
+        );
+    }
 
     // Add the validation function
     $form['#validate'][] = 'civihr_employee_portal_civi_tasks_form_validate';
@@ -2991,26 +2995,28 @@ function _task_can_be_marked_as_complete($taskId) {
  *
  * @return bool
  */
-function _task_can_be_edited($taskId) {
+function _task_can_be_edited($taskId = null) {
 
     global $user;
     $result = false;
 
-    try {
-        $apiResult = civicrm_api3('Task', 'get', array(
-            'sequential' => 1,
-            'return' => "id,source_contact_id",
-            'id' => $taskId,
-        ));
+    if ($taskId) {
+        try {
+            $apiResult = civicrm_api3('Task', 'get', array(
+                'sequential' => 1,
+                'return' => "id,source_contact_id",
+                'id' => $taskId,
+            ));
 
-        $uf = get_civihr_uf_match_data($user->uid);
-        $apiResultValue = CRM_Utils_Array::first($apiResult['values']);
+            $uf = get_civihr_uf_match_data($user->uid);
+            $apiResultValue = CRM_Utils_Array::first($apiResult['values']);
 
-        if (in_array($uf['contact_id'], array($apiResultValue['source_contact_id']))) {
-            $result = true;
+            if (in_array($uf['contact_id'], array($apiResultValue['source_contact_id']))) {
+                $result = true;
+            }
+        } catch (CiviCRM_API3_Exception $e) {
+            $error = $e->getMessage();
         }
-    } catch (CiviCRM_API3_Exception $e) {
-        $error = $e->getMessage();
     }
 
     if (!user_access('can create and edit tasks')) {
