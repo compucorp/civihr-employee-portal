@@ -84,6 +84,7 @@
         },
         buildAssignmentsSelect: function (assignmentsSelectOptions, defaultValue) {
             CRM.$('#edit-assignment').select2({
+                allowClear: true,
                 placeholder: "Search for assignment",
                 data: assignmentsSelectOptions
             });
