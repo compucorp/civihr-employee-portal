@@ -14,11 +14,17 @@ function picture_upload_camera_form_alter(&$form, &$form_state, $form_id) {
         $buttons = '<div id="buttons">
                         <button id="loadCameraButton">Take picture with your Camera!</button>
 
-                        <button id="inverseType" style="display: none;">Inverse filter</button>
-                        <button id="grayscaleType" style="display: none;">Grayscale filter</button>
-                        <button id="sobelType" style="display: none;">Sobel filter</button>
-            
-                        <button id="takePhotoButton" style="display: none;">Take photo</button>
+                        <label for="applyFilter" style="display: none;">Select Filter:</label>
+                        <select name="applyFilter" id="applyFilter" style="display: none;">
+                            <option value="noFilter">No Effect</option>
+                            <option value="inverse">Inverse Effect</option>
+                            <option value="grayscale">Grayscale Effect</option>
+                            <option value="sobel">Sobel Effect</option>
+                        </select>
+
+                        <div class="or-option" style="display: none;">or</div>
+
+                        <button id="takePhotoButton" style="display: none;">Take new Picture</button>
 
                     </div>';
         
@@ -33,7 +39,7 @@ function picture_upload_camera_form_alter(&$form, &$form_state, $form_id) {
                         <img id="photo" />
 
                         <p id="slider-label" style="display: none; float: right; width: 120px;">
-                            <label for="amount">Volume:</label>
+                            <label for="amount">Brightness:</label>
                             <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
                         </p>
                         <div id="slider" style="display: none; float: right; height: 240px;"></div>
