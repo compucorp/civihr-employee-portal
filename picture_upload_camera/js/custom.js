@@ -76,7 +76,6 @@
              * @returns {undefined}
              */
             function applyFilter(filter_type, brightness) {
-
                 // Make the slider visible
                 sliderLabel.style.display = "inline";
                 
@@ -88,48 +87,62 @@
                 var modified_canvas = new_img.getContext("2d");
                 var imgData = ctx.getImageData(0, 0, width, height);
 
-                // If brightness is passed set the brightness value
-                if (brightness) {
+                // Default noFilter option
+                if (filter_type == 'noFilter') {
 
-                    // Set the brightness if needed
+                    // If brightness not set fallback to 0
+                    brightness = brightness || 0;
+
+                    // No filter selected generate final image
                     final_image = Filter.brightness(imgData, brightness);
-
-                }
-                if (filter_type == 'sobel') {
-
-                    // get the grayscale filter first as we need it for the sobel filter
-                    var grayscale = Filter['grayscale'](imgData);
-                    var vertical = Filter.convoluteFloat32(grayscale,
-                        [-1, 0, 1,
-                         -2, 0, 2,
-                         -1, 0, 1]);
-                    var horizontal = Filter.convoluteFloat32(grayscale,
-                        [-1, -2, -1,
-                         0, 0, 0,
-                         1, 2, 1]);
-
-                    final_image = modified_canvas.createImageData(vertical.width, vertical.height);
-
-                    for (var i = 0; i < final_image.data.length; i += 4) {
-
-                        // make the vertical gradient red
-                        var v = Math.abs(vertical.data[i]);
-                        final_image.data[i] = v;
-
-                        // make the horizontal gradient green
-                        var h = Math.abs(horizontal.data[i]);
-                        final_image.data[i + 1] = h;
-
-                        // and mix in some blue for aesthetics
-                        final_image.data[i + 2] = (v + h) / 4;
-                        final_image.data[i + 3] = 255; // opaque alpha
-                    }
 
                 }
                 else {
 
-                    // No advanced processing needed just filter the image
-                    final_image = Filter[filter_type](imgData);
+                    // If brightness is passed set the brightness value
+                    if (brightness) {
+
+                        // Set the brightness if needed
+                        final_image = Filter.brightness(imgData, brightness);
+
+                    }
+                    if (filter_type == 'sobel') {
+
+                        // get the grayscale filter first as we need it for the sobel filter
+                        var grayscale = Filter['grayscale'](imgData);
+                        var vertical = Filter.convoluteFloat32(grayscale,
+                            [-1, 0, 1,
+                                -2, 0, 2,
+                                -1, 0, 1]);
+                        var horizontal = Filter.convoluteFloat32(grayscale,
+                            [-1, -2, -1,
+                                0, 0, 0,
+                                1, 2, 1]);
+
+                        final_image = modified_canvas.createImageData(vertical.width, vertical.height);
+
+                        for (var i = 0; i < final_image.data.length; i += 4) {
+
+                            // make the vertical gradient red
+                            var v = Math.abs(vertical.data[i]);
+                            final_image.data[i] = v;
+
+                            // make the horizontal gradient green
+                            var h = Math.abs(horizontal.data[i]);
+                            final_image.data[i + 1] = h;
+
+                            // and mix in some blue for aesthetics
+                            final_image.data[i + 2] = (v + h) / 4;
+                            final_image.data[i + 3] = 255; // opaque alpha
+                        }
+
+                    }
+                    else {
+
+                        // No advanced processing needed just filter the image
+                        final_image = Filter[filter_type](imgData);
+
+                    }
 
                 }
 
@@ -146,15 +159,15 @@
                 
                 // Set the modified image in the hidden field (this will be sent after form submit to Drupal for processing)
                 hiddenimage.setAttribute('value', data);
-               
+
             }
 
             var loadCamera = document.querySelector("button#loadCameraButton");
             var hiddenimage = document.querySelector('input[name="picture_upload_camera_value"]');
             var takePhoto = document.querySelector("button#takePhotoButton");
-            var inverse = document.querySelector("button#inverseType");
-            var grayscale = document.querySelector("button#grayscaleType");
-            var sobel = document.querySelector("button#sobelType");
+
+            var selectFilter = document.querySelector("select#applyFilter");
+
             var videoStream = document.querySelector("video#video-stream");
             var mainCanvas = document.querySelector("canvas#canvas");
             var sliderLabel = document.querySelector("p#slider-label");
@@ -207,20 +220,29 @@
                 takepicture();
 
                 // Show the filters when the picture is ready
-                inverse.style.display = "inline";
-                grayscale.style.display = "inline";
-                sobel.style.display = "inline";
+                selectFilter.style.display = "inline";
 
                 // Show the main canvas so we can see the picture snap
                 mainCanvas.style.display = "inline";
+
+                // If not defined use the default fallback
+                Filter.filter_type = Filter.filter_type || 'noFilter';
+
+                // Apply selected filter (default fallback is noFilter)
+                applyFilter(Filter.filter_type, 0);
+
+                // Allow to set brightness with the slider
+                init_slider();
                 
                 return false;
             }
 
-            inverse.onclick = function () {
-
+            /**
+             * Select effect / apply filter
+             */
+            $('#applyFilter').on('change', function() {
                 // Set what filter will be called
-                Filter.filter_type = 'inverse';
+                Filter.filter_type = this.value;
 
                 // Apply selected filter
                 applyFilter(Filter.filter_type);
@@ -229,38 +251,7 @@
                 init_slider();
 
                 return false;
-
-            };
-            
-            grayscale.onclick = function () {
-                
-                // Set what filter will be called
-                Filter.filter_type = 'grayscale';
-
-                // Apply selected filter
-                applyFilter(Filter.filter_type);
-
-                // Allow to set brightness with the slider
-                init_slider();
-
-                return false;
-
-            };
-
-            sobel.onclick = function () {
-
-                // Set what filter will be called
-                Filter.filter_type = 'sobel';
-
-                // Apply selected filter
-                applyFilter(Filter.filter_type);
-
-                // Allow to set brightness with the slider
-                init_slider();
-
-                return false;
-
-            };
+            });
             
             Filter = {};
 
