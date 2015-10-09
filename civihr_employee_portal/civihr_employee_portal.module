@@ -2636,7 +2636,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
     $assigneeSelected = null;
     $targetSelected = null;
     $assignmentSelected = null;
-    $id = $form_state['id'];
+    $id = isset($form_state['id']) ? $form_state['id'] : null;
 
     $disabledAttr = array('disabled' => 'disabled');
     if (_task_can_be_edited($id)) {
@@ -2867,7 +2867,7 @@ function civihr_employee_portal_civi_tasks_form_validate($form, &$form_state) {
 function civihr_employee_portal_civi_tasks_form_submit($form, &$form_state) {
 
     global $user;
-    $id = $form_state['values']['id'];
+    $id = isset($form_state['values']['id']) ? $form_state['values']['id'] : null;
 
     if (_task_can_be_edited($id)) {
         $result_output = array();
@@ -2879,18 +2879,20 @@ function civihr_employee_portal_civi_tasks_form_submit($form, &$form_state) {
         $params = array(
             'sequential' => 1,
             'debug' => false,
-            'assignee_contact_id' => array($form_state['values']['assignee']),
+            'assignee_contact_id' => $form_state['values']['assignee'],
             'source_contact_id' => _get_civicrm_contact_id_by_drupal_uid($user->uid),
-            'target_contact_id' => array($form_state['values']['target']),
+            'target_contact_id' => $form_state['values']['target'],
             'activity_type_id' => $form_state['values']['activity_type_id'],
             'activity_date_time' => $form_state['values']['activity_date_time'],
             'subject' => $form_state['values']['subject'],
             'status_id' => $form_state['values']['status_id'],
             'details' => $form_state['values']['details'],
-            'case_id' => $form_state['values']['assignment'],
         );
         if ($id) {
             $params['id'] = $id;
+        }
+        if (!empty($form_state['values']['assignment'])) {
+            $params['case_id'] = (int)$form_state['values']['assignment'];
         }
 
         $result = civicrm_api3('Task', 'create', $params);
@@ -3017,6 +3019,8 @@ function _task_can_be_edited($taskId = null) {
         } catch (CiviCRM_API3_Exception $e) {
             $error = $e->getMessage();
         }
+    } else {
+        $result = true;
     }
 
     if (!user_access('can create and edit tasks')) {
