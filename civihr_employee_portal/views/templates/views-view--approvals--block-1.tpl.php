@@ -63,10 +63,12 @@
     <?php if ($rows): ?>
         <div class="chr_table-w-filters row">
             <div class="chr_table-w-filters__filters approval-filters col-md-3">
-                <div class="chr_table-w-filters__filters__dropdown-wrapper form-item">
-                    <select class="chr_table-w-filters__filters__dropdown">
-                        <!-- content injected via JS -->
-                    </select>
+                <div class="chr_table-w-filters__filters__dropdown-wrapper">
+                    <div class="chr_custom-select chr_custom-select--full">
+                        <select class="chr_table-w-filters__filters__dropdown skip-js-custom-select">
+                            <!-- content injected via JS -->
+                        </select>
+                    </div>
                 </div>
                 <ul id="tag-list" class="chr_table-w-filters__filters__nav">
                     <!-- content injected via JS -->
