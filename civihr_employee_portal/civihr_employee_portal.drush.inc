@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\civihr_employee_portal\Helpers\HelperClass;
+
 /**
  * Implements hook_drush_help().
  */
@@ -146,7 +148,7 @@ function drush_civihr_employee_portal_update_external_ids() {
  */
 function drush_civihr_employee_portal_update_email_type() {
     try {
-        $work_type_id = _get_work_location_type_id();
+        $work_type_id = HelperClass::_get_work_location_type_id();
 
         $uf_data = civicrm_api3('UFMatch', 'get', array(
             'sequential' => 1,
@@ -186,18 +188,4 @@ function drush_civihr_employee_portal_update_email_type() {
 
     // Log to the command line with an OK status
     drush_log('Primary email types were changed to "Work"', 'ok');
-}
-
-/**
- * Helper function for retrieving particular "Work" location type id
- */
-function _get_work_location_type_id() {
-    $type_data = civicrm_api3('LocationType', 'get', array(
-        'sequential' => 1,
-        'display_name' => "Work",
-    ));
-
-    $type_values = reset($type_data['values']);
-
-    return $type_values['id'];
 }
