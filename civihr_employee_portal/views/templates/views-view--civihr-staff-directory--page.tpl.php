@@ -39,12 +39,6 @@
         </div>
     <?php endif; ?>
 
-    <?php if ($header): ?>
-        <div class="view-header">
-            <?php print $header; ?>
-        </div>
-    <?php endif; ?>
-
     <?php if ($attachment_before): ?>
         <div class="attachment attachment-before">
             <?php print $attachment_before; ?>
@@ -53,12 +47,29 @@
 
     <?php if ($rows): ?>
         <div class="view-content">
-            <?php print $rows; ?>
+            <div class="chr_search-result">
+                <?php if ($header): ?>
+                    <div class="chr_search-result__header">
+                        <?php print $header; ?>
+                    </div>
+                <?php endif; ?>
 
-            <!-- moved this bit inside the div - scoller dissappeared for some reason -->
-            <?php if ($pager): ?>
-                <?php print $pager; ?>
-            <?php endif; ?>
+                <div class="chr_search-result__content">
+                    <?php print $rows; ?>
+                </div>
+
+                <div class="chr_search-result__footer">
+                    <?php if ($pager): ?>
+                        <div class="chr_search-result__pager">
+                            <?php print $pager; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($footer): ?>
+                        <?php print $footer; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
     <?php elseif ($empty): ?>
         <div class="view-empty">
@@ -74,12 +85,6 @@
 
     <?php if ($more): ?>
         <?php print $more; ?>
-    <?php endif; ?>
-
-    <?php if ($footer): ?>
-        <div class="view-footer">
-            <?php print $footer; ?>
-        </div>
     <?php endif; ?>
 
     <?php if ($feed_icon): ?>

@@ -359,26 +359,52 @@ function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
         // Create links
         $items_per_page = array_map(
             function ($item) use ($page_path) {
-                return l($item, $page_path, array('query' => array('items_per_page' => trim($item))));
+                return l($item, $page_path,
+                    array(
+                        'attributes' => array(
+                            'class' => array('chr_search-result__items-per-page__list__item', 'btn', 'btn-default')
+                        ),
+                        'query' => array('items_per_page' => trim($item))
+                    )
+                );
             },
             $numbers_to_show
         );
 
-        // Current header item
-        $header_item = $view->get_item('page', 'header', 'result');
+        $item_per_page_nav = '<nav class="chr_search-result__items-per-page">
+            <span>' . t('View:') . '</span>
+            <div class="chr_search-result__items-per-page__list btn-group btn-group-sm">'
+                . implode('', $items_per_page ) .
+            '</div>
+        </nav>';
 
-        // Add custom items per page
-        $header = t('Items per page') . ': ' . implode( ' | ', $items_per_page );
+        // Set the custom footer
+        $view->set_item_option(
+            $display_id,
+            'footer',
+            'area_text_custom',
+            'content',
+            $item_per_page_nav
+        );
 
         // Set the custom header
-        $view->set_item_option($display_id, 'header', 'result', 'content', $header_item['content'] . '&nbsp;' . $header);
+        $view->set_item_option(
+            $display_id,
+            'header',
+            'result',
+            'content',
+            '<div class="chr_search-result__total">'
+                . t('Results') .
+                '<span class="chr_search-result__total__count">'
+                    . $view->get_item('page', 'header', 'result')['content'] .
+                '</span>
+            </div>' . $item_per_page_nav
+        );
 
         // Set items to show per page
         $selected_count = isset($_GET['items_per_page']) ? $_GET['items_per_page'] : $default_count;
 
         // Set items per page to the view
         $view->set_items_per_page($selected_count);
-
     }
-
 }
