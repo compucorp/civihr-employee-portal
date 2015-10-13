@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 // We assume that this script is being executed from the root of the Drupal
 // installation. e.g. -- > phpunit StaffDirectoryResultTest sites/all/modules/civihr-custom/civihr_employee_portal/tdd/StaffDirectoryResultTest.php
@@ -12,15 +12,19 @@ drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 
 // Load our custom classes
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
+use Drupal\civihr_employee_portal\Helpers\Test\TestUser;
 
 // Our test class.
-class StaffDirectoryResultTest extends PHPUnit_Framework_TestCase {
+class UsernameToExternalIdTest extends PHPUnit_Framework_TestCase {
+    private $testUser = NULL;
 
     protected function setUp() {
+        
     }
-    
+
     //check whether module username_to_external_id is enabled
     public function testModuleState() {
+        print " Test if module is enabled \r\n";
         $this->assertEquals(TRUE, module_exists("username_to_external_id"));
     }
 
@@ -65,6 +69,20 @@ class StaffDirectoryResultTest extends PHPUnit_Framework_TestCase {
 
             $this->fail('Exception occured by civi API call.');
         }
+    }
+
+    /**
+     *  tries to create a new drupal user and civi contact 
+     *  and tests if the external ID is set properly
+     * @depends testModuleState
+     */
+    public function testExternalID() {
+        $this->testUser = new TestUser(NULL, true);
+
+        $values = $this->testUser->getCiviValues("external_identifier");
+        
+        print " Test External ID \r\n";
+        $this->assertEquals($this->testUser->name, $values['external_identifier']);
     }
 
 }
