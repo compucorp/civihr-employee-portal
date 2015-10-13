@@ -333,3 +333,52 @@ function civihr_employee_portal_views_pre_render(&$view) {
         }
     }
 }
+
+/**
+ * Implements hook_views_pre_view().
+ * @param $view
+ * @param $display_id
+ * @param $args
+ */
+function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
+
+    // Custom configuration start for items per page
+    if ($view->name == 'civihr_staff_directory' && $display_id == 'page') {
+
+        // Default value for items per page
+        $default_count = $view->display_handler->display->display_options['pager']['options']['items_per_page'];
+
+        // Set number of items to show
+        $numbers_to_show = explode(',', $view->display_handler->display->display_options['pager']['options']['expose']['items_per_page_options']);
+
+        // Generate page path
+        $view_url_path = $view->display[$display_id]->display_options['path'];
+        $vupc = strlen($view_url_path);
+        $page_path = substr($_GET['q'], 0, $vupc);
+
+        // Create links
+        $items_per_page = array_map(
+            function ($item) use ($page_path) {
+                return l($item, $page_path, array('query' => array('items_per_page' => trim($item))));
+            },
+            $numbers_to_show
+        );
+
+        // Current header item
+        $header_item = $view->get_item('page', 'header', 'result');
+
+        // Add custom items per page
+        $header = t('Items per page') . ': ' . implode( ' | ', $items_per_page );
+
+        // Set the custom header
+        $view->set_item_option($display_id, 'header', 'result', 'content', $header_item['content'] . '&nbsp;' . $header);
+
+        // Set items to show per page
+        $selected_count = isset($_GET['items_per_page']) ? $_GET['items_per_page'] : $default_count;
+
+        // Set items per page to the view
+        $view->set_items_per_page($selected_count);
+
+    }
+
+}
