@@ -11,6 +11,8 @@ function civihr_employee_portal_drush_help($command) {
             return dt('Hides the blocks not used for CiviHR employee portal');
         case 'drush:update-external-ids':
             return dt('Sets usernames into external IDs');
+        case 'drush:update-email-type':
+            return dt('Sets primary email type to "Work" for existing users');
     }
 }
 
@@ -45,6 +47,15 @@ function civihr_employee_portal_drush_command() {
             'Standard example' => 'drush update-external-ids',
         ),
         'aliases' => array('drush-ueids'),
+    );
+    
+     $items['update-email-type'] = array(
+        'description' => dt('Sets primary email type to "Work" for existing users'),
+        'arguments'   => array(),
+        'examples' => array(
+            'Standard example' => 'drush update-email-type',
+        ),
+        'aliases' => array('drush-uetype'),
     );
     return $items;
 }
@@ -125,4 +136,68 @@ function drush_civihr_employee_portal_update_external_ids() {
 
     // Log to the command line with an OK status
     drush_log('External ID parameters were updated', 'ok');
+}
+
+/**
+ * Callback function for drush update-email-type.
+ * Callback is called by using drush_hook_command() where
+ * the Drush command with all "-" characters converted to "_" characters (update-email-type)
+ *
+ */
+function drush_civihr_employee_portal_update_email_type() {
+    try {
+        $work_type_id = _get_work_location_type_id();
+
+        $uf_data = civicrm_api3('UFMatch', 'get', array(
+            'sequential' => 1,
+            'return' => "contact_id",
+        ));
+
+        //update primary email to "Work" location type for each user
+        foreach ($uf_data['values'] as $uf_item) {
+
+            $email_data = civicrm_api3('Email', 'get', array(
+                'sequential' => 1,
+                'contact_id' => $uf_item['contact_id'],
+                'is_primary' => 1,
+                'return' => "id,email,contact_id,is_primary,location_type_id",
+            ));
+
+            $email_values = reset($email_data['values']);
+            
+            if ($email_values['location_type_id'] !== $work_type_id) {
+                $result = civicrm_api3('Email', 'create', array(
+                    'sequential' => 1,
+                    'id' => $email_values['id'],
+                    'email' => $email_values['email'],
+                    'contact_id' => $email_values['contact_id'],
+                    'is_primary' => $email_values['is_primary'],
+                    'location_type_id' => $work_type_id,
+                ));
+            }
+        }
+    }
+    catch (CiviCRM_API3_Exception $e) {
+        $error = $e->getMessage();
+        drush_log(dt('Error communicating with CiVi API: @err', array('@err' => $error)), 'error');
+        drush_user_abort();
+        return;
+    }
+
+    // Log to the command line with an OK status
+    drush_log('Primary email types were changed to "Work"', 'ok');
+}
+
+/**
+ * Helper function for retrieving particular "Work" location type id
+ */
+function _get_work_location_type_id() {
+    $type_data = civicrm_api3('LocationType', 'get', array(
+        'sequential' => 1,
+        'display_name' => "Work",
+    ));
+
+    $type_values = reset($type_data['values']);
+
+    return $type_values['id'];
 }

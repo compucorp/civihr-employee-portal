@@ -32,7 +32,7 @@ function civihr_employee_portal_js_alter(&$javascript) {
         }
 
     }
-    
+
     global $user;
     $uf = get_civihr_uf_match_data($user->uid);
     drupal_add_js(array('currentDrupalUserId' => $user->uid), 'setting');
@@ -520,7 +520,7 @@ function get_civihr_absence_statuses($status_id = NULL) {
 }
 
 function get_document_statuses($status_id = NULL) {
-    
+
     $documentStatuses = &drupal_static(__FUNCTION__);
 
     if (!isset($documentStatuses)) {
@@ -555,7 +555,7 @@ function get_document_statuses($status_id = NULL) {
 }
 
 function get_task_statuses($status_id = NULL) {
-    
+
     $taskStatuses = &drupal_static(__FUNCTION__);
 
     if (!isset($taskStatuses)) {
@@ -582,7 +582,7 @@ function get_task_statuses($status_id = NULL) {
             cache_set('civihr_task_statuses', $taskStatuses, 'cache', time() + 360);
         }
     }
-    
+
     if ($status_id === null) {
         return $taskStatuses['values'];
     }
@@ -594,7 +594,7 @@ function get_task_statuses($status_id = NULL) {
 }
 
 function get_task_type($type_id = NULL) {
-    
+
     $taskTypes = &drupal_static(__FUNCTION__);
 
     if (!isset($taskTypes)) {
@@ -621,7 +621,7 @@ function get_task_type($type_id = NULL) {
             cache_set('civihr_task_types', $taskTypes, 'cache', time() + 360);
         }
     }
-    
+
     if ($type_id === null) {
         return $taskTypes['values'];
     }
@@ -737,7 +737,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['absence_entitlement_json'] = array(
         'title' => 'Absence Entitlement',
         'page callback' => 'civihr_employee_portal_get_absence_entitlement',
@@ -775,7 +775,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['civi_documents/%ctools_js/delete/%'] = array(
         'title' => 'Delete Document',
         'page callback' => 'civihr_employee_portal_delete_document',
@@ -783,7 +783,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['civi_documents/%ctools_js/reminder/%'] = array(
         'title' => 'Send Reminder',
         'page callback' => 'civihr_employee_portal_send_reminder_document',
@@ -791,7 +791,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['civi_tasks'] = array(
         'title' => 'Task list',
         'page callback' => 'civihr_employee_portal_get_task_list',
@@ -805,7 +805,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['civi_tasks/%ctools_js/create'] = array(
         'title' => 'Create new Task',
         'page callback' => 'civihr_employee_portal_civi_tasks_create',
@@ -813,7 +813,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['civi_tasks/%ctools_js/edit/%'] = array(
         'title' => 'Edit Task',
         'page callback' => 'civihr_employee_portal_civi_tasks_create',
@@ -821,7 +821,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['civi_tasks/ajax/complete/%'] = array(
         'title' => 'Mark Task as complete',
         'page callback' => 'civihr_employee_portal_civi_tasks_complete',
@@ -1065,7 +1065,7 @@ function _get_civicrm_contact_id_by_drupal_uid($uid) {
     if (empty($res['values'])) {
         return null;
     }
-    
+
     $uf_match_data = array_shift($res['values']);
 
     return $uf_match_data['contact_id'];
@@ -1903,7 +1903,7 @@ function civihr_employee_portal_get_vacancy_list() {
  * Returns the document list
  */
 function civihr_employee_portal_get_document_list() {
-    
+
     $result_output = array(
         'values' => array(),
     );
@@ -1923,10 +1923,10 @@ function civihr_employee_portal_get_document_list() {
 
 /**
  * Ajax menu callback for dashboard document status change.
- * 
+ *
  * @param int $document_id
  *  ID of changed document
- * 
+ *
  * @param int $status_id
  *  ID of new status
  */
@@ -1969,13 +1969,13 @@ function civihr_employee_portal_change_document_status($document_id, $status_id)
 
 /**
  * Check whether user is entitled to change document status
- * 
+ *
  * @param int $document_id
  *  ID of modified document
- * 
+ *
  * @param int $user_id
  *  ID of user to check against or not filled for current user
- * 
+ *
  * @return bool
  *  TRUE if user has needed permission(s), FALSE if he doesn't
  */
@@ -2077,13 +2077,13 @@ function civihr_employee_portal_document_form($form, &$form_state) {
     if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
         return $form;
     }
-    
+
     $activityOptions = array();
     $typeResult = civicrm_api3('Activity', 'getoptions', array(
         'field' => "activity_type_id",
     ));
     $activityOptions['type'] = $typeResult['values'];
-    
+
     $result = civicrm_api3('Document', 'get', array(
         'sequential' => 1,
         'id' => $form_state['id'],
@@ -2097,10 +2097,10 @@ function civihr_employee_portal_document_form($form, &$form_state) {
         )
     );
     //$files = array();
-    
+
     $form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
     $form['#suffix'] = '</div></article>';
-    
+
     $form['id'] = array(
         '#type' => 'hidden',
         '#value' => $document['id'],
@@ -2115,7 +2115,7 @@ function civihr_employee_portal_document_form($form, &$form_state) {
         '#attributes' => array('disabled' => 'disabled'),
         '#default_value' => $activityOptions['type'][$document['activity_type_id']],
     );
-    
+
     $form['files'] = array(
         '#type' => 'plupload',
         '#title' => 'Files',
@@ -2154,7 +2154,7 @@ function civihr_employee_portal_document_form($form, &$form_state) {
             </script>
         </div></div>',
     );
-    
+
     $form['expire_date'] = array(
         '#type' => 'date_popup',
         '#title' => t('Expiry date:'),
@@ -2164,7 +2164,7 @@ function civihr_employee_portal_document_form($form, &$form_state) {
         '#date_year_range' => '-10:+10',
         '#default_value' => isset($document['expire_date']) ? strip_tags($document['expire_date']) : '',
     );
-    
+
     $form['details'] = array(
         '#type' => 'textarea',
         '#title' => t('Notes'),
@@ -2174,7 +2174,7 @@ function civihr_employee_portal_document_form($form, &$form_state) {
         '#cols' => 100,
         '#default_value' => isset($document['details']) ? strip_tags($document['details']) : '',
     );
-    
+
     $form['delete_files'] = array(
         '#type' => 'hidden',
         //'#tree' => TRUE,
@@ -2204,17 +2204,17 @@ function civihr_employee_portal_document_form_validate($form, &$form_state) {
 }
 
 function civihr_employee_portal_document_form_submit($form, &$form_state) {
-    
+
     $result_output = array();
     $extensions = CRM_Core_PseudoConstant::getExtensions();
     if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
         return false;
     }
-    
+
     $id = $form_state['values']['id'];
     $expireDate = substr($form_state['values']['expire_date'], 0, 10);
     $details = strip_tags($form_state['values']['details']);
-    
+
     $result = civicrm_api3('Document', 'create', array(
         'sequential' => 1,
         'id' => $id,
@@ -2234,7 +2234,7 @@ function civihr_employee_portal_document_form_submit($form, &$form_state) {
             );
         }
     }
-    
+
     $documentResult = civicrm_api3('Document', 'get', array(
         'sequential' => 1,
         'id' => $id,
@@ -2249,10 +2249,10 @@ function civihr_employee_portal_document_form_submit($form, &$form_state) {
             ));
         }
     }
-    
+
     //clear views cache to reflect changes
     _clear_json_cache();
-    
+
     drupal_set_message(t('Document changes has been saved.'), 'success');
 }
 
@@ -2311,39 +2311,39 @@ function civihr_employee_portal_delete_document($ajax, $id) {
 }
 
 function civihr_employee_portal_document_form_delete_confirm($form, &$form_state){
-    
+
     $form['id'] = array(
         '#type' => 'hidden',
         '#value' =>  $form_state['id'],
         '#suffix' => "<script>CRM.$('#edit-cancel').bind('click', function() { Drupal.CTools.Modal.dismiss(); return false; });</script>",
     );
-    
+
     $form['#submit'][] = 'civihr_employee_portal_document_form_delete_submit';
-    
-    return confirm_form($form, 
+
+    return confirm_form($form,
         t('Are you sure you want to delete this Document?'),
         'dashboard',
-        t('This action cannot be undone from here.'), 
-        t('Delete'), 
+        t('This action cannot be undone from here.'),
+        t('Delete'),
         t('Cancel'));
 }
 
 function civihr_employee_portal_document_form_delete_submit($form, &$form_state) {
-    
+
     $result_output = array();
     $extensions = CRM_Core_PseudoConstant::getExtensions();
     if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
         return false;
     }
-    
+
     $id = (int)$form_state['values']['id'];
-    
+
     $result = civicrm_api3('Document', 'create', array(
         'sequential' => 1,
         'id' => $id,
         'is_deleted' => 1,
     ));
-    
+
     drupal_set_message(t('Document has been deleted.'), 'success');
 }
 
@@ -2408,7 +2408,7 @@ function civihr_employee_portal_document_form_send_reminder($form, &$form_state)
     if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
         return $form;
     }
-    
+
     $form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
     $form['#suffix'] = '</div></article>';
 
@@ -2417,13 +2417,13 @@ function civihr_employee_portal_document_form_send_reminder($form, &$form_state)
         'field' => "activity_type_id",
     ));
     $activityOptions['type'] = $typeResult['values'];
-    
+
     $documentResult = civicrm_api3('Document', 'get', array(
         'sequential' => 1,
         'id' => $form_state['id'],
     ));
     $document = CRM_Utils_Array::first($documentResult['values']);
-    
+
     $activityContactResult = civicrm_api3('ActivityContact', 'get', array(
         'sequential' => 1,
         'activity_id' => $form_state['id'],
@@ -2438,12 +2438,12 @@ function civihr_employee_portal_document_form_send_reminder($form, &$form_state)
         $contact = CRM_Utils_Array::first($contactResult['values']);
         $activityContacts[] = $contact['sort_name'];
     }
-    
+
     $form['id'] = array(
         '#type' => 'hidden',
         '#value' =>  $form_state['id'],
     );
-    
+
     $form['document'] = array(
         '#type' => 'textfield',
         '#title' => t('Document'),
@@ -2453,7 +2453,7 @@ function civihr_employee_portal_document_form_send_reminder($form, &$form_state)
         '#attributes' => array('disabled' => 'disabled'),
         '#value' => $activityOptions['type'][$document['activity_type_id']],
     );
-    
+
     $form['due'] = array(
         '#type' => 'textfield',
         '#title' => t('Due'),
@@ -2463,7 +2463,7 @@ function civihr_employee_portal_document_form_send_reminder($form, &$form_state)
         '#attributes' => array('disabled' => 'disabled'),
         '#value' => $document['activity_date_time'],
     );
-    
+
     $form['assignee'] = array(
         '#type' => 'textfield',
         '#title' => t('Assignee'),
@@ -2473,7 +2473,7 @@ function civihr_employee_portal_document_form_send_reminder($form, &$form_state)
         '#attributes' => array('disabled' => 'disabled'),
         '#value' => implode(', ', $activityContacts),
     );
-    
+
     $form['notes'] = array(
         '#type' => 'textarea',
         '#title' => t('Notes'),
@@ -2483,34 +2483,34 @@ function civihr_employee_portal_document_form_send_reminder($form, &$form_state)
         '#suffix' => '</div></div>',
         '#default_value' => '',
     );
-    
+
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => t('Send'),
     );
-    
+
     $form['#submit'][] = 'civihr_employee_portal_document_form_send_reminder_submit';
-    
+
     return $form;
 }
 
 function civihr_employee_portal_document_form_send_reminder_submit($form, &$form_state) {
-    
+
     $result_output = array();
     $extensions = CRM_Core_PseudoConstant::getExtensions();
     if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
         return false;
     }
-    
+
     $id = (int)$form_state['values']['id'];
     $notes = $form_state['values']['notes'];
-    
+
     $result = civicrm_api3('Document', 'sendreminder', array(
         'sequential' => 1,
         'activity_id' => $id,
         'notes' => $notes,
     ));
-    
+
     drupal_set_message(t('Reminder has been sent.'), 'success');
 }
 
@@ -2522,7 +2522,7 @@ function civihr_employee_portal_document_form_send_reminder_submit($form, &$form
  * Returns the document list
  */
 function civihr_employee_portal_get_task_list() {
-    
+
     $result_output = array(
         'values' => array(),
     );
@@ -2577,6 +2577,9 @@ function civihr_employee_portal_civi_tasks_create($ajax, $id = null) {
         ctools_include('modal');
 
         $title = t('Create new Task');
+        if ($id) {
+            $title = t('Task Details');
+        }
 
         $form_state = array(
             'ajax' => TRUE,
@@ -2633,20 +2636,19 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
     $assigneeSelected = null;
     $targetSelected = null;
     $assignmentSelected = null;
-    
-    $disabledAttr = array();
-    if (!user_access('can create and edit tasks')) {
-        //$disabledAttr['#attributes'] = array('readonly' => 'readonly');
-        $disabledAttr = array('disabled' => 'disabled');
+    $id = isset($form_state['id']) ? $form_state['id'] : null;
+
+    $disabledAttr = array('disabled' => 'disabled');
+    if (_task_can_be_edited($id)) {
+        $disabledAttr = array();
     }
-    
+
     $result_output = array();
     $extensions = CRM_Core_PseudoConstant::getExtensions();
     if (empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
         return $form;
     }
-    
-    $id = $form_state['id'];
+
     if ($id) {
         $result = civicrm_api3('Task', 'get', array(
             'sequential' => 1,
@@ -2656,7 +2658,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
         $task = CRM_Utils_Array::first($result['values']);
         $assigneeId = CRM_Utils_array::first($task['assignee_contact_id']);
         $targetId = CRM_Utils_Array::first($task['target_contact_id']);
-        
+
         // Getting Assignee data:
         $result = civicrm_api3('Contact', 'get', array(
             'sequential' => 1,
@@ -2667,7 +2669,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
             'id' => $assigneeId,
             'text' => $assignee['sort_name'],
         );
-        
+
         // Getting Target data:
         $result = civicrm_api3('Contact', 'get', array(
             'sequential' => 1,
@@ -2678,7 +2680,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
             'id' => $targetId,
             'text' => $target['sort_name'],
         );
-        
+
         // Getting Assignment data:
         if ($task['case_id']) {
             $result = civicrm_api3('Assignment', 'get', array(
@@ -2692,13 +2694,13 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
             );
         }
     }
-    
+
     $result = civicrm_api3('Contact', 'get', array(
         'sequential' => 1,
         'id' => $targetId,
     ));
     $target = CRM_Utils_Array::first($result['values']);
-    
+
     // get all Assignments of the target:
     $result = civicrm_api3('Assignment', 'get', array(
         'sequential' => 1,
@@ -2710,22 +2712,25 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
             'text' => $target['sort_name'] . ' - ' . $assignment['subject'],
         );
     }
-    
+
     $taskTypes = civicrm_api3('Task', 'getoptions', array(
       'field' => "activity_type_id",
     ));
-    
+
     $taskStatuses = get_task_statuses();
-    
+
     $activityOptions = array();
     $typeResult = civicrm_api3('Activity', 'getoptions', array(
         'field' => "activity_type_id",
     ));
     $activityOptions['type'] = $typeResult['values'];
-    
-    $form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
-    $form['#suffix'] = '</div></article>';
-    
+
+    $form['#attributes']['class'][] = 'form-horizontal civihr_form';
+
+    $form['section_open'] = array(
+        '#markup' => '<div class="modal-civihr-custom__section">'
+    );
+
     $form['id'] = array(
         '#type' => 'hidden',
         '#value' => $id,
@@ -2733,110 +2738,124 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
 
     $form['activity_type_id'] = array(
         '#type' => 'select',
-        '#title' => t('Task type'),
+        '#title' => t('Task type:'),
         '#options' => $taskTypes['values'],
-        '#prefix' => '<div class="row"><div class="col-md-12">',
-        '#suffix' => '</div></div>',
         '#attributes' => $disabledAttr,
+        '#label_class' => 'col-sm-3 control-label',
+        '#field_prefix' => '<div class="col-sm-9">',
+        '#field_suffix' => '</div>',
     );
+
     if ($id) {
         $form['activity_type_id']['#default_value'] = $task['activity_type_id'];
     }
-    
+
     $form['activity_date_time'] = array(
         '#type' => 'date_popup',
         '#title' => t('Due:'),
-        '#prefix' => '<div class="row"><div class="col-md-12">',
-        '#suffix' => '</div></div>',
         '#date_format' => 'Y-m-d',
         '#date_year_range' => '-10:+10',
         '#default_value' => isset($task['activity_date_time']) ? strip_tags($task['activity_date_time']) : '',
         '#attributes' => $disabledAttr,
+        '#label_class' => 'col-xs-12 col-sm-3 control-label',
+        '#prefix' => '<div class="civihr_container-inline-date--reset">',
+        '#field_prefix' => '<div class="col-xs-4 col-sm-4">',
+        '#field_suffix' => '</div>',
+        '#suffix' => '</div>'
     );
-    
+
     $form['subject'] = array(
         '#type' => 'textfield',
-        '#title' => t('Subject'),
-        '#prefix' => '<div class="row"><div class="col-md-12">',
-        '#suffix' => '</div></div>',
+        '#title' => t('Subject:'),
         '#default_value' => isset($task['subject']) ? strip_tags($task['subject']) : '',
         '#attributes' => $disabledAttr,
+        '#label_class' => 'col-sm-3 control-label',
+        '#field_prefix' => '<div class="col-sm-9">',
+        '#field_suffix' => '</div>',
     );
-    
+
     $form['assignee'] = array(
         '#type' => 'textfield',
-        '#title' => t('Assignee'),
-        '#prefix' => '<div class="row"><div class="col-md-12">',
-        '#suffix' => '</div></div>',
+        '#title' => t('Assignee:'),
         '#default_value' => '',
         '#attributes' => $disabledAttr,
+        '#label_class' => 'col-sm-3 control-label',
+        '#field_prefix' => '<div class="col-sm-9">',
+        '#field_suffix' => '</div>',
     );
-    
+
     $form['target'] = array(
         '#type' => 'textfield',
-        '#title' => t('Target'),
-        '#prefix' => '<div class="row"><div class="col-md-12">',
-        '#suffix' => '</div></div>',
+        '#title' => t('Target:'),
         '#default_value' => '',
         '#attributes' => $disabledAttr,
+        '#label_class' => 'col-sm-3 control-label',
+        '#field_prefix' => '<div class="col-sm-9">',
+        '#field_suffix' => '</div>',
     );
-    
+
     $form['status_id'] = array(
         '#type' => 'select',
-        '#title' => t('Status'),
+        '#title' => t('Status:'),
         '#options' => $taskStatuses,
-        '#prefix' => '<div class="row"><div class="col-md-12">',
-        '#suffix' => '</div></div>',
         '#default_value' => isset($task['status_id']) ? $task['status_id'] : '',
         '#attributes' => $disabledAttr,
+        '#label_class' => 'col-sm-3 control-label',
+        '#field_prefix' => '<div class="col-sm-9">',
+        '#field_suffix' => '</div>',
     );
-    
+
     $form['details'] = array(
         '#type' => 'textarea',
-        '#title' => t('Details'),
-        '#prefix' => '<div class="row"><div class="col-md-12">',
-        '#suffix' => '</div></div>',
+        '#title' => t('Details:'),
         '#rows' => 10,
         '#cols' => 100,
         '#default_value' => isset($task['details']) ? strip_tags($task['details']) : '',
         '#attributes' => $disabledAttr,
-    );
-    
-    $form['assignment'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Assignment'),
-        '#prefix' => '<div class="row"><div class="col-md-12">',
-        '#suffix' => '</div></div>',
-        '#default_value' => '',
-        '#attributes' => $disabledAttr,
+        '#label_class' => 'col-sm-3 control-label',
+        '#field_prefix' => '<div class="col-sm-9">',
+        '#field_suffix' => '</div>',
     );
 
-    $form['save'] = array(
-        '#type' => 'submit',
-        '#value' => t('Save'),
-        '#attributes' => array(
-            'class' => array(
-                'btn',
-                'btn-primary'
-            ),
-        ),
+    $form['assignment'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Assignment:'),
+        '#default_value' => '',
+        '#attributes' => $disabledAttr,
+        '#label_class' => 'col-sm-3 control-label',
+        '#field_prefix' => '<div class="col-sm-9">',
+        '#field_suffix' => '</div>',
     );
+
+    $form['section_close'] = array(
+        '#markup' => '</div>'
+    );
+    
+    if (_task_can_be_edited($id)) {
+        $form['save'] = array(
+            '#type' => 'submit',
+            '#value' => t('Save'),
+            '#attributes' => array('class' => array('chr_action')),
+            '#prefix' => '<div class="modal-civihr-custom__footer"><div class="chr_actions-wrapper">',
+            '#suffix'=> '</div></div>'
+        );
+    }
 
     // Add the validation function
     $form['#validate'][] = 'civihr_employee_portal_civi_tasks_form_validate';
 
     // Add the submit function
     $form['#submit'][] = 'civihr_employee_portal_civi_tasks_form_submit';
-    
+
     $form['javascript'] = array(
-        '#markup' => 
+        '#markup' =>
           '<script type="text/javascript">'
         . 'Drupal.behaviors.civihr_employee_portal_tasks.buildAssigneeSelect(' . json_encode($assigneeSelected) . ');'
         . 'Drupal.behaviors.civihr_employee_portal_tasks.buildTargetSelect(' . json_encode($targetSelected) . ');'
         . 'Drupal.behaviors.civihr_employee_portal_tasks.buildAssignmentsSelect(' . json_encode($assignmentsSelectOptions) . ', ' . json_encode($assignmentSelected) . ');'
         . '</script>',
     );
-    
+
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/tasks.js');
 
     return $form;
@@ -2846,10 +2865,10 @@ function civihr_employee_portal_civi_tasks_form_validate($form, &$form_state) {
 }
 
 function civihr_employee_portal_civi_tasks_form_submit($form, &$form_state) {
-    
+
     global $user;
-    $id = $form_state['values']['id'];
-    
+    $id = isset($form_state['values']['id']) ? $form_state['values']['id'] : null;
+
     if (_task_can_be_edited($id)) {
         $result_output = array();
         $extensions = CRM_Core_PseudoConstant::getExtensions();
@@ -2860,18 +2879,20 @@ function civihr_employee_portal_civi_tasks_form_submit($form, &$form_state) {
         $params = array(
             'sequential' => 1,
             'debug' => false,
-            'assignee_contact_id' => array($form_state['values']['assignee']),
+            'assignee_contact_id' => $form_state['values']['assignee'],
             'source_contact_id' => _get_civicrm_contact_id_by_drupal_uid($user->uid),
-            'target_contact_id' => array($form_state['values']['target']),
+            'target_contact_id' => $form_state['values']['target'],
             'activity_type_id' => $form_state['values']['activity_type_id'],
             'activity_date_time' => $form_state['values']['activity_date_time'],
             'subject' => $form_state['values']['subject'],
             'status_id' => $form_state['values']['status_id'],
             'details' => $form_state['values']['details'],
-            'case_id' => $form_state['values']['assignment'],
         );
         if ($id) {
             $params['id'] = $id;
+        }
+        if (!empty($form_state['values']['assignment'])) {
+            $params['case_id'] = (int)$form_state['values']['assignment'];
         }
 
         $result = civicrm_api3('Task', 'create', $params);
@@ -2895,13 +2916,13 @@ function civihr_employee_portal_civi_tasks_form_submit($form, &$form_state) {
 
 /**
  * Ajax action which tries to mark the Task as complete.
- * 
+ *
  * @param int $taskId
- * 
+ *
  * @return NULL
  */
 function civihr_employee_portal_civi_tasks_complete($taskId = null) {
-    
+
     $res = array(
         'success' => 0,
         'message' => t("Error processing status change."),
@@ -2934,21 +2955,21 @@ function civihr_employee_portal_civi_tasks_complete($taskId = null) {
     // Output json
     drupal_json_output($res);
     drupal_exit();
-    
+
 }
 
 /**
  * Check if user has permissions to mark the task as complete.
- * 
+ *
  * @param int $taskId
- * 
+ *
  * @return bool
  */
 function _task_can_be_marked_as_complete($taskId) {
-    
+
     global $user;
     $result = false;
-    
+
     try {
         $apiResult = civicrm_api3('Task', 'get', array(
             'sequential' => 1,
@@ -2971,33 +2992,37 @@ function _task_can_be_marked_as_complete($taskId) {
 
 /**
  * Check if user has permissions to edit the task.
- * 
+ *
  * @param int $taskId
- * 
+ *
  * @return bool
  */
-function _task_can_be_edited($taskId) {
-    
+function _task_can_be_edited($taskId = null) {
+
     global $user;
     $result = false;
-    
-    try {
-        $apiResult = civicrm_api3('Task', 'get', array(
-            'sequential' => 1,
-            'return' => "id,source_contact_id",
-            'id' => $taskId,
-        ));
 
-        $uf = get_civihr_uf_match_data($user->uid);
-        $apiResultValue = CRM_Utils_Array::first($apiResult['values']);
+    if ($taskId) {
+        try {
+            $apiResult = civicrm_api3('Task', 'get', array(
+                'sequential' => 1,
+                'return' => "id,source_contact_id",
+                'id' => $taskId,
+            ));
 
-        if (in_array($uf['contact_id'], array($apiResultValue['source_contact_id']))) {
-            $result = true;
+            $uf = get_civihr_uf_match_data($user->uid);
+            $apiResultValue = CRM_Utils_Array::first($apiResult['values']);
+
+            if (in_array($uf['contact_id'], array($apiResultValue['source_contact_id']))) {
+                $result = true;
+            }
+        } catch (CiviCRM_API3_Exception $e) {
+            $error = $e->getMessage();
         }
-    } catch (CiviCRM_API3_Exception $e) {
-        $error = $e->getMessage();
+    } else {
+        $result = true;
     }
-    
+
     if (!user_access('can create and edit tasks')) {
         $result = false;
     }
@@ -3010,7 +3035,7 @@ function _task_can_be_edited($taskId) {
 * Ajax menu callback.
 */
 function civihr_employee_portal_request_new_account($ajax) {
-    
+
     if ($ajax) {
         ctools_include('ajax');
         ctools_include('modal');
@@ -3059,14 +3084,14 @@ function civihr_employee_portal_request_new_account($ajax) {
 }
 
 function civihr_employee_portal_request_new_account_form($form, &$form_state){
-    
+
     $form = array();
-    
+
     //$form = drupal_get_form('user_register_form', $form);
-    
+
     $form['#prefix'] = '<div id="request-new-account-form" class="col-md-12">';
     $form['#suffix'] = '</div>';
-    
+
     $form['first_name'] = array(
         '#type' => 'textfield',
         '#title' => t('First Name'),
@@ -3076,7 +3101,7 @@ function civihr_employee_portal_request_new_account_form($form, &$form_state){
             'placeholder' => t('First Name'),
         ),
     );
-    
+
     $form['last_name'] = array(
         '#type' => 'textfield',
         '#title' => t('Last Name'),
@@ -3086,7 +3111,7 @@ function civihr_employee_portal_request_new_account_form($form, &$form_state){
             'placeholder' => t('Last Name'),
         ),
     );
-    
+
     $form['mail'] = array(
         '#type' => 'textfield',
         '#title' => t('Email'),
@@ -3096,7 +3121,7 @@ function civihr_employee_portal_request_new_account_form($form, &$form_state){
             'placeholder' => t('Email'),
         ),
     );
-    
+
     $form['name'] = array(
         '#type' => 'textfield',
         '#title' => t('Employee ID'),
@@ -3106,37 +3131,37 @@ function civihr_employee_portal_request_new_account_form($form, &$form_state){
             'placeholder' => t('Employee ID'),
         ),
     );
-    
+
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => t('Request Access'),
     );
-    
+
     $form['#validate'] = array('civihr_employee_portal_request_new_account_validate');
     $form['#submit'] = array('civihr_employee_portal_request_new_account_submit');
-    
+
     return $form;
 }
 
 function civihr_employee_portal_request_new_account_validate($form, &$form_state) {
-    
+
     //$form['#user_category'] = 'account';
     if ($form_state['values']['first_name'] == '') {
         form_set_error('first_name', t('First Name field is required.'));
     }
-    
+
     if ($form_state['values']['last_name'] == '') {
         form_set_error('last_name', t('Last Name field is required.'));
     }
-    
+
     if ($form_state['values']['mail'] == '') {
         form_set_error('mail', t('Email field is required.'));
     }
-    
+
     if ($form_state['values']['name'] == '') {
         form_set_error('name', t('Employee ID field is required.'));
     }
-    
+
     if (isset($form_state['values']['name'])) {
       if ($error = user_validate_name($form_state['values']['name'])) {
         form_set_error('name', $error);
@@ -3145,7 +3170,7 @@ function civihr_employee_portal_request_new_account_validate($form, &$form_state
         form_set_error('name', t('The name %name is already taken.', array('%name' => $form_state['values']['name'])));
       }
     }
-    
+
     // Validate the e-mail address, and check if it is taken by an existing user.
     if ($error = user_validate_mail($form_state['values']['mail'])) {
       form_set_error('mail', $error);
@@ -3159,10 +3184,10 @@ function civihr_employee_portal_request_new_account_validate($form, &$form_state
         form_set_error('mail', t('The e-mail address %email is already registered. <a href="@password">Have you forgotten your password?</a>', array('%email' => $form_state['values']['mail'], '@password' => url('user/password'))));
       }
     }
-    
+
     //user_account_form_validate($form, $form_state);
     //user_register_validate($form, $form_state);
-    
+
     /*user_account_form_validate($form, $form_state);
     user_validate_picture($form, $form_state);
     user_register_validate($form, $form_state);*/
@@ -3178,7 +3203,7 @@ function civihr_employee_portal_request_new_account_submit($form, &$form_state) 
         'status' => 0,
         'access' => REQUEST_TIME,
     );
-    
+
     $user = user_save(drupal_anonymous_user(), $edit);
     if (!empty($user->uid)) {
         $uf = get_civihr_uf_match_data($user->uid);
@@ -3857,6 +3882,10 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
+    if ($form_id == 'webform_client_form_' . variable_get('my_details_webform_nid') ||
+        $form_id == 'webform_client_form_' . variable_get('emergency_contact_webform_nid')) {
+        $form['#attributes']['class'][] = 'civihr_form civihr_form--reset form-horizontal';
+    }
 
     // Form become outdated fix
     if ($form_id == 'views_exposed_form') {
@@ -3907,11 +3936,11 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
     if ($form_id == 'user_login_block') {
         array_unshift($form['#submit'], 'civihr_employee_portal_user_login_submit');
-        
+
         $form['#validate'] = array('civihr_employee_portal_user_login_validate');
         $form['name']['#required'] = false;
         $form['pass']['#required'] = false;
-        
+
         $form['forgot-password'] = array(
             '#type' => 'textfield',
             '#title' => t('Email'),
@@ -3969,7 +3998,7 @@ function civihr_employee_portal_preprocess_user_login(&$vars) {
                 )
         ))
     );
-    
+
     $vars['classes_array'] = array();
     $vars['content_attributes_array'] = array();
     $vars['title_attributes_array'] = array();
@@ -3978,12 +4007,12 @@ function civihr_employee_portal_preprocess_user_login(&$vars) {
 }
 
 function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
-    
+
     if ($form_state['values']['forgot-password']) {
         $form_state['values']['name'] = $form_state['values']['forgot-password'];
         require_once('modules/user/user.pages.inc');
         user_pass_validate($form, $form_state);
-        
+
         $errors = form_get_errors();
         if (isset($errors['name'])) {
             form_clear_error();
@@ -3991,7 +4020,7 @@ function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
         }
         return true;
     }
-    
+
     $requiredValidate = true;
     if (!$form_state['values']['name']) {
         form_set_error('name', t('Username field is required.'));
@@ -4004,14 +4033,14 @@ function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
     if (!$requiredValidate) {
         return;
     }
-    
+
     user_login_name_validate($form, $form_state);
     user_login_authenticate_validate($form, $form_state);
     user_login_final_validate($form, $form_state);
 }
- 
+
 function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
-    
+
     $destination = !empty($_REQUEST['destination']) ? $_REQUEST['destination'] : '';
     if ($form_state['input']['forgot-password']) {
         user_pass_submit($form, $form_state);
