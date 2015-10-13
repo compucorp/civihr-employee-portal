@@ -356,17 +356,22 @@ function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
         $vupc = strlen($view_url_path);
         $page_path = substr($_GET['q'], 0, $vupc);
 
+        // Set items to show per page
+        $selected_count = isset($_GET['items_per_page']) ? $_GET['items_per_page'] : $default_count;
+
         // Create links
+        // Not using the l function as it can't handle the "active" class correctly (https://www.drupal.org/node/1410574)
         $items_per_page = array_map(
-            function ($item) use ($page_path) {
-                return l($item, $page_path,
-                    array(
-                        'attributes' => array(
-                            'class' => array('chr_search-result__items-per-page__list__item', 'btn', 'btn-default')
-                        ),
-                        'query' => array('items_per_page' => trim($item))
-                    )
-                );
+            function ($item) use ($page_path, $selected_count) {
+                $item = trim($item);
+                $href = $page_path . '?items_per_page=' . $item;
+                $class = 'chr_search-result__items-per-page__list__item btn btn-default';
+
+                if ($selected_count == $item) {
+                    $class .= ' active';
+                }
+
+                return sprintf('<a href="%s" class="%s">%s</a>', $href, $class, $item);
             },
             $numbers_to_show
         );
@@ -400,9 +405,6 @@ function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
                 '</span>
             </div>' . $item_per_page_nav
         );
-
-        // Set items to show per page
-        $selected_count = isset($_GET['items_per_page']) ? $_GET['items_per_page'] : $default_count;
 
         // Set items per page to the view
         $view->set_items_per_page($selected_count);
