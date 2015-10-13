@@ -112,7 +112,11 @@ $handler->display->display_options['style_options']['info'] = array(
 $handler->display->display_options['header']['result']['id'] = 'result';
 $handler->display->display_options['header']['result']['table'] = 'views';
 $handler->display->display_options['header']['result']['field'] = 'result';
-$handler->display->display_options['header']['result']['content'] = 'Results: @total';
+$handler->display->display_options['header']['result']['content'] = '@total';
+/* Footer: Global: Unfiltered text */
+$handler->display->display_options['footer']['area_text_custom']['id'] = 'area_text_custom';
+$handler->display->display_options['footer']['area_text_custom']['table'] = 'views';
+$handler->display->display_options['footer']['area_text_custom']['field'] = 'area_text_custom';
 /* Relationship: CiviCRM Contacts: HRJobContract Details entity */
 $handler->display->display_options['relationships']['hrjc_details']['id'] = 'hrjc_details';
 $handler->display->display_options['relationships']['hrjc_details']['table'] = 'civicrm_contact';
@@ -436,9 +440,12 @@ $handler->display->display_options['pager']['options']['items_per_page'] = '2';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['pager']['options']['id'] = '0';
 $handler->display->display_options['pager']['options']['quantity'] = '9';
-$handler->display->display_options['pager']['options']['expose']['items_per_page'] = TRUE;
 $handler->display->display_options['pager']['options']['expose']['items_per_page_options'] = '2, 5, 10, 20, 40, 60';
 $handler->display->display_options['pager']['options']['expose']['items_per_page_options_all'] = TRUE;
+$handler->display->display_options['pager']['options']['tags']['first'] = 'First';
+$handler->display->display_options['pager']['options']['tags']['previous'] = 'Previous';
+$handler->display->display_options['pager']['options']['tags']['next'] = 'Next';
+$handler->display->display_options['pager']['options']['tags']['last'] = 'Last';
 $handler->display->display_options['merge_rows'] = TRUE;
 $handler->display->display_options['field_config'] = array(
     'id' => array(
@@ -526,4 +533,8 @@ $translatables['civihr_staff_directory'] = array(
     t('Manager'),
     t('Phone'),
     t('Staff directory list page'),
+    t('First'),
+    t('Previous'),
+    t('Next'),
+    t('Last'),
 );
