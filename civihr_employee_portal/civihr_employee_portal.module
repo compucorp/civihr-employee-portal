@@ -3739,7 +3739,7 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
 
         // Load the reports page
         // Add the javascript library for D3
-        drupal_add_js('http://d3js.org/d3.v3.min.js', 'external');
+        drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/d3/d3.v3.min.js');
         drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
 
         // Load the view, set filters and display
