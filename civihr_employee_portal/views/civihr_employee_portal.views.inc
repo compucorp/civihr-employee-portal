@@ -343,7 +343,8 @@ function civihr_employee_portal_views_pre_render(&$view) {
 function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
 
     // Custom configuration start for items per page
-    if ($view->name == 'civihr_staff_directory' && $display_id == 'page') {
+    if (($view->name == 'civihr_staff_directory' && $display_id == 'page') ||
+        ($view->name == 'hr_documents' && $display_id == 'hr_resources')) {
 
         // Default value for items per page
         $default_count = $view->display_handler->display->display_options['pager']['options']['items_per_page'];
@@ -401,7 +402,7 @@ function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
             '<div class="chr_search-result__total">'
                 . t('Results') .
                 '<span class="chr_search-result__total__count">'
-                    . $view->get_item('page', 'header', 'result')['content'] .
+                    . $view->get_item($display_id, 'header', 'result')['content'] .
                 '</span>
             </div>' . $item_per_page_nav
         );
