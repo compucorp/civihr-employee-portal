@@ -162,10 +162,16 @@ $handler = $view->new_display('page', 'HR Resources page', 'hr_resources');
 $handler->display->display_options['defaults']['css_class'] = FALSE;
 $handler->display->display_options['css_class'] = 'view-full-hr-documents';
 $handler->display->display_options['defaults']['pager'] = FALSE;
-$handler->display->display_options['pager']['type'] = 'mini';
-$handler->display->display_options['pager']['options']['items_per_page'] = '20';
+$handler->display->display_options['pager']['type'] = 'full';
+$handler->display->display_options['pager']['options']['items_per_page'] = '2';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['pager']['options']['id'] = '0';
+$handler->display->display_options['pager']['options']['quantity'] = '9';
+$handler->display->display_options['pager']['options']['expose']['items_per_page_options'] = '2, 5, 10, 20, 40, 60';
+$handler->display->display_options['pager']['options']['tags']['first'] = 'First';
+$handler->display->display_options['pager']['options']['tags']['previous'] = 'Previous';
+$handler->display->display_options['pager']['options']['tags']['next'] = 'Next';
+$handler->display->display_options['pager']['options']['tags']['last'] = 'Last';
 $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'default';
 $handler->display->display_options['defaults']['style_options'] = FALSE;
@@ -173,6 +179,16 @@ $handler->display->display_options['defaults']['row_plugin'] = FALSE;
 $handler->display->display_options['row_plugin'] = 'fields';
 $handler->display->display_options['defaults']['row_options'] = FALSE;
 $handler->display->display_options['defaults']['header'] = FALSE;
+/* Header: Global: Result summary */
+$handler->display->display_options['header']['result']['id'] = 'result';
+$handler->display->display_options['header']['result']['table'] = 'views';
+$handler->display->display_options['header']['result']['field'] = 'result';
+$handler->display->display_options['header']['result']['content'] = '@total';
+$handler->display->display_options['defaults']['footer'] = FALSE;
+/* Footer: Global: Unfiltered text */
+$handler->display->display_options['footer']['area_text_custom']['id'] = 'area_text_custom';
+$handler->display->display_options['footer']['area_text_custom']['table'] = 'views';
+$handler->display->display_options['footer']['area_text_custom']['field'] = 'area_text_custom';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Content: Nid */
 $handler->display->display_options['fields']['nid']['id'] = 'nid';
@@ -419,10 +435,10 @@ $translatables['hr_documents'] = array(
     t('Items per page'),
     t('- All -'),
     t('Offset'),
-    t('« first'),
-    t('‹ previous'),
-    t('next ›'),
-    t('last »'),
+    t('First'),
+    t('Previous'),
+    t('Next'),
+    t('Last'),
     t('<strong><h4>[title]</h4></strong>
 '),
     t('<div class="col-md-2"></div>
