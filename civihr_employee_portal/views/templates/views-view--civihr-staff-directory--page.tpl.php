@@ -60,7 +60,10 @@
 
                 <div class="chr_search-result__footer">
                     <?php if ($pager): ?>
-                        <div class="chr_search-result__pager">
+                        <div class="chr_search-result__pager chr_search-result__pager--full">
+                            <?php print $pager; ?>
+                        </div>
+                        <div class="chr_search-result__pager chr_search-result__pager--mini">
                             <?php print $pager; ?>
                         </div>
                     <?php endif; ?>
