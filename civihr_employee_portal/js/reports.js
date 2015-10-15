@@ -304,6 +304,13 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             // Start y / height padding, when using axes
             this.settings.hpadding = 25;
 
+            // Set globally used margins
+            this.settings.margin = {top: 20, right: 30, bottom: 30, left: 40},
+
+            // Globally accessible svg_width and svg_height -> (mind the final svg width and height equals to svg_width + margins)
+            this.settings.svg_width = this.settings.outerWidth + this.settings.padding;
+            this.settings.svg_height = this.settings.outerHeight + this.settings.hpadding;
+
             // Duration
             this.settings.duration = 250;
 
@@ -551,12 +558,16 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             // Create SVG element
             var svg = d3.select("#custom-report")
                 .append("svg")
-                .attr("width", report.settings.outerWidth + report.settings.padding)
-                .attr("height", report.settings.outerHeight);
+                .attr("width", report.settings.svg_width + report.settings.margin.left + report.settings.margin.right)
+                .attr("height", report.settings.svg_height + report.settings.margin.top + report.settings.margin.bottom);
 
             // Set up scales
+            var scaleX = d3.scale.ordinal()
+                .domain(d3.range(data.length))
+                .rangeBands([0, report.settings.svg_width - report.settings.padding], .3);
+
             var scaleY = d3.scale.linear()
-                .range([report.settings.outerHeight - report.settings.hpadding, report.settings.hpadding])
+                .range([report.settings.svg_height - report.settings.padding, 0])
                 .domain([0, d3.max(data, function(d) { return report.roundUp5(d.data.count); })]);
 
             var yAxis = d3.svg.axis()
@@ -595,14 +606,14 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
                 })
                 .attr("x", function(d, i) {
-                    return report.settings.padding + i * (report.settings.innerWidth / data.length);
+                    return scaleX(i);
                 })
                 .attr("y", function(d) {
-                    return scaleY(d.data.count);
+                    return scaleY(d.data.count) + report.settings.hpadding;
                 })
                 .attr("width", report.settings.innerWidth / data.length - report.settings.barPadding)
                 .attr("height", function(d) {
-                    return report.settings.outerHeight - report.settings.hpadding - scaleY(d.data.count);  // Just the data value
+                    return report.settings.svg_height - report.settings.hpadding - scaleY(d.data.count);
                 });
 
             svg.selectAll("text")
@@ -610,24 +621,25 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .enter()
                 .append("text")
                 .attr("font-family", "sans-serif")
-                .attr("font-size", "9px")
+                .attr("font-size", "13px")
                 .attr("fill", "black")
                 .attr("text-anchor", "middle")
                 .text(function(d) {
                     return d.data.department;
                 })
                 .attr("x", function(d, i) {
-                    return i * (report.settings.innerWidth / data.length) + (report.settings.innerWidth / data.length - report.settings.barPadding) / 2;
+                    return report.settings.barPadding + report.settings.margin.left + scaleX(i);
+
                 })
                 .attr("y", function(d) {
-                    return report.settings.outerHeight - 10;
+                    return report.settings.hpadding + report.settings.outerHeight + 15;
                 });
 
             // Append the axes
             svg.append("g")
-                .attr("class", "y axis")
+                .attr("class", "y-axis")
                 .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px' })
-                .attr("transform", "translate(" + report.settings.padding + ",0)")
+                .attr("transform", "translate(" + 30 + "," + report.settings.padding + ")")
                 .call(yAxis);
 
             // Add chart types
@@ -641,8 +653,8 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             var svg = d3.select('#custom-report')
                 .append('svg')
-                .attr('width', report.settings.outerWidth + report.settings.padding + 70)
-                .attr('height', report.settings.outerHeight)
+                .attr("width", report.settings.svg_width + report.settings.margin.left + report.settings.margin.right)
+                .attr("height", report.settings.svg_height + report.settings.margin.top + report.settings.margin.bottom)
                 .append('g');
 
             var arc = d3.svg.arc()
@@ -799,10 +811,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             });
 
-            var margin = {top: 20, right: 30, bottom: 30, left: 40},
-                width = report.settings.outerWidth + report.settings.padding,
-                height = report.settings.outerHeight + report.settings.hpadding;
-
             var y = d3.scale.linear()
                 .domain([0, d3.max(nested_data, function(d) {
 
@@ -819,11 +827,11 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
                     return report.roundUp5(highest);
                 })])
-                .range([height - report.settings.padding, 0]);
+                .range([report.settings.svg_height - report.settings.padding, 0]);
 
             var x0 = d3.scale.ordinal()
                 .domain(d3.range(n))
-                .rangeBands([0, width - report.settings.padding], .3);
+                .rangeBands([0, report.settings.svg_width - report.settings.padding], .3);
 
             var x1 = d3.scale.ordinal()
                 .domain(d3.range(m))
@@ -851,12 +859,12 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .ticks(report.settings.setTicks);
 
             var svg = d3.select("#custom-report").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
+                .attr("width", report.settings.svg_width + report.settings.margin.left + report.settings.margin.right)
+                .attr("height", report.settings.svg_height + report.settings.margin.top + report.settings.margin.bottom)
                 .append("svg:g");
 
             svg.append("g")
-                .attr("class", "y axis")
+                .attr("class", "y-axis")
                 .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px' })
                 .attr("transform", "translate(" + 30 + "," + report.settings.padding + ")")
                 .call(yAxis);
@@ -864,7 +872,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             svg.append("g")
                 .attr("class", "x-axis")
                 .style({ 'fill': 'none', 'stroke-width': '1px' })
-                .attr("transform", "translate(" + -30 + "," + height + ")")
+                .attr("transform", "translate(" + -30 + "," + report.settings.svg_height + ")")
                 .call(xAxis);
 
             svg.append("g").selectAll("g")
@@ -890,10 +898,10 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
                     // If not set, just return 0
                     if (typeof d == "undefined") {
-                        return height - report.settings.hpadding - y(0);
+                        return report.settings.svg_height - report.settings.hpadding - y(0);
                     }
 
-                    return height - report.settings.hpadding - y(d.values);
+                    return report.settings.svg_height - report.settings.hpadding - y(d.values);
 
                 })
                 .on("mouseover", function() {
@@ -916,7 +924,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     // Get x axis value (Location, Department..)
                     d.data.department = d['key'];
 
-                    // Get the y axis filter value (Gender, Age)
+                    // Get the y-axis filter value (Gender, Age)
                     d.data.gender = d3.select(this.parentNode).attr("data-legend");
 
                     _displayFilterData(d, report);
@@ -950,7 +958,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return d.key;
                 })
                 .attr("x", function(d, i) {
-                    return width - report.settings.barPadding;
+                    return report.settings.svg_width - report.settings.barPadding;
                 })
                 .attr("y", function(d, i) {
                     return (i * report.settings.hpadding) + report.settings.outerHeight - 10;
@@ -964,7 +972,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .attr("height", 15)
                 .attr("fill", function(d, i) { return z(d.key); })
                 .attr("x", function(d, i) {
-                    return width - 50 - report.settings.barPadding;
+                    return report.settings.svg_width - 50 - report.settings.barPadding;
                 })
                 .attr("y", function(d, i) {
                     return (i * report.settings.hpadding - 10) + report.settings.outerHeight - 10;
