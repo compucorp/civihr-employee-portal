@@ -16,6 +16,7 @@ use Drupal\civihr_employee_portal\Helpers\Test\TestUser;
 
 // Our test class.
 class UsernameToExternalIdTest extends PHPUnit_Framework_TestCase {
+
     private $testUser = NULL;
 
     protected function setUp() {
@@ -64,9 +65,7 @@ class UsernameToExternalIdTest extends PHPUnit_Framework_TestCase {
             $this->assertEquals(array(), $res_user_ids);
         }
         catch (CiviCRM_API3_Exception $e) {
-            $error = $e->getMessage();
-            watchdog("test error: testPrimaryEmailType", $error);
-
+            print " Exception raised in method " . __FUNCTION__ . " : " . $e->getMessage() . "\r\n";
             $this->fail('Exception occured by civi API call.');
         }
     }
@@ -77,12 +76,52 @@ class UsernameToExternalIdTest extends PHPUnit_Framework_TestCase {
      * @depends testModuleState
      */
     public function testExternalID() {
-        $this->testUser = new TestUser(NULL, true);
+        try {
+            print " Test External ID \r\n";
 
-        $values = $this->testUser->getCiviValues("external_identifier");
+            $this->testUser = new TestUser(NULL, true);
+            $values = $this->testUser->getCiviContactValues("external_identifier");
+
+            $this->assertEquals($this->testUser->name, $values['external_identifier']);
+            $this->testUser->delete();
+        }
+        catch (\Exception $e) {
+            print " Exception raised in method " . __FUNCTION__ . " : " . $e->getMessage() . "\r\n";
+            $this->fail('Exception occured');
+        }
+    }
+
+    /**
+     * updates the contact and tests the external ID again
+     * @depends testExternalID
+     */
+    public function testContactUpdate() {
+        try {
+            print " Test External ID after contact update \r\n";
+            $this->testUser = new TestUser(NULL, true);
+            // update civi contact 
+            $this->testUser->setCiviContactValues(array(
+                'first_name' => "Foo",
+                'last_name' => "Bar",
+            ));
+
+            // update drupal user account
+            $this->testUser->name = $this->testUser->name . "_2";
+            $this->testUser->save();
+
+            $values = $this->testUser->getCiviContactValues("external_identifier");
+            
+            $this->assertEquals($this->testUser->name, $values['external_identifier']);
+            $this->testUser->delete();
+        }
+        catch (\Exception $e) {
+            print " Exception raised in method " . __FUNCTION__ . " : " . $e->getMessage() . "\r\n";
+            $this->fail('Exception occured');
+        }
+    }
+
+    protected function tearDown() {
         
-        print " Test External ID \r\n";
-        $this->assertEquals($this->testUser->name, $values['external_identifier']);
     }
 
 }
