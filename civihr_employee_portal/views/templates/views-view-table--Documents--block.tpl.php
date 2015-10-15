@@ -49,13 +49,14 @@ endforeach;
 ?>
 <div class="chr_table-w-filters chr_table-w-filters--documents row">
     <div class="chr_table-w-filters__filters col-md-3">
-        <!-- .form-item is necessary for how we implement customSelect() -->
-        <div class="chr_table-w-filters__filters__dropdown-wrapper form-item">
-            <select class="chr_table-w-filters__filters__dropdown">
-                <?php foreach ($statuses as $key => $value): ?>
-                    <option value="<?php print $key; ?>"><?php print $value; ?> (<?php print $statusesCount[$key]; ?>)</option>
-                <?php endforeach; ?>
-            </select>
+        <div class="chr_table-w-filters__filters__dropdown-wrapper">
+            <div class="chr_custom-select chr_custom-select--full">
+                <select class="chr_table-w-filters__filters__dropdown skip-js-custom-select">
+                    <?php foreach ($statuses as $key => $value): ?>
+                        <option value="<?php print $key; ?>"><?php print $value; ?> (<?php print $statusesCount[$key]; ?>)</option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
         </div>
         <ul class="chr_table-w-filters__filters__nav">
             <?php $classActive = ' class="active"'; ?>
