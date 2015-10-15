@@ -570,6 +570,13 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 .range([report.settings.svg_height - report.settings.padding, 0])
                 .domain([0, d3.max(data, function(d) { return report.roundUp5(d.data.count); })]);
 
+            var xAxis = d3.svg.axis()
+                .scale(scaleX)
+                .tickFormat(function(d, i) {
+                    return data[i]['data']['department'];
+                })
+                .orient("bottom");
+
             var yAxis = d3.svg.axis()
                 .scale(scaleY)
                 .orient("left")
@@ -616,26 +623,13 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     return report.settings.svg_height - report.settings.hpadding - scaleY(d.data.count);
                 });
 
-            svg.selectAll("text")
-                .data(data)
-                .enter()
-                .append("text")
-                .attr("font-family", "sans-serif")
-                .attr("font-size", "13px")
-                .attr("fill", "black")
-                .attr("text-anchor", "middle")
-                .text(function(d) {
-                    return d.data.department;
-                })
-                .attr("x", function(d, i) {
-                    return report.settings.barPadding + report.settings.margin.left + scaleX(i);
-
-                })
-                .attr("y", function(d) {
-                    return report.settings.hpadding + report.settings.outerHeight + 15;
-                });
-
             // Append the axes
+            svg.append("g")
+                .attr("class", "x-axis")
+                .style({ 'fill': 'none', 'stroke-width': '1px' })
+                .attr("transform", "translate(" + -30 + "," + report.settings.svg_height + ")")
+                .call(xAxis);
+
             svg.append("g")
                 .attr("class", "y-axis")
                 .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px' })
