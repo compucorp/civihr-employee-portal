@@ -45,7 +45,7 @@
         </div>
         <div class="clearfix visible-xs-block"></div>
         <div class="chr_hr-resource__description col-sm-6 col-md-7">'
-            . ( isset($row->field_body[0]) ? $row->field_body[0]['rendered']['#markup'] : '' ) .
+            . ( isset($row->field_field_short_description[0]) ? $row->field_field_short_description[0]['rendered']['#markup'] : '' ) .
         '</div>
     ';
 

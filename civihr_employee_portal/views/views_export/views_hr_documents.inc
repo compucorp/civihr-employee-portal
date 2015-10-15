@@ -233,20 +233,13 @@ $handler->display->display_options['fields']['nothing']['table'] = 'views';
 $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = '';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
-/* Field: Content: Body */
-$handler->display->display_options['fields']['body']['id'] = 'body';
-$handler->display->display_options['fields']['body']['table'] = 'field_data_body';
-$handler->display->display_options['fields']['body']['field'] = 'body';
-$handler->display->display_options['fields']['body']['label'] = '';
-$handler->display->display_options['fields']['body']['exclude'] = TRUE;
-$handler->display->display_options['fields']['body']['alter']['alter_text'] = TRUE;
-$handler->display->display_options['fields']['body']['alter']['text'] = '<div class="col-md-2"></div>
-<div class="col-md-10">[body]</div>';
-$handler->display->display_options['fields']['body']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['body']['type'] = 'text_summary_or_trimmed';
-$handler->display->display_options['fields']['body']['settings'] = array(
-    'trim_length' => '100',
-);
+/* Field: Content: Short description */
+$handler->display->display_options['fields']['field_short_description']['id'] = 'field_short_description';
+$handler->display->display_options['fields']['field_short_description']['table'] = 'field_data_field_short_description';
+$handler->display->display_options['fields']['field_short_description']['field'] = 'field_short_description';
+$handler->display->display_options['fields']['field_short_description']['label'] = '';
+$handler->display->display_options['fields']['field_short_description']['exclude'] = TRUE;
+$handler->display->display_options['fields']['field_short_description']['element_label_colon'] = FALSE;
 /* Field: Global: Fieldset */
 $handler->display->display_options['fields']['fieldset']['id'] = 'fieldset';
 $handler->display->display_options['fields']['fieldset']['table'] = 'views';
@@ -421,7 +414,7 @@ $handler->display->display_options['arguments']['nid']['summary']['format'] = 'd
 $handler->display->display_options['arguments']['nid']['summary_options']['items_per_page'] = '25';
 $translatables['hr_documents'] = array(
     t('Master'),
-    t('HR Documents and Downloads'),
+    t('HR Resources'),
     t('more'),
     t('Search'),
     t('Reset'),
@@ -439,11 +432,12 @@ $translatables['hr_documents'] = array(
     t('Previous'),
     t('Next'),
     t('Last'),
+    t('@total'),
     t('<strong><h4>[title]</h4></strong>
 '),
     t('<div class="col-md-2"></div>
 <div class="col-md-10">[body]</div>'),
-    t('See resources'),
+    t('See Resources'),
     t('Attachments'),
     t('No resource file attached!'),
     t('Keywords'),
