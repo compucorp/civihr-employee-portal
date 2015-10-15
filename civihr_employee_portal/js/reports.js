@@ -255,7 +255,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
          */
         function _checkChartTypes(customReport) {
 
-            if (customReport.getMainFilter() != 'headcount') {
+            if (customReport.getMainFilter() != 'headcount' && customReport.getMainFilter() != 'fte') {
                 customReport.setChartType('grouped_bar');
             }
             else {
@@ -445,7 +445,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             // Only headcount reports can be bar/pie types
             // All other reports are currently grouped bar charts
-            if (this.getMainFilter() != 'headcount') {
+            if (this.getMainFilter() != 'headcount' && this.getMainFilter() != 'fte') {
 
                 svg.append("text")
                     .attr("class", "btn btn-primary btn-reports")
