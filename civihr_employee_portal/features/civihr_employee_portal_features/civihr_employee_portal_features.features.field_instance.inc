@@ -147,7 +147,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
         'download_fields' => array(
           'field_attachment' => 'field_attachment',
         ),
-        'download_label' => 'Download all',
+        'download_label' => 'Download',
       ),
     ),
     'deleted' => 0,

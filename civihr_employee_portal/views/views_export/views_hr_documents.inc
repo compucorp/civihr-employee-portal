@@ -394,7 +394,7 @@ $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
 $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = '';
-$handler->display->display_options['fields']['nothing']['alter']['text'] = '<div class="btn">Download all</div>';
+$handler->display->display_options['fields']['nothing']['alter']['text'] = '<div class="btn">Download</div>';
 $handler->display->display_options['fields']['nothing']['alter']['make_link'] = TRUE;
 $handler->display->display_options['fields']['nothing']['alter']['path'] = 'node/[nid]';
 $handler->display->display_options['fields']['nothing']['alter']['alt'] = 'Read more';
@@ -451,7 +451,7 @@ $translatables['hr_documents'] = array(
     t('HR Resources page modal details'),
     t('Download'),
     t('Details:'),
-    t('<div class="btn">Download all</div>'),
+    t('<div class="btn">Download</div>'),
     t('Post date'),
     t('All'),
 );
