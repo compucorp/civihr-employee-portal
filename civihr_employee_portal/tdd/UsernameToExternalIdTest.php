@@ -35,34 +35,34 @@ class UsernameToExternalIdTest extends PHPUnit_Framework_TestCase {
      */
     public function testPrimaryEmailType() {
         try {
-            $res_user_ids = array();
-            $work_type_id = HelperClass::_get_work_location_type_id();
+            $resultUserIDs = array();
+            $workTypeID = HelperClass::_get_work_location_type_id();
 
-            $uf_data = civicrm_api3('UFMatch', 'get', array(
+            $ufData = civicrm_api3('UFMatch', 'get', array(
                 'sequential' => 1,
                 'return' => "contact_id",
             ));
 
-            foreach ($uf_data['values'] as $uf_item) {
+            foreach ($ufData['values'] as $ufItem) {
 
-                $email_data = civicrm_api3('Email', 'get', array(
+                $emailData = civicrm_api3('Email', 'get', array(
                     'sequential' => 1,
-                    'contact_id' => $uf_item['contact_id'],
+                    'contact_id' => $ufItem['contact_id'],
                     'is_primary' => 1,
                     'return' => "id,email,contact_id,is_primary,location_type_id",
                 ));
 
-                $email_values = reset($email_data['values']);
+                $emailValues = reset($emailData['values']);
 
-                if ($email_values['location_type_id'] !== $work_type_id) {
-                    $res_user_ids[] = $uf_item['contact_id'];
+                if ($emailValues['location_type_id'] !== $workTypeID) {
+                    $resultUserIDs[] = $ufItem['contact_id'];
                 }
             }
 
             print " Test Primary Email Type \r\n";
-            print_r($res_user_ids);
+            print_r($resultUserIDs);
 
-            $this->assertEquals(array(), $res_user_ids);
+            $this->assertEquals(array(), $resultUserIDs);
         }
         catch (CiviCRM_API3_Exception $e) {
             print " Exception raised in method " . __FUNCTION__ . " : " . $e->getMessage() . "\r\n";
@@ -93,7 +93,7 @@ class UsernameToExternalIdTest extends PHPUnit_Framework_TestCase {
 
     /**
      * updates the contact and tests the external ID again
-     * @depends testExternalID
+     * @depends testModuleState
      */
     public function testContactUpdate() {
         try {
@@ -110,8 +110,87 @@ class UsernameToExternalIdTest extends PHPUnit_Framework_TestCase {
             $this->testUser->save();
 
             $values = $this->testUser->getCiviContactValues("external_identifier");
-            
+
             $this->assertEquals($this->testUser->name, $values['external_identifier']);
+            $this->testUser->delete();
+        }
+        catch (\Exception $e) {
+            print " Exception raised in method " . __FUNCTION__ . " : " . $e->getMessage() . "\r\n";
+            $this->fail('Exception occured');
+        }
+    }
+
+    /**
+     * sets the personal phone, personal email for the contact -> and checks 
+     * if the correct values are returned with the API
+     * @depends testModuleState
+     */
+    public function testPersonalDetails() {
+        try {
+            print " Test correct setup of personal email and phone \r\n";
+            $this->testUser = new TestUser(NULL, true);
+
+            $contactID = $this->testUser->getCiviUserId();
+            $personalTypeID = HelperClass::_get_location_type_id("Home");
+            $inputDetails = array('email' => "test_foo_bar.home@compucorp.co.uk", 'phone' => "22222222");
+
+            $emailResult = civicrm_api3('Email', 'create', array(
+                'sequential' => 1,
+                'contact_id' => $contactID,
+                'location_type_id' => $personalTypeID,
+                'email' => $inputDetails['email'],
+            ));
+
+            $phoneResult = civicrm_api3('Phone', 'create', array(
+                'sequential' => 1,
+                'contact_id' => $contactID,
+                'location_type_id' => $personalTypeID,
+                'phone' => $inputDetails['phone'],
+            ));
+
+            $emailData = civicrm_api3('Email', 'getsingle', array(
+                'sequential' => 1,
+                'contact_id' => $contactID,
+                'location_type_id' => $personalTypeID,
+            ));
+
+            $phoneData = civicrm_api3('Phone', 'getsingle', array(
+                'sequential' => 1,
+                'contact_id' => $contactID,
+                'location_type_id' => $personalTypeID,
+            ));
+
+            $this->assertEquals($inputDetails, array('email' => $emailData['email'], 'phone' => $phoneData['phone']));
+            $this->testUser->delete();
+        }
+        catch (\Exception $e) {
+            print " Exception raised in method " . __FUNCTION__ . " : " . $e->getMessage() . "\r\n";
+            $this->fail('Exception occured');
+        }
+    }
+
+    /**
+     * checks if the work email from the API is set as primary and is the 
+     * same as the email used when creating the contact
+     * @depends testModuleState
+     */
+    public function testWorkEmail() {
+        try {
+            print " Test work email type \r\n";
+            $this->testUser = new TestUser(NULL, true);
+
+            $contactID = $this->testUser->getCiviUserId();
+            $workTypeID = HelperClass::_get_work_location_type_id();
+
+            $emailData = civicrm_api3('Email', 'getsingle', array(
+                'sequential' => 1,
+                'contact_id' => $contactID,
+                'is_primary' => 1,
+                'location_type_id' => $workTypeID,
+                'return' => "id,email,contact_id,is_primary,location_type_id",
+            ));
+
+            $this->assertEquals($this->testUser->mail, $emailData['email']);
             $this->testUser->delete();
         }
         catch (\Exception $e) {

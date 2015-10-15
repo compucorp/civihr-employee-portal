@@ -148,13 +148,11 @@ class TestUser {
             $requestedFields = array($requestedFields);
         }
 
-
         $result = civicrm_api3('Contact', 'getsingle', array(
             'sequential' => 1,
             'id' => $this->getCiviUserId(),
             'return' => join(",", $requestedFields),
         ));
-
 
         return $result;
     }
@@ -170,14 +168,12 @@ class TestUser {
             'id' => $this->getCiviUserId(),
         );
 
-
         $result = civicrm_api3('Contact', 'create', array_merge($values, $base));
-
 
         return $result;
     }
 
-    protected function getCiviUserId() {
+    public function getCiviUserId() {
         if ($this->civiUserID === NULL) {
             $uf = get_civihr_uf_match_data($this->user->uid);
             if (!empty($uf['contact_id'])) {
