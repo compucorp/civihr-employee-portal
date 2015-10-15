@@ -93,7 +93,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => 2,
+      'weight' => 3,
     ),
   );
 
@@ -135,7 +135,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
         'progress_indicator' => 'throbber',
       ),
       'type' => 'file_generic',
-      'weight' => 3,
+      'weight' => 4,
     ),
   );
 
@@ -180,7 +180,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
       'module' => 'download',
       'settings' => array(),
       'type' => 'download_link_widget',
-      'weight' => 4,
+      'weight' => 5,
     ),
   );
 
@@ -221,12 +221,53 @@ function civihr_employee_portal_features_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-hr_documents-field_short_description'
+  $field_instances['node-hr_documents-field_short_description'] = array(
+    'bundle' => 'hr_documents',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 4,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_short_description',
+    'label' => 'Short description',
+    'required' => 1,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 2,
+    ),
+  );
+
   // Translatables
   // Included for use with string extractors like potx.
   t('Attachments');
   t('Description');
   t('Download');
   t('Resource type');
+  t('Short description');
 
   return $field_instances;
 }
