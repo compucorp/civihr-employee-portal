@@ -2533,6 +2533,7 @@ function civihr_employee_portal_get_task_list() {
             'is_deleted' => 0,
             'is_current_revision' => 1,
             'return' => "id,activity_type_id,activity_subject,activity_date_time,expire_date,activity_details,activity_status_id,activity_is_deleted,case_id,file_count,source_contact_id,target_contact_id,assignee_contact_id",
+            'options' => array('limit' => 0),
         ));
     }
 
