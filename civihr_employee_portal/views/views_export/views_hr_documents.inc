@@ -134,17 +134,12 @@ $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FAL
 $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['title']['element_wrapper_class'] = 'hr-documents-title-block';
 $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
-/* Field: Content: Body */
-$handler->display->display_options['fields']['body']['id'] = 'body';
-$handler->display->display_options['fields']['body']['table'] = 'field_data_body';
-$handler->display->display_options['fields']['body']['field'] = 'body';
-$handler->display->display_options['fields']['body']['label'] = '';
-$handler->display->display_options['fields']['body']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['body']['element_wrapper_class'] = 'hr-documents-body-block';
-$handler->display->display_options['fields']['body']['type'] = 'text_summary_or_trimmed';
-$handler->display->display_options['fields']['body']['settings'] = array(
-    'trim_length' => '100',
-);
+/* Field: Content: Short description */
+$handler->display->display_options['fields']['field_short_description']['id'] = 'field_short_description';
+$handler->display->display_options['fields']['field_short_description']['table'] = 'field_data_field_short_description';
+$handler->display->display_options['fields']['field_short_description']['field'] = 'field_short_description';
+$handler->display->display_options['fields']['field_short_description']['label'] = '';
+$handler->display->display_options['fields']['field_short_description']['element_label_colon'] = FALSE;
 /* Field: Global: Custom text */
 $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
@@ -433,10 +428,7 @@ $translatables['hr_documents'] = array(
     t('Next'),
     t('Last'),
     t('@total'),
-    t('<strong><h4>[title]</h4></strong>
-'),
-    t('<div class="col-md-2"></div>
-<div class="col-md-10">[body]</div>'),
+    t('<strong><h4>[title]</h4></strong>'),
     t('See Resources'),
     t('Attachments'),
     t('No resource file attached!'),
