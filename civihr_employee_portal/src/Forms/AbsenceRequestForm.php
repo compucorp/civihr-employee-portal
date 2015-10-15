@@ -250,11 +250,14 @@ class AbsenceRequestForm {
      */
     protected function add_fields() {
         $this->form['absence_request_type'] = array(
+            '#attributes' => array('class' => array('skip-js-custom-select')),
             '#title' => t('Type:'),
             '#type' => 'select',
             '#options' => $this->absence_types(),
+            '#field_prefix' => '<div class="chr_custom-select chr_custom-select--full chr_custom-select--transparent">',
+            '#field_suffix' => '</div>',
             '#prefix' => '<div class="modal-civihr-custom__section--strip">',
-            '#suffix'=> '</div>'
+            '#suffix'=> '</div>',
         );
 
         $this->form['absence_file'] = array(

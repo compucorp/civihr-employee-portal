@@ -42,12 +42,14 @@
                         <button class="btn btn-default active" data-task-type="all">All</button>
                     </div>
                 </div>
-                <div class="chr_panel__toolbar__filter visible-xs-block form-item">
-                    <select id="select-tasks-types">
-                        <option value="my">My Tasks</option>
-                        <option value="delegated">Delegated Tasks</option>
-                        <option value="all" selected>All</option>
-                    </select>
+                <div class="chr_panel__toolbar__filter visible-xs-block">
+                    <div class="chr_custom-select chr_custom-select--full">
+                        <select id="select-tasks-types" class="skip-js-custom-select">
+                            <option value="my">My Tasks</option>
+                            <option value="delegated">Delegated Tasks</option>
+                            <option value="all" selected>All</option>
+                        </select>
+                    </div>
                 </div>
             <?php endif; ?>
             <div class="chr_panel__toolbar__actions">

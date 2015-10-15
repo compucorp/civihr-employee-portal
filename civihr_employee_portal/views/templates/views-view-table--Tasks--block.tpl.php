@@ -87,12 +87,14 @@ function _get_task_filter_by_date($date) {
 
 <div class="chr_table-w-filters row">
     <div class="chr_table-w-filters__filters col-md-3">
-        <div class="chr_table-w-filters__filters__dropdown-wrapper form-item">
-            <select id="select-tasks-filter" class="chr_table-w-filters__filters__dropdown">
-                <?php foreach ($taskFilters as $key => $value): ?>
-                    <option value="<?php print $key; ?>"><?php print $value; ?> (<?php print $taskFiltersCount[$key]; ?>)</option>
-                <?php endforeach; ?>
-            </select>
+        <div class="chr_table-w-filters__filters__dropdown-wrapper">
+            <div class="chr_custom-select chr_custom-select--full">
+                <select id="select-tasks-filter" class="chr_table-w-filters__filters__dropdown skip-js-custom-select">
+                    <?php foreach ($taskFilters as $key => $value): ?>
+                        <option value="<?php print $key; ?>"><?php print $value; ?> (<?php print $taskFiltersCount[$key]; ?>)</option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
         </div>
         <ul id="nav-tasks-filter" class="chr_table-w-filters__filters__nav">
             <?php $classActive = ' class="active"'; ?>
