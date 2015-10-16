@@ -2,6 +2,11 @@
 Drupal.behaviors.civihr_employee_portal_reports = {
     attach: function (context, settings) {
 
+        // Report to date selector
+        $( "#reportToDate" ).datepicker({
+            dateFormat: "yy-mm-dd"
+        });
+
         $('.table-add', context).once('editableBehaviour', function () {
 
             // Apply the myCustomBehaviour effect to the elements only once.
@@ -393,6 +398,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
         DrawReport.prototype.drawGraph = function(json_url, type) {
 
             console.log('draw');
+            console.log(json_url);
             var _this = this;
 
             d3.json(Drupal.settings.basePath + json_url, function(error, json) {
@@ -400,6 +406,8 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
                 // Prepare our data
                 data = json.results;
+
+                console.log(data);
 
                 // Draw Simple bar chart
                 if (type == 'bar') {
@@ -547,6 +555,20 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
         var customReport = new CustomReport('param to pass');
         customReport.drawGraph(customReport.getJsonUrl(), customReport.getChartType());
+
+        // When the date range changes update the graph
+        $("#reportToDate").change(function() {
+            console.log('date update');
+            console.log(this.value);
+
+            // If not set it will return All values
+            var toDate = this.value || 'All';
+
+            console.log(toDate);
+            // Filter the graph by specifing To Date
+            customReport.drawGraph(customReport.getJsonUrl() + '/' + toDate, customReport.getChartType());
+
+        });
 
         // Set default classes on initial load
         _setDefaultClass(mainFilters, subFilters, customReport);
