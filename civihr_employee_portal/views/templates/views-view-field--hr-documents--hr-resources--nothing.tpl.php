@@ -25,7 +25,7 @@
 
 <?php
     $total_count = isset($row->field_field_attachment) ? count($row->field_field_attachment) : t('No attachments');;
-    $resource_type = isset($row->field_field_resource_type[0]) ? $row->field_field_resource_type[0]['rendered']['#markup'] : t('No resource type selected!');
+    $resource_type = isset($row->field_field_resource_type[0]) ? $row->field_field_resource_type[0]['rendered']['#markup'] : NULL;
 
     // Get the download link if we have anything to download
     if (isset($row->field_field_download[0])) {
@@ -41,11 +41,11 @@
             <h3 class="chr_hr-resource__name" id="resource-modal">'
                 . civihr_employee_portal_make_link($row->node_title, 'hr-resource', $row->nid) .
             '</h3>
-            <span class="chr_hr-resource__type">' . $resource_type . '</span>
+            <span class="chr_hr-resource__type">' . ( $resource_type ? $resource_type : '' ) . '</span>
         </div>
         <div class="clearfix visible-xs-block"></div>
         <div class="chr_hr-resource__description col-sm-6 col-md-7">'
-            . ( isset($row->field_body[0]) ? $row->field_body[0]['rendered']['#markup'] : '' ) .
+            . ( isset($row->field_field_short_description[0]) ? $row->field_field_short_description[0]['rendered']['#markup'] : '' ) .
         '</div>
     ';
 
