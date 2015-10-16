@@ -367,6 +367,23 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
 }
 
 /**
+ * Implements hook_custom_theme()
+ * @return string
+ */
+function civihr_employee_portal_custom_theme() {
+
+    /**
+     *
+
+    // Set the civihr_reports related pages to use the custom civihr admin theme and not the self service theme
+    if (arg(0) == 'civihr_reports' || arg(0) == 'civihr_reports_settings') {
+        return 'seven';
+    }
+
+     */
+}
+
+/**
  * Implements hook_views_default_views().
  */
 function civihr_employee_portal_views_default_views() {
@@ -4360,18 +4377,24 @@ function civihr_employee_portal_module_implements_alter(&$implementations, $hook
         return;
     }
 
-    // Check if the module exists and it's installed
-    if (!module_exists('views_autocomplete_filters')) {
-        return;
-    }
-
-    $module = 'views_autocomplete_filters';
     watchdog('alter default order', print_r($implementations, TRUE));
 
-    $group = array($module => $implementations[$module]);
+    $group = [];
+
+    // Check if the module exists and it's installed
+    if (module_exists('views_autocomplete_filters')) {
+        // Put the views autocomplete filters after civicrm
+        $module = 'views_autocomplete_filters';
+        $group += array($module => $implementations[$module]);
+        unset($implementations[$module]);
+    }
+
+    // Put the civihr employee portal module after civicrm module
+    $module = 'civihr_employee_portal';
+    $group += array($module => $implementations[$module]);
     unset($implementations[$module]);
 
-    // Make sure this module is after civicrm to avoid error with autocomplete search
+    // Make sure some modules are after civicrm to avoid error with autocomplete search or drush cc all
     $implementations = $implementations + $group;
 
     watchdog('alter modified order', print_r($implementations, TRUE));
