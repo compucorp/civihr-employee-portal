@@ -157,7 +157,7 @@ function _get_task_filter_by_date($date) {
 								<?php //if (_task_can_be_edited($row['id'])): ?>
                                 <a
                                     href="/civi_tasks/nojs/edit/<?php print strip_tags($row['id']); ?>"
-                                    class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">
+                                    class="ctools-use-modal ctools-modal-civihr-custom-style ctools-use-modal-processed">
 								<?php //endif; ?>
                                     <?php print strip_tags(html_entity_decode($content)); ?>
 								<?php //if (_task_can_be_edited($row['id'])): ?>
