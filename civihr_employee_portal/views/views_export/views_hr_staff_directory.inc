@@ -216,6 +216,7 @@ $handler->display->display_options['filter_groups']['groups'] = array(
     1 => 'AND',
     2 => 'OR',
     3 => 'OR',
+    4 => 'OR',
 );
 /* Filter criterion: CiviCRM Contacts: Contact Type */
 $handler->display->display_options['filters']['contact_type']['id'] = 'contact_type';
@@ -418,20 +419,18 @@ $handler->display->display_options['filters']['is_primary']['field'] = 'is_prima
 $handler->display->display_options['filters']['is_primary']['relationship'] = 'hrjc_details';
 $handler->display->display_options['filters']['is_primary']['value']['value'] = '1';
 $handler->display->display_options['filters']['is_primary']['group'] = 1;
+/* Filter criterion: CiviCRM Relationships: Is Relationship Active */
+$handler->display->display_options['filters']['is_active']['id'] = 'is_active';
+$handler->display->display_options['filters']['is_active']['table'] = 'civicrm_relationship';
+$handler->display->display_options['filters']['is_active']['field'] = 'is_active';
+$handler->display->display_options['filters']['is_active']['value'] = '1';
+$handler->display->display_options['filters']['is_active']['group'] = 4;
 /* Filter criterion: CiviCRM Relationships: Relationship Type A-to-B */
-$handler->display->display_options['filters']['relationship_type']['id'] = 'relationship_type';
-$handler->display->display_options['filters']['relationship_type']['table'] = 'civicrm_relationship';
-$handler->display->display_options['filters']['relationship_type']['field'] = 'relationship_type';
-$handler->display->display_options['filters']['relationship_type']['value'] = array(
-    18 => '18',
-);
-$handler->display->display_options['filters']['relationship_type']['group'] = 2;
-/* Filter criterion: CiviCRM Relationships: Relationship Type A-to-B */
-$handler->display->display_options['filters']['relationship_type_1']['id'] = 'relationship_type_1';
-$handler->display->display_options['filters']['relationship_type_1']['table'] = 'civicrm_relationship';
-$handler->display->display_options['filters']['relationship_type_1']['field'] = 'relationship_type';
-$handler->display->display_options['filters']['relationship_type_1']['operator'] = 'empty';
-$handler->display->display_options['filters']['relationship_type_1']['group'] = 2;
+$handler->display->display_options['filters']['relationship_type_2']['id'] = 'relationship_type_2';
+$handler->display->display_options['filters']['relationship_type_2']['table'] = 'civicrm_relationship';
+$handler->display->display_options['filters']['relationship_type_2']['field'] = 'relationship_type';
+$handler->display->display_options['filters']['relationship_type_2']['operator'] = 'empty';
+$handler->display->display_options['filters']['relationship_type_2']['group'] = 4;
 /* Filter criterion: CiviCRM Relationships: End Date */
 $handler->display->display_options['filters']['end_date']['id'] = 'end_date';
 $handler->display->display_options['filters']['end_date']['table'] = 'civicrm_relationship';
@@ -446,6 +445,20 @@ $handler->display->display_options['filters']['end_date_1']['table'] = 'civicrm_
 $handler->display->display_options['filters']['end_date_1']['field'] = 'end_date';
 $handler->display->display_options['filters']['end_date_1']['operator'] = 'empty';
 $handler->display->display_options['filters']['end_date_1']['group'] = 3;
+/* Filter criterion: CiviCRM Relationships: Relationship Type A-to-B */
+$handler->display->display_options['filters']['relationship_type']['id'] = 'relationship_type';
+$handler->display->display_options['filters']['relationship_type']['table'] = 'civicrm_relationship';
+$handler->display->display_options['filters']['relationship_type']['field'] = 'relationship_type';
+$handler->display->display_options['filters']['relationship_type']['value'] = array(
+    18 => '18',
+);
+$handler->display->display_options['filters']['relationship_type']['group'] = 2;
+/* Filter criterion: CiviCRM Relationships: Relationship Type A-to-B */
+$handler->display->display_options['filters']['relationship_type_1']['id'] = 'relationship_type_1';
+$handler->display->display_options['filters']['relationship_type_1']['table'] = 'civicrm_relationship';
+$handler->display->display_options['filters']['relationship_type_1']['field'] = 'relationship_type';
+$handler->display->display_options['filters']['relationship_type_1']['operator'] = 'empty';
+$handler->display->display_options['filters']['relationship_type_1']['group'] = 2;
 
 /* Display: Staff directory list page */
 $handler = $view->new_display('page', 'Staff directory list page', 'page');
