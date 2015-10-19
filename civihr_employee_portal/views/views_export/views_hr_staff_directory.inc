@@ -215,6 +215,7 @@ $handler->display->display_options['sorts']['id']['field'] = 'id';
 $handler->display->display_options['filter_groups']['groups'] = array(
     1 => 'AND',
     2 => 'OR',
+    3 => 'OR',
 );
 /* Filter criterion: CiviCRM Contacts: Contact Type */
 $handler->display->display_options['filters']['contact_type']['id'] = 'contact_type';
@@ -431,6 +432,20 @@ $handler->display->display_options['filters']['relationship_type_1']['table'] = 
 $handler->display->display_options['filters']['relationship_type_1']['field'] = 'relationship_type';
 $handler->display->display_options['filters']['relationship_type_1']['operator'] = 'empty';
 $handler->display->display_options['filters']['relationship_type_1']['group'] = 2;
+/* Filter criterion: CiviCRM Relationships: End Date */
+$handler->display->display_options['filters']['end_date']['id'] = 'end_date';
+$handler->display->display_options['filters']['end_date']['table'] = 'civicrm_relationship';
+$handler->display->display_options['filters']['end_date']['field'] = 'end_date';
+$handler->display->display_options['filters']['end_date']['operator'] = '>=';
+$handler->display->display_options['filters']['end_date']['value']['value'] = '-1 day';
+$handler->display->display_options['filters']['end_date']['value']['type'] = 'offset';
+$handler->display->display_options['filters']['end_date']['group'] = 3;
+/* Filter criterion: CiviCRM Relationships: End Date */
+$handler->display->display_options['filters']['end_date_1']['id'] = 'end_date_1';
+$handler->display->display_options['filters']['end_date_1']['table'] = 'civicrm_relationship';
+$handler->display->display_options['filters']['end_date_1']['field'] = 'end_date';
+$handler->display->display_options['filters']['end_date_1']['operator'] = 'empty';
+$handler->display->display_options['filters']['end_date_1']['group'] = 3;
 
 /* Display: Staff directory list page */
 $handler = $view->new_display('page', 'Staff directory list page', 'page');
@@ -516,7 +531,7 @@ $translatables['civihr_staff_directory'] = array(
     t('‹ previous'),
     t('next ›'),
     t('last »'),
-    t('Results: @total'),
+    t('@total'),
     t('HRJobContract Details entity'),
     t('HRJobContract Role entity'),
     t('CiviCRM Contact B'),
