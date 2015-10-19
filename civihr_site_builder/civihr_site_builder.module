@@ -27,7 +27,7 @@ function _civihr_site_builder_create() {
     $buildkit_url = '/var/www/civicrm-buildkit';
 
     $cmd = 'sh ' . $buildkit_url . '/site-builder.sh test-2015';
-    $outputfile = $buildkit_url . '/civicrm-buildkit/site-builder-out-2015.log';
+    $outputfile = $buildkit_url . '/site-builder-out-2015.log';
     $pidfile = $buildkit_url . '/site-builder-pids-2015.log';
 
     // This will start a background process and will build the site
