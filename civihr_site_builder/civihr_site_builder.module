@@ -35,6 +35,6 @@ function _civihr_site_builder_create() {
     // It will also append the pids file to track what pids the process is using
     exec(sprintf("%s > %s 2>&1 & echo $! >> %s", $cmd, $outputfile, $pidfile));
 
-    return 'Site build started';
+    return $command . ' Site build started';
 
 }
