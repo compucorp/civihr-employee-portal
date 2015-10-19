@@ -1,0 +1,4 @@
+name = CiviHR Site Builder
+description = Build site based on required settings
+core = 7.x
+package = Compucorp
