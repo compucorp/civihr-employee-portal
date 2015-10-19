@@ -3137,11 +3137,11 @@ function civihr_employee_portal_request_new_account_form($form, &$form_state){
 
     $form['name'] = array(
         '#type' => 'textfield',
-        '#title' => t('Employee ID'),
+        '#title' => t('Username'),
         '#prefix' => '<div class="row"><div class="col-md-12">',
         '#suffix' => '</div></div>',
         '#attributes' => array(
-            'placeholder' => t('Employee ID'),
+            'placeholder' => t('Username'),
         ),
     );
 
