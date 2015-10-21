@@ -124,7 +124,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             // Make array from object keys
             var dataGroups = Object.keys(getCleanData.enabled_x_axis_defaults(data.target.id));
             var $filters = $('.report-x-filters');
-            var $filtersParent = $filters.parent('.chr_section__footer')
+            var $filtersParent = $filters.parent('.panel-footer')
 
             // Remove previous buttons if any, and hide the containing footer
             $filtersParent.addClass('hide');

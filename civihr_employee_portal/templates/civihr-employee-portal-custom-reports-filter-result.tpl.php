@@ -28,9 +28,9 @@
  */
 ?>
 <div class="<?php print $classes; ?>">
-    <section class="chr_section chr_section--no-padding">
-        <header class="chr_section__header">
-            <h2 class="chr_section__title">Data</h2>
+    <section class="panel panel-primary panel--no-padding">
+        <header class="panel-heading">
+            <h2 class="panel-title">Data</h2>
         </header>
 
         <?php if ($exposed): ?>
@@ -40,9 +40,7 @@
         <?php endif; ?>
 
         <?php if ($rows): ?>
-            <div class="view-content">
-                <?php print $rows; ?>
-            </div>
+            <?php print $rows; ?>
         <?php elseif ($empty): ?>
             <div class="view-empty">
                 <?php print $empty; ?>
@@ -50,7 +48,7 @@
         <?php endif; ?>
 
         <?php if ($pager): ?>
-            <footer class="chr_section__footer">
+            <footer class="panel-footer">
                 <?php print $pager; ?>
             </footer>
         <?php endif; ?>

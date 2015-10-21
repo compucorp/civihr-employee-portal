@@ -1,14 +1,14 @@
 <?php $enabled_y_axis_filters = variable_get('enabled_y_axis_filters', array()); ?>
 
-<section class="chr_section">
-    <header class="chr_section__header">
-        <h2 class="chr_section__title">
+<section class="panel panel-primary">
+    <header class="panel-heading">
+        <h2 class="panel-title">
             My People
         </h2>
     </header>
-    <div class="chr_section__body">
+    <div class="panel-body">
         <div class="row">
-            <div class="col-md-2 column1 panel-panel">
+            <div class="col-md-2">
                 <?php
                     foreach ($enabled_y_axis_filters as $key => $filter) {
                         if ($filter != '0') {
@@ -18,27 +18,25 @@
                 ?>
             </div>
 
-            <div class="col-md-8 column2 panel-panel">
+            <div class="col-md-8">
                 <input type="text" id="reportToDate">
                 <div id="custom-report"></div>
             </div>
         </div>
     </div>
-    <footer class="chr_section__footer text-center hide">
+    <footer class="panel-footer text-center hide">
         <div class="report-x-filters btn-group">
             <!-- Content generated in reports.js -->
         </div>
     </footer>
 </section>
 
-<div class="panel-pane custom-data-block">
-    <div>
-        <div id="custom-report-details"> <?php print $custom_data; ?> </div>
-    </div>
+<div id="custom-report-details">
+    <?php print $custom_data; ?>
 </div>
 
-<section class="chr_section">
-    <div class="chr_section__body">
+<section class="panel panel-default">
+    <div class="panel-body">
         <?php print $settings_url; ?>
     </div>
 </section>
