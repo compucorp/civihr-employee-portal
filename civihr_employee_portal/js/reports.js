@@ -123,14 +123,19 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             // Make array from object keys
             var dataGroups = Object.keys(getCleanData.enabled_x_axis_defaults(data.target.id));
+            var $filters = $('.report-x-filters');
+            var $filtersParent = $filters.parent('.chr_section__footer')
 
-            // Remove previous buttons if any
-            $('.subFilter').remove();
+            // Remove previous buttons if any, and hide the containing footer
+            $filtersParent.addClass('hide');
+            $filters.find('.subFilter').remove();
 
             // Generate the available X Group By buttons
             dataGroups.forEach(function (value, key) {
-                $('.report-x-filters').append('<button id="' + value + '" class="subFilter btn btn-lg btn-secondary-outline">' + value.toUpperCase() + '</button>');
+                $filters.append('<button id="' + value + '" class="subFilter btn btn-lg btn-secondary-outline">' + value.toUpperCase() + '</button>');
             });
+
+            $filtersParent.removeClass('hide');
 
             // Init the sub filters
             subFilters = document.querySelectorAll(".subFilter");
@@ -159,7 +164,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             console.log(subFilters);
             // Set default classes on initial load
             _setDefaultClass(mainFilters, subFilters, customReport);
-
         }
 
         // Init the main filters

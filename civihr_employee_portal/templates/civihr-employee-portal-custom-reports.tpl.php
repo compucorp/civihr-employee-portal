@@ -24,7 +24,7 @@
             </div>
         </div>
     </div>
-    <div class="chr_section__footer text-center">
+    <div class="chr_section__footer text-center hide">
         <div class="report-x-filters btn-group">
             <!-- Content generated in reports.js -->
         </div>
