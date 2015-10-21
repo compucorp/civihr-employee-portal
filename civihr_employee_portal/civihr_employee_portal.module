@@ -311,8 +311,7 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
     foreach ($view_displays_to_rewrite as $view_name => $val) {
         $theme_hooks[$view_name] = array(
             'template' => $template_url,
-            'original hook' => 'views_view',
-            'preprocess functions' => array('template_preprocess', 'template_preprocess_views_view'),
+            'base hook' => 'views_view',
             'arguments' => array('view' => NULL)
         );
     }
