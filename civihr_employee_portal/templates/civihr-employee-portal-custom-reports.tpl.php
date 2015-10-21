@@ -22,9 +22,11 @@
                 <input type="text" id="reportToDate">
                 <div id="custom-report"></div>
             </div>
-
+        </div>
+    </div>
+    <div class="chr_section__footer text-center">
+        <div class="report-x-filters btn-group">
             <!-- Content generated in reports.js -->
-            <div class="col-md-8 column1 panel-panel report-x-filters btn-group"></div>
         </div>
     </div>
 </section>
