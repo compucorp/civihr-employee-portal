@@ -24,11 +24,11 @@
             </div>
         </div>
     </div>
-    <div class="chr_section__footer text-center hide">
+    <footer class="chr_section__footer text-center hide">
         <div class="report-x-filters btn-group">
             <!-- Content generated in reports.js -->
         </div>
-    </div>
+    </footer>
 </section>
 
 <div class="panel-pane custom-data-block">
