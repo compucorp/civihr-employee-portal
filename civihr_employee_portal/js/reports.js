@@ -129,7 +129,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             // Generate the available X Group By buttons
             dataGroups.forEach(function (value, key) {
-                $('.report-x-filters').append('<button id="' + value + '" class="subFilter btn btn-primary btn-reports">' + value + '</button>');
+                $('.report-x-filters').append('<button id="' + value + '" class="subFilter btn btn-lg btn-secondary-outline">' + value.toUpperCase() + '</button>');
             });
 
             // Init the sub filters
@@ -463,7 +463,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             if (this.getMainFilter() != 'headcount' && this.getMainFilter() != 'fte') {
 
                 svg.append("text")
-                    .attr("class", "btn btn-primary btn-reports")
+                    .attr("class", "btn btn-lg btn-primary")
                     .attr("type", "button")
                     .attr("x", _this.settings.outerWidth - 50)
                     .attr("y", 30)
@@ -478,7 +478,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             else {
 
                 svg.append("text")
-                    .attr("class", "btn btn-primary btn-reports")
+                    .attr("class", "btn btn-lg btn-primary")
                     .attr("type", "button")
                     .attr("x", _this.settings.outerWidth - 50)
                     .attr("y", 30)
@@ -490,7 +490,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                     });
 
                 svg.append("text")
-                    .attr("class", "btn btn-primary btn-reports")
+                    .attr("class", "btn btn-lg btn-primary")
                     .attr("type", "button")
                     .attr("x", _this.settings.outerWidth - 50)
                     .attr("y", 60)

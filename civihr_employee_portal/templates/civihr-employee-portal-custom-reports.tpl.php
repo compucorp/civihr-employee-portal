@@ -12,7 +12,7 @@
                 <?php
                     foreach ($enabled_y_axis_filters as $key => $filter) {
                         if ($filter != '0') {
-                            print '<button id="' . $key . '" class="mainFilter btn btn-primary btn-reports">' . $filter . '</button>';
+                            print '<button id="' . $key . '" class="mainFilter btn btn-lg btn-secondary-outline btn-block">' . strtoupper($filter) . '</button>';
                         }
                     }
                 ?>
@@ -24,7 +24,7 @@
             </div>
 
             <!-- Content generated in reports.js -->
-            <div class="col-md-8 column1 panel-panel report-x-filters"></div>
+            <div class="col-md-8 column1 panel-panel report-x-filters btn-group"></div>
         </div>
     </div>
 </section>
