@@ -426,10 +426,12 @@ class AbsenceRequestForm {
 
             $dateExists = false;
             if($requestedStartTimestamp <= $endTimestamp && $requestedStartTimestamp >= $startTimestamp) {
-                    $dateExists = true;
-            }else if($requestedEndTimestamp >= $startTimestamp && $requestedEndTimestamp <= $endTimestamp) {
-                    $dateExists = true;
-            }else if($startTimestamp >= $requestedStartTimestamp && $endTimestamp <= $requestedEndTimestamp) {
+                $dateExists = true;
+            }
+            else if($requestedEndTimestamp >= $startTimestamp && $requestedEndTimestamp <= $endTimestamp) {
+                $dateExists = true;
+            }
+            else if($startTimestamp >= $requestedStartTimestamp && $endTimestamp <= $requestedEndTimestamp) {
                 $dateExists = true;
             }
             
