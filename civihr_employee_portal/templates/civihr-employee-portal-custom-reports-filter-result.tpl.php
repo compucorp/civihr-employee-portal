@@ -28,7 +28,7 @@
  */
 ?>
 <div class="<?php print $classes; ?>">
-    <section class="panel panel-primary panel--no-padding">
+    <section class="panel panel-primary">
         <header class="panel-heading">
             <h2 class="panel-title">Data</h2>
         </header>
