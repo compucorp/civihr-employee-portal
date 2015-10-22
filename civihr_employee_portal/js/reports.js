@@ -127,45 +127,35 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             // Make array from object keys
             var dataGroups = Object.keys(getCleanData.enabled_x_axis_defaults(data.target.id));
-            var $filters = $('.report-x-filters');
-            var $filtersParent = $filters.parent('.panel-footer')
+            var $xFilters = customReport.$DOM.section.xFilters;
+            var $xFiltersParent = $xFilters.parent('.panel-footer')
 
             // Remove previous buttons if any, and hide the containing footer
-            $filtersParent.addClass('hide');
-            $filters.find('.subFilter').remove();
+            $xFiltersParent.addClass('hide');
+            customReport.clearButtons($xFilters);
 
-            // Generate the available X Group By buttons
             dataGroups.forEach(function (value, key) {
-                $filters.append('<button id="' + value + '" class="subFilter btn btn-lg btn-secondary-outline text-uppercase">' + value + '</button>');
+                $xFilters.append(
+                    customReport.cloneButtonTpl($xFilters, {
+                        active: customReport.getSubFilter() === value,
+                        label: value,
+                        value: value,
+                        click: function (data) {
+                            if (data.target !== null) {
+                                // Set the subfilter
+                                customReport.setSubFilter($(data.target).data('value'));
+                                // Re-draw graph
+                                customReport.drawGraph(customReport.getJsonUrl(), customReport.getChartType());
+                            }
+
+                            return false;
+                        }
+                    })
+                );
             });
 
-            $filtersParent.removeClass('hide');
+            $xFiltersParent.removeClass('hide');
 
-            // Init the sub filters
-            subFilters = document.querySelectorAll(".subFilter");
-
-            // Loop the buttons and attach the onclick function
-            for (i = 0; i < subFilters.length; i++) {
-                subFilters[i].onclick = function (data) {
-
-                    if (data.target !== null) {
-
-                        // Set the subfilter
-                        customReport.setSubFilter(data.target.id);
-
-                        // Add default classes
-                        _checkDefaultClasses(subFilters, data);
-
-                        // Re-draw graph
-                        customReport.drawGraph(customReport.getJsonUrl(), customReport.getChartType());
-
-                    }
-
-                    return false;
-                }
-            }
-
-            console.log(subFilters);
             // Set default classes on initial load
             _setDefaultClass(mainFilters, subFilters, customReport);
         }
@@ -464,12 +454,103 @@ Drupal.behaviors.civihr_employee_portal_reports = {
         // Extend base class (overwrite any default settings if needed)
         function CustomReport(name) {
             DrawReport.call(this);
+
             this.name = name;
             this.settings.barPadding = 5;
 
+            this.getDOMElements();
+            this.hideButtonTpls();
         }
 
         CustomReport.prototype = new DrawReport();
+
+        /**
+         * Collects the DOM elements marked by the [data-graph-*] data attribute
+         *
+         */
+        CustomReport.prototype.getDOMElements = function () {
+            this.$DOM = {};
+            this.$DOM.wrapper = $('[data-graph]');
+            this.$DOM.section = {
+                canvas: this.$DOM.wrapper.find('[data-graph-section="canvas"]'),
+                graphFilters: this.$DOM.wrapper.find('[data-graph-section="graph-filters"]'),
+                xFilters: this.$DOM.wrapper.find('[data-graph-section="x-filters"]'),
+                yFilters: this.$DOM.wrapper.find('[data-graph-section="y-filters"]')
+            };
+        };
+
+        /**
+         * Activate the button and deactive all the others in its section
+         *
+         * @param {Object} $button - The jQuery object to activate
+         */
+        CustomReport.prototype.activateButton = function($button) {
+            var $section = $button.parents('[data-graph-section]');
+
+            $section.find('[data-graph-button]').each(function (_, button) {
+                var $button = $(button);
+
+                $button
+                    .addClass($button.data('graph-button-inactive-class'))
+                    .removeClass($button.data('graph-button-active-class'));
+            });
+
+            $button.addClass($button.data('graph-button-active-class'));
+        }
+
+        /**
+         * Removes all the buttons contained in a given section
+         *
+         */
+        CustomReport.prototype.clearButtons = function ($section) {
+            $section.find('[data-graph-button]').remove();
+        };
+
+        /**
+         * Clones the button marked as a template inside the given section
+         *
+         * @param {Object} $sectionName - jQuery object of the section (y-axis filters, graph filters, etc)
+         * @param {Object} attributes - The attributes to apply to the cloned button
+         * @return jQuery object of the cloned button
+         */
+        CustomReport.prototype.cloneButtonTpl = function ($section, attributes) {
+            var _this = this;
+            var button = $section.find('[data-graph-button-tpl]').clone();
+
+            button
+                .attr('data-graph-button', '')
+                .removeAttr('data-graph-button-tpl')
+                .addClass(button.data('graph-button-' + ( !!attributes.active ? 'active' : 'inactive' ) + '-class'))
+                .show();
+
+            button.on('click', function (event) {
+                _this.activateButton($(this));
+
+                if (attributes.click) {
+                    attributes.click(event);
+                }
+            });
+
+            if (attributes.value) {
+                button.data('value', attributes.value);
+            }
+
+            if (attributes.label) {
+                button.text(attributes.label);
+            }
+
+            return button;
+        };
+
+        /**
+         * Hides all the template buttons
+         *
+         */
+        CustomReport.prototype.hideButtonTpls = function () {
+            $.each(this.$DOM.section, function (_, section) {
+                section.find('[data-graph-button-tpl]').hide();
+            });
+        };
 
         // Overwrite any function if needed -> Create the default chart types (links + adds to SVG, onclick redraws the graph)
         CustomReport.prototype.addChartTypes = function(svg) {
@@ -477,52 +558,37 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             console.log('child');
 
             var _this = this;
+            var $graphFilters = this.$DOM.section.graphFilters;
+
+            this.clearButtons($graphFilters);
 
             // Only headcount reports can be bar/pie types
             // All other reports are currently grouped bar charts
             if (this.getMainFilter() != 'headcount' && this.getMainFilter() != 'fte') {
-
-                svg.append("text")
-                    .attr("class", "btn btn-lg btn-primary")
-                    .attr("type", "button")
-                    .attr("x", _this.settings.outerWidth - 50)
-                    .attr("y", 30)
-                    .on('click', function(d,i) {
+                $graphFilters.append(this.cloneButtonTpl($graphFilters, {
+                    active: this.getChartType() === 'grouped_bar',
+                    label: 'bar chart',
+                    click: function () {
                         _this.drawGraph(_this.getJsonUrl(), 'grouped_bar');
-                    })
-                    .text(function(d,i) {
-                        return 'Bar chart';
-                    });
-
-            }
-            else {
-
-                svg.append("text")
-                    .attr("class", "btn btn-lg btn-primary")
-                    .attr("type", "button")
-                    .attr("x", _this.settings.outerWidth - 50)
-                    .attr("y", 30)
-                    .on('click', function(d,i) {
+                    }
+                }));
+            } else {
+                $graphFilters.append(this.cloneButtonTpl($graphFilters, {
+                    active: this.getChartType() === 'bar',
+                    label: 'bar chart',
+                    click: function () {
                         _this.drawGraph(_this.getJsonUrl(), 'bar');
-                    })
-                    .text(function(d,i) {
-                        return 'Bar chart';
-                    });
+                    }
+                }));
 
-                svg.append("text")
-                    .attr("class", "btn btn-lg btn-primary")
-                    .attr("type", "button")
-                    .attr("x", _this.settings.outerWidth - 50)
-                    .attr("y", 60)
-                    .on('click', function(d,i) {
+                $graphFilters.append(this.cloneButtonTpl($graphFilters, {
+                    active: this.getChartType() === 'pie',
+                    label: 'pie chart',
+                    click: function () {
                         _this.drawGraph(_this.getJsonUrl(), 'pie');
-                    })
-                    .text(function(d,i) {
-                        return 'Pie chart';
-                    });
-
+                    }
+                }));
             }
-
         };
 
         // Sets default chart type
