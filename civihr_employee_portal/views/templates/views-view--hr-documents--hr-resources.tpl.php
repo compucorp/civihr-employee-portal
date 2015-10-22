@@ -29,28 +29,13 @@
 ?>
 <div class="<?php print $classes; ?>">
     <?php print render($title_prefix); ?>
-    <?php if ($title) { print $title; } ?>
-    <?php print render($title_suffix); ?>
-
-    <?php if ($header): ?>
-        <div class="chr_panel__toolbar">
-            <div class="chr_panel__toolbar__actions">
-                <?php print $header; ?>
-            </div>
-            <?php if ($rows): ?>
-                <div class="chr_panel__toolbar__filter">
-                    <div class="input-group">
-                        <div class="btn input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
-                        <input class="form-control" id="manager-approval-search" placeholder="Enter name">
-                    </div>
-                </div>
-            <?php endif; ?>
-        </div>
+    <?php if ($title): ?>
+        <?php print $title; ?>
     <?php endif; ?>
-
+    <?php print render($title_suffix); ?>
     <?php if ($exposed): ?>
         <div class="view-filters">
-            <?php print $exposed; ?>
+          <?php print $exposed; ?>
         </div>
     <?php endif; ?>
 
@@ -61,22 +46,31 @@
     <?php endif; ?>
 
     <?php if ($rows): ?>
-        <div class="chr_table-w-filters row">
-            <div class="chr_table-w-filters__filters approval-filters col-md-3">
-                <div class="chr_table-w-filters__filters__dropdown-wrapper">
-                    <div class="chr_custom-select chr_custom-select--full">
-                        <select class="chr_table-w-filters__filters__dropdown skip-js-custom-select">
-                            <!-- content injected via JS -->
-                        </select>
+        <div class="view-content">
+            <div class="chr_search-result">
+                <?php if ($header): ?>
+                    <div class="chr_search-result__header">
+                        <?php print $header; ?>
                     </div>
-                </div>
-                <ul id="tag-list" class="chr_table-w-filters__filters__nav">
-                    <!-- content injected via JS -->
-                </ul>
-            </div>
-            <div class="chr_table-w-filters__table-wrapper col-md-9">
-                <div class="chr_table-w-filters__table">
+                <?php endif; ?>
+
+                <div class="chr_search-result__content">
                     <?php print $rows; ?>
+                </div>
+
+                <div class="chr_search-result__footer">
+                    <?php if ($pager): ?>
+                        <div class="chr_search-result__pager chr_search-result__pager--full">
+                            <?php print $pager; ?>
+                        </div>
+                        <div class="chr_search-result__pager chr_search-result__pager--mini">
+                            <?php print $pager; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($footer): ?>
+                        <?php print $footer; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -86,20 +80,14 @@
         </div>
     <?php endif; ?>
 
-    <?php if ($pager) { print $pager; } ?>
-
     <?php if ($attachment_after): ?>
         <div class="attachment attachment-after">
             <?php print $attachment_after; ?>
         </div>
     <?php endif; ?>
 
-    <?php if ($more){ print $more; } ?>
-
-    <?php if ($footer): ?>
-        <div class="view-footer">
-            <?php print $footer; ?>
-        </div>
+    <?php if ($more): ?>
+        <?php print $more; ?>
     <?php endif; ?>
 
     <?php if ($feed_icon): ?>
@@ -107,4 +95,5 @@
             <?php print $feed_icon; ?>
         </div>
     <?php endif; ?>
+
 </div><?php /* class view */ ?>

@@ -120,6 +120,7 @@ class AbsenceRequestForm {
                 $mk_time_start = explode("-", $this->form_state['values']['absence_request_date_from']);
                 $mk_time_end = explode("-", $this->form_state['values']['absence_request_date_to']);
                 $mk_time_start_timestamp = mktime(0, 0, 0, $mk_time_start[1], $mk_time_start[2], $mk_time_start[0]);
+                $mk_time_end_timestamp = mktime(0, 0, 0, $mk_time_end[1], $mk_time_end[2], $mk_time_end[0]);
 
                 $period_id = $this->period_id($mk_time_start);
 
@@ -143,7 +144,12 @@ class AbsenceRequestForm {
                 if ($mk_time_start_timestamp > strtotime('today') && $this->form_state['values']['absence_type'] == "sick") {
                     form_set_error('absence_request_date_from', t('You are not allowed to report Sickness in advance!'));
                 }
-
+                
+                // If we requested leave with dates that have already been requested before (duplicate dates)
+                if($this->duplicate_dates_exist($mk_time_start_timestamp, $mk_time_end_timestamp)){
+                    form_set_error('form', t('You have already requested leave for this date.'));
+                }
+                
                 // Check if we have enough leave left to request this leave (only if leave type is DEBIT or CREDIT_USE) -> deducting days
                 if (isset($this->form_state['values']['absence_type']) && ($this->form_state['values']['absence_type'] == 'debit' || $this->form_state['values']['absence_type'] == 'credit_use')) {
                     $leave = $this->leave_data();
@@ -250,11 +256,14 @@ class AbsenceRequestForm {
      */
     protected function add_fields() {
         $this->form['absence_request_type'] = array(
+            '#attributes' => array('class' => array('skip-js-custom-select')),
             '#title' => t('Type:'),
             '#type' => 'select',
             '#options' => $this->absence_types(),
+            '#field_prefix' => '<div class="chr_custom-select chr_custom-select--full chr_custom-select--transparent">',
+            '#field_suffix' => '</div>',
             '#prefix' => '<div class="modal-civihr-custom__section--strip">',
-            '#suffix'=> '</div>'
+            '#suffix'=> '</div>',
         );
 
         $this->form['absence_file'] = array(
@@ -390,6 +399,48 @@ class AbsenceRequestForm {
         $q->addExpression('sum(duration) / (6 * 80)');
 
         return $q->execute()->fetchField();
+    }
+    
+    /**
+     * Check if the dates requested for leaves are already requested for other leaves before
+     *
+     * @param timestamp $requestedStartTimestamp
+     *   Timestamp for start date requested by the user
+     * @param timestamp $requestedEndTimestamp
+     *   Timestamp for start date requested by the user
+     * @return bool
+     */
+    protected function duplicate_dates_exist($requestedStartTimestamp, $requestedEndTimestamp) {
+        // fetch all leaves that has End time greater than today
+        $absencesDataQuery = db_select('absence_list', 'al')
+            ->condition('contact_id', $_SESSION['CiviCRM']['userID'])
+            //->condition('absence_end_date_timestamp', strtotime('today'), '>')
+            ->fields('al', array('absence_start_date_timestamp', 'absence_end_date_timestamp'));
+
+        $absencesData = $absencesDataQuery->execute()->fetchAll();
+
+        $dateExists = false;
+        foreach($absencesData as $absence) {
+            $startTimestamp = $absence->absence_start_date_timestamp;
+            $endTimestamp = $absence->absence_end_date_timestamp;
+
+            $dateExists = false;
+            if($requestedStartTimestamp <= $endTimestamp && $requestedStartTimestamp >= $startTimestamp) {
+                $dateExists = true;
+            }
+            else if($requestedEndTimestamp >= $startTimestamp && $requestedEndTimestamp <= $endTimestamp) {
+                $dateExists = true;
+            }
+            else if($startTimestamp >= $requestedStartTimestamp && $endTimestamp <= $requestedEndTimestamp) {
+                $dateExists = true;
+            }
+            
+            if($dateExists == true) {
+                break;
+            }
+        }
+        
+        return $dateExists;
     }
 
     /**

@@ -16,7 +16,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 
 /* Display: Master */
 $handler = $view->new_display('default', 'Master', 'default');
-$handler->display->display_options['title'] = 'HR Documents and Downloads';
+$handler->display->display_options['title'] = 'HR Resources';
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
 $handler->display->display_options['access']['role'] = array(
@@ -134,17 +134,12 @@ $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FAL
 $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['title']['element_wrapper_class'] = 'hr-documents-title-block';
 $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
-/* Field: Content: Body */
-$handler->display->display_options['fields']['body']['id'] = 'body';
-$handler->display->display_options['fields']['body']['table'] = 'field_data_body';
-$handler->display->display_options['fields']['body']['field'] = 'body';
-$handler->display->display_options['fields']['body']['label'] = '';
-$handler->display->display_options['fields']['body']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['body']['element_wrapper_class'] = 'hr-documents-body-block';
-$handler->display->display_options['fields']['body']['type'] = 'text_summary_or_trimmed';
-$handler->display->display_options['fields']['body']['settings'] = array(
-    'trim_length' => '100',
-);
+/* Field: Content: Short description */
+$handler->display->display_options['fields']['field_short_description']['id'] = 'field_short_description';
+$handler->display->display_options['fields']['field_short_description']['table'] = 'field_data_field_short_description';
+$handler->display->display_options['fields']['field_short_description']['field'] = 'field_short_description';
+$handler->display->display_options['fields']['field_short_description']['label'] = '';
+$handler->display->display_options['fields']['field_short_description']['element_label_colon'] = FALSE;
 /* Field: Global: Custom text */
 $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
@@ -162,10 +157,16 @@ $handler = $view->new_display('page', 'HR Resources page', 'hr_resources');
 $handler->display->display_options['defaults']['css_class'] = FALSE;
 $handler->display->display_options['css_class'] = 'view-full-hr-documents';
 $handler->display->display_options['defaults']['pager'] = FALSE;
-$handler->display->display_options['pager']['type'] = 'mini';
-$handler->display->display_options['pager']['options']['items_per_page'] = '20';
+$handler->display->display_options['pager']['type'] = 'full';
+$handler->display->display_options['pager']['options']['items_per_page'] = '10';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['pager']['options']['id'] = '0';
+$handler->display->display_options['pager']['options']['quantity'] = '9';
+$handler->display->display_options['pager']['options']['expose']['items_per_page_options'] = '2, 5, 10, 20, 40, 60';
+$handler->display->display_options['pager']['options']['tags']['first'] = 'First';
+$handler->display->display_options['pager']['options']['tags']['previous'] = 'Previous';
+$handler->display->display_options['pager']['options']['tags']['next'] = 'Next';
+$handler->display->display_options['pager']['options']['tags']['last'] = 'Last';
 $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'default';
 $handler->display->display_options['defaults']['style_options'] = FALSE;
@@ -173,6 +174,16 @@ $handler->display->display_options['defaults']['row_plugin'] = FALSE;
 $handler->display->display_options['row_plugin'] = 'fields';
 $handler->display->display_options['defaults']['row_options'] = FALSE;
 $handler->display->display_options['defaults']['header'] = FALSE;
+/* Header: Global: Result summary */
+$handler->display->display_options['header']['result']['id'] = 'result';
+$handler->display->display_options['header']['result']['table'] = 'views';
+$handler->display->display_options['header']['result']['field'] = 'result';
+$handler->display->display_options['header']['result']['content'] = '@total';
+$handler->display->display_options['defaults']['footer'] = FALSE;
+/* Footer: Global: Unfiltered text */
+$handler->display->display_options['footer']['area_text_custom']['id'] = 'area_text_custom';
+$handler->display->display_options['footer']['area_text_custom']['table'] = 'views';
+$handler->display->display_options['footer']['area_text_custom']['field'] = 'area_text_custom';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Content: Nid */
 $handler->display->display_options['fields']['nid']['id'] = 'nid';
@@ -217,20 +228,13 @@ $handler->display->display_options['fields']['nothing']['table'] = 'views';
 $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = '';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
-/* Field: Content: Body */
-$handler->display->display_options['fields']['body']['id'] = 'body';
-$handler->display->display_options['fields']['body']['table'] = 'field_data_body';
-$handler->display->display_options['fields']['body']['field'] = 'body';
-$handler->display->display_options['fields']['body']['label'] = '';
-$handler->display->display_options['fields']['body']['exclude'] = TRUE;
-$handler->display->display_options['fields']['body']['alter']['alter_text'] = TRUE;
-$handler->display->display_options['fields']['body']['alter']['text'] = '<div class="col-md-2"></div>
-<div class="col-md-10">[body]</div>';
-$handler->display->display_options['fields']['body']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['body']['type'] = 'text_summary_or_trimmed';
-$handler->display->display_options['fields']['body']['settings'] = array(
-    'trim_length' => '100',
-);
+/* Field: Content: Short description */
+$handler->display->display_options['fields']['field_short_description']['id'] = 'field_short_description';
+$handler->display->display_options['fields']['field_short_description']['table'] = 'field_data_field_short_description';
+$handler->display->display_options['fields']['field_short_description']['field'] = 'field_short_description';
+$handler->display->display_options['fields']['field_short_description']['label'] = '';
+$handler->display->display_options['fields']['field_short_description']['exclude'] = TRUE;
+$handler->display->display_options['fields']['field_short_description']['element_label_colon'] = FALSE;
 /* Field: Global: Fieldset */
 $handler->display->display_options['fields']['fieldset']['id'] = 'fieldset';
 $handler->display->display_options['fields']['fieldset']['table'] = 'views';
@@ -378,7 +382,7 @@ $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
 $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = '';
-$handler->display->display_options['fields']['nothing']['alter']['text'] = '<div class="btn">Download all</div>';
+$handler->display->display_options['fields']['nothing']['alter']['text'] = '<div class="btn">Download</div>';
 $handler->display->display_options['fields']['nothing']['alter']['make_link'] = TRUE;
 $handler->display->display_options['fields']['nothing']['alter']['path'] = 'node/[nid]';
 $handler->display->display_options['fields']['nothing']['alter']['alt'] = 'Read more';
@@ -405,7 +409,7 @@ $handler->display->display_options['arguments']['nid']['summary']['format'] = 'd
 $handler->display->display_options['arguments']['nid']['summary_options']['items_per_page'] = '25';
 $translatables['hr_documents'] = array(
     t('Master'),
-    t('HR Documents and Downloads'),
+    t('HR Resources'),
     t('more'),
     t('Search'),
     t('Reset'),
@@ -419,15 +423,13 @@ $translatables['hr_documents'] = array(
     t('Items per page'),
     t('- All -'),
     t('Offset'),
-    t('« first'),
-    t('‹ previous'),
-    t('next ›'),
-    t('last »'),
-    t('<strong><h4>[title]</h4></strong>
-'),
-    t('<div class="col-md-2"></div>
-<div class="col-md-10">[body]</div>'),
-    t('See resources'),
+    t('First'),
+    t('Previous'),
+    t('Next'),
+    t('Last'),
+    t('@total'),
+    t('<strong><h4>[title]</h4></strong>'),
+    t('See Resources'),
     t('Attachments'),
     t('No resource file attached!'),
     t('Keywords'),
@@ -435,7 +437,7 @@ $translatables['hr_documents'] = array(
     t('HR Resources page modal details'),
     t('Download'),
     t('Details:'),
-    t('<div class="btn">Download all</div>'),
+    t('<div class="btn">Download</div>'),
     t('Post date'),
     t('All'),
 );

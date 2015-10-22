@@ -165,7 +165,8 @@ function drush_civihr_employee_portal_update_email_type() {
 
             $email_values = reset($email_data['values']);
             
-            if ($email_values['location_type_id'] !== $work_type_id) {
+            if ((isset($email_values['id']) && isset($email_values['email'])) 
+                && $email_values['location_type_id'] !== $work_type_id) {
                 $result = civicrm_api3('Email', 'create', array(
                     'sequential' => 1,
                     'id' => $email_values['id'],

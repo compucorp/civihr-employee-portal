@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * Implements hook_menu()
+ * @return array
+ */
+function civihr_site_builder_menu() {
+    $items = array();
+    $items['site_builder/build'] = array(
+        'title' => 'Site Builder - New',
+        'page callback' => '_civihr_site_builder_create',
+        'access callback' => '_user_has_role',
+        'access arguments' => array(array('civihr_admin', 'administrator')),
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+
+}
+
+/**
+ * This function is used to start the automated build as background process
+ * @return string
+ */
+function _civihr_site_builder_create() {
+
+
+    $buildkit_url = '/var/www/civicrm-buildkit';
+
+    $cmd = 'sh ' . $buildkit_url . '/site-builder.sh test-2015';
+    $outputfile = $buildkit_url . '/site-builder-out-2015.log';
+    $pidfile = $buildkit_url . '/site-builder-pids-2015.log';
+
+    // This will start a background process and will build the site
+    // It will populate the .log file / each build so we can check the progress of the build
+    // It will also append the pids file to track what pids the process is using
+    exec(sprintf("%s > %s 2>&1 & echo $! >> %s", $cmd, $outputfile, $pidfile));
+
+    return $cmd . ' Site build started';
+
+}

@@ -367,6 +367,18 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
 }
 
 /**
+ * Implements hook_custom_theme()
+ * @return string
+ */
+function civihr_employee_portal_custom_theme() {
+
+    // Set the civihr_reports related pages to use the custom civihr admin theme and not the self service theme
+    if (arg(0) == 'civihr_reports' || arg(0) == 'civihr_reports_settings') {
+        return 'civihr_admin_theme';
+    }
+}
+
+/**
  * Implements hook_views_default_views().
  */
 function civihr_employee_portal_views_default_views() {
@@ -2533,6 +2545,7 @@ function civihr_employee_portal_get_task_list() {
             'is_deleted' => 0,
             'is_current_revision' => 1,
             'return' => "id,activity_type_id,activity_subject,activity_date_time,expire_date,activity_details,activity_status_id,activity_is_deleted,case_id,file_count,source_contact_id,target_contact_id,assignee_contact_id",
+            'options' => array('limit' => 0),
         ));
     }
 
@@ -3124,11 +3137,11 @@ function civihr_employee_portal_request_new_account_form($form, &$form_state){
 
     $form['name'] = array(
         '#type' => 'textfield',
-        '#title' => t('Employee ID'),
+        '#title' => t('Username'),
         '#prefix' => '<div class="row"><div class="col-md-12">',
         '#suffix' => '</div></div>',
         '#attributes' => array(
-            'placeholder' => t('Employee ID'),
+            'placeholder' => t('Username'),
         ),
     );
 
@@ -3709,6 +3722,9 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
 
     // Get available X Axis Group by options
     $enabled_x_axis_defaults = _getXAxisDefaults();
+
+    // Add custom datepicker
+    drupal_add_library('system', 'ui.datepicker');
 
     // Pass our custom data to js
     drupal_add_js(array('civihr_employee_portal_reports' => array('gender_options_data' => $gender_options_data, 'enabled_x_axis_defaults' => $enabled_x_axis_defaults)), 'setting');
@@ -4359,18 +4375,24 @@ function civihr_employee_portal_module_implements_alter(&$implementations, $hook
         return;
     }
 
-    // Check if the module exists and it's installed
-    if (!module_exists('views_autocomplete_filters')) {
-        return;
-    }
-
-    $module = 'views_autocomplete_filters';
     watchdog('alter default order', print_r($implementations, TRUE));
 
-    $group = array($module => $implementations[$module]);
+    $group = [];
+
+    // Check if the module exists and it's installed
+    if (module_exists('views_autocomplete_filters')) {
+        // Put the views autocomplete filters after civicrm
+        $module = 'views_autocomplete_filters';
+        $group += array($module => $implementations[$module]);
+        unset($implementations[$module]);
+    }
+
+    // Put the civihr employee portal module after civicrm module
+    $module = 'civihr_employee_portal';
+    $group += array($module => $implementations[$module]);
     unset($implementations[$module]);
 
-    // Make sure this module is after civicrm to avoid error with autocomplete search
+    // Make sure some modules are after civicrm to avoid error with autocomplete search or drush cc all
     $implementations = $implementations + $group;
 
     watchdog('alter modified order', print_r($implementations, TRUE));

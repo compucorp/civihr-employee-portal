@@ -32,10 +32,13 @@ $handler->display->display_options['query']['options']['distinct'] = TRUE;
 $handler->display->display_options['exposed_form']['type'] = 'basic';
 $handler->display->display_options['exposed_form']['options']['submit_button'] = 'Search';
 $handler->display->display_options['pager']['type'] = 'full';
-$handler->display->display_options['pager']['options']['items_per_page'] = '25';
+$handler->display->display_options['pager']['options']['items_per_page'] = '10';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['pager']['options']['id'] = '0';
 $handler->display->display_options['pager']['options']['quantity'] = '9';
+$handler->display->display_options['pager']['options']['expose']['items_per_page'] = TRUE;
+$handler->display->display_options['pager']['options']['expose']['items_per_page_options'] = '2, 5, 10, 20, 40, 60';
+$handler->display->display_options['pager']['options']['expose']['items_per_page_options_all'] = TRUE;
 $handler->display->display_options['style_plugin'] = 'table';
 $handler->display->display_options['style_options']['columns'] = array(
     'display_name' => 'display_name',
@@ -45,7 +48,7 @@ $handler->display->display_options['style_options']['columns'] = array(
     'location' => 'location',
     'contract_type' => 'contract_type',
     'department' => 'department',
-    'last_name' => 'last_name'
+    'last_name' => 'last_name',
 );
 $handler->display->display_options['style_options']['info'] = array(
     'display_name' => array(
@@ -103,8 +106,17 @@ $handler->display->display_options['style_options']['info'] = array(
         'align' => '',
         'separator' => '',
         'empty_column' => 0,
-    )
+    ),
 );
+/* Header: Global: Result summary */
+$handler->display->display_options['header']['result']['id'] = 'result';
+$handler->display->display_options['header']['result']['table'] = 'views';
+$handler->display->display_options['header']['result']['field'] = 'result';
+$handler->display->display_options['header']['result']['content'] = '@total';
+/* Footer: Global: Unfiltered text */
+$handler->display->display_options['footer']['area_text_custom']['id'] = 'area_text_custom';
+$handler->display->display_options['footer']['area_text_custom']['table'] = 'views';
+$handler->display->display_options['footer']['area_text_custom']['field'] = 'area_text_custom';
 /* Relationship: CiviCRM Contacts: HRJobContract Details entity */
 $handler->display->display_options['relationships']['hrjc_details']['id'] = 'hrjc_details';
 $handler->display->display_options['relationships']['hrjc_details']['table'] = 'civicrm_contact';
@@ -178,7 +190,6 @@ $handler->display->display_options['fields']['location']['id'] = 'location';
 $handler->display->display_options['fields']['location']['table'] = 'hrjc_details';
 $handler->display->display_options['fields']['location']['field'] = 'location';
 $handler->display->display_options['fields']['location']['relationship'] = 'hrjc_details';
-$handler->display->display_options['fields']['location']['label'] = 'Location';
 /* Field: HRJobContract Details entity: Contract_type */
 $handler->display->display_options['fields']['contract_type']['id'] = 'contract_type';
 $handler->display->display_options['fields']['contract_type']['table'] = 'hrjc_details';
@@ -204,6 +215,8 @@ $handler->display->display_options['sorts']['id']['field'] = 'id';
 $handler->display->display_options['filter_groups']['groups'] = array(
     1 => 'AND',
     2 => 'OR',
+    3 => 'OR',
+    4 => 'OR',
 );
 /* Filter criterion: CiviCRM Contacts: Contact Type */
 $handler->display->display_options['filters']['contact_type']['id'] = 'contact_type';
@@ -406,6 +419,32 @@ $handler->display->display_options['filters']['is_primary']['field'] = 'is_prima
 $handler->display->display_options['filters']['is_primary']['relationship'] = 'hrjc_details';
 $handler->display->display_options['filters']['is_primary']['value']['value'] = '1';
 $handler->display->display_options['filters']['is_primary']['group'] = 1;
+/* Filter criterion: CiviCRM Relationships: Is Relationship Active */
+$handler->display->display_options['filters']['is_active']['id'] = 'is_active';
+$handler->display->display_options['filters']['is_active']['table'] = 'civicrm_relationship';
+$handler->display->display_options['filters']['is_active']['field'] = 'is_active';
+$handler->display->display_options['filters']['is_active']['value'] = '1';
+$handler->display->display_options['filters']['is_active']['group'] = 4;
+/* Filter criterion: CiviCRM Relationships: Relationship Type A-to-B */
+$handler->display->display_options['filters']['relationship_type_2']['id'] = 'relationship_type_2';
+$handler->display->display_options['filters']['relationship_type_2']['table'] = 'civicrm_relationship';
+$handler->display->display_options['filters']['relationship_type_2']['field'] = 'relationship_type';
+$handler->display->display_options['filters']['relationship_type_2']['operator'] = 'empty';
+$handler->display->display_options['filters']['relationship_type_2']['group'] = 4;
+/* Filter criterion: CiviCRM Relationships: End Date */
+$handler->display->display_options['filters']['end_date']['id'] = 'end_date';
+$handler->display->display_options['filters']['end_date']['table'] = 'civicrm_relationship';
+$handler->display->display_options['filters']['end_date']['field'] = 'end_date';
+$handler->display->display_options['filters']['end_date']['operator'] = '>=';
+$handler->display->display_options['filters']['end_date']['value']['value'] = '-1 day';
+$handler->display->display_options['filters']['end_date']['value']['type'] = 'offset';
+$handler->display->display_options['filters']['end_date']['group'] = 3;
+/* Filter criterion: CiviCRM Relationships: End Date */
+$handler->display->display_options['filters']['end_date_1']['id'] = 'end_date_1';
+$handler->display->display_options['filters']['end_date_1']['table'] = 'civicrm_relationship';
+$handler->display->display_options['filters']['end_date_1']['field'] = 'end_date';
+$handler->display->display_options['filters']['end_date_1']['operator'] = 'empty';
+$handler->display->display_options['filters']['end_date_1']['group'] = 3;
 /* Filter criterion: CiviCRM Relationships: Relationship Type A-to-B */
 $handler->display->display_options['filters']['relationship_type']['id'] = 'relationship_type';
 $handler->display->display_options['filters']['relationship_type']['table'] = 'civicrm_relationship';
@@ -423,6 +462,18 @@ $handler->display->display_options['filters']['relationship_type_1']['group'] = 
 
 /* Display: Staff directory list page */
 $handler = $view->new_display('page', 'Staff directory list page', 'page');
+$handler->display->display_options['defaults']['pager'] = FALSE;
+$handler->display->display_options['pager']['type'] = 'full';
+$handler->display->display_options['pager']['options']['items_per_page'] = '10';
+$handler->display->display_options['pager']['options']['offset'] = '0';
+$handler->display->display_options['pager']['options']['id'] = '0';
+$handler->display->display_options['pager']['options']['quantity'] = '9';
+$handler->display->display_options['pager']['options']['expose']['items_per_page_options'] = '2, 5, 10, 20, 40, 60';
+$handler->display->display_options['pager']['options']['expose']['items_per_page_options_all'] = TRUE;
+$handler->display->display_options['pager']['options']['tags']['first'] = 'First';
+$handler->display->display_options['pager']['options']['tags']['previous'] = 'Previous';
+$handler->display->display_options['pager']['options']['tags']['next'] = 'Next';
+$handler->display->display_options['pager']['options']['tags']['last'] = 'Last';
 $handler->display->display_options['merge_rows'] = TRUE;
 $handler->display->display_options['field_config'] = array(
     'id' => array(
@@ -493,23 +544,25 @@ $translatables['civihr_staff_directory'] = array(
     t('‹ previous'),
     t('next ›'),
     t('last »'),
+    t('@total'),
     t('HRJobContract Details entity'),
     t('HRJobContract Role entity'),
     t('CiviCRM Contact B'),
     t('CiviCRM Relationship (starting from contact A)'),
     t('Contact ID'),
     t('.'),
-    t('<img src="[image_URL]" width="35px" height="25px" />'),
     t('Name'),
-    t('Last Name'),
     t('Work Phone'),
     t('Job Title'),
     t('Email'),
-    t('Location / Place of Work'),
+    t('Location'),
     t(' Contract Type '),
     t('Department'),
     t('Manager'),
     t('Phone'),
-    t('Location'),
     t('Staff directory list page'),
+    t('First'),
+    t('Previous'),
+    t('Next'),
+    t('Last'),
 );

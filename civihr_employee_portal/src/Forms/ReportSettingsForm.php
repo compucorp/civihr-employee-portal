@@ -20,6 +20,7 @@ class ReportSettingsForm extends BaseForm {
     public function setYAxisFilterTypes($additional_filters = array()) {
 
         $filters = array(
+            'fte' => t('FTE'),
             'headcount' => t('Headcount'),
             'gender' => t('Gender'),
             'age' => t('Age')

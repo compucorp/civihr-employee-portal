@@ -33,6 +33,8 @@ dependencies[] = views_merge_rows
 dependencies[] = views_data_export
 dependencies[] = views_json
 dependencies[] = views_bulk_operations
+dependencies[] = browserclass
+dependencies[] = conditional_styles
 
 ; Views Handlers
 files[] = views/includes/civihr_employee_portal_handler_age_group.inc

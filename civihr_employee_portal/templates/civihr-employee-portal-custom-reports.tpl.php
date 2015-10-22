@@ -13,6 +13,9 @@
     </div>
 
     <div class="col-md-8 column2 panel-panel">
+
+        <input type="text" id="reportToDate">
+
         <div id="custom-report"></div>
     </div>
 
