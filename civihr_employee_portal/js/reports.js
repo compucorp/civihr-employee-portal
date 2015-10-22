@@ -1,6 +1,10 @@
 (function($) {
 Drupal.behaviors.civihr_employee_portal_reports = {
     attach: function (context, settings) {
+        // The outer wrapper of the Data section
+        var $dataWrapper = $('#custom-report-details');
+
+        _setDataWrapperVisibility();
 
         // Report to date selector
         $( "#reportToDate" ).datepicker({
@@ -198,6 +202,18 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 }
 
                 return false;
+            }
+        }
+
+        /**
+         * If the Data section has already a results table, show it
+         *
+         */
+        function _setDataWrapperVisibility() {
+            if ($dataWrapper.find('table').length > 0 ) {
+                $dataWrapper.show();
+            } else {
+                $dataWrapper.hide();
             }
         }
 
@@ -1011,7 +1027,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
          */
         function _displayFilterData(d, report) {
             // Build the custom table with details
-            var target = $('#custom-report-details');
             var viewName = report.getViewMachineName();
             var viewDisplay = report.getViewDisplayName();
 
@@ -1019,9 +1034,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             var x_axis = d.data.department;
             var y_axis = getCleanData['gender'](d.data.gender) || d.data.gender;
 
-            if (target.is(':visible') ) {
-                target.fadeIn(function () {
-                    target.find('table').animate({ opacity: 0.3 }, 500);
+            if ($dataWrapper.is(':visible') ) {
+                $dataWrapper.fadeIn(function () {
+                    $dataWrapper.find('table').animate({ opacity: 0.3 }, 500);
                 });
             }
 
@@ -1045,7 +1060,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 type: 'GET',
                 url: buildURL(),
                 success: function(data) {
-                    target
+                    $dataWrapper
                         .html(data)
                         .ready(function() {
                             if (Drupal.vbo) {
@@ -1061,11 +1076,11 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                                 Drupal.civihr_theme.applyCustomSelect();
                             }
 
-                            target.fadeIn();
+                            $dataWrapper.fadeIn();
                         });
                 },
                 error: function(data) {
-                    target.html('An error occured!');
+                    $dataWrapper.html('An error occured!');
                 }
             });
         }

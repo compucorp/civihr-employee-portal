@@ -31,7 +31,7 @@
     </footer>
 </section>
 
-<div id="custom-report-details" style="display: none;">
+<div id="custom-report-details">
     <?php print $custom_data; ?>
 </div>
 
