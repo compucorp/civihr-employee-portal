@@ -132,7 +132,7 @@ Drupal.behaviors.civihr_employee_portal_reports = {
 
             // Generate the available X Group By buttons
             dataGroups.forEach(function (value, key) {
-                $filters.append('<button id="' + value + '" class="subFilter btn btn-lg btn-secondary-outline">' + value.toUpperCase() + '</button>');
+                $filters.append('<button id="' + value + '" class="subFilter btn btn-lg btn-secondary-outline text-uppercase">' + value + '</button>');
             });
 
             $filtersParent.removeClass('hide');
@@ -1010,10 +1010,6 @@ Drupal.behaviors.civihr_employee_portal_reports = {
          * @private
          */
         function _displayFilterData(d, report) {
-
-            $('#custom-report-details table').remove();
-            $('#custom-report-details').append('<table></table>');
-
             // Build the custom table with details
             var target = $('#custom-report-details');
             var viewName = report.getViewMachineName();
@@ -1022,6 +1018,12 @@ Drupal.behaviors.civihr_employee_portal_reports = {
             // If any value cleanup needs to be done it need to be done at this stage
             var x_axis = d.data.department;
             var y_axis = getCleanData['gender'](d.data.gender) || d.data.gender;
+
+            if (target.is(':visible') ) {
+                target.fadeIn(function () {
+                    target.find('table').animate({ opacity: 0.3 }, 500);
+                });
+            }
 
             console.log(d.data.gender);
             console.log(getCleanData['gender'](d.data.gender));
@@ -1043,13 +1045,9 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                 type: 'GET',
                 url: buildURL(),
                 success: function(data) {
-
-                    var viewHtml = data;
-
-                    target.children().fadeOut(300, function() {
-                        target.html(viewHtml);
-
-                        target.ready(function() {
+                    target
+                        .html(data)
+                        .ready(function() {
                             if (Drupal.vbo) {
                                 // Reload js behaviours for views bulk operations
                                 $('.vbo-views-form', context).each(function() {
@@ -1063,17 +1061,14 @@ Drupal.behaviors.civihr_employee_portal_reports = {
                                 Drupal.civihr_theme.applyCustomSelect();
                             }
 
+                            target.fadeIn();
                         });
-
-                    });
                 },
                 error: function(data) {
                     target.html('An error occured!');
                 }
             });
-
         }
-              
     }
 }
 })(jQuery);
