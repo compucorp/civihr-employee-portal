@@ -420,20 +420,20 @@ class AbsenceRequestForm {
         $absencesData = $absencesDataQuery->execute()->fetchAll();
 
         $dateExists = false;
-        foreach($absencesData as $absence){
+        foreach($absencesData as $absence) {
             $startTimestamp = $absence->absence_start_date_timestamp;
             $endTimestamp = $absence->absence_end_date_timestamp;
 
             $dateExists = false;
-            if($requestedStartTimestamp <= $endTimestamp && $requestedStartTimestamp >= $startTimestamp){
+            if($requestedStartTimestamp <= $endTimestamp && $requestedStartTimestamp >= $startTimestamp) {
                     $dateExists = true;
-            }else if($requestedEndTimestamp >= $startTimestamp && $requestedEndTimestamp <= $endTimestamp){
+            }else if($requestedEndTimestamp >= $startTimestamp && $requestedEndTimestamp <= $endTimestamp) {
                     $dateExists = true;
-            }else if($startTimestamp >= $requestedStartTimestamp && $endTimestamp <= $requestedEndTimestamp){
+            }else if($startTimestamp >= $requestedStartTimestamp && $endTimestamp <= $requestedEndTimestamp) {
                 $dateExists = true;
             }
             
-            if($dateExists == true){
+            if($dateExists == true) {
                 break;
             }
         }
