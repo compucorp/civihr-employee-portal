@@ -19,7 +19,12 @@
                     ?>
                 </div>
                 <div class="col-md-8">
-                    <input type="text" id="reportToDate">
+                    <div class="form-inline text-right">
+                        <div class="input-group input-group-sm input-group-unstyled">
+                            <input type="text" id="reportToDate" class="form-control">
+                            <span class="input-group-addon fa fa-calendar"></span>
+                        </div>
+                    </div>
                     <div id="custom-report" data-graph-section="canvas">
                         <!-- Content generated in reports.js -->
                     </div>
