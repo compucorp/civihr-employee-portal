@@ -19,10 +19,14 @@
                     ?>
                 </div>
                 <div class="col-md-8">
+                    <div class="clearfix visible-xs-block visible-sm-block">&nbsp;</div>
                     <div class="form-inline text-right">
-                        <div id="reportToDate" class="input-group input-group-sm input-group-unstyled">
-                            <input type="text" class="form-control">
-                            <span class="input-group-addon fa fa-calendar"></span>
+                        <div class="form-group">
+                            <label for="date-filter" class="control-label">Select Date:</label>
+                            <div id="reportToDate" class="input-group input-group-sm input-group-unstyled">
+                                <input type="text" id="date-filter" class="form-control">
+                                <span class="input-group-addon fa fa-calendar"></span>
+                            </div>
                         </div>
                     </div>
                     <div id="custom-report" data-graph-section="canvas">
