@@ -50,6 +50,12 @@ function _setup_modals() {
         'animation' => 'fadeIn'
     );
 
+    $bootstrap_modal = array_replace_recursive($basic_modal, array(
+        'modalSize' => array('height' => 'auto', 'width' => 'auto'),
+        'modalTheme' => 'ctools_custom_modal_html',
+        'modalClass' => 'civihr-bootstrap'
+    ));
+
     $custom_modal = array_replace_recursive($basic_modal, array(
         'modalSize' => array('height' => 'auto', 'width' => 'auto'),
         'animation' => 'fadeIn',
@@ -62,6 +68,7 @@ function _setup_modals() {
 
     drupal_add_js(array(
         'civihr-default-style' => $basic_modal,
+        'civihr-bootstrap-style' => $bootstrap_modal,
         'civihr-custom-style' => $custom_modal,
         'civihr-custom-large-style' => $custom_modal__large
     ), 'setting');
@@ -1139,7 +1146,7 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
 
     if ($link_type == 'civihr_report_settings') {
         return '' . l($link_text, 'civihr_reports_settings/nojs/view',
-            array('attributes' => array('class' => "twitter_bootstrap_modal tb_modal $class"))
+            array('attributes' => array('class' => "ctools-use-modal ctools-modal-civihr-bootstrap-style $class"))
         ) . '';
     }
 

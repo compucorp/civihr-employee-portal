@@ -115,7 +115,6 @@ class ReportSettingsForm extends BaseForm {
         // Optionally can pass new X Axis type same as for Y Axis groupings
         $this->setXAxisFilterTypes();
 
-
         $this->form_data['modal_body_open'] = array(
             '#markup' => '<div class="modal-body">'
         );
@@ -147,7 +146,7 @@ class ReportSettingsForm extends BaseForm {
             '#title' => $this->getFormName(),
             '#default_value' => $this->getRawAgeGroups(),
             '#maxlength' => 1024,
-            '#suffix' => '<div>
+            '#suffix' => '<div id="table">
                 <span class="table-add glyphicon glyphicon-plus"></span>
                 <table class="table table-striped table-editable">
                     <thead>
