@@ -869,9 +869,15 @@
             customReport.$DOM.section.xFilters.hide();
 
             // Report to date selector
-            $( "#reportToDate" ).datepicker({
-                dateFormat: "yy-mm-dd"
-            });
+            $( "#reportToDate > input" )
+                .datepicker({ dateFormat: "yy-mm-dd" })
+                .change(function() { // When the date range changes update the graph
+                    // If not set it will return All values
+                    var toDate = this.value || 'All';
+
+                    // Filter the graph by specifing To Date
+                    customReport.drawGraph(customReport.getJsonUrl() + '/' + toDate, customReport.getChartType());
+                });
 
             $('.table-add', context).once('editableBehaviour', function () {
 
@@ -1107,15 +1113,6 @@
             }
 
             customReport.drawGraph(customReport.getJsonUrl(), customReport.getChartType());
-
-            // When the date range changes update the graph
-            $("#reportToDate").change(function() {
-                // If not set it will return All values
-                var toDate = this.value || 'All';
-
-                // Filter the graph by specifing To Date
-                customReport.drawGraph(customReport.getJsonUrl() + '/' + toDate, customReport.getChartType());
-            });
 
             // Set default classes on initial load
             _setDefaultClass(mainFilters, subFilters, customReport);

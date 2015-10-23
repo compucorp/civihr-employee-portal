@@ -20,8 +20,8 @@
                 </div>
                 <div class="col-md-8">
                     <div class="form-inline text-right">
-                        <div class="input-group input-group-sm input-group-unstyled">
-                            <input type="text" id="reportToDate" class="form-control">
+                        <div id="reportToDate" class="input-group input-group-sm input-group-unstyled">
+                            <input type="text" class="form-control">
                             <span class="input-group-addon fa fa-calendar"></span>
                         </div>
                     </div>
