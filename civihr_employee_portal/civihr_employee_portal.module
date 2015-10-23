@@ -1139,7 +1139,7 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
 
     if ($link_type == 'civihr_report_settings') {
         return '' . l($link_text, 'civihr_reports_settings/nojs/view',
-            array('attributes' => array('class' => "ctools-use-modal ctools-modal-civihr-default-style $class"))
+            array('attributes' => array('class' => "twitter_bootstrap_modal tb_modal $class"))
         ) . '';
     }
 

@@ -115,6 +115,11 @@ class ReportSettingsForm extends BaseForm {
         // Optionally can pass new X Axis type same as for Y Axis groupings
         $this->setXAxisFilterTypes();
 
+
+        $this->form_data['modal_body_open'] = array(
+            '#markup' => '<div class="modal-body">'
+        );
+
         $this->form_data['enabled_y_axis_filters'] = array(
             '#type' => 'checkboxes',
             '#title' => t('Y Axis Group By options'),
@@ -142,42 +147,47 @@ class ReportSettingsForm extends BaseForm {
             '#title' => $this->getFormName(),
             '#default_value' => $this->getRawAgeGroups(),
             '#maxlength' => 1024,
-            '#suffix' => '<div class="container">
+            '#suffix' => '<div>
+                <span class="table-add glyphicon glyphicon-plus"></span>
+                <table class="table table-striped table-editable">
+                    <thead>
+                        <tr>
+                          <th id="description">Description</th>
+                          <th id="start_period">Start Age</th>
+                          <th id="end_period">End Age</th>
+                          <th></th>
+                          <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>'
+                        . $this->getAgeGroupsHTML() .
+                        '<!-- This is our clonable table line -->
+                        <tr class="hide">
+                          <td class="changeable" contenteditable="true">0 - 99</td>
+                          <td class="changeable" contenteditable="true">0</td>
+                          <td class="changeable" contenteditable="true">99</td>
+                          <td>
+                            <span class="table-remove glyphicon glyphicon-remove"></span>
+                          </td>
+                          <td>
+                            <span class="table-up glyphicon glyphicon-arrow-up"></span>
+                            <span class="table-down glyphicon glyphicon-arrow-down"></span>
+                          </td>
+                        </tr>
+                    </tbody>
+              </table>
+            </div>'
+        );
 
-                              <div id="table">
-                                <span class="table-add glyphicon glyphicon-plus"></span>
-                                <table class="table-editable">
-                                  <tr>
-                                    <th id="description">Description</th>
-                                    <th id="start_period">Start Age</th>
-                                    <th id="end_period">End Age</th>
-                                    <th></th>
-                                    <th></th>
-                                  </tr>
-
-                                    ' . $this->getAgeGroupsHTML() . '
-
-                                  <!-- This is our clonable table line -->
-                                  <tr class="hide">
-                                    <td class="changeable" contenteditable="true">0 - 99</td>
-                                    <td class="changeable" contenteditable="true">0</td>
-                                    <td class="changeable" contenteditable="true">99</td>
-                                    <td>
-                                      <span class="table-remove glyphicon glyphicon-remove"></span>
-                                    </td>
-                                    <td>
-                                      <span class="table-up glyphicon glyphicon-arrow-up"></span>
-                                      <span class="table-down glyphicon glyphicon-arrow-down"></span>
-                                    </td>
-                                  </tr>
-                                </table>
-                              </div>
-                        </div>'
+        $this->form_data['modal_body_close'] = array(
+            '#markup' => '</div>'
         );
 
         $this->form_data['submit'] = array(
             '#type' => 'submit',
             '#value' => t('Save settings!'),
+            '#prefix' => '<div class="modal-footer">',
+            '#suffix' => '</div>',
         );
 
         $this->form_data['#validate'][] = 'civihr_employee_portal_report_settings_form_validate';
