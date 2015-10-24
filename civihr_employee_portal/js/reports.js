@@ -2,562 +2,513 @@
     'use strict';
 
     /**
-     * DrawReport Object
-     * @constructor
+     * D3Wrapper Object
      */
-    function DrawReport(cleanData) {
-        this.cleanData = cleanData;
+    var D3Wrapper = (function () {
 
-        // Will hold our loaded json data later
-        this.data = null;
+        // Init default settings
+        var _settings = (function (settings) {
+            // The DOM container of the chart
+            settings.container = '';
 
-        // Init default settings for the Report class
-        this.settings = [];
+            settings.outerWidth = window.innerWidth / 2;
+            settings.outerHeight = window.innerHeight / 2;
 
-        this.settings.outerWidth = window.innerWidth / 2;
-        this.settings.outerHeight = window.innerHeight / 2;
+            // Width and height for the SVG area (for charts)
+            settings.innerWidth = window.innerWidth / 3;
+            settings.innerHeight = window.innerHeight / 3;
+            settings.barPadding = 5;
 
-        // Width and height for the SVG area (for charts)
-        this.settings.innerWidth = window.innerWidth / 3;
-        this.settings.innerHeight = window.innerHeight / 3;
-        this.settings.barPadding = 2;
+            // Pie charts are round so we need a radius for them
+            settings.radius = Math.min(settings.innerWidth, settings.innerHeight) / 2;
 
-        // Pie charts are round so we need a radius for them
-        this.settings.radius = Math.min(this.settings.innerWidth, this.settings.innerHeight) / 2;
+            // Set our defined range of colour codes for now
+            // settings.color = d3.scale.ordinal()
+            //    .range(['#A60F2B', '#648C85', '#B3F2C9', '#528C18', '#C3F25C']);
 
-        // Set our defined range of colour codes for now
-        // this.settings.color = d3.scale.ordinal()
-        //    .range(['#A60F2B', '#648C85', '#B3F2C9', '#528C18', '#C3F25C']);
+            // Use 20 predefined colours
+            settings.color = d3.scale.category20();
 
-        // Use 20 predefined colours
-        this.settings.color = d3.scale.category20();
+            // Set number of ticks
+            settings.setTicks = 5;
 
-        // Set number of ticks
-        this.settings.setTicks = 5;
+            // Start x padding, when using axes
+            settings.padding = 25;
 
-        // Start x padding, when using axes
-        this.settings.padding = 25;
+            // Start y / height padding, when using axes
+            settings.hpadding = 25;
 
-        // Start y / height padding, when using axes
-        this.settings.hpadding = 25;
+            // Set globally used margins
+            settings.margin = {top: 20, right: 30, bottom: 30, left: 40},
 
-        // Set globally used margins
-        this.settings.margin = {top: 20, right: 30, bottom: 30, left: 40},
+            // Globally accessible svg_width and svg_height -> (mind the final svg width and height equals to svg_width + margins)
+            settings.svg_width = settings.outerWidth + settings.padding;
+            settings.svg_height = settings.outerHeight + settings.hpadding;
 
-        // Globally accessible svg_width and svg_height -> (mind the final svg width and height equals to svg_width + margins)
-        this.settings.svg_width = this.settings.outerWidth + this.settings.padding;
-        this.settings.svg_height = this.settings.outerHeight + this.settings.hpadding;
+            // Duration
+            settings.duration = 250;
 
-        // Duration
-        this.settings.duration = 250;
-    };
+            // Empty default click handler
+            settings.clickHandler = function () {}
 
-    // This will draw report on specified json endpoint, with specified report type
-    DrawReport.prototype.drawGraph = function (json_url, type) {
-        d3.json(Drupal.settings.basePath + json_url, function (error, json) {
-            if (error) {
-                return console.warn(error);
-            }
+            return settings;
+        })({});
 
-            // Prepare our data
-            this.data = json.results;
-
-            switch (type) {
-                case 'grouped_bar':
-                    this.setChartType('grouped_bar');
-                    this.visualizeMultipleBarChart();
-                    break;
-                case 'pie':
-                    this.setChartType('pie');
-                    this.visualizePieChart();
-                    break;
-                case 'bar':
-                default:
-                    this.setChartType('bar');
-                    this.visualizeBarChart();
-            }
-        }.bind(this));
-    };
-
-    // Get default main filter type
-    DrawReport.prototype.getMainFilter = function () {
-        // Gets the default filter from the object
-        if (this.mainFilter !== 'undefined' && this.mainFilter) {
-            return this.mainFilter;
+        /**
+         * Round UP to the nearest five -> helper function
+         *
+         */
+        function roundUp5 (x) {
+            return Math.ceil(x / 5) * 5;
         }
 
-        // If not set on the object, try to get from the COOKIE values
-        if ($.cookie('mainFilter') !== 'undefined' && $.cookie('mainFilter')) {
-            return $.cookie('mainFilter');
-        } else {
-            // Provide default main filter type
-            return 'headcount';
-        }
-    };
+        return {
 
-    // Get default sub filter type
-    DrawReport.prototype.getSubFilter = function () {
-        // Gets the default filter from the object
-        if (this.subFilter !== 'undefined' && this.subFilter) {
-            return this.subFilter;
-        }
+            /**
+             * Draws a bar chart
+             *
+             * @param {JSON} chartData - The data to visualize
+             */
+            barChart: function (chartData) {
+                document.querySelector(_settings.container).innerHTML = '';
 
-        // If not set on the object, try to get from the COOKIE values
-        if ($.cookie('subFilter') !== 'undefined' && $.cookie('subFilter')) {
-            return $.cookie('subFilter');
-        } else {
-            // Provide default sub filter type
-            return 'location';
-        }
-    };
+                // Create SVG element
+                var svg = d3.select(_settings.container)
+                    .append("svg")
+                    .attr("width", _settings.svg_width + _settings.margin.left + _settings.margin.right)
+                    .attr("height", _settings.svg_height + _settings.margin.top + _settings.margin.bottom);
 
-    // Round UP to the nearest five -> helper function
-    DrawReport.prototype.roundUp5 = function (x) {
-        return Math.ceil(x / 5) * 5;
-    };
+                // Set up scales
+                var scaleX = d3.scale.ordinal()
+                    .domain(d3.range(chartData.length))
+                    .rangeBands([0, _settings.svg_width - _settings.padding], .3);
 
-    // Set default main filter type
-    DrawReport.prototype.setMainFilter = function (filter) {
-        this.mainFilter = filter;
+                var scaleY = d3.scale.linear()
+                    .range([_settings.svg_height - _settings.padding, 0])
+                    .domain([0, d3.max(chartData, function(d) { return roundUp5(d.data.count); })]);
 
-        // Sets the filter on the cookie as well (helps to set default values)
-        $.cookie('mainFilter', filter, { path: '/' });
-    };
-
-    // Set default sub filter type
-    DrawReport.prototype.setSubFilter = function (filter) {
-        // Sets the filter to the object
-        this.subFilter = filter;
-
-        // Sets the filter on the cookie as well (helps to set default values)
-        $.cookie('subFilter', filter, { path: '/' });
-    };
-
-    DrawReport.prototype.visualizeBarChart = function () {
-        var _this = this;
-
-        $('#custom-report').empty();
-
-        // Create SVG element
-        var svg = d3.select("#custom-report")
-            .append("svg")
-            .attr("width", _this.settings.svg_width + _this.settings.margin.left + _this.settings.margin.right)
-            .attr("height", _this.settings.svg_height + _this.settings.margin.top + _this.settings.margin.bottom);
-
-        // Set up scales
-        var scaleX = d3.scale.ordinal()
-            .domain(d3.range(_this.data.length))
-            .rangeBands([0, _this.settings.svg_width - _this.settings.padding], .3);
-
-        var scaleY = d3.scale.linear()
-            .range([_this.settings.svg_height - _this.settings.padding, 0])
-            .domain([0, d3.max(_this.data, function(d) { return _this.roundUp5(d.data.count); })]);
-
-        var xAxis = d3.svg.axis()
-            .scale(scaleX)
-            .tickFormat(function(d, i) {
-                return _this.data[i]['data']['department'];
-            })
-            .orient("bottom");
-
-        var yAxis = d3.svg.axis()
-            .scale(scaleY)
-            .orient("left")
-            .ticks(_this.settings.setTicks);
-
-        svg.selectAll("rect")
-            .data(_this.data)
-            .enter()
-            .append("rect")
-            .attr("fill", function (d, i) {
-                if (d.data.department === 'HR') {
-                    return 'green';
-                } else {
-                    return _this.settings.color(d.data.department);
-                }
-            })
-            .on("mouseover", function () {
-                d3.select(this)
-                    .attr("cursor", "pointer")
-                    .attr("fill", "orange");
-            })
-            .on("mouseout", function (d) {
-                d3.select(this)
-                    .transition()
-                    .duration(_this.settings.duration)
-                    .attr("fill", _this.settings.color(d.data.department));
-            })
-            .on("click", function (d, i) {
-                _this.displayFilterData(d);
-            })
-            .attr("x", function (d, i) {
-                return scaleX(i);
-            })
-            .attr("y", function (d) {
-                return scaleY(d.data.count) + _this.settings.hpadding;
-            })
-            .attr("width", _this.settings.innerWidth / _this.data.length - _this.settings.barPadding)
-            .attr("height", function (d) {
-                return _this.settings.svg_height - _this.settings.hpadding - scaleY(d.data.count);
-            });
-
-        // Append the axes
-        svg.append("g")
-            .attr("class", "x-axis")
-            .style({ 'fill': 'none', 'stroke-width': '1px' })
-            .attr("transform", "translate(" + -30 + "," + _this.settings.svg_height + ")")
-            .call(xAxis);
-
-        svg.append("g")
-            .attr("class", "y-axis")
-            .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px' })
-            .attr("transform", "translate(" + 30 + "," + _this.settings.padding + ")")
-            .call(yAxis);
-
-        // Add chart types
-        _this.addChartTypes();
-    };
-
-    DrawReport.prototype.visualizePieChart = function () {
-        var _this = this;
-
-        $('#custom-report').empty();
-
-        var svg = d3.select('#custom-report')
-            .append('svg')
-            .attr("width", _this.settings.svg_width + _this.settings.margin.left + _this.settings.margin.right)
-            .attr("height", _this.settings.svg_height + _this.settings.margin.top + _this.settings.margin.bottom)
-            .append('g');
-
-        var arc = d3.svg.arc()
-            .outerRadius(_this.settings.radius - 10)
-            .innerRadius(_this.settings.radius - 50);
-
-        var pie = d3.layout.pie()
-            .value(function (d) {
-                return d.data.count;
-            })
-            .sort(null);
-
-        var path = svg.selectAll("path")
-            .data(pie(_this.data))
-            .enter()
-            .append("path")
-            .attr('transform', 'translate(' + (_this.settings.innerWidth / 2) +  ',' + (_this.settings.innerHeight / 2) + ')')
-            .attr('d', arc)
-            .on("mouseover", function () {
-                d3.select(this)
-                    .attr("cursor", "pointer")
-                    .attr("fill", "orange");
-            })
-            .on("mouseout", function (d) {
-                d3.select(this)
-                    .transition()
-                    .duration(_this.settings.duration)
-                    .attr("fill", _this.settings.color(d.data.data.department));
-            })
-            .on("click", function (d, i) {
-                _this.displayFilterData(d.data);
-            })
-            .attr('fill', function (d, i) {
-                return _this.settings.color(d.data.data.department);
-            });
-
-        // Add legend labels
-        svg.append("g").selectAll("g")
-            .data(pie(_this.data))
-            .enter().append("text")
-            .attr("font-family", "sans-serif")
-            .attr("font-size", "9px")
-            .attr("fill", function (d, i) {
-                return _this.settings.color(d.data.data.department);
-            })
-            .attr("text-anchor", "middle")
-            .text(function(d) {
-                return d.data.data.department;
-            })
-            .attr("x", function (d, i) {
-                return _this.settings.outerWidth + _this.settings.padding - _this.settings.barPadding;
-            })
-            .attr("y", function (d, i) {
-                return (i * _this.settings.hpadding) + _this.settings.outerHeight - 100;
-            });
-
-        // Add legend small image icons
-        svg.append("g").selectAll("g")
-            .data(pie(_this.data))
-            .enter().append("rect")
-            .attr("width", 15)
-            .attr("height", 15)
-            .attr("fill", function (d, i) {
-                return _this.settings.color(d.data.data.department);
-            })
-            .attr("x", function (d, i) {
-                return _this.settings.outerWidth - 80 + _this.settings.padding - _this.settings.barPadding;
-            })
-            .attr("y", function (d, i) {
-                return (i * _this.settings.hpadding - 10) + _this.settings.outerHeight - 100;
-            });
-
-        var count = svg.selectAll("count")
-            .data(pie(_this.data));
-
-        // Add count for each slice...
-        count.enter()
-            .append("text")
-            .attr("font-family", "sans-serif")
-            .attr("x", _this.settings.innerWidth / 2)
-            .attr("y", _this.settings.innerHeight / 2)
-            .attr("font-size", "11px")
-            .attr("font-style", "bold")
-            .attr("fill", "white")
-            .attr("text-anchor", "middle")
-            .attr("transform", function(d) {
-                // Sets the text inside the circle
-                d.innerRadius = _this.settings.radius - 80;
-                return "translate(" + arc.centroid(d) + ")";
-            })
-            .text(function (d, i) {
-                return d.data.data.count;
-            });
-
-        // Add chart types
-        _this.addChartTypes();
-    }
-
-    DrawReport.prototype.visualizeMultipleBarChart = function () {
-        var _this = this;
-
-        $('#custom-report').empty();
-
-        var nested_data = d3.nest()
-            .key(function (d) {
-                return d.data.gender;
-            }).sortKeys(d3.ascending)
-            .key(function (d) {
-                return d.data.department;
-            })
-            .rollup(function (d) {
-                return d3.sum(d, function(g) {
-                    return 1;
-                });
-            })
-            .entries(_this.data);
-
-        var tracker = 0;
-        var assigned_key = '';
-        var tracking_array = [];
-
-        // Groups data
-        nested_data.forEach(function (s, main_key) {
-            s.values.forEach(function (x, i) {
-                if (typeof tracking_array[x.key] == "undefined") {
-                    // Add to the array with current key (if not exist)
-                    tracking_array[x.key] = tracker;
-
-                    // Number of grouped charts
-                    tracking_array['grouped_charts_num'] = tracker + 1;
-                    tracker++;
-                }
-            });
-        });
-
-        var n = tracking_array['grouped_charts_num'], // Number of grouped charts
-            m = nested_data.length; // Number of columns / chart
-
-        // Sorts data
-        nested_data.forEach(function (s, main_key) {
-            var sorted_array = [];
-
-            $.map(nested_data[main_key].values, function (n, key_i) {
-                sorted_array[tracking_array[n.key]] = n;
-            });
-
-            nested_data[main_key].values = sorted_array;
-        });
-
-        var y = d3.scale.linear()
-            .domain([0, d3.max(nested_data, function (d) {
-                // Get the highest column value
-                var highest = 0;
-
-                $.each(d.values, function(key, object_test) {
-                    if (object_test) {
-                        if (object_test.values > highest) {
-                            highest = object_test.values;
-                        }
-                    }
-                });
-
-                return _this.roundUp5(highest);
-            })])
-            .range([_this.settings.svg_height - _this.settings.padding, 0]);
-
-        var x0 = d3.scale.ordinal()
-            .domain(d3.range(n))
-            .rangeBands([0, _this.settings.svg_width - _this.settings.padding], .3);
-
-        var x1 = d3.scale.ordinal()
-            .domain(d3.range(m))
-            .rangeBands([0, x0.rangeBand()]);
-
-        var z = d3.scale.category10();
-
-        var xAxis = d3.svg.axis()
-            .scale(x0)
-            .tickFormat(function (d, i) {
-                for(var key in tracking_array) {
-                    var value = tracking_array[key];
-
-                    if (tracking_array[key] == d) {
-                        return key;
-                    }
-                }
-            })
-            .orient("bottom");
-
-        var yAxis = d3.svg.axis()
-            .scale(y)
-            .orient("left")
-            .ticks(_this.settings.setTicks);
-
-        var svg = d3.select("#custom-report").append("svg")
-            .attr("width", _this.settings.svg_width + _this.settings.margin.left + _this.settings.margin.right)
-            .attr("height", _this.settings.svg_height + _this.settings.margin.top + _this.settings.margin.bottom)
-            .append("svg:g");
-
-        svg.append("g")
-            .attr("class", "y-axis")
-            .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px' })
-            .attr("transform", "translate(" + 30 + "," + _this.settings.padding + ")")
-            .call(yAxis);
-
-        svg.append("g")
-            .attr("class", "x-axis")
-            .style({ 'fill': 'none', 'stroke-width': '1px' })
-            .attr("transform", "translate(" + -30 + "," + _this.settings.svg_height + ")")
-            .call(xAxis);
-
-        svg.append("g").selectAll("g")
-            .data(nested_data)
-            .enter().append("g")
-            .style("fill", function (d, i) {
-                return z(d.key);
-            })
-            .attr("transform", function (d, i) {
-                return "translate(" + x1(i) + ",0)";
-            })
-            .attr("data-legend",function (d) {
-                return d.key;
-            })
-            .selectAll("rect")
-            .data(function (d) {
-                // d.key (holds male / female);
-                return d.values;
-            })
-            .enter().append("rect")
-            .attr("width", x1.rangeBand())
-            .attr("height", function (d) {
-                // If not set, just return 0
-                if (typeof d == "undefined") {
-                    return _this.settings.svg_height - _this.settings.hpadding - y(0);
-                }
-
-                return _this.settings.svg_height - _this.settings.hpadding - y(d.values);
-            })
-            .on("mouseover", function () {
-                d3.select(this)
-                    .attr("cursor", "pointer")
-                    .attr("fill", "orange");
-            })
-            .on("mouseout", function (d, i) {
-                d3.select(this)
-                    .transition()
-                    .duration(_this.settings.duration)
-                    .attr("fill", function() {
-                        return z(d3.select(this.parentNode).attr("data-legend"));
+                var xAxis = d3.svg.axis()
+                    .scale(scaleX)
+                    .tickFormat(function(d, i) {
+                        return chartData[i]['data']['department'];
                     })
-            })
-            .on("click", function (d, i) {
-                d.data = [];
+                    .orient("bottom");
 
-                // Get x axis value (Location, Department..)
-                d.data.department = d['key'];
+                var yAxis = d3.svg.axis()
+                    .scale(scaleY)
+                    .orient("left")
+                    .ticks(_settings.setTicks);
 
-                // Get the y-axis filter value (Gender, Age)
-                d.data.gender = d3.select(this.parentNode).attr("data-legend");
+                svg.selectAll("rect")
+                    .data(chartData)
+                    .enter()
+                    .append("rect")
+                    .attr("fill", function (d, i) {
+                        if (d.data.department === 'HR') {
+                            return 'green';
+                        } else {
+                            return _settings.color(d.data.department);
+                        }
+                    })
+                    .on("mouseover", function () {
+                        d3.select(this)
+                            .attr("cursor", "pointer")
+                            .attr("fill", "orange");
+                    })
+                    .on("mouseout", function (d) {
+                        d3.select(this)
+                            .transition()
+                            .duration(_settings.duration)
+                            .attr("fill", _settings.color(d.data.department));
+                    })
+                    .on("click", function (d, i) {
+                        _settings.clickHandler(d);
+                    })
+                    .attr("x", function (d, i) {
+                        return scaleX(i);
+                    })
+                    .attr("y", function (d) {
+                        return scaleY(d.data.count) + _settings.hpadding;
+                    })
+                    .attr("width", _settings.innerWidth / chartData.length - _settings.barPadding)
+                    .attr("height", function (d) {
+                        return _settings.svg_height - _settings.hpadding - scaleY(d.data.count);
+                    });
 
-                _this.displayFilterData(d);
-            })
-            .attr("x", function (d, i) {
-                return x0(i);
-            })
-            .attr("y", function (d) {
-                // If not set, just return 0
-                if (typeof d == "undefined") {
-                    return y(0) + _this.settings.hpadding;
+                // Append the axes
+                svg.append("g")
+                    .attr("class", "x-axis")
+                    .style({ 'fill': 'none', 'stroke-width': '1px' })
+                    .attr("transform", "translate(" + -30 + "," + _settings.svg_height + ")")
+                    .call(xAxis);
+
+                svg.append("g")
+                    .attr("class", "y-axis")
+                    .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px' })
+                    .attr("transform", "translate(" + 30 + "," + _settings.padding + ")")
+                    .call(yAxis);
+            },
+
+            /**
+             * Draws a multiple bar chart
+             *
+             * @param {JSON} chartData - The data to visualize
+             */
+            multipleBarChart: function (chartData) {
+                document.querySelector(_settings.container).innerHTML = '';
+
+                var nested_data = d3.nest()
+                    .key(function (d) {
+                        return d.data.gender;
+                    }).sortKeys(d3.ascending)
+                    .key(function (d) {
+                        return d.data.department;
+                    })
+                    .rollup(function (d) {
+                        return d3.sum(d, function(g) {
+                            return 1;
+                        });
+                    })
+                    .entries(chartData);
+
+                var tracker = 0;
+                var assigned_key = '';
+                var tracking_array = [];
+
+                // Groups data
+                nested_data.forEach(function (s, main_key) {
+                    s.values.forEach(function (x, i) {
+                        if (typeof tracking_array[x.key] == "undefined") {
+                            // Add to the array with current key (if not exist)
+                            tracking_array[x.key] = tracker;
+
+                            // Number of grouped charts
+                            tracking_array['grouped_charts_num'] = tracker + 1;
+                            tracker++;
+                        }
+                    });
+                });
+
+                var n = tracking_array['grouped_charts_num'], // Number of grouped charts
+                    m = nested_data.length; // Number of columns / chart
+
+                // Sorts data
+                nested_data.forEach(function (s, main_key) {
+                    var sorted_array = [];
+
+                    $.map(nested_data[main_key].values, function (n, key_i) {
+                        sorted_array[tracking_array[n.key]] = n;
+                    });
+
+                    nested_data[main_key].values = sorted_array;
+                });
+
+                var y = d3.scale.linear()
+                    .domain([0, d3.max(nested_data, function (d) {
+                        // Get the highest column value
+                        var highest = 0;
+
+                        $.each(d.values, function(key, object_test) {
+                            if (object_test) {
+                                if (object_test.values > highest) {
+                                    highest = object_test.values;
+                                }
+                            }
+                        });
+
+                        return roundUp5(highest);
+                    })])
+                    .range([_settings.svg_height - _settings.padding, 0]);
+
+                var x0 = d3.scale.ordinal()
+                    .domain(d3.range(n))
+                    .rangeBands([0, _settings.svg_width - _settings.padding], .3);
+
+                var x1 = d3.scale.ordinal()
+                    .domain(d3.range(m))
+                    .rangeBands([0, x0.rangeBand()]);
+
+                var z = d3.scale.category10();
+
+                var xAxis = d3.svg.axis()
+                    .scale(x0)
+                    .tickFormat(function (d, i) {
+                        for(var key in tracking_array) {
+                            var value = tracking_array[key];
+
+                            if (tracking_array[key] == d) {
+                                return key;
+                            }
+                        }
+                    })
+                    .orient("bottom");
+
+                var yAxis = d3.svg.axis()
+                    .scale(y)
+                    .orient("left")
+                    .ticks(_settings.setTicks);
+
+                var svg = d3.select(_settings.container).append("svg")
+                    .attr("width", _settings.svg_width + _settings.margin.left + _settings.margin.right)
+                    .attr("height", _settings.svg_height + _settings.margin.top + _settings.margin.bottom)
+                    .append("svg:g");
+
+                svg.append("g")
+                    .attr("class", "y-axis")
+                    .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px' })
+                    .attr("transform", "translate(" + 30 + "," + _settings.padding + ")")
+                    .call(yAxis);
+
+                svg.append("g")
+                    .attr("class", "x-axis")
+                    .style({ 'fill': 'none', 'stroke-width': '1px' })
+                    .attr("transform", "translate(" + -30 + "," + _settings.svg_height + ")")
+                    .call(xAxis);
+
+                svg.append("g").selectAll("g")
+                    .data(nested_data)
+                    .enter().append("g")
+                    .style("fill", function (d, i) {
+                        return z(d.key);
+                    })
+                    .attr("transform", function (d, i) {
+                        return "translate(" + x1(i) + ",0)";
+                    })
+                    .attr("data-legend",function (d) {
+                        return d.key;
+                    })
+                    .selectAll("rect")
+                    .data(function (d) {
+                        // d.key (holds male / female);
+                        return d.values;
+                    })
+                    .enter().append("rect")
+                    .attr("width", x1.rangeBand())
+                    .attr("height", function (d) {
+                        // If not set, just return 0
+                        if (typeof d == "undefined") {
+                            return _settings.svg_height - _settings.hpadding - y(0);
+                        }
+
+                        return _settings.svg_height - _settings.hpadding - y(d.values);
+                    })
+                    .on("mouseover", function () {
+                        d3.select(this)
+                            .attr("cursor", "pointer")
+                            .attr("fill", "orange");
+                    })
+                    .on("mouseout", function (d, i) {
+                        d3.select(this)
+                            .transition()
+                            .duration(_settings.duration)
+                            .attr("fill", function() {
+                                return z(d3.select(this.parentNode).attr("data-legend"));
+                            })
+                    })
+                    .on("click", function (d, i) {
+                        d.data = [];
+
+                        // Get x axis value (Location, Department..)
+                        d.data.department = d['key'];
+
+                        // Get the y-axis filter value (Gender, Age)
+                        d.data.gender = d3.select(this.parentNode).attr("data-legend");
+
+                        _settings.clickHandler(d);
+                    })
+                    .attr("x", function (d, i) {
+                        return x0(i);
+                    })
+                    .attr("y", function (d) {
+                        // If not set, just return 0
+                        if (typeof d == "undefined") {
+                            return y(0) + _settings.hpadding;
+                        }
+
+                        // d.key (holds headquarters / home office)
+                        return y(d.values) + _settings.hpadding;
+                    });
+
+                // Add legend labels
+                svg.append("g").selectAll("g")
+                    .data(nested_data)
+                    .enter().append("text")
+                    .attr("font-family", "sans-serif")
+                    .attr("font-size", "9px")
+                    .attr("fill", function (d, i) {
+                        return z(d.key);
+                    })
+                    .attr("text-anchor", "middle")
+                    .text(function(d) {
+                        return d.key;
+                    })
+                    .attr("x", function (d, i) {
+                        return _settings.svg_width - _settings.barPadding;
+                    })
+                    .attr("y", function (d, i) {
+                        return (i * _settings.hpadding) + _settings.outerHeight - 10;
+                    });
+
+                // Add legend small image icons
+                svg.append("g").selectAll("g")
+                    .data(nested_data)
+                    .enter().append("rect")
+                    .attr("width", 15)
+                    .attr("height", 15)
+                    .attr("fill", function (d, i) {
+                        return z(d.key);
+                    })
+                    .attr("x", function(d, i) {
+                        return _settings.svg_width - 50 - _settings.barPadding;
+                    })
+                    .attr("y", function(d, i) {
+                        return (i * _settings.hpadding - 10) + _settings.outerHeight - 10;
+                    });
+            },
+
+            /**
+             * Draws a pie chart
+             *
+             * @param {JSON} chartData - The data to visualize
+             */
+            pieChart: function (chartData) {
+                document.querySelector(_settings.container).innerHTML = '';
+
+                var svg = d3.select(_settings.container)
+                    .append('svg')
+                    .attr("width", _settings.svg_width + _settings.margin.left + _settings.margin.right)
+                    .attr("height", _settings.svg_height + _settings.margin.top + _settings.margin.bottom)
+                    .append('g');
+
+                var arc = d3.svg.arc()
+                    .outerRadius(_settings.radius - 10)
+                    .innerRadius(_settings.radius - 50);
+
+                var pie = d3.layout.pie()
+                    .value(function (d) {
+                        return d.data.count;
+                    })
+                    .sort(null);
+
+                var path = svg.selectAll("path")
+                    .data(pie(chartData))
+                    .enter()
+                    .append("path")
+                    .attr('transform', 'translate(' + (_settings.innerWidth / 2) +  ',' + (_settings.innerHeight / 2) + ')')
+                    .attr('d', arc)
+                    .on("mouseover", function () {
+                        d3.select(this)
+                            .attr("cursor", "pointer")
+                            .attr("fill", "orange");
+                    })
+                    .on("mouseout", function (d) {
+                        d3.select(this)
+                            .transition()
+                            .duration(_settings.duration)
+                            .attr("fill", _settings.color(d.data.data.department));
+                    })
+                    .on("click", function (d, i) {
+                        _settings.clickHandler(d.data);
+                    })
+                    .attr('fill', function (d, i) {
+                        return _settings.color(d.data.data.department);
+                    });
+
+                // Add legend labels
+                svg.append("g").selectAll("g")
+                    .data(pie(chartData))
+                    .enter().append("text")
+                    .attr("font-family", "sans-serif")
+                    .attr("font-size", "9px")
+                    .attr("fill", function (d, i) {
+                        return _settings.color(d.data.data.department);
+                    })
+                    .attr("text-anchor", "middle")
+                    .text(function(d) {
+                        return d.data.data.department;
+                    })
+                    .attr("x", function (d, i) {
+                        return _settings.outerWidth + _settings.padding - _settings.barPadding;
+                    })
+                    .attr("y", function (d, i) {
+                        return (i * _settings.hpadding) + _settings.outerHeight - 100;
+                    });
+
+                // Add legend small image icons
+                svg.append("g").selectAll("g")
+                    .data(pie(chartData))
+                    .enter().append("rect")
+                    .attr("width", 15)
+                    .attr("height", 15)
+                    .attr("fill", function (d, i) {
+                        return _settings.color(d.data.data.department);
+                    })
+                    .attr("x", function (d, i) {
+                        return _settings.outerWidth - 80 + _settings.padding - _settings.barPadding;
+                    })
+                    .attr("y", function (d, i) {
+                        return (i * _settings.hpadding - 10) + _settings.outerHeight - 100;
+                    });
+
+                var count = svg.selectAll("count")
+                    .data(pie(chartData));
+
+                // Add count for each slice...
+                count.enter()
+                    .append("text")
+                    .attr("font-family", "sans-serif")
+                    .attr("x", _settings.innerWidth / 2)
+                    .attr("y", _settings.innerHeight / 2)
+                    .attr("font-size", "11px")
+                    .attr("font-style", "bold")
+                    .attr("fill", "white")
+                    .attr("text-anchor", "middle")
+                    .attr("transform", function(d) {
+                        // Sets the text inside the circle
+                        d.innerRadius = _settings.radius - 80;
+                        return "translate(" + arc.centroid(d) + ")";
+                    })
+                    .text(function (d, i) {
+                        return d.data.data.count;
+                    });
+            },
+
+            /**
+             * Override default settings
+             *
+             * @param {JSON} overrides - Overrides for default settings
+             */
+            settings: function (overrides) {
+                for (var setting in overrides) {
+                    _settings[setting] = overrides[setting];
                 }
-
-                // d.key (holds headquarters / home office)
-                return y(d.values) + _this.settings.hpadding;
-            });
-
-        // Add legend labels
-        svg.append("g").selectAll("g")
-            .data(nested_data)
-            .enter().append("text")
-            .attr("font-family", "sans-serif")
-            .attr("font-size", "9px")
-            .attr("fill", function (d, i) {
-                return z(d.key);
-            })
-            .attr("text-anchor", "middle")
-            .text(function(d) {
-                return d.key;
-            })
-            .attr("x", function (d, i) {
-                return _this.settings.svg_width - _this.settings.barPadding;
-            })
-            .attr("y", function (d, i) {
-                return (i * _this.settings.hpadding) + _this.settings.outerHeight - 10;
-            });
-
-        // Add legend small image icons
-        svg.append("g").selectAll("g")
-            .data(nested_data)
-            .enter().append("rect")
-            .attr("width", 15)
-            .attr("height", 15)
-            .attr("fill", function (d, i) {
-                return z(d.key);
-            })
-            .attr("x", function(d, i) {
-                return _this.settings.svg_width - 50 - _this.settings.barPadding;
-            })
-            .attr("y", function(d, i) {
-                return (i * _this.settings.hpadding - 10) + _this.settings.outerHeight - 10;
-            });
-
-        // Add chart types
-        _this.addChartTypes();
-    }
+            }
+        };
+    })();
 
 
 
-    // Extend base class (overwrite any default settings if needed)
-    function CustomReport(cleanData, name, context) {
-        DrawReport.call(this, cleanData);
+    /**
+     * Displays a chart on the page, handling its filters and data table
+     *
+     * @param {Object} ChartLibrary - A library for drawing charts
+     * @param {JSON} cleanData - ?
+     * @param {Object} context [temporary]
+     */
+    function CustomReport(ChartLibrary, cleanData, context) {
+        this.chartLibrary = ChartLibrary;
+        this.chartLibrary.settings({
+            container: '[data-graph-section="canvas"]',
+            clickHandler: this.displayFilterData.bind(this)
+        });
 
         this.context = context;
-        this.name = name;
-        this.settings.barPadding = 5;
+        this.cleanData = cleanData;
 
         this.getDOMElements();
         this.hideButtonTpls();
         this.setDataWrapperVisibility();
     }
-
-    CustomReport.prototype = new DrawReport();
 
     /**
      * Activate the given button and deactivate all the others in its section
@@ -584,7 +535,7 @@
      * If the section has an element marked with [data-graph-button-area], then
      * the button will be put there, otherwise it will be appended to the section
      *
-     * @param {Object} attributes - The attributes to apply to the cloned button
+     * @param {JSON} attributes - The attributes to apply to the cloned button
      * @param {Object} $section - jQuery object of the section
      */
     CustomReport.prototype.addButton = function (attributes, $section) {
@@ -594,9 +545,12 @@
             .append(this.cloneButtonTpl(attributes, $section));
     };
 
-    // Overwrite any function if needed -> Create the default chart types (links + adds to SVG, onclick redraws the graph)
+    /**
+     * Create the default chart types (links + adds to SVG, onclick redraws the graph)
+     * Overwrite any function if needed
+     *
+     */
     CustomReport.prototype.addChartTypes = function () {
-        var _this = this;
         var $graphFilters = this.$DOM.section.graphFilters;
 
         this.clearButtons($graphFilters);
@@ -608,24 +562,24 @@
                 active: this.getChartType() === 'grouped_bar',
                 label: 'bar chart',
                 click: function () {
-                    _this.drawGraph(_this.getJsonUrl(), 'grouped_bar');
-                }
+                    this.drawGraph(this.getJsonUrl(), 'grouped_bar');
+                }.bind(this)
             }, $graphFilters);
         } else {
             this.addButton({
                 active: this.getChartType() === 'bar',
                 label: 'bar chart',
                 click: function () {
-                    _this.drawGraph(_this.getJsonUrl(), 'bar');
-                }
+                    this.drawGraph(this.getJsonUrl(), 'bar');
+                }.bind(this)
             }, $graphFilters);
 
             this.addButton({
                 active: this.getChartType() === 'pie',
                 label: 'pie chart',
                 click: function () {
-                    _this.drawGraph(_this.getJsonUrl(), 'pie');
-                }
+                    this.drawGraph(this.getJsonUrl(), 'pie');
+                }.bind(this)
             }, $graphFilters);
         }
     };
@@ -641,7 +595,7 @@
     /**
      * Clones the button marked as a template inside the given section
      *
-     * @param {Object} attributes - The attributes to apply to the cloned button
+     * @param {JSON} attributes - The attributes to apply to the cloned button
      * @param {Object} $section - jQuery object of the section
      * @return jQuery object of the cloned button
      */
@@ -681,43 +635,28 @@
      * @private
      */
     CustomReport.prototype.displayFilterData = function (d) {
-        var _this = this;
-
         // Build the custom table with details
-        var viewName = _this.getViewMachineName();
-        var viewDisplay = _this.getViewDisplayName();
+        var viewName = this.getViewMachineName();
+        var viewDisplay = this.getViewDisplayName();
 
         // If any value cleanup needs to be done it need to be done at this stage
         var x_axis = d.data.department;
-        var y_axis = _this.cleanData['gender'](d.data.gender) || d.data.gender;
+        var y_axis = this.cleanData['gender'](d.data.gender) || d.data.gender;
 
-        if (_this.$DOM.section.dataWrapper.is(':visible')) {
-            _this.$DOM.section.dataWrapper.fadeIn(function () {
-                _this.$DOM.section.dataWrapper.find('table').animate({ opacity: 0.3 }, 500);
-            });
-        }
-
-        // Returns the URL for the ajax call
-        function buildURL() {
-
-            var base_path = Drupal.settings.basePath;
-            var menu_route = 'civihr_reports';
-            var separator = '/';
-            var args = '?x_axis=' + x_axis + '&y_axis=' + y_axis + '&ajax=true';
-
-            return base_path + menu_route + separator + viewName + separator + viewDisplay + args;
+        if (this.$DOM.section.dataWrapper.is(':visible')) {
+            this.$DOM.section.dataWrapper.find('table').animate({ opacity: 0.3 }, 500);
         }
 
         $.ajax({
             type: 'GET',
             url: buildURL(),
             success: function (data) {
-                _this.$DOM.section.dataWrapper
+                this.$DOM.section.dataWrapper
                     .html(data)
                     .ready(function () {
                         if (Drupal.vbo) {
                             // Reload js behaviours for views bulk operations
-                            $('.vbo-views-form', _this.context).each(function () {
+                            $('.vbo-views-form', this.context).each(function () {
                                 Drupal.vbo.initTableBehaviors(this);
                                 Drupal.vbo.initGenericBehaviors(this);
                             });
@@ -728,16 +667,61 @@
                             Drupal.civihr_theme.applyCustomSelect();
                         }
 
-                        _this.$DOM.section.dataWrapper.fadeIn();
-                    });
-            },
+                        this.$DOM.section.dataWrapper.fadeIn();
+                    }.bind(this));
+            }.bind(this),
             error: function (data) {
-                _this.$DOM.section.dataWrapper.html('An error occured!');
-            }
+                this.$DOM.section.dataWrapper.html('An error occured!');
+            }.bind(this)
         });
+
+        // Returns the URL for the ajax call
+        function buildURL() {
+            var base_path = Drupal.settings.basePath;
+            var menu_route = 'civihr_reports';
+            var separator = '/';
+            var args = '?x_axis=' + x_axis + '&y_axis=' + y_axis + '&ajax=true';
+
+            return base_path + menu_route + separator + viewName + separator + viewDisplay + args;
+        }
     };
 
-    // Gets the default chart type
+    /**
+     * This will draw report on specified json endpoint, with specified report type
+     *
+     * @param {string} json_url - The full url of the endpoint returning the graph data
+     * @param {string} type - The graph type
+     */
+    CustomReport.prototype.drawGraph = function (json_url, type) {
+        d3.json(json_url, function (error, json) {
+            if (error) {
+                return console.warn(error);
+            }
+
+            switch (type) {
+                case 'grouped_bar':
+                    this.setChartType('grouped_bar');
+                    this.chartLibrary.multipleBarChart(json.results);
+                    break;
+                case 'pie':
+                    this.setChartType('pie');
+                    this.chartLibrary.pieChart(json.results);
+                    break;
+                case 'bar':
+                default:
+                    this.setChartType('bar');
+                    this.chartLibrary.barChart(json.results);
+            }
+
+            this.addChartTypes();
+        }.bind(this));
+    };
+
+    /**
+     * Gets the default chart type
+     *
+     * @return {string}
+     */
     CustomReport.prototype.getChartType = function () {
         // Gets the default chart type from the object
         if (this.chartType !== 'undefined' && this.chartType) {
@@ -769,22 +753,74 @@
         };
     };
 
-    // Get reports basic json url for graph report
+    /**
+     * Get reports basic json url for graph report
+     *
+     * @return {string}
+     */
     CustomReport.prototype.getJsonUrl = function () {
         // Returns the report graph url from (mainFilter and subFilter values)
-        return this.getMainFilter() + '-' + this.getSubFilter();
+        return Drupal.settings.basePath + this.getMainFilter() + '-' + this.getSubFilter();
     };
 
-    // Get reports basic view machine_name based on selected filter types
-    CustomReport.prototype.getViewMachineName = function () {
-        // Returns the view machine name from (mainFilter and subFilter values)
-        return this.getMainFilter() + '_' + this.getSubFilter();
+    /**
+     * Get default main filter type
+     *
+     * @return {sring}
+     */
+    CustomReport.prototype.getMainFilter = function () {
+        // Gets the default filter from the object
+        if (this.mainFilter !== 'undefined' && this.mainFilter) {
+            return this.mainFilter;
+        }
+
+        // If not set on the object, try to get from the COOKIE values
+        if ($.cookie('mainFilter') !== 'undefined' && $.cookie('mainFilter')) {
+            return $.cookie('mainFilter');
+        } else {
+            // Provide default main filter type
+            return 'headcount';
+        }
     };
 
-    // Get view_display machine name what will be used when filtering the main view
+    /**
+     * Get default sub filter type
+     *
+     * @return {string}
+     */
+    CustomReport.prototype.getSubFilter = function () {
+        // Gets the default filter from the object
+        if (this.subFilter !== 'undefined' && this.subFilter) {
+            return this.subFilter;
+        }
+
+        // If not set on the object, try to get from the COOKIE values
+        if ($.cookie('subFilter') !== 'undefined' && $.cookie('subFilter')) {
+            return $.cookie('subFilter');
+        } else {
+            // Provide default sub filter type
+            return 'location';
+        }
+    };
+
+    /**
+     * Get view_display machine name what will be used when filtering the main view
+     *
+     * @return {string}
+     */
     CustomReport.prototype.getViewDisplayName = function () {
         // Returns the view_display name from (mainFilter and subFilter values)
         return 'filter_' + this.getMainFilter() + '_' + this.getSubFilter();
+    };
+
+    /**
+     * Get reports basic view machine_name based on selected filter types
+     *
+     * @return {string}
+     */
+    CustomReport.prototype.getViewMachineName = function () {
+        // Returns the view machine name from (mainFilter and subFilter values)
+        return this.getMainFilter() + '_' + this.getSubFilter();
     };
 
     /**
@@ -809,13 +845,39 @@
         }
     };
 
-    // Sets default chart type
+    /**
+     * Sets default chart type
+     *
+     */
     CustomReport.prototype.setChartType = function (chart_type) {
         // Sets the chart type to the object
         this.chartType = chart_type;
 
         // Sets the chartType on the cookie as well (helps to set default values)
         $.cookie('chartType', chart_type, { path: '/' });
+    };
+
+    /**
+     * Set default main filter type
+     *
+     */
+    CustomReport.prototype.setMainFilter = function (filter) {
+        this.mainFilter = filter;
+
+        // Sets the filter on the cookie as well (helps to set default values)
+        $.cookie('mainFilter', filter, { path: '/' });
+    };
+
+    /**
+     * Set default sub filter type
+     *
+     */
+    CustomReport.prototype.setSubFilter = function (filter) {
+        // Sets the filter to the object
+        this.subFilter = filter;
+
+        // Sets the filter on the cookie as well (helps to set default values)
+        $.cookie('subFilter', filter, { path: '/' });
     };
 
 
@@ -834,7 +896,7 @@
                     return settings.civihr_employee_portal_reports.enabled_x_axis_defaults['enabled_x_axis_filters_' + type];
                 }
             };
-            var customReport = new CustomReport(cleanData, 'param to pass', context);
+            var customReport = new CustomReport(D3Wrapper, cleanData, context);
             // Init the main filters
             var mainFilters = document.querySelectorAll(".mainFilter");
             // Init the subFilters as global and leave empty for now
