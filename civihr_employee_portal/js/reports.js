@@ -491,23 +491,13 @@
     /**
      * Displays a chart on the page, handling its filters and data table
      *
-     * @param {Object} ChartLibrary - A library for drawing charts
-     * @param {JSON} cleanData - ?
-     * @param {Object} context [temporary]
+     * @param {JSON} options - Settings for the object
      */
-    function CustomReport(ChartLibrary, cleanData, context) {
-        this.chartLibrary = ChartLibrary;
-        this.chartLibrary.settings({
-            container: '[data-graph-section="canvas"]',
-            clickHandler: this.displayFilterData.bind(this)
-        });
+    function CustomReport(options) {
+        $.extend(this, options);
 
-        this.context = context;
-        this.cleanData = cleanData;
-
-        this.getDOMElements();
-        this.hideButtonTpls();
-        this.setDataWrapperVisibility();
+        this.init();
+        this.drawGraph();
     }
 
     /**
@@ -551,18 +541,19 @@
      *
      */
     CustomReport.prototype.addChartTypes = function () {
-        var $graphFilters = this.$DOM.section.graphFilters;
+        var $graphFilters = this.$DOM.sections.filters.graph;
 
         this.clearButtons($graphFilters);
 
         // Only headcount reports can be bar/pie types
         // All other reports are currently grouped bar charts
-        if (this.getMainFilter() != 'headcount' && this.getMainFilter() != 'fte') {
+        if (this.getMainFilter() !== 'headcount' && this.getMainFilter() !== 'fte') {
             this.addButton({
                 active: this.getChartType() === 'grouped_bar',
                 label: 'bar chart',
                 click: function () {
-                    this.drawGraph(this.getJsonUrl(), 'grouped_bar');
+                    this.setChartType('grouped_bar');
+                    this.drawGraph();
                 }.bind(this)
             }, $graphFilters);
         } else {
@@ -570,7 +561,8 @@
                 active: this.getChartType() === 'bar',
                 label: 'bar chart',
                 click: function () {
-                    this.drawGraph(this.getJsonUrl(), 'bar');
+                    this.setChartType('bar');
+                    this.drawGraph();
                 }.bind(this)
             }, $graphFilters);
 
@@ -578,7 +570,8 @@
                 active: this.getChartType() === 'pie',
                 label: 'pie chart',
                 click: function () {
-                    this.drawGraph(this.getJsonUrl(), 'pie');
+                    this.setChartType('pie');
+                    this.drawGraph();
                 }.bind(this)
             }, $graphFilters);
         }
@@ -587,6 +580,7 @@
     /**
      * Removes all the buttons contained in a given section
      *
+     * @param {Object} $section - jQuery object of the section
      */
     CustomReport.prototype.clearButtons = function ($section) {
         $section.find('[data-graph-button]').remove();
@@ -601,31 +595,35 @@
      */
     CustomReport.prototype.cloneButtonTpl = function (attributes, $section) {
         var _this = this;
-        var button = $section.find('[data-graph-button-tpl]').clone();
+        var $button = $section.find('[data-graph-button-tpl]').clone();
 
-        button
+        $button
             .attr('data-graph-button', '')
             .removeAttr('data-graph-button-tpl')
-            .addClass(button.data('graph-button-' + ( !!attributes.active ? 'active' : 'inactive' ) + '-class'))
+            .addClass($button.data('graph-button-' + ( !!attributes.active ? 'active' : 'inactive' ) + '-class'))
             .show();
 
-        button.on('click', function (event) {
-            _this.activateButton($(this));
+        $button.on('click', function (event) {
+            var $button = $(this);
 
-            if (attributes.click) {
-                attributes.click(event);
+            _this.activateButton($button);
+
+            if (typeof attributes.click === 'function') {
+                attributes.click($button);
             }
+
+            event.preventDefault();
         });
 
-        if (attributes.value) {
-            button.data('value', attributes.value);
-        }
-
         if (attributes.label) {
-            button.text(attributes.label);
+            $button.text(attributes.label);
         }
 
-        return button;
+        if (attributes.value) {
+            $button.data('value', attributes.value);
+        }
+
+        return $button;
     };
 
     /**
@@ -635,43 +633,30 @@
      * @private
      */
     CustomReport.prototype.displayFilterData = function (d) {
-        // Build the custom table with details
-        var viewName = this.getViewMachineName();
-        var viewDisplay = this.getViewDisplayName();
-
         // If any value cleanup needs to be done it need to be done at this stage
         var x_axis = d.data.department;
         var y_axis = this.cleanData['gender'](d.data.gender) || d.data.gender;
 
-        if (this.$DOM.section.dataWrapper.is(':visible')) {
-            this.$DOM.section.dataWrapper.find('table').animate({ opacity: 0.3 }, 500);
+        if (this.$DOM.sections.dataWrapper.is(':visible')) {
+            this.$DOM.sections.dataWrapper.find('table').animate({ opacity: 0.3 }, 500);
         }
 
         $.ajax({
             type: 'GET',
-            url: buildURL(),
+            url: buildURL.call(this),
             success: function (data) {
-                this.$DOM.section.dataWrapper
+                this.$DOM.sections.dataWrapper
                     .html(data)
                     .ready(function () {
-                        if (Drupal.vbo) {
-                            // Reload js behaviours for views bulk operations
-                            $('.vbo-views-form', this.context).each(function () {
-                                Drupal.vbo.initTableBehaviors(this);
-                                Drupal.vbo.initGenericBehaviors(this);
-                            });
+                        if (typeof this.on !== 'undefined' && typeof this.on.tableLoad === 'function') {
+                            this.on.tableLoad();
                         }
 
-                        if (Drupal.civihr_theme) {
-                            // Apply theme related js
-                            Drupal.civihr_theme.applyCustomSelect();
-                        }
-
-                        this.$DOM.section.dataWrapper.fadeIn();
+                        this.$DOM.sections.dataWrapper.fadeIn();
                     }.bind(this));
             }.bind(this),
             error: function (data) {
-                this.$DOM.section.dataWrapper.html('An error occured!');
+                this.$DOM.sections.dataWrapper.html('An error occured!');
             }.bind(this)
         });
 
@@ -682,23 +667,24 @@
             var separator = '/';
             var args = '?x_axis=' + x_axis + '&y_axis=' + y_axis + '&ajax=true';
 
-            return base_path + menu_route + separator + viewName + separator + viewDisplay + args;
+            return base_path + menu_route + separator + this.viewMachineName() + separator + this.viewDisplayName() + args;
         }
     };
 
     /**
-     * This will draw report on specified json endpoint, with specified report type
+     * This will draw report on specified json endpoint
      *
-     * @param {string} json_url - The full url of the endpoint returning the graph data
-     * @param {string} type - The graph type
+     * @param {string} path - Path to append to the default json URL
      */
-    CustomReport.prototype.drawGraph = function (json_url, type) {
-        d3.json(json_url, function (error, json) {
+    CustomReport.prototype.drawGraph = function (path) {
+        var url = this.getJsonUrl() + ( typeof path !== 'undefined' ? path : '' );
+
+        d3.json(url, function (error, json) {
             if (error) {
                 return console.warn(error);
             }
 
-            switch (type) {
+            switch (this.getChartType()) {
                 case 'grouped_bar':
                     this.setChartType('grouped_bar');
                     this.chartLibrary.multipleBarChart(json.results);
@@ -715,6 +701,52 @@
 
             this.addChartTypes();
         }.bind(this));
+    };
+
+    /**
+     * Generates the buttons for the main filters
+     *
+     */
+    CustomReport.prototype.generateMainFilters = function() {
+        var _this = this;
+        var $mainFilters = this.$DOM.sections.filters.main;
+
+        this.clearButtons($mainFilters);
+
+        this.filters.main.each(function() {
+            _this.addButton({
+                active: $(this).data('value') === _this.getMainFilter(),
+                label: $(this).data('label'),
+                value: $(this).data('value'),
+                click: _this.mainFilterClickHandler.bind(_this)
+            }, $mainFilters);
+        });
+    };
+
+    /**
+     * This function will generate the X Axis buttons, based on available X Axis Grouping options
+     *
+     * @param data
+     * @private
+     */
+    CustomReport.prototype.generateSubFilters = function (mainFilter) {
+        var $subFilters = this.$DOM.sections.filters.sub;
+
+        this.clearButtons($subFilters);
+
+        this.filters.sub(mainFilter).forEach(function (value, key) {
+            this.addButton({
+                active: this.getSubFilter() === value,
+                label: value,
+                value: value,
+                click: function ($button) {
+                    this.setSubFilter($button.data('value'));
+                    this.drawGraph();
+                }.bind(this)
+            }, $subFilters);
+        }.bind(this));
+
+        $subFilters.show();
     };
 
     /**
@@ -744,12 +776,14 @@
     CustomReport.prototype.getDOMElements = function () {
         this.$DOM = {};
         this.$DOM.wrapper = $('[data-graph]');
-        this.$DOM.section = {
+        this.$DOM.sections = {
             dataWrapper: this.$DOM.wrapper.find('[data-graph-section="data"]'),
             canvas: this.$DOM.wrapper.find('[data-graph-section="canvas"]'),
-            graphFilters: this.$DOM.wrapper.find('[data-graph-section="graph-filters"]'),
-            xFilters: this.$DOM.wrapper.find('[data-graph-section="x-filters"]'),
-            yFilters: this.$DOM.wrapper.find('[data-graph-section="y-filters"]')
+            filters: {
+                graph: this.$DOM.wrapper.find('[data-graph-section="graph-filters"]'),
+                main: this.$DOM.wrapper.find('[data-graph-section="main-filters"]'),
+                sub: this.$DOM.wrapper.find('[data-graph-section="sub-filters"]')
+            }
         };
     };
 
@@ -804,33 +838,97 @@
     };
 
     /**
-     * Get view_display machine name what will be used when filtering the main view
-     *
-     * @return {string}
-     */
-    CustomReport.prototype.getViewDisplayName = function () {
-        // Returns the view_display name from (mainFilter and subFilter values)
-        return 'filter_' + this.getMainFilter() + '_' + this.getSubFilter();
-    };
-
-    /**
-     * Get reports basic view machine_name based on selected filter types
-     *
-     * @return {string}
-     */
-    CustomReport.prototype.getViewMachineName = function () {
-        // Returns the view machine name from (mainFilter and subFilter values)
-        return this.getMainFilter() + '_' + this.getSubFilter();
-    };
-
-    /**
      * Hides all the template buttons
      *
      */
     CustomReport.prototype.hideButtonTpls = function () {
-        $.each(this.$DOM.section, function (_, section) {
-            section.find('[data-graph-button-tpl]').hide();
+        this.$DOM.wrapper.find('[data-graph-button-tpl]').hide();
+    };
+
+    /**
+     * Hides sub filters section
+     *
+     */
+    CustomReport.prototype.hideSubFilters = function () {
+        this.$DOM.sections.filters.sub.hide()
+    };
+
+    /**
+     * Initializes the object
+     *
+     */
+    CustomReport.prototype.init = function () {
+        this.chartLibrary.settings({
+            container: '[data-graph-section="canvas"]',
+            clickHandler: this.displayFilterData.bind(this)
         });
+
+        this.getDOMElements();
+
+        this.initCalendar();
+        this.generateMainFilters();
+
+        this.hideButtonTpls();
+        this.hideSubFilters();
+        this.setDataWrapperVisibility();
+    };
+
+    /**
+     * Initializes the calendar element
+     *
+     */
+    CustomReport.prototype.initCalendar = function () {
+        var _this = this;
+
+        // Report to date selector
+        $('[data-graph-calendar] > input')
+            .datepicker({ dateFormat: 'yy-mm-dd' })
+            .change(function() { // When the date range changes update the graph
+                // If not set it will return All values
+                var toDate = this.value || 'All';
+
+                // Filter the graph by specifing To Date
+                _this.drawGraph('/' + toDate);
+            });
+    };
+
+    /**
+     * Handler of the click event on main filters
+     *
+     * @param {Object} $button - jQuery object of the filter button
+     */
+    CustomReport.prototype.mainFilterClickHandler = function ($button) {
+
+        /**
+         * If the reports mainFilter value is gender or age allow only the grouped_bar chart
+         * @param customReport
+         * @private
+         */
+        function _checkChartTypes() {
+            if (this.getMainFilter() !== 'headcount' && this.getMainFilter() !== 'fte') {
+                this.setChartType('grouped_bar');
+            } else {
+                // If the mainFilter value is 'headcount', and we have
+                // grouped_bar chart, reset it to default bar chart
+                if (this.setChartType() === 'grouped_bar') {
+                    this.setChartType('bar');
+                }
+            }
+        }
+
+        // Set the mainFilter
+        this.setMainFilter($button.data('value'));
+
+        // Force change to location filter (when filters are updated)
+        this.setSubFilter('location');
+
+        _checkChartTypes.call(this);
+
+        // Re-draw graph
+        this.drawGraph();
+
+        // Generate X Axis Group By buttons, when Y Axis Group By is clicked
+        this.generateSubFilters($button.data('value'));
     };
 
     /**
@@ -838,10 +936,10 @@
      *
      */
     CustomReport.prototype.setDataWrapperVisibility = function () {
-        if (this.$DOM.section.dataWrapper.find('table').length > 0 ) {
-            this.$DOM.section.dataWrapper.show();
+        if (this.$DOM.sections.dataWrapper.find('table').length > 0) {
+            this.$DOM.sections.dataWrapper.show();
         } else {
-            this.$DOM.section.dataWrapper.hide();
+            this.$DOM.sections.dataWrapper.hide();
         }
     };
 
@@ -880,40 +978,55 @@
         $.cookie('subFilter', filter, { path: '/' });
     };
 
+    /**
+     * Get view_display machine name what will be used when filtering the main view
+     * Returns the view_display name from (mainFilter and subFilter values)
+     *
+     * @return {string}
+     */
+    CustomReport.prototype.viewDisplayName = function () {
+        return 'filter_' + this.viewMachineName();
+    };
+
+    /**
+     * Get reports basic view machine_name based on selected filter types
+     * Returns the view machine name from (mainFilter and subFilter values)
+     *
+     * @return {string}
+     */
+    CustomReport.prototype.viewMachineName = function () {
+        return this.getMainFilter() + '_' + this.getSubFilter();
+    };
+
 
 
     Drupal.behaviors.civihr_employee_portal_reports = {
         attach: function (context, settings) {
-             // Wrapper around the settings js values
-            var cleanData = {
-                // Gender values
-                gender: function (gender) {
-                    return settings.civihr_employee_portal_reports.gender_options_data[gender];
+            var customReport = new CustomReport({
+                chartLibrary: D3Wrapper,
+                cleanData: {
+                    gender: function (gender) {
+                        return settings.civihr_employee_portal_reports.gender_options_data[gender];
+                    }
                 },
-
-                // Enabled X Axis Group By settings (need to pass Y Group By machine name/type)
-                enabled_x_axis_defaults: function (type) {
-                    return settings.civihr_employee_portal_reports.enabled_x_axis_defaults['enabled_x_axis_filters_' + type];
+                filters: {
+                    main: $('[data-temporary-main-filters]'),
+                    sub: function (type) {
+                        return Object.keys(settings.civihr_employee_portal_reports.enabled_x_axis_defaults['enabled_x_axis_filters_' + type]);
+                    }
+                },
+                on: {
+                    tableLoad: function () {
+                        // Reload js behaviours for views bulk operations
+                        if (Drupal.vbo) {
+                            $('.vbo-views-form', context).each(function () {
+                                Drupal.vbo.initTableBehaviors(this);
+                                Drupal.vbo.initGenericBehaviors(this);
+                            });
+                        }
+                    }
                 }
-            };
-            var customReport = new CustomReport(D3Wrapper, cleanData, context);
-            // Init the main filters
-            var mainFilters = document.querySelectorAll(".mainFilter");
-            // Init the subFilters as global and leave empty for now
-            var subFilters = '';
-
-            customReport.$DOM.section.xFilters.hide();
-
-            // Report to date selector
-            $( "#reportToDate > input" )
-                .datepicker({ dateFormat: "yy-mm-dd" })
-                .change(function() { // When the date range changes update the graph
-                    // If not set it will return All values
-                    var toDate = this.value || 'All';
-
-                    // Filter the graph by specifing To Date
-                    customReport.drawGraph(customReport.getJsonUrl() + '/' + toDate, customReport.getChartType());
-                });
+            });
 
             $('.table-add', context).once('editableBehaviour', function () {
                 // Apply the myCustomBehaviour effect to the elements only once.
@@ -995,132 +1108,6 @@
                     }
                 });
             });
-
-            // Loop the buttons and attach the onclick function
-            for (var i = 0; i < mainFilters.length; i++) {
-                mainFilters[i].onclick = function (data) {
-                    if (data.target !== null) {
-                        // Set the mainFilter
-                        customReport.setMainFilter(data.target.id);
-
-                        // Force change to location filter (when filters are updated)
-                        customReport.setSubFilter('location');
-
-                        // Add default classes
-                        _checkDefaultClasses(mainFilters, data);
-                        _checkChartTypes(customReport);
-
-                        // Re-draw graph
-                        customReport.drawGraph(customReport.getJsonUrl(), customReport.getChartType());
-
-                        // Generate X Axis Group By buttons, when Y Axis Group By is clicked
-                        _generateSubFilters(data, subFilters);
-                    }
-
-                    return false;
-                }
-            }
-
-            customReport.drawGraph(customReport.getJsonUrl(), customReport.getChartType());
-
-            // Set default classes on initial load
-            _setDefaultClass(mainFilters, subFilters, customReport);
-
-            /**
-             * This function will generate the X Axis buttons, based on available X Axis Grouping options
-             * @param data
-             * @private
-             */
-            function _generateSubFilters(data, subFilters) {
-                // Make array from object keys
-                var dataGroups = Object.keys(cleanData.enabled_x_axis_defaults(data.target.id));
-                var $xFilters = customReport.$DOM.section.xFilters;
-
-                customReport.clearButtons($xFilters);
-
-                dataGroups.forEach(function (value, key) {
-                    customReport.addButton({
-                        active: customReport.getSubFilter() === value,
-                        label: value,
-                        value: value,
-                        click: function (data) {
-                            if (data.target !== null) {
-                                // Set the subfilter
-                                customReport.setSubFilter($(data.target).data('value'));
-                                // Re-draw graph
-                                customReport.drawGraph(customReport.getJsonUrl(), customReport.getChartType());
-                            }
-
-                            return false;
-                        }
-                    }, $xFilters);
-                });
-
-                $xFilters.show();
-
-                // Set default classes on initial load
-                _setDefaultClass(mainFilters, subFilters, customReport);
-            }
-
-            /**
-             * Checks default CSS classes
-             * @param subFilters or mainFilters
-             * @param data
-             * @private
-             */
-            function _checkDefaultClasses(filters, data) {
-                // Append active class for filters
-                $("#" + data.target.id).addClass("active");
-
-                for (var check = 0; check < filters.length; check++) {
-                    // Add active class if filter clicked
-                    if (filters[check]['id'] == data.target.id) {
-                        $("#" + data.target.id).addClass("active");
-                    }
-                    else {
-                        // Remove all other active classes
-                        $("#" + filters[check]['id']).removeClass("active");
-                    }
-                }
-            }
-
-            /**
-             * Set default classes on initial load
-             * @param subFilters
-             * @private
-             */
-            function _setDefaultClass(mainFilters, subFilters, customReport) {
-                for (var check = 0; check < mainFilters.length; check++) {
-                    // Add active class if the cookie is already set)
-                    if (mainFilters[check]['id'] == customReport.getMainFilter()) {
-                        $("#" + mainFilters[check]['id']).addClass("active");
-                    }
-                }
-
-                for (check = 0; check < subFilters.length; check++) {
-                    // Add active class if the cookie is already set)
-                    if (subFilters[check]['id'] == customReport.getSubFilter()) {
-                        $("#" + subFilters[check]['id']).addClass("active");
-                    }
-                }
-            }
-
-            /**
-             * If the reports mainFilter value is gender or age allow only the grouped_bar chart
-             * @param customReport
-             * @private
-             */
-            function _checkChartTypes(customReport) {
-                if (customReport.getMainFilter() != 'headcount' && customReport.getMainFilter() != 'fte') {
-                    customReport.setChartType('grouped_bar');
-                } else {
-                    // If the mainFilter value is 'headcount', and we have
-                    // grouped_bar chart, reset it to default bar chart
-                    if (customReport.setChartType() == 'grouped_bar') {
-                        customReport.setChartType('bar');
-                    }
-                }
-            }
         }
     }
 })(jQuery);

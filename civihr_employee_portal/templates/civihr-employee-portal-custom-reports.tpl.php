@@ -9,11 +9,22 @@
         </header>
         <div class="panel-body">
             <div class="row">
-                <div class="col-md-2" data-graph-section="y-filters">
+                <div class="col-md-2" data-graph-section="main-filters">
+                    <button
+                        data-graph-button-tpl
+                        data-graph-button-inactive-class=""
+                        data-graph-button-active-class="active"
+                        class="btn btn-lg btn-secondary-outline btn-block text-uppercase">
+                    </button>
+
+                    <div data-graph-button-area>
+                        <!-- Content generated in reports.js -->
+                    </div>
+
                     <?php
                         foreach ($enabled_y_axis_filters as $key => $filter) {
                             if ($filter != '0') {
-                                print '<button id="' . $key . '" class="mainFilter btn btn-lg btn-secondary-outline btn-block">' . strtoupper($filter) . '</button>';
+                                print "<span data-temporary-main-filters data-value=\"$key\" data-label=\"$filter\" class=\"hide\"></span>";
                             }
                         }
                     ?>
@@ -23,7 +34,7 @@
                     <div class="form-inline text-right">
                         <div class="form-group">
                             <label for="date-filter" class="control-label">Select Date:</label>
-                            <div id="reportToDate" class="input-group input-group-sm input-group-unstyled">
+                            <div data-graph-calendar class="input-group input-group-sm input-group-unstyled">
                                 <input type="text" id="date-filter" class="form-control">
                                 <span class="input-group-addon fa fa-calendar"></span>
                             </div>
@@ -46,12 +57,12 @@
                 </div>
             </div>
         </div>
-        <footer class="panel-footer text-center" data-graph-section="x-filters">
+        <footer class="panel-footer text-center" data-graph-section="sub-filters">
             <button
                 data-graph-button-tpl
                 data-graph-button-inactive-class=""
                 data-graph-button-active-class="active"
-                class="subFilter btn btn-lg btn-secondary-outline text-uppercase">
+                class="btn btn-lg btn-secondary-outline text-uppercase">
             </button>
             <div class="btn-group" data-graph-button-area>
                 <!-- Content generated in reports.js -->
