@@ -708,19 +708,18 @@
      *
      */
     CustomReport.prototype.generateMainFilters = function() {
-        var _this = this;
         var $mainFilters = this.$DOM.sections.filters.main;
 
         this.clearButtons($mainFilters);
 
-        this.filters.main.each(function() {
-            _this.addButton({
-                active: $(this).data('value') === _this.getMainFilter(),
-                label: $(this).data('label'),
-                value: $(this).data('value'),
-                click: _this.mainFilterClickHandler.bind(_this)
+        for (var value in this.filters.main) {
+            this.addButton({
+                active: value === this.getMainFilter(),
+                label: this.filters.main[value],
+                value: value,
+                click: this.mainFilterClickHandler.bind(this)
             }, $mainFilters);
-        });
+        }
     };
 
     /**
@@ -730,21 +729,22 @@
      * @private
      */
     CustomReport.prototype.generateSubFilters = function (mainFilter) {
+        var subFilters = this.filters.sub(mainFilter);
         var $subFilters = this.$DOM.sections.filters.sub;
 
         this.clearButtons($subFilters);
 
-        this.filters.sub(mainFilter).forEach(function (value, key) {
+        for (var value in subFilters) {
             this.addButton({
                 active: this.getSubFilter() === value,
-                label: value,
+                label: subFilters[value],
                 value: value,
                 click: function ($button) {
                     this.setSubFilter($button.data('value'));
                     this.drawGraph();
                 }.bind(this)
             }, $subFilters);
-        }.bind(this));
+        };
 
         $subFilters.show();
     };
@@ -1010,9 +1010,15 @@
                     }
                 },
                 filters: {
-                    main: $('[data-temporary-main-filters]'),
+                    main: (function () {
+                        return jQuery.makeArray($('[data-temporary-main-filters]')).reduce(function (obj, filter) {
+                            obj['' + $(filter).data('value') + ''] = $(filter).data('label');
+
+                            return obj;
+                        }, {});
+                    })(),
                     sub: function (type) {
-                        return Object.keys(settings.civihr_employee_portal_reports.enabled_x_axis_defaults['enabled_x_axis_filters_' + type]);
+                        return settings.civihr_employee_portal_reports.enabled_x_axis_defaults['enabled_x_axis_filters_' + type];
                     }
                 },
                 on: {
