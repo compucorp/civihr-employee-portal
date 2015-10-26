@@ -2,105 +2,257 @@
     'use strict';
 
     /**
-     * D3Wrapper Object
+     * Wraps the D3 JS library
+     *
+     * Must be given the css selectors for the chart and legend containers
+     *
+     * Example usage:
+     *
+     *   D3Wrapper.init({
+     *       selectors: {
+     *           chart: '.example-chart',
+     *           legend: '#example-legend'
+     *       },
+     *       settings: {
+     *           setTicks: 3,
+     *           clickHandler: function (d) {
+     *               // Handle the clicl event on chart elements
+     *           }
+     *       }
+     *   });
+     *
+     *   D3Wrapper.barChart(chartData);
      */
     var D3Wrapper = (function () {
 
-        // Init default settings
-        var _settings = (function (settings) {
-            // The DOM container of the chart
-            settings.container = '';
+        // The chart object
+        var _chart = {
+            data: null,
+            margin: { bottom: 30, left: 40, right: 30, top: 20 },
+            selector: null,
+            size: {},
+            type: null,
+            calculateSize: function () {
+                this.size.width = document.querySelector(this.selector).clientWidth;
+                this.size.height = this.size.width / 2;
 
-            settings.outerWidth = window.innerWidth / 2;
-            settings.outerHeight = window.innerHeight / 2;
+                this.size.innerWidth = this.size.width - this.margin.left - this.margin.right;
+                this.size.innerHeight = this.size.height - this.margin.top - this.margin.bottom;
 
-            // Width and height for the SVG area (for charts)
-            settings.innerWidth = window.innerWidth / 3;
-            settings.innerHeight = window.innerHeight / 3;
-            settings.barPadding = 5;
+                // Pie charts are round so we need a radius for them
+                _settings.radius = Math.min(_chart.size.innerWidth, _chart.size.innerHeight) / 2;
+            }
+        };
 
-            // Pie charts are round so we need a radius for them
-            settings.radius = Math.min(settings.innerWidth, settings.innerHeight) / 2;
+        // The legend object
+        var _legend = {
+            constants: {
+                ENTRY_FONT_SIZE: 12,
+                ENTRY_ROW_HEIGHT: 15,
+                ENTRY_ROW_MARGIN: 10,
+                ICON_MARGIN: 5,
+                ICON_SIZE: 15
+            },
+            margin: { bottom: 15, left: 15, right: 15, top: 15 },
+            selector: null,
+            size: {},
+            calculateSize: function (data) {
+                var padding = {
+                    left: parseInt(window.getComputedStyle(document.querySelector(this.selector), null).getPropertyValue('padding-left')),
+                    right: parseInt(window.getComputedStyle(document.querySelector(this.selector), null).getPropertyValue('padding-left'))
+                };
 
-            // Set our defined range of colour codes for now
-            // settings.color = d3.scale.ordinal()
-            //    .range(['#A60F2B', '#648C85', '#B3F2C9', '#528C18', '#C3F25C']);
+                this.size.height = data.length * (this.constants.ENTRY_ROW_HEIGHT + this.constants.ENTRY_ROW_MARGIN) - this.constants.ENTRY_ROW_MARGIN + this.margin.left + this.margin.right;
+                this.size.width = document.querySelector(this.selector).clientWidth - padding.left - padding.right;
+            }
+        };
 
-            // Use 20 predefined colours
-            settings.color = d3.scale.category20();
+        // Default settings
+        var _settings = {
+            color: d3.scale.category20(),
+            duration: 250,
+            setTicks: 5,
+            clickHandler: function () { /* Empty default click handler */ }
+        };
 
-            // Set number of ticks
-            settings.setTicks = 5;
+        /**
+         * Draws the chart axis
+         *
+         * @param {Object} svg
+         * @param {Object} xAxis
+         * @param {Object} yAxis
+         */
+        function _drawAxis(svg, xAxis, yAxis) {
+            svg.append("g")
+                .attr("class", "chart-axis chart-axis-x")
+                .style({ 'fill': 'none', 'stroke-width': '1px' })
+                .attr("transform", "translate(0," + _chart.size.innerHeight + ")")
+                .call(xAxis);
 
-            // Start x padding, when using axes
-            settings.padding = 25;
+            svg.append("g")
+                .attr("class", "chart-axis chart-axis-y")
+                .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px' })
+                .call(yAxis);
+        }
 
-            // Start y / height padding, when using axes
-            settings.hpadding = 25;
+        /**
+         * Draws the chart legend
+         *
+         * @param {Object} svg
+         * @param {Object} data - The data object from which to extract the labels
+         * @param {Object} callbacks - .color() and .text() fns, to extract colors and labels
+         */
+        function _drawLegend(svg, data, callbacks) {
+            _legend.calculateSize(data);
 
-            // Set globally used margins
-            settings.margin = {top: 20, right: 30, bottom: 30, left: 40},
+            var svg = _drawSvg(_legend);
 
-            // Globally accessible svg_width and svg_height -> (mind the final svg width and height equals to svg_width + margins)
-            settings.svg_width = settings.outerWidth + settings.padding;
-            settings.svg_height = settings.outerHeight + settings.hpadding;
+            // Outer frame
+            svg.append("rect")
+                .attr("fill", "#ffffff")
+                .attr("stroke", "#e6ecef")
+                .attr("height", function () {
+                    return _legend.size.height;
+                })
+                .attr("width", _legend.size.width)
+                .attr("x", function (d, i) {
+                    return -_legend.margin.left;
+                })
+                .attr("y", function (d, i) {
+                    return -_legend.margin.top;
+                });
 
-            // Duration
-            settings.duration = 250;
+            // Icons
+            svg.selectAll("g")
+                .data(data)
+                .enter().append("rect")
+                .attr("width", _legend.constants.ICON_SIZE)
+                .attr("height", _legend.constants.ICON_SIZE)
+                .attr("fill", callbacks.color)
+                .attr("x", function(d, i) {
+                    return 0;
+                })
+                .attr("y", function(d, i) {
+                    return (i * (_legend.constants.ICON_SIZE + _legend.constants.ENTRY_ROW_MARGIN));
+                });
 
-            // Empty default click handler
-            settings.clickHandler = function () {}
+            // Labels
+            svg.selectAll("g")
+                .data(data)
+                .enter()
+                .append("text")
+                    .attr("font-family", "sans-serif")
+                    .attr("font-size", _legend.constants.ENTRY_FONT_SIZE + "px")
+                    .attr("fill", callbacks.color)
+                    .attr("text-anchor", "left")
+                    .text(callbacks.text)
+                    .attr("x", function (d, i) {
+                        return _legend.constants.ICON_SIZE + _legend.constants.ICON_MARGIN;
+                    })
+                    .attr("y", function (d, i) {
+                        return (_legend.constants.ENTRY_ROW_HEIGHT / 1.3) + (i * (_legend.constants.ENTRY_ROW_HEIGHT + _legend.constants.ENTRY_ROW_MARGIN));
+                    });
+        };
 
-            return settings;
-        })({});
+        /**
+         * Creates the SVG element
+         *
+         * @return {Object} element - Either the _chart or the _label object
+         * @return {Array}
+         */
+        function _drawSvg(element) {
+            document.querySelector(element.selector).innerHTML = '';
+
+            return d3.select(element.selector)
+                .append("svg")
+                    .attr("width", element.size.width)
+                    .attr("height", element.size.height)
+                .append("g")
+                    .attr("transform", "translate(" + element.margin.left + "," + element.margin.top + ")");
+        }
+
+        /**
+         * The handler of the resize event
+         *
+         */
+        function _resizeHandler () {
+            _chart.calculateSize();
+            this[_chart.type]();
+        }
 
         /**
          * Round UP to the nearest five -> helper function
          *
+         * @param {int} x
+         * @return {float}
          */
-        function roundUp5 (x) {
+        function _roundUp5 (x) {
             return Math.ceil(x / 5) * 5;
         }
+
 
         return {
 
             /**
+             * Initializes the object
+             *
+             * 1) Sets the selectors for the chart and legend container elements,
+             * 2) Calculates the size of the chart based on the size of its container
+             * 3) Overrides the default settings with the ones given
+             * 4) Initializes the resize handler
+             *
+             * @param {JSON} options - Object containing the selectors and settings
+             */
+            init: function (options) {
+                _chart.selector = options.selectors.chart;
+                _legend.selector = options.selectors.legend;
+
+                _chart.calculateSize();
+
+                // Override default settings
+                for (var setting in options.settings) {
+                    _settings[setting] = options.settings[setting];
+                }
+
+                window.onresize = _resizeHandler.bind(this);
+            },
+
+            /**
              * Draws a bar chart
              *
-             * @param {JSON} chartData - The data to visualize
+             * @param {JSON} (optional) chartData - The data to visualize
              */
             barChart: function (chartData) {
-                document.querySelector(_settings.container).innerHTML = '';
+                _chart.type = 'barChart';
 
-                // Create SVG element
-                var svg = d3.select(_settings.container)
-                    .append("svg")
-                    .attr("width", _settings.svg_width + _settings.margin.left + _settings.margin.right)
-                    .attr("height", _settings.svg_height + _settings.margin.top + _settings.margin.bottom);
+                if (typeof chartData !== 'undefined') {
+                    _chart.data =  chartData;
+                }
 
-                // Set up scales
-                var scaleX = d3.scale.ordinal()
-                    .domain(d3.range(chartData.length))
-                    .rangeBands([0, _settings.svg_width - _settings.padding], .3);
+                var svg = _drawSvg(_chart);
 
-                var scaleY = d3.scale.linear()
-                    .range([_settings.svg_height - _settings.padding, 0])
-                    .domain([0, d3.max(chartData, function(d) { return roundUp5(d.data.count); })]);
+                var x = d3.scale.ordinal()
+                    .domain(d3.range(_chart.data.length))
+                    .rangeBands([0, _chart.size.innerWidth], .2);
+                var y = d3.scale.linear()
+                    .range([_chart.size.innerHeight, 0])
+                    .domain([0, d3.max(_chart.data, function(d) { return _roundUp5(d.data.count); })]);
 
                 var xAxis = d3.svg.axis()
-                    .scale(scaleX)
+                    .scale(x)
                     .tickFormat(function(d, i) {
-                        return chartData[i]['data']['department'];
+                        return _chart.data[i]['data']['department'];
                     })
                     .orient("bottom");
-
                 var yAxis = d3.svg.axis()
-                    .scale(scaleY)
+                    .scale(y)
                     .orient("left")
                     .ticks(_settings.setTicks);
 
+                document.querySelector(_legend.selector).innerHTML = '';
+
                 svg.selectAll("rect")
-                    .data(chartData)
+                    .data(_chart.data)
                     .enter()
                     .append("rect")
                     .attr("fill", function (d, i) {
@@ -125,28 +277,17 @@
                         _settings.clickHandler(d);
                     })
                     .attr("x", function (d, i) {
-                        return scaleX(i);
+                        return x(i);
                     })
                     .attr("y", function (d) {
-                        return scaleY(d.data.count) + _settings.hpadding;
+                        return y(d.data.count);
                     })
-                    .attr("width", _settings.innerWidth / chartData.length - _settings.barPadding)
+                    .attr("width", x.rangeBand())
                     .attr("height", function (d) {
-                        return _settings.svg_height - _settings.hpadding - scaleY(d.data.count);
+                        return _chart.size.innerHeight - y(d.data.count);
                     });
 
-                // Append the axes
-                svg.append("g")
-                    .attr("class", "x-axis")
-                    .style({ 'fill': 'none', 'stroke-width': '1px' })
-                    .attr("transform", "translate(" + -30 + "," + _settings.svg_height + ")")
-                    .call(xAxis);
-
-                svg.append("g")
-                    .attr("class", "y-axis")
-                    .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px' })
-                    .attr("transform", "translate(" + 30 + "," + _settings.padding + ")")
-                    .call(yAxis);
+                _drawAxis(svg, xAxis, yAxis);
             },
 
             /**
@@ -155,7 +296,11 @@
              * @param {JSON} chartData - The data to visualize
              */
             multipleBarChart: function (chartData) {
-                document.querySelector(_settings.container).innerHTML = '';
+                _chart.type = 'multipleBarChart';
+
+                if (typeof chartData !== 'undefined') {
+                    _chart.data = chartData;
+                }
 
                 var nested_data = d3.nest()
                     .key(function (d) {
@@ -169,7 +314,7 @@
                             return 1;
                         });
                     })
-                    .entries(chartData);
+                    .entries(_chart.data);
 
                 var tracker = 0;
                 var assigned_key = '';
@@ -216,13 +361,13 @@
                             }
                         });
 
-                        return roundUp5(highest);
+                        return _roundUp5(highest);
                     })])
-                    .range([_settings.svg_height - _settings.padding, 0]);
+                    .range([_chart.size.innerHeight, 0]);
 
                 var x0 = d3.scale.ordinal()
                     .domain(d3.range(n))
-                    .rangeBands([0, _settings.svg_width - _settings.padding], .3);
+                    .rangeBands([0, _chart.size.innerWidth], .2);
 
                 var x1 = d3.scale.ordinal()
                     .domain(d3.range(m))
@@ -248,22 +393,7 @@
                     .orient("left")
                     .ticks(_settings.setTicks);
 
-                var svg = d3.select(_settings.container).append("svg")
-                    .attr("width", _settings.svg_width + _settings.margin.left + _settings.margin.right)
-                    .attr("height", _settings.svg_height + _settings.margin.top + _settings.margin.bottom)
-                    .append("svg:g");
-
-                svg.append("g")
-                    .attr("class", "y-axis")
-                    .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px' })
-                    .attr("transform", "translate(" + 30 + "," + _settings.padding + ")")
-                    .call(yAxis);
-
-                svg.append("g")
-                    .attr("class", "x-axis")
-                    .style({ 'fill': 'none', 'stroke-width': '1px' })
-                    .attr("transform", "translate(" + -30 + "," + _settings.svg_height + ")")
-                    .call(xAxis);
+                var svg = _drawSvg(_chart);
 
                 svg.append("g").selectAll("g")
                     .data(nested_data)
@@ -283,15 +413,6 @@
                         return d.values;
                     })
                     .enter().append("rect")
-                    .attr("width", x1.rangeBand())
-                    .attr("height", function (d) {
-                        // If not set, just return 0
-                        if (typeof d == "undefined") {
-                            return _settings.svg_height - _settings.hpadding - y(0);
-                        }
-
-                        return _settings.svg_height - _settings.hpadding - y(d.values);
-                    })
                     .on("mouseover", function () {
                         d3.select(this)
                             .attr("cursor", "pointer")
@@ -322,48 +443,27 @@
                     .attr("y", function (d) {
                         // If not set, just return 0
                         if (typeof d == "undefined") {
-                            return y(0) + _settings.hpadding;
+                            return y(0);
                         }
 
                         // d.key (holds headquarters / home office)
-                        return y(d.values) + _settings.hpadding;
+                        return y(d.values) ;
+                    })
+                    .attr("width", x1.rangeBand())
+                    .attr("height", function (d) {
+                        // If not set, just return 0
+                        if (typeof d == "undefined") {
+                            return _chart.size.innerHeight - y(0);
+                        }
+
+                        return _chart.size.innerHeight - y(d.values);
                     });
 
-                // Add legend labels
-                svg.append("g").selectAll("g")
-                    .data(nested_data)
-                    .enter().append("text")
-                    .attr("font-family", "sans-serif")
-                    .attr("font-size", "9px")
-                    .attr("fill", function (d, i) {
-                        return z(d.key);
-                    })
-                    .attr("text-anchor", "middle")
-                    .text(function(d) {
-                        return d.key;
-                    })
-                    .attr("x", function (d, i) {
-                        return _settings.svg_width - _settings.barPadding;
-                    })
-                    .attr("y", function (d, i) {
-                        return (i * _settings.hpadding) + _settings.outerHeight - 10;
-                    });
-
-                // Add legend small image icons
-                svg.append("g").selectAll("g")
-                    .data(nested_data)
-                    .enter().append("rect")
-                    .attr("width", 15)
-                    .attr("height", 15)
-                    .attr("fill", function (d, i) {
-                        return z(d.key);
-                    })
-                    .attr("x", function(d, i) {
-                        return _settings.svg_width - 50 - _settings.barPadding;
-                    })
-                    .attr("y", function(d, i) {
-                        return (i * _settings.hpadding - 10) + _settings.outerHeight - 10;
-                    });
+                _drawAxis(svg, xAxis, yAxis);
+                _drawLegend(svg, nested_data, {
+                    color: function (d, i) { return z(d.key); },
+                    text: function(d) { return d.key; }
+                });
             },
 
             /**
@@ -372,13 +472,13 @@
              * @param {JSON} chartData - The data to visualize
              */
             pieChart: function (chartData) {
-                document.querySelector(_settings.container).innerHTML = '';
+                _chart.type = 'pieChart';
 
-                var svg = d3.select(_settings.container)
-                    .append('svg')
-                    .attr("width", _settings.svg_width + _settings.margin.left + _settings.margin.right)
-                    .attr("height", _settings.svg_height + _settings.margin.top + _settings.margin.bottom)
-                    .append('g');
+                if (typeof chartData !== 'undefined') {
+                    _chart.data =  chartData;
+                }
+
+                var svg = _drawSvg(_chart);
 
                 var arc = d3.svg.arc()
                     .outerRadius(_settings.radius - 10)
@@ -390,11 +490,13 @@
                     })
                     .sort(null);
 
-                var path = svg.selectAll("path")
-                    .data(pie(chartData))
+                var count = svg.selectAll("count").data(pie(_chart.data));
+
+                svg.selectAll("path")
+                    .data(pie(_chart.data))
                     .enter()
                     .append("path")
-                    .attr('transform', 'translate(' + (_settings.innerWidth / 2) +  ',' + (_settings.innerHeight / 2) + ')')
+                    .attr('transform', 'translate(' + (_chart.size.innerWidth / 2) +  ',' + (_chart.size.innerHeight / 2) + ')')
                     .attr('d', arc)
                     .on("mouseover", function () {
                         d3.select(this)
@@ -414,51 +516,12 @@
                         return _settings.color(d.data.data.department);
                     });
 
-                // Add legend labels
-                svg.append("g").selectAll("g")
-                    .data(pie(chartData))
-                    .enter().append("text")
-                    .attr("font-family", "sans-serif")
-                    .attr("font-size", "9px")
-                    .attr("fill", function (d, i) {
-                        return _settings.color(d.data.data.department);
-                    })
-                    .attr("text-anchor", "middle")
-                    .text(function(d) {
-                        return d.data.data.department;
-                    })
-                    .attr("x", function (d, i) {
-                        return _settings.outerWidth + _settings.padding - _settings.barPadding;
-                    })
-                    .attr("y", function (d, i) {
-                        return (i * _settings.hpadding) + _settings.outerHeight - 100;
-                    });
-
-                // Add legend small image icons
-                svg.append("g").selectAll("g")
-                    .data(pie(chartData))
-                    .enter().append("rect")
-                    .attr("width", 15)
-                    .attr("height", 15)
-                    .attr("fill", function (d, i) {
-                        return _settings.color(d.data.data.department);
-                    })
-                    .attr("x", function (d, i) {
-                        return _settings.outerWidth - 80 + _settings.padding - _settings.barPadding;
-                    })
-                    .attr("y", function (d, i) {
-                        return (i * _settings.hpadding - 10) + _settings.outerHeight - 100;
-                    });
-
-                var count = svg.selectAll("count")
-                    .data(pie(chartData));
-
                 // Add count for each slice...
                 count.enter()
                     .append("text")
                     .attr("font-family", "sans-serif")
-                    .attr("x", _settings.innerWidth / 2)
-                    .attr("y", _settings.innerHeight / 2)
+                    .attr("x", _chart.size.innerWidth / 2)
+                    .attr("y", _chart.size.innerHeight / 2)
                     .attr("font-size", "11px")
                     .attr("font-style", "bold")
                     .attr("fill", "white")
@@ -471,18 +534,12 @@
                     .text(function (d, i) {
                         return d.data.data.count;
                     });
-            },
 
-            /**
-             * Override default settings
-             *
-             * @param {JSON} overrides - Overrides for default settings
-             */
-            settings: function (overrides) {
-                for (var setting in overrides) {
-                    _settings[setting] = overrides[setting];
-                }
-            }
+                _drawLegend(svg, pie(_chart.data), {
+                    color: function (d) { return _settings.color(d.data.data.department); },
+                    text: function(d) { return d.data.data.department;}
+                });
+            },
         };
     })();
 
@@ -501,7 +558,7 @@
     }
 
     /**
-     * Activate the given button and deactivate all the others in its section
+     * Activates the given button and deactivate all the others in its section
      *
      * @param {Object} $button - The jQuery object to activate
      */
@@ -629,7 +686,6 @@
     /**
      *
      * @param d (passed from D3)
-     * @param report (report object) -> contains all the prototype settings and functions
      * @private
      */
     CustomReport.prototype.displayFilterData = function (d) {
@@ -858,9 +914,14 @@
      *
      */
     CustomReport.prototype.init = function () {
-        this.chartLibrary.settings({
-            container: '[data-graph-section="canvas"]',
-            clickHandler: this.displayFilterData.bind(this)
+        this.chartLibrary.init({
+            selectors: {
+                chart: '[data-graph-section="canvas"]',
+                legend: '[data-graph-section="legend"]'
+            },
+            settings: {
+                clickHandler: this.displayFilterData.bind(this)
+            }
         });
 
         this.getDOMElements();

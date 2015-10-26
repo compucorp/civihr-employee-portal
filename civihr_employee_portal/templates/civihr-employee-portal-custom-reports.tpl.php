@@ -40,19 +40,26 @@
                             </div>
                         </div>
                     </div>
-                    <div id="custom-report" data-graph-section="canvas">
+                    <div data-graph-section="canvas">
                         <!-- Content generated in reports.js -->
                     </div>
                 </div>
-                <div class="col-md-2" data-graph-section="graph-filters">
-                    <button
-                        data-graph-button-tpl
-                        data-graph-button-inactive-class="btn-secondary-outline"
-                        data-graph-button-active-class="btn-primary"
-                        class="btn btn-lg btn-block text-uppercase">
-                    </button>
-                    <div data-graph-button-area>
-                        <!-- Content generated in reports.js -->
+                <div class="col-md-2">
+                    <div class="row">
+                        <div class="col-md-12" data-graph-section="graph-filters">
+                            <button
+                                data-graph-button-tpl
+                                data-graph-button-inactive-class="btn-secondary-outline"
+                                data-graph-button-active-class="btn-primary"
+                                class="btn btn-lg btn-block text-uppercase">
+                            </button>
+                            <div data-graph-button-area>
+                                <!-- Content generated in reports.js -->
+                            </div>
+                        </div>
+                        <div class="col-md-12" data-graph-section="legend">
+                            <!-- Content generated in reports.js -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -69,7 +76,7 @@
             </div>
         </footer>
     </section>
-    <div id="custom-report-details" data-graph-section="data">
+    <div data-graph-section="data">
         <?php print $custom_data; ?>
     </div>
 </div>
