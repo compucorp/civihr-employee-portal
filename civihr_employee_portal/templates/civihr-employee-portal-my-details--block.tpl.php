@@ -57,12 +57,14 @@
 <div class="<?php print $classes; ?>"<?php print $attributes; ?>>
     <div class="row relative">
         <div class="col-md-2">
-            <div class="chr_profile-pic hidden-xs hidden-sm">
-                <?php if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) { ?>
-                    <img src="<?php print $contact_data['image_URL']; ?>" />
-                <?php } else { ?>
-                    <img src="<?php print drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png' ?>"/>
-                <?php } ?>
+            <div class="chr_profile-card hidden-xs hidden-sm">
+                <div class="chr_profile-card__picture">
+                    <?php if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) { ?>
+                        <img src="<?php print $contact_data['image_URL']; ?>" />
+                    <?php } else { ?>
+                        <img src="<?php print drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png' ?>"/>
+                    <?php } ?>
+                </div>
             </div>
         </div>
         <div class="col-md-5 chr_panel--my-details__data-group">
