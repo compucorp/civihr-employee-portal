@@ -50,6 +50,12 @@ function _setup_modals() {
         'animation' => 'fadeIn'
     );
 
+    $bootstrap_modal = array_replace_recursive($basic_modal, array(
+        'modalSize' => array('height' => 'auto', 'width' => 'auto'),
+        'modalTheme' => 'ctools_custom_modal_html',
+        'modalClass' => 'civihr-bootstrap'
+    ));
+
     $custom_modal = array_replace_recursive($basic_modal, array(
         'modalSize' => array('height' => 'auto', 'width' => 'auto'),
         'animation' => 'fadeIn',
@@ -62,6 +68,7 @@ function _setup_modals() {
 
     drupal_add_js(array(
         'civihr-default-style' => $basic_modal,
+        'civihr-bootstrap-style' => $bootstrap_modal,
         'civihr-custom-style' => $custom_modal,
         'civihr-custom-large-style' => $custom_modal__large
     ), 'setting');
@@ -292,15 +299,18 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
     // @TODO test with more custom views
     $view_displays_to_rewrite = array();
 
+    // Fte groups
+    $view_displays_to_rewrite['views_view__filter_fte_location'] = 1;
+
     // Headcount groups
-    //$view_displays_to_rewrite['views_view__filter_headcount_location'] = 1;
-    //$view_displays_to_rewrite['views_view__filter_headcount_department'] = 1;
+    $view_displays_to_rewrite['views_view__filter_headcount_location'] = 1;
+    $view_displays_to_rewrite['views_view__filter_headcount_department'] = 1;
 
     // Gender groups
-    //$view_displays_to_rewrite['views_view__filter_gender_location'] = 1;
+    $view_displays_to_rewrite['views_view__filter_gender_location'] = 1;
 
     // Age groups
-    //$view_displays_to_rewrite['views_view__filter_age_location'] = 1;
+    $view_displays_to_rewrite['views_view__filter_age_location'] = 1;
 
     // This will hold any custom view display names where we need to override the template file
     $theme_hooks = array();
@@ -308,8 +318,7 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
     foreach ($view_displays_to_rewrite as $view_name => $val) {
         $theme_hooks[$view_name] = array(
             'template' => $template_url,
-            'original hook' => 'views_view',
-            'preprocess functions' => array('template_preprocess', 'template_preprocess_views_view'),
+            'base hook' => 'views_view',
             'arguments' => array('view' => NULL)
         );
     }
@@ -1137,7 +1146,7 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
 
     if ($link_type == 'civihr_report_settings') {
         return '' . l($link_text, 'civihr_reports_settings/nojs/view',
-            array('attributes' => array('class' => "ctools-use-modal ctools-modal-civihr-default-style $class"))
+            array('attributes' => array('class' => "ctools-use-modal ctools-modal-civihr-bootstrap-style $class"))
         ) . '';
     }
 

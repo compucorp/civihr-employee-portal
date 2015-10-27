@@ -1,41 +1,87 @@
 <?php $enabled_y_axis_filters = variable_get('enabled_y_axis_filters', array()); ?>
 
-<div class="panel-pane pane-block">
+<div data-graph>
+    <section class="panel panel-primary">
+        <header class="panel-heading">
+            <h2 class="panel-title">
+                My People
+            </h2>
+        </header>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-2" data-graph-section="main-filters">
+                    <button
+                        data-graph-button-tpl
+                        data-graph-button-inactive-class=""
+                        data-graph-button-active-class="active"
+                        class="btn btn-lg btn-secondary-outline btn-block text-uppercase">
+                    </button>
 
-    <div class="col-md-2 column1 panel-panel">
-        <?php
-            foreach ($enabled_y_axis_filters as $key => $filter) {
-                if ($filter != '0') {
-                    print '<button id="' . $key . '" class="mainFilter btn btn-primary btn-reports">' . $filter . '</button>';
-                }
-            }
-        ?>
+                    <div data-graph-button-area>
+                        <!-- Content generated in reports.js -->
+                    </div>
+
+                    <?php
+                        foreach ($enabled_y_axis_filters as $key => $filter) {
+                            if ($filter != '0') {
+                                print "<span data-temporary-main-filters data-value=\"$key\" data-label=\"$filter\" class=\"hide\"></span>";
+                            }
+                        }
+                    ?>
+                </div>
+                <div class="col-md-8">
+                    <div class="clearfix visible-xs-block visible-sm-block">&nbsp;</div>
+                    <div class="form-inline text-right">
+                        <div class="form-group">
+                            <label for="date-filter" class="control-label">Select Date:</label>
+                            <div data-graph-calendar class="input-group input-group-sm input-group-unstyled">
+                                <input type="text" id="date-filter" class="form-control">
+                                <span class="input-group-addon fa fa-calendar"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-graph-section="canvas">
+                        <!-- Content generated in reports.js -->
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="row">
+                        <div class="col-md-12" data-graph-section="graph-filters">
+                            <button
+                                data-graph-button-tpl
+                                data-graph-button-inactive-class="btn-secondary-outline"
+                                data-graph-button-active-class="btn-primary"
+                                class="btn btn-lg btn-block text-uppercase">
+                            </button>
+                            <div data-graph-button-area>
+                                <!-- Content generated in reports.js -->
+                            </div>
+                        </div>
+                        <div class="col-md-12" data-graph-section="legend">
+                            <!-- Content generated in reports.js -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="panel-footer text-center" data-graph-section="sub-filters">
+            <button
+                data-graph-button-tpl
+                data-graph-button-inactive-class=""
+                data-graph-button-active-class="active"
+                class="btn btn-lg btn-secondary-outline text-uppercase">
+            </button>
+            <div class="btn-group" data-graph-button-area>
+                <!-- Content generated in reports.js -->
+            </div>
+        </footer>
+    </section>
+    <div data-graph-section="data">
+        <?php print $custom_data; ?>
     </div>
-
-    <div class="col-md-8 column2 panel-panel">
-
-        <input type="text" id="reportToDate">
-
-        <div id="custom-report"></div>
-    </div>
-
-    <!-- Content generated in reports.js -->
-    <div class="col-md-8 column1 panel-panel report-x-filters"></div>
-
 </div>
-
-<div class="panel-pane custom-data-block">
-
-    <div>
-        <div id="custom-report-details"> <?php print $custom_data; ?> </div>
-    </div>
-
-</div>
-
-<div class="panel-pane pane-block custom-settings-block">
-
-    <div class="col-md-8 column2 panel-panel">
+<section class="panel panel-default">
+    <div class="panel-body">
         <?php print $settings_url; ?>
     </div>
-
-</div>
+</section>
