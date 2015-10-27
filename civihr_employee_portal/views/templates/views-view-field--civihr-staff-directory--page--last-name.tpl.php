@@ -24,9 +24,11 @@
 
 $profile_image = $row->civicrm_contact_image_url ? $row->civicrm_contact_image_url : drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
 ?>
-<div class="chr_profile-pic chr_profile-pic--small">
-    <img src="<?php print $profile_image; ?>" />
+<div class="chr_profile-card">
+    <div class="chr_profile-card__picture chr_profile-card__picture--small">
+        <img src="<?php print $profile_image; ?>" />
+    </div>
+    <div class="chr_profile-card__name">
+        <?php print $row->civicrm_contact_display_name ?>
+    </div>
 </div>
-<span>
-    <?php print $row->civicrm_contact_display_name ?>
-</span>
