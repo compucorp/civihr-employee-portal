@@ -107,24 +107,31 @@ class ManagerCalendar {
                     $header[] = array('class' => 'chr_calendar--manager__header__day-of-month', 'data' => $s);
 
                     foreach ($months_data[$month] as $employee) {
-
+                        
                         foreach ($employee as $activities) {
+
+                            $employeeId = key($employee);
                             foreach ($activities as $key_ac => $activity) {
 
-                                $rows[$key_ac][0] = array(
+                                $rows[$employeeId][0] = array(
                                     'class' => 'chr_calendar--manager__employee_name',
                                     'data' => '<div class="' . $activity['name'] . '">' . $activity['name'] . '</div>'
                                 );
-
+                                
+                                // prevent key overwriting for requested dates
+                                if(isset($rows[$employeeId][$s]['style'])){
+                                    continue;
+                                }
+                                
                                 if ($activity['start_month'] == $activity['end_month']) {
                                     if ($s >= $activity['start_day'] && $s <= $activity['end_day']) {
-                                        $rows[$key_ac][$s]['class'] = 'chr_calendar--manager__date chr_calendar--manager__date--filled';
-                                        $rows[$key_ac][$s]['style'] = 'background-color: ' . $colour_codes[$activity['type']] . ';';
-                                        $rows[$key_ac][$s]['data'] = '<div style="color: #ffffff;" class="views-tooltip stripe" tooltip-content="' . $activity['title'] . ': ' . $activity['duration'] . '">'  . date('D', strtotime($current_year . '/' . $activity['start_month'] . '/' . $s)) . '</div></div>';
+                                        $rows[$employeeId][$s]['class'] = 'chr_calendar--manager__date chr_calendar--manager__date--filled';
+                                        $rows[$employeeId][$s]['style'] = 'background-color: ' . $colour_codes[$activity['type']] . ';';
+                                        $rows[$employeeId][$s]['data'] = '<div style="color: #ffffff;" class="views-tooltip stripe" tooltip-content="' . $activity['title'] . ': ' . $activity['duration'] . '">'  . date('D', strtotime($current_year . '/' . $activity['start_month'] . '/' . $s)) . '</div></div>';
                                     }
                                     else {
-                                        $rows[$key_ac][$s]['class'] = 'chr_calendar--manager__date';
-                                        $rows[$key_ac][$s]['data'] = '';
+                                        $rows[$employeeId][$s]['class'] = 'chr_calendar--manager__date';
+                                        $rows[$employeeId][$s]['data'] = '';
                                     }
                                 }
 
