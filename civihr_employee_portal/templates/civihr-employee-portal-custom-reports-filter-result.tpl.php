@@ -28,63 +28,29 @@
  */
 ?>
 <div class="<?php print $classes; ?>">
-    <?php print render($title_prefix); ?>
-    <?php if ($title): ?>
-        <?php print $title; ?>
-    <?php endif; ?>
-    <?php print render($title_suffix); ?>
-    <?php if ($header): ?>
-        <div class="view-header">
-            <?php print $header; ?>
-        </div>
-    <?php else: ?>
-        <?php if ($feed_icon): ?>
-            <div class="header-export">
-                Data <?php print $feed_icon; ?>
+    <section class="panel panel-primary">
+        <header class="panel-heading">
+            <h2 class="panel-title">Data</h2>
+        </header>
+
+        <?php if ($exposed): ?>
+            <div class="view-filters well">
+                <?php print $exposed; ?>
             </div>
         <?php endif; ?>
-    <?php endif; ?>
 
-    <?php if ($exposed): ?>
-        <div class="view-filters well">
-            <?php print $exposed; ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if ($attachment_before): ?>
-        <div class="attachment attachment-before">
-            <?php print $attachment_before; ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if ($rows): ?>
-        <div class="view-content">
+        <?php if ($rows): ?>
             <?php print $rows; ?>
-        </div>
-    <?php elseif ($empty): ?>
-        <div class="view-empty">
-            <?php print $empty; ?>
-        </div>
-    <?php endif; ?>
+        <?php elseif ($empty): ?>
+            <div class="view-empty">
+                <?php print $empty; ?>
+            </div>
+        <?php endif; ?>
 
-    <?php if ($pager): ?>
-        <?php print $pager; ?>
-    <?php endif; ?>
-
-    <?php if ($attachment_after): ?>
-        <div class="attachment attachment-after">
-            <?php print $attachment_after; ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if ($more): ?>
-        <?php print $more; ?>
-    <?php endif; ?>
-
-    <?php if ($footer): ?>
-        <div class="view-footer">
-            <?php print $footer; ?>
-        </div>
-    <?php endif; ?>
-
+        <?php if ($pager): ?>
+            <footer class="panel-footer">
+                <?php print $pager; ?>
+            </footer>
+        <?php endif; ?>
+    </div>
 </div><?php /* class view */ ?>
