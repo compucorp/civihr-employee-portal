@@ -85,4 +85,20 @@ class HelperClass {
         return $assigned_manager_contact_ids;
     }
     
+    /**
+     * Helper method for retrieving particular "Work" location type id
+     */
+    public static function _get_work_location_type_id() {
+        return self::_get_location_type_id("Work");
+    }
+    
+    public static function _get_location_type_id($name) {
+        $type_data = civicrm_api3('LocationType', 'getsingle', array(
+            'sequential' => 1,
+            'display_name' => $name,
+        ));
+
+        return $type_data['id'];
+    }
+
 }
