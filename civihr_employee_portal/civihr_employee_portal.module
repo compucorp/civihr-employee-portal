@@ -1199,7 +1199,7 @@ function civihr_employee_portal_manager_approval_show_calendar_callback($ajax) {
         $block = module_invoke('civihr_employee_portal', 'block_view', 'manager_calendar');
 
         $output = array();
-        $output[] = ctools_modal_command_display('Manager calendar view', render($block['content']));
+        $output[] = ctools_modal_command_display('Manager Calendar View', render($block['content']));
 
         print ajax_render($output);
         drupal_exit();
