@@ -52,7 +52,7 @@ class HelperClass {
 
         // @TODO -> cache the relationships if we need to!
         // Get the relationships for the Contact
-        $res = civicrm_api3('Relationship', 'get', array('contact_id' => $contact_id));
+        $res = civicrm_api3('Relationship', 'get', array('contact_id' => $contact_id, 'return' => "is_active"));
         $contactRelationships = $res['values'];
 
         $assigned_manager_contact_ids = [];
@@ -61,8 +61,10 @@ class HelperClass {
         // If Leave approver is find, assign him as the manager (add contact ID to $assigned_manager_contact_ids array)
         foreach ($contactRelationships as $key => $relation) {
             if ($relation['relation'] == variable_get('relationship_name_to_use', 'has Leave Approved by')) {
-                $assigned_manager_contact_ids[] = $relation['contact_id_b'];
-                $manager_found++;
+                if($relation['is_active'] == 1){
+                  $assigned_manager_contact_ids[] = $relation['contact_id_b'];
+                  $manager_found++;
+                }
             }
         }
 
@@ -81,7 +83,7 @@ class HelperClass {
             $assigned_manager_contact_ids[] = $main_admin_contact['contact_id'];
 
         }
-
+        
         return $assigned_manager_contact_ids;
     }
     
