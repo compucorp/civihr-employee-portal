@@ -377,7 +377,7 @@ $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
 $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = '';
-$handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="manager_approval/nojs/pick_days/user/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style">[absence_title]</a><br />
+$handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="manager_approval/nojs/pick_days/user/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-custom-large-style">[absence_title]</a><br />
 ([absence_start_date_timestamp] - [absence_end_date_timestamp])';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
 /* Field: Absence entity: Absence status */
@@ -527,7 +527,7 @@ $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
 $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = 'Description';
-$handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="manager_approval/nojs/pick_days/user/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style">[absence_title]</a><br />
+$handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="manager_approval/nojs/pick_days/user/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-custom-large-style">[absence_title]</a><br />
 ([absence_start_date_timestamp] - [absence_end_date_timestamp])';
 /* Field: Absence entity: Absence status */
 $handler->display->display_options['fields']['absence_status']['id'] = 'absence_status';
@@ -922,7 +922,7 @@ $translatables['absence_list'] = array(
   t('Leave report'),
   t('Activity type ID'),
   t('Is_credit'),
-  t('<a href="manager_approval/nojs/pick_days/user/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style">[absence_title]</a><br />
+  t('<a href="manager_approval/nojs/pick_days/user/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-custom-large-style">[absence_title]</a><br />
 ([absence_start_date_timestamp] - [absence_end_date_timestamp])'),
   t('Absence date filter based on Civi date periods'),
   t('My leave'),
