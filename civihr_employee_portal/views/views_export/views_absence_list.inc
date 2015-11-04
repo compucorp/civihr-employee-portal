@@ -16,7 +16,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 
 /* Display: Master */
 $handler = $view->new_display('default', 'Master', 'default');
-$handler->display->display_options['title'] = 'Absence list';
+$handler->display->display_options['title'] = 'Absence List';
 $handler->display->display_options['css_class'] = 'view--w-table';
 $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['use_more_always'] = FALSE;
@@ -597,7 +597,7 @@ $handler->display->display_options['path'] = 'sickness-report';
 /* Display: Print Leave report */
 $handler = $view->new_display('page', 'Print Leave report', 'print_leave_report');
 $handler->display->display_options['defaults']['title'] = FALSE;
-$handler->display->display_options['title'] = 'Print Leave report';
+$handler->display->display_options['title'] = 'Print Leave Report';
 $handler->display->display_options['defaults']['css_class'] = FALSE;
 $handler->display->display_options['css_class'] = 'print-leave-report-view';
 $handler->display->display_options['defaults']['pager'] = FALSE;
