@@ -108,9 +108,8 @@ class ManagerCalendar {
 
                     foreach ($months_data[$month] as $employee) {
                         
-                        foreach ($employee as $activities) {
-
-                            $employeeId = key($employee);
+                        foreach ($employee as $empId => $activities) {
+                            $employeeId = $empId;
                             foreach ($activities as $key_ac => $activity) {
 
                                 $rows[$employeeId][0] = array(
