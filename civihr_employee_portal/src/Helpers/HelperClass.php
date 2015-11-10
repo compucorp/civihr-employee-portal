@@ -50,41 +50,7 @@ class HelperClass {
         // Get the contact ID based on the USER ID
         $contact_id = get_civihr_uf_match_data($user_id)['contact_id'];
 
-        // @TODO -> cache the relationships if we need to!
-        // Get the relationships for the Contact
-        $res = civicrm_api3('Relationship', 'get', array('contact_id' => $contact_id, 'return' => "is_active"));
-        $contactRelationships = $res['values'];
-
-        $assigned_manager_contact_ids = [];
-        $manager_found = 0;
-
-        // If Leave approver is find, assign him as the manager (add contact ID to $assigned_manager_contact_ids array)
-        foreach ($contactRelationships as $key => $relation) {
-            if ($relation['relation'] == variable_get('relationship_name_to_use', 'has Leave Approved by')) {
-                if($relation['is_active'] == 1){
-                  $assigned_manager_contact_ids[] = $relation['contact_id_b'];
-                  $manager_found++;
-                }
-            }
-        }
-
-        // If no assigned managers found
-        if ($manager_found <= 0) {
-
-            // Get the main admin contact (this will be the default approver -> as no other leave approver is found)
-            $main_admin_contact = civicrm_api('uf_match', 'get', array(
-                'version' => 3,
-                'uf_id' => 1,
-            ));
-
-            $main_admin_contact = array_shift($main_admin_contact['values']);
-
-            // Set default manager ID
-            $assigned_manager_contact_ids[] = $main_admin_contact['contact_id'];
-
-        }
-        
-        return $assigned_manager_contact_ids;
+        return _getManagerContacts($contact_id);
     }
     
     /**
