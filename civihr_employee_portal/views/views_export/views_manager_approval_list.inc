@@ -16,7 +16,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 
 /* Display: Master */
 $handler = $view->new_display('default', 'Master', 'default');
-$handler->display->display_options['title'] = 'Manager absence approval';
+$handler->display->display_options['title'] = 'Manager Absence Approval';
 $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'perm';
@@ -293,7 +293,7 @@ $handler->display->display_options['filters']['absence_status']['field'] = 'abse
 $handler->display->display_options['filters']['absence_status']['value'] = '1';
 $translatables['approvals'] = array(
     t('Master'),
-    t('Manager absence approval'),
+    t('Manager Absence Approval'),
     t('more'),
     t('Apply'),
     t('Reset'),

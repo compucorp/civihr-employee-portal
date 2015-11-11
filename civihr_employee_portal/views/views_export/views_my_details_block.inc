@@ -16,7 +16,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 
 /* Display: Master */
 $handler = $view->new_display('default', 'Master', 'default');
-$handler->display->display_options['title'] = 'My details block';
+$handler->display->display_options['title'] = 'My Details Block';
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'role';
 $handler->display->display_options['access']['role'] = array(
@@ -164,7 +164,7 @@ $handler->display->display_options['fields']['name_80']['alter']['strip_tags'] =
 /* Display: My address */
 $handler = $view->new_display('block', 'My address', 'my_address_block');
 $handler->display->display_options['defaults']['title'] = FALSE;
-$handler->display->display_options['title'] = 'My address block';
+$handler->display->display_options['title'] = 'My Address Block';
 $handler->display->display_options['defaults']['pager'] = FALSE;
 $handler->display->display_options['pager']['type'] = 'some';
 $handler->display->display_options['pager']['options']['items_per_page'] = '1';

@@ -1199,7 +1199,7 @@ function civihr_employee_portal_manager_approval_show_calendar_callback($ajax) {
         $block = module_invoke('civihr_employee_portal', 'block_view', 'manager_calendar');
 
         $output = array();
-        $output[] = ctools_modal_command_display('Manager calendar view', render($block['content']));
+        $output[] = ctools_modal_command_display('Manager Calendar View', render($block['content']));
 
         print ajax_render($output);
         drupal_exit();
@@ -4479,4 +4479,47 @@ function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$obje
             _clear_json_cache();
         }
     }
+}
+
+/**
+ * Pass the contact ID and this function will return array of assigned ACTIVE manager contact IDs
+ * @param $contact_id
+ */
+function _getManagerContacts($contact_id) {
+
+    // @TODO -> cache the relationships if we need to!
+    // Get the relationships for the Contact
+    $res = civicrm_api3('Relationship', 'get', array('contact_id' => $contact_id, 'return' => "is_active"));
+    $contactRelationships = $res['values'];
+
+    $assigned_manager_contact_ids = [];
+    $manager_found = 0;
+
+    // If Leave approver is find, assign him as the manager (add contact ID to $assigned_manager_contact_ids array)
+    foreach ($contactRelationships as $key => $relation) {
+        if ($relation['relation'] == variable_get('relationship_name_to_use', 'has Leave Approved by')) {
+            if($relation['is_active'] == 1){
+                $assigned_manager_contact_ids[] = $relation['contact_id_b'];
+                $manager_found++;
+            }
+        }
+    }
+
+    // If no assigned managers found
+    if ($manager_found <= 0) {
+
+        // Get the main admin contact (this will be the default approver -> as no other leave approver is found)
+        $main_admin_contact = civicrm_api('uf_match', 'get', array(
+            'version' => 3,
+            'uf_id' => 1,
+        ));
+
+        $main_admin_contact = array_shift($main_admin_contact['values']);
+
+        // Set default manager ID
+        $assigned_manager_contact_ids[] = $main_admin_contact['contact_id'];
+
+    }
+
+    return $assigned_manager_contact_ids;
 }

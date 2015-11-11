@@ -16,7 +16,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 
 /* Display: Master */
 $handler = $view->new_display('default', 'Master', 'default');
-$handler->display->display_options['title'] = 'Absence list';
+$handler->display->display_options['title'] = 'Absence List';
 $handler->display->display_options['css_class'] = 'view--w-table';
 $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['use_more_always'] = FALSE;
@@ -377,7 +377,7 @@ $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
 $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = '';
-$handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="manager_approval/nojs/pick_days/user/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style">[absence_title]</a><br />
+$handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="manager_approval/nojs/pick_days/user/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-custom-large-style">[absence_title]</a><br />
 ([absence_start_date_timestamp] - [absence_end_date_timestamp])';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
 /* Field: Absence entity: Absence status */
@@ -527,7 +527,7 @@ $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
 $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = 'Description';
-$handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="manager_approval/nojs/pick_days/user/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style">[absence_title]</a><br />
+$handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="manager_approval/nojs/pick_days/user/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-custom-large-style">[absence_title]</a><br />
 ([absence_start_date_timestamp] - [absence_end_date_timestamp])';
 /* Field: Absence entity: Absence status */
 $handler->display->display_options['fields']['absence_status']['id'] = 'absence_status';
@@ -597,7 +597,7 @@ $handler->display->display_options['path'] = 'sickness-report';
 /* Display: Print Leave report */
 $handler = $view->new_display('page', 'Print Leave report', 'print_leave_report');
 $handler->display->display_options['defaults']['title'] = FALSE;
-$handler->display->display_options['title'] = 'Print Leave report';
+$handler->display->display_options['title'] = 'Print Leave Report';
 $handler->display->display_options['defaults']['css_class'] = FALSE;
 $handler->display->display_options['css_class'] = 'print-leave-report-view';
 $handler->display->display_options['defaults']['pager'] = FALSE;
@@ -922,7 +922,7 @@ $translatables['absence_list'] = array(
   t('Leave report'),
   t('Activity type ID'),
   t('Is_credit'),
-  t('<a href="manager_approval/nojs/pick_days/user/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style">[absence_title]</a><br />
+  t('<a href="manager_approval/nojs/pick_days/user/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-custom-large-style">[absence_title]</a><br />
 ([absence_start_date_timestamp] - [absence_end_date_timestamp])'),
   t('Absence date filter based on Civi date periods'),
   t('My leave'),
