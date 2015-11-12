@@ -332,6 +332,14 @@ function civihr_employee_portal_views_pre_render(&$view) {
 
         }
     }
+    
+    if($view->name == 'civihr_staff_directory'){
+        foreach($view->result as $result){
+            if(!$result->civicrm_relationship_is_active){
+                $result->civicrm_contact_civicrm_relationship_display_name = "";
+            }
+        }
+    }
 }
 
 /**
