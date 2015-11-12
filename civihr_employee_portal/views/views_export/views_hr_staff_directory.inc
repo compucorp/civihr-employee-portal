@@ -1,3 +1,4 @@
+<?php
 $view = new view();
 $view->name = 'civihr_staff_directory';
 $view->description = '';
