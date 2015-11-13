@@ -734,7 +734,7 @@
      */
     CustomReport.prototype.drawGraph = function (path) {
         var url = this.getJsonUrl() + ( typeof path !== 'undefined' ? path : '' );
-
+        console.log(url);
         d3.json(url, function (error, json) {
             if (error) {
                 return console.warn(error);
@@ -948,8 +948,8 @@
                 // If not set it will return All values
                 var toDate = this.value || 'All';
 
-                // Filter the graph by specifing To Date
-                _this.drawGraph('/' + toDate);
+                // Filter the graph by specifing To Date (pass the same date for Start and End date in the views)
+                _this.drawGraph('/' + toDate + '/' + toDate);
             });
     };
 
