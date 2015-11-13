@@ -65,7 +65,7 @@ $handler->display->display_options['arguments']['period_start_date']['default_ar
 $handler->display->display_options['arguments']['period_start_date']['summary']['number_of_records'] = '0';
 $handler->display->display_options['arguments']['period_start_date']['summary']['format'] = 'default_summary';
 $handler->display->display_options['arguments']['period_start_date']['summary_options']['items_per_page'] = '25';
-$handler->display->display_options['arguments']['period_start_date']['limit'] = '0';
+$handler->display->display_options['arguments']['period_start_date']['civihr_range'] = '=';
 
 /* Display: FTE / All (sum) */
 $handler = $view->new_display('page', 'FTE / All (sum)', 'page');
@@ -100,6 +100,29 @@ $handler->display->display_options['fields']['hours_fte']['field'] = 'hours_fte'
 $handler->display->display_options['fields']['hours_fte']['relationship'] = 'hrjc_hour';
 $handler->display->display_options['fields']['hours_fte']['group_type'] = 'sum';
 $handler->display->display_options['fields']['hours_fte']['label'] = 'count';
+$handler->display->display_options['defaults']['arguments'] = FALSE;
+/* Contextual filter: HRJobContract Details entity: Period_start_date */
+$handler->display->display_options['arguments']['period_start_date']['id'] = 'period_start_date';
+$handler->display->display_options['arguments']['period_start_date']['table'] = 'hrjc_details';
+$handler->display->display_options['arguments']['period_start_date']['field'] = 'period_start_date';
+$handler->display->display_options['arguments']['period_start_date']['relationship'] = 'hrjc_details';
+$handler->display->display_options['arguments']['period_start_date']['default_argument_type'] = 'fixed';
+$handler->display->display_options['arguments']['period_start_date']['summary']['number_of_records'] = '0';
+$handler->display->display_options['arguments']['period_start_date']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['period_start_date']['summary_options']['items_per_page'] = '25';
+$handler->display->display_options['arguments']['period_start_date']['civihr_range'] = '<=';
+$handler->display->display_options['arguments']['period_start_date']['civihr_range_empty'] = '0';
+/* Contextual filter: HRJobContract Details entity: Period_end_date */
+$handler->display->display_options['arguments']['period_end_date']['id'] = 'period_end_date';
+$handler->display->display_options['arguments']['period_end_date']['table'] = 'hrjc_details';
+$handler->display->display_options['arguments']['period_end_date']['field'] = 'period_end_date';
+$handler->display->display_options['arguments']['period_end_date']['relationship'] = 'hrjc_details';
+$handler->display->display_options['arguments']['period_end_date']['default_argument_type'] = 'fixed';
+$handler->display->display_options['arguments']['period_end_date']['summary']['number_of_records'] = '0';
+$handler->display->display_options['arguments']['period_end_date']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['period_end_date']['summary_options']['items_per_page'] = '25';
+$handler->display->display_options['arguments']['period_end_date']['civihr_range'] = '>=';
+$handler->display->display_options['arguments']['period_end_date']['civihr_range_empty'] = '1';
 $handler->display->display_options['path'] = 'fte-all';
 
 /* Display: Filter by All */

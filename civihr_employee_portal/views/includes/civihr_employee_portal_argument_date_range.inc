@@ -8,6 +8,20 @@
 
 class civihr_employee_portal_argument_date_range extends views_handler_argument {
 
+    /**
+     * @return array
+     * This will make sure the additional options are exported when exporting the view to features
+     */
+    function option_definition() {
+        $options = parent::option_definition();
+
+        // Define our custom settings fields
+        $options['civihr_range'] = array();
+        $options['civihr_range_empty'] = array();
+
+        return $options;
+    }
+
     function options_form(&$form, &$form_state) {
         parent::options_form($form, $form_state);
 
