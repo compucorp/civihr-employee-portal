@@ -4396,10 +4396,10 @@ function civihr_employee_portal_module_implements_alter(&$implementations, $hook
         unset($implementations[$module]);
     }
 
-    // Put the civihr employee portal module after civicrm module
-    $module = 'civihr_employee_portal';
-    $group += array($module => $implementations[$module]);
-    unset($implementations[$module]);
+    // Put the civihr employee portal module after civicrm module (breaks the Calendar view)
+    // $module = 'civihr_employee_portal';
+    // $group += array($module => $implementations[$module]);
+    // unset($implementations[$module]);
 
     // Make sure some modules are after civicrm to avoid error with autocomplete search or drush cc all
     $implementations = $implementations + $group;
