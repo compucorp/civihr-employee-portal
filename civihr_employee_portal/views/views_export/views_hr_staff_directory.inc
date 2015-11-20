@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * Exported hr_staff_directory view
+ */
+
 $view = new view();
 $view->name = 'civihr_staff_directory';
 $view->description = '';
@@ -203,6 +208,13 @@ $handler->display->display_options['fields']['display_name_1']['field'] = 'displ
 $handler->display->display_options['fields']['display_name_1']['relationship'] = 'contact_id_b_';
 $handler->display->display_options['fields']['display_name_1']['label'] = 'Manager';
 $handler->display->display_options['fields']['display_name_1']['link_to_civicrm_contact'] = 0;
+/* Field: CiviCRM Relationships: End Date */
+$handler->display->display_options['fields']['end_date']['id'] = 'end_date';
+$handler->display->display_options['fields']['end_date']['table'] = 'civicrm_relationship';
+$handler->display->display_options['fields']['end_date']['field'] = 'end_date';
+$handler->display->display_options['fields']['end_date']['exclude'] = TRUE;
+$handler->display->display_options['fields']['end_date']['date_format'] = 'long';
+$handler->display->display_options['fields']['end_date']['second_date_format'] = 'long';
 /* Field: CiviCRM Relationships: Is Relationship Active */
 $handler->display->display_options['fields']['is_active']['id'] = 'is_active';
 $handler->display->display_options['fields']['is_active']['table'] = 'civicrm_relationship';
@@ -216,7 +228,6 @@ $handler->display->display_options['sorts']['id']['field'] = 'id';
 $handler->display->display_options['filter_groups']['groups'] = array(
   1 => 'AND',
   2 => 'OR',
-  3 => 'OR',
 );
 /* Filter criterion: CiviCRM Contacts: Contact Type */
 $handler->display->display_options['filters']['contact_type']['id'] = 'contact_type';
@@ -419,20 +430,6 @@ $handler->display->display_options['filters']['is_primary']['field'] = 'is_prima
 $handler->display->display_options['filters']['is_primary']['relationship'] = 'hrjc_details';
 $handler->display->display_options['filters']['is_primary']['value']['value'] = '1';
 $handler->display->display_options['filters']['is_primary']['group'] = 1;
-/* Filter criterion: CiviCRM Relationships: End Date */
-$handler->display->display_options['filters']['end_date']['id'] = 'end_date';
-$handler->display->display_options['filters']['end_date']['table'] = 'civicrm_relationship';
-$handler->display->display_options['filters']['end_date']['field'] = 'end_date';
-$handler->display->display_options['filters']['end_date']['operator'] = '>=';
-$handler->display->display_options['filters']['end_date']['value']['value'] = '-1 day';
-$handler->display->display_options['filters']['end_date']['value']['type'] = 'offset';
-$handler->display->display_options['filters']['end_date']['group'] = 3;
-/* Filter criterion: CiviCRM Relationships: End Date */
-$handler->display->display_options['filters']['end_date_1']['id'] = 'end_date_1';
-$handler->display->display_options['filters']['end_date_1']['table'] = 'civicrm_relationship';
-$handler->display->display_options['filters']['end_date_1']['field'] = 'end_date';
-$handler->display->display_options['filters']['end_date_1']['operator'] = 'empty';
-$handler->display->display_options['filters']['end_date_1']['group'] = 3;
 /* Filter criterion: CiviCRM Relationships: Relationship Type A-to-B */
 $handler->display->display_options['filters']['relationship_type']['id'] = 'relationship_type';
 $handler->display->display_options['filters']['relationship_type']['table'] = 'civicrm_relationship';
@@ -547,6 +544,7 @@ $translatables['civihr_staff_directory'] = array(
   t(' Contract Type '),
   t('Department'),
   t('Manager'),
+  t('End Date'),
   t('Is Relationship Active'),
   t('Phone'),
   t('Staff directory list page'),

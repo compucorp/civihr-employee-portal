@@ -333,13 +333,20 @@ function civihr_employee_portal_views_pre_render(&$view) {
         }
     }
     
-    if($view->name == 'civihr_staff_directory'){
-        foreach($view->result as $result){
-            if(!$result->civicrm_relationship_is_active){
-                $result->civicrm_contact_civicrm_relationship_display_name = "";
-            }
+    if($view->name == "civihr_staff_directory"){
+      $view->result = removeInactiveManagers($view->result);
+    }
+}
+
+function removeInactiveManagers($results = array()) {
+  foreach ($results as $key => $value) {
+    if ($value->civicrm_relationship_is_active == 0 ||
+       ($value->civicrm_relationship_end_date < date('Y-m-d') && $value->civicrm_relationship_end_date != NULL))
+        {
+          $value->civicrm_contact_civicrm_relationship_display_name = NULL;
         }
     }
+  return $results;
 }
 
 /**
