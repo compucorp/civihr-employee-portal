@@ -4,7 +4,7 @@
     <section class="panel panel-primary">
         <header class="panel-heading">
             <div class="row">
-                <div class="col-xs-1">
+                <div class="col-xs-1 text-left">
                     <a href="/<?php print $next_url;?>">
                         <i class="fa fa-arrow-left"></i>
                     </a>
