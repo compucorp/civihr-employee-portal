@@ -3,9 +3,15 @@
 <div data-graph>
     <section class="panel panel-primary">
         <header class="panel-heading">
+            <a href="/<?php print $next_url;?>">
+                <i class="fa fa-arrow-left"></i>
+            </a>
             <h2 class="panel-title">
-                My People
+                <?php print $report_title; ?>
             </h2>
+            <a href="/<?php print $next_url;?>">
+                <i class="fa fa-arrow-right"></i>
+            </a>
         </header>
         <div class="panel-body">
             <div class="row">

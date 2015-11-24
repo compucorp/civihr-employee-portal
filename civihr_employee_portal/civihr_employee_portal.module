@@ -360,7 +360,9 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
         ),
         'civihr_employee_portal_custom_reports' => array(
             'variables' => array(
-                'custom_data' => NULL
+                'report_title' => NULL,
+                'custom_data' => NULL,
+                'settings_url' => NULL
             ),
             'template' => 'templates/civihr-employee-portal-custom-reports',
         ),
@@ -941,6 +943,15 @@ function civihr_employee_portal_menu() {
     $items['civihr_reports'] = array(
         'title' => 'CiviHR reports',
         'page callback' => 'civihr_employee_portal_get_reports',
+        'page arguments' => array(1, 2),
+        'access callback' => '_user_has_role',
+        'access arguments' => array(array('civihr_admin', 'administrator')),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['civihr_reports_monthly'] = array(
+        'title' => 'CiviHR reports',
+        'page callback' => 'civihr_employee_portal_get_reports_monthly',
         'page arguments' => array(1, 2),
         'access callback' => '_user_has_role',
         'access arguments' => array(array('civihr_admin', 'administrator')),
@@ -3792,7 +3803,9 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         // Output the custom report theme page
         return theme('civihr_employee_portal_custom_reports',
             array(
+                'report_title' => t('My People'),
                 'custom_data' => _generateView(),
+                'next_url' => 'civihr_reports_monthly',
                 'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
             )
         );
@@ -3805,7 +3818,9 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
         // Output the custom report theme page
         return theme('civihr_employee_portal_custom_reports',
             array(
+                'report_title' => t('My People'),
                 'custom_data' => _generateView($view_name, $view_display, $args),
+                'next_url' => 'civihr_reports_monthly',
                 'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
             )
         );
@@ -3820,6 +3835,30 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
 
     }
 
+}
+
+function civihr_employee_portal_get_reports_monthly($view_name = FALSE, $view_display = 'default') {
+
+    ctools_include('modal');
+    ctools_modal_add_js();
+
+    // Add custom datepicker
+    drupal_add_library('system', 'ui.datepicker');
+
+    // Load the reports page
+    // Add the javascript library for D3
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/d3/d3.v3.min.js');
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
+
+    // Output the custom report theme page
+    return theme('civihr_employee_portal_custom_reports',
+        array(
+            'report_title' => t('My People (Monthly)'),
+            'custom_data' => 'test data',
+            'next_url' => 'civihr_reports',
+            'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
+        )
+    );
 }
 
 /**
