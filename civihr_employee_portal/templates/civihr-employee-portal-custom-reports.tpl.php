@@ -3,15 +3,23 @@
 <div data-graph>
     <section class="panel panel-primary">
         <header class="panel-heading">
-            <a href="/<?php print $next_url;?>">
-                <i class="fa fa-arrow-left"></i>
-            </a>
-            <h2 class="panel-title">
-                <?php print $report_title; ?>
-            </h2>
-            <a href="/<?php print $next_url;?>">
-                <i class="fa fa-arrow-right"></i>
-            </a>
+            <div class="row">
+                <div class="col-xs-1">
+                    <a href="/<?php print $next_url;?>">
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
+                </div>
+                <div class="col-xs-10">
+                    <h2 class="panel-title">
+                        <?php print $report_title; ?>
+                    </h2>
+                </div>
+                <div class="col-xs-1 text-right">
+                    <a href="/<?php print $next_url;?>">
+                        <i class="fa fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
         </header>
         <div class="panel-body">
             <div class="row">
