@@ -8,11 +8,76 @@
 
 namespace Drupal\civihr_employee_portal\Forms;
 
+trait modalCallback {
+    public function initModal($ajax, $modalTitle = '') {
+        if ($ajax) {
+            ctools_include('ajax');
+            ctools_include('modal');
+
+            //$title = t('CiviHR Report settings form');
+
+            $form_state = array(
+                'ajax' => TRUE,
+                'is_ajax_update' => TRUE,
+                'title' => $modalTitle,
+            );
+
+            // Pass the custom form object data
+            $form_state['build_info']['args'] = array(array('form_object' => $this));
+
+            // Use ctools to generate ajax instructions for the browser to create a form in a modal popup.
+            $output = ctools_modal_form_wrapper($this->getFormName(), $form_state);
+
+            // If the form has been submitted, there may be additional instructions such as dismissing the modal popup.
+            if (!empty($form_state['executed'])) {
+
+                // Add the responder javascript, required by ctools
+                ctools_add_js('ajax-responder');
+
+                $output[] = ctools_modal_command_dismiss();
+                $output[] = ajax_command_remove('#messages');
+                $output[] = ajax_command_after('#breadcrumb', '<div id="messages">' . theme('status_messages') . '</div>');
+
+                // If we need to redirect
+                $output[] = ctools_ajax_command_redirect($this->getReportType());
+
+            }
+
+            // Return the ajax instructions to the browser via ajax_render().
+            print ajax_render($output);
+            drupal_exit();
+
+        }
+        else {
+
+            // Returns default form (no AJAX support OR mobile view)
+            return drupal_get_form($this->getFormName(), array('form_object' => $this));
+        }
+    }
+}
+
 class ReportSettingsForm extends BaseForm {
 
+    // Use the defined traits
+    // This will try to load the form as modal window, if no ajax support it will fallback to default form
+    use modalCallback;
+
     // This will hold the form data
-    private $form_data = array();
-    private $y_axis_filter_types = array();
+    public $form_data = array();
+    public $y_axis_filter_types = array();
+
+    /**
+     * Constructor
+     *
+     * @param string form_name
+     */
+    public function __construct($form_name, $report_type) {
+        BaseForm::__construct($form_name, $report_type);
+
+        // This will initialise form fields
+        // Created in child classes which should extend the base class
+        $this->setForm();
+    }
 
     /**
      * Sets default Y axis filter types
@@ -42,7 +107,7 @@ class ReportSettingsForm extends BaseForm {
      * Returns the Y Axis filter types default values or empty array
      */
     public function getYAxisFilterTypesDefaults() {
-        return variable_get('enabled_y_axis_filters', array());
+        return variable_get($this->getReportType() . '_enabled_y_axis_filters', array());
     }
 
     /**
@@ -72,7 +137,7 @@ class ReportSettingsForm extends BaseForm {
      * Returns the X Axis filter types default values or empty array
      */
     public function getXAxisFilterTypesDefaults($type = 'all') {
-        return variable_get('enabled_x_axis_filters_' . $type, array());
+        return variable_get($this->getReportType() . '_enabled_x_axis_filters_' . $type, array());
     }
 
     /**
@@ -242,11 +307,11 @@ class ReportSettingsForm extends BaseForm {
         if (isset($form_state['values']['enabled_y_axis_filters'])) {
 
             // Saves the enabled Y Axis group by settings
-            variable_set('enabled_y_axis_filters', $form_state['values']['enabled_y_axis_filters']);
+            variable_set($this->getReportType() . '_enabled_y_axis_filters', $form_state['values']['enabled_y_axis_filters']);
 
             // Saves the X Axis group by settings
             foreach ($this->getYAxisFilterTypes() as $key => $value) {
-                variable_set('enabled_x_axis_filters_' . $key, $form_state['values']['enabled_x_axis_filters_' . $key]);
+                variable_set($this->getReportType() . '_enabled_x_axis_filters_' . $key, $form_state['values']['enabled_x_axis_filters_' . $key]);
             }
 
         }

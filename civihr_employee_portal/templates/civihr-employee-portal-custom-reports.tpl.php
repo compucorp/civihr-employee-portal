@@ -1,4 +1,4 @@
-<?php $enabled_y_axis_filters = variable_get('enabled_y_axis_filters', array()); ?>
+<?php $enabled_y_axis_filters = variable_get(arg(0) . '_enabled_y_axis_filters', array()); ?>
 
 <div data-graph>
     <section class="panel panel-primary">

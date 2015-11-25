@@ -4,6 +4,7 @@ use Drupal\civihr_employee_portal\Blocks\Base;
 use Drupal\civihr_employee_portal\Blocks\Leave;
 use Drupal\civihr_employee_portal\Forms\BaseForm;
 use Drupal\civihr_employee_portal\Forms\ReportSettingsForm;
+use Drupal\civihr_employee_portal\Forms\ReportMonthlyForm;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 
@@ -961,7 +962,7 @@ function civihr_employee_portal_menu() {
     $items['civihr_reports_settings/%ctools_js/view'] = array(
         'title' => 'CiviHR Reports settings form',
         'page callback' => 'civihr_employee_portal_report_settings_form_callback',
-        'page arguments' => array(1),
+        'page arguments' => array(1, 3),
         'access callback' => '_user_has_role',
         'access arguments' => array(array('civihr_admin', 'administrator')),
         'type' => MENU_CALLBACK,
@@ -1156,7 +1157,8 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
     }
 
     if ($link_type == 'civihr_report_settings') {
-        return '' . l($link_text, 'civihr_reports_settings/nojs/view',
+        // pass arg(0) so we know which report type we want to display in the settings modal
+        return '' . l($link_text, 'civihr_reports_settings/nojs/view/' . arg(0),
             array('attributes' => array('class' => "ctools-use-modal ctools-modal-civihr-bootstrap-style $class"))
         ) . '';
     }
@@ -3259,10 +3261,16 @@ function civihr_employee_portal_request_new_account_submit($form, &$form_state) 
 /**
  * CiviHR Report settings form
  */
-function civihr_employee_portal_report_settings_form_callback($ajax) {
+function civihr_employee_portal_report_settings_form_callback($ajax, $report_type) {
 
-    $reports = new ReportSettingsForm('report_settings_form');
-    return $reports->initModal($ajax, t('CiviHR Report settings form'), 'civihr_reports');
+    // First parameter: form name of the function which will be used for validation, submit
+    // Second parameter: report type
+    $register_class = new BaseForm('report_settings_form', $report_type);
+
+    $class_name = 'Drupal\civihr_employee_portal\Forms' . '\\' . $register_class->getClassName($report_type);
+    $reports = new $class_name('report_settings_form', $report_type);
+
+    return $reports->initModal($ajax, t('CiviHR Report settings form'));
 
 }
 
