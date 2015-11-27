@@ -435,6 +435,7 @@
                         // Get the y-axis filter value (Gender, Age)
                         d.data.gender = d3.select(this.parentNode).attr("data-legend");
 
+                        console.log('click');
                         _settings.clickHandler(d);
                     })
                     .attr("x", function (d, i) {
@@ -850,7 +851,8 @@
      */
     CustomReport.prototype.getJsonUrl = function () {
         // Returns the report graph url from (mainFilter and subFilter values)
-        return Drupal.settings.basePath + this.getMainFilter() + '-' + this.getSubFilter();
+        console.log(Drupal.settings.civihr_employee_portal_reports);
+        return Drupal.settings.basePath + Drupal.settings.civihr_employee_portal_reports.prefix + '_' + this.getMainFilter() + '-' + this.getSubFilter();
     };
 
     /**
@@ -1079,7 +1081,9 @@
                         }, {});
                     })(),
                     sub: function (type) {
-                        return settings.civihr_employee_portal_reports.enabled_x_axis_defaults['enabled_x_axis_filters_' + type];
+                        console.log(settings.civihr_employee_portal_reports);
+                        var prefix = settings.civihr_employee_portal_reports.prefix;
+                        return settings.civihr_employee_portal_reports.enabled_x_axis_defaults[prefix + '_enabled_x_axis_filters_' + type];
                     }
                 },
                 on: {

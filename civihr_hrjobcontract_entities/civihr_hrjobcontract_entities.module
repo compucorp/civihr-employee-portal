@@ -231,6 +231,8 @@ function civihr_hrjobcontract_entities_init() {
                     t.description,
                     t.hours,
                     t.role_hours_unit,
+                    t.start_date,
+                    t.end_date,
                     ov_region.label AS region,
                     ov_department.label AS department,
                     ov_level_type.label AS level_type,
@@ -720,7 +722,19 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'not null' => FALSE,
         'description' => 'Location.',
     );
-    
+    $schema['hrjc_role']['fields']['start_date'] = array(
+        'type' => 'varchar',
+        'mysql_type' => 'DATETIME',
+        'not null' => FALSE,
+        'description' => 'Job role - period start date.',
+    );
+    $schema['hrjc_role']['fields']['end_date'] = array(
+        'type' => 'varchar',
+        'mysql_type' => 'DATETIME',
+        'not null' => FALSE,
+        'description' => 'Job role - period end date.',
+    );
+
 }
 
 /**

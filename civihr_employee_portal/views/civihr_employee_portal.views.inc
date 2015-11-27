@@ -12,7 +12,6 @@
  */
 function civihr_employee_portal_views_data_alter(&$data) {
 
-
     /**
      * Custom field handler which will create age group based on the contact birth date
      */

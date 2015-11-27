@@ -363,6 +363,7 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
             'variables' => array(
                 'report_title' => NULL,
                 'custom_data' => NULL,
+                'next_url' => NULL,
                 'settings_url' => NULL
             ),
             'template' => 'templates/civihr-employee-portal-custom-reports',
@@ -3716,7 +3717,7 @@ function _getXAxisDefaults() {
     // Get additional details about the absence
     $q = db_select('variable', 'var')
         ->fields('var', array('name'))
-        ->condition('name', '%' . db_like($name) . '%', 'LIKE');
+        ->condition('name', '%' . db_like(arg(0) . '_' . $name) . '%', 'LIKE');
 
     $result = $q->execute()->fetchAllAssoc('name');
 
@@ -3755,7 +3756,7 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
     drupal_add_library('system', 'ui.datepicker');
 
     // Pass our custom data to js
-    drupal_add_js(array('civihr_employee_portal_reports' => array('gender_options_data' => $gender_options_data, 'enabled_x_axis_defaults' => $enabled_x_axis_defaults)), 'setting');
+    drupal_add_js(array('civihr_employee_portal_reports' => array('gender_options_data' => $gender_options_data, 'enabled_x_axis_defaults' => $enabled_x_axis_defaults, 'prefix' => arg(0))), 'setting');
 
     // Array for contextual filters
     $args = [];
@@ -3850,13 +3851,22 @@ function civihr_employee_portal_get_reports_monthly($view_name = FALSE, $view_di
     ctools_include('modal');
     ctools_modal_add_js();
 
-    // Add custom datepicker
-    drupal_add_library('system', 'ui.datepicker');
-
     // Load the reports page
     // Add the javascript library for D3
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/d3/d3.v3.min.js');
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
+
+    // Get available gender options from CiviCRM
+    $gender_options_data =  _getGenderReportOptions();
+
+    // Get available X Axis Group by options
+    $enabled_x_axis_defaults = _getXAxisDefaults();
+
+    // Add custom datepicker
+    drupal_add_library('system', 'ui.datepicker');
+
+    // Pass our custom data to js
+    drupal_add_js(array('civihr_employee_portal_reports' => array('gender_options_data' => $gender_options_data, 'enabled_x_axis_defaults' => $enabled_x_axis_defaults, 'prefix' => arg(0))), 'setting');
 
     // Output the custom report theme page
     return theme('civihr_employee_portal_custom_reports',
