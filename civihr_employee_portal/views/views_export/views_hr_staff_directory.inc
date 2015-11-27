@@ -156,6 +156,13 @@ $handler->display->display_options['fields']['display_name']['field'] = 'display
 $handler->display->display_options['fields']['display_name']['label'] = 'Name';
 $handler->display->display_options['fields']['display_name']['exclude'] = TRUE;
 $handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 0;
+/* Field: CiviCRM Contacts: First Name */
+$handler->display->display_options['fields']['first_name']['id'] = 'first_name';
+$handler->display->display_options['fields']['first_name']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['first_name']['field'] = 'first_name';
+$handler->display->display_options['fields']['first_name']['label'] = 'Name';
+$handler->display->display_options['fields']['first_name']['exclude'] = TRUE;
+$handler->display->display_options['fields']['first_name']['link_to_civicrm_contact'] = 0;
 /* Field: CiviCRM Contacts: Last Name */
 $handler->display->display_options['fields']['last_name']['id'] = 'last_name';
 $handler->display->display_options['fields']['last_name']['table'] = 'civicrm_contact';
