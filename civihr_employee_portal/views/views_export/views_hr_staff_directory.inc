@@ -41,16 +41,38 @@ $handler->display->display_options['pager']['options']['expose']['items_per_page
 $handler->display->display_options['pager']['options']['expose']['items_per_page_options_all'] = TRUE;
 $handler->display->display_options['style_plugin'] = 'table';
 $handler->display->display_options['style_options']['columns'] = array(
+  'id' => 'id',
+  'image_URL' => 'image_URL',
   'display_name' => 'display_name',
+  'first_name' => 'first_name',
+  'last_name' => 'last_name',
   'phone' => 'phone',
+  'phone_ext' => 'phone_ext',
   'title' => 'title',
   'email' => 'email',
   'location' => 'location',
   'contract_type' => 'contract_type',
   'department' => 'department',
-  'last_name' => 'last_name',
+  'display_name_1' => 'display_name_1',
+  'end_date' => 'end_date',
+  'is_active' => 'is_active',
 );
+$handler->display->display_options['style_options']['default'] = '-1';
 $handler->display->display_options['style_options']['info'] = array(
+  'id' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'image_URL' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
   'display_name' => array(
     'sortable' => 1,
     'default_sort_order' => 'asc',
@@ -58,7 +80,28 @@ $handler->display->display_options['style_options']['info'] = array(
     'separator' => '',
     'empty_column' => 0,
   ),
+  'first_name' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'last_name' => array(
+    'sortable' => 1,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
   'phone' => array(
+    'sortable' => 1,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'phone_ext' => array(
     'sortable' => 1,
     'default_sort_order' => 'asc',
     'align' => '',
@@ -100,8 +143,22 @@ $handler->display->display_options['style_options']['info'] = array(
     'separator' => '',
     'empty_column' => 0,
   ),
-  'last_name' => array(
+  'display_name_1' => array(
     'sortable' => 1,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'end_date' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'is_active' => array(
+    'sortable' => 0,
     'default_sort_order' => 'asc',
     'align' => '',
     'separator' => '',
@@ -178,6 +235,15 @@ $handler->display->display_options['fields']['phone']['location_type'] = '2';
 $handler->display->display_options['fields']['phone']['location_op'] = '0';
 $handler->display->display_options['fields']['phone']['is_primary'] = 0;
 $handler->display->display_options['fields']['phone']['phone_type'] = '0';
+/* Field: CiviCRM Phone Details: Phone Number Extension */
+$handler->display->display_options['fields']['phone_ext']['id'] = 'phone_ext';
+$handler->display->display_options['fields']['phone_ext']['table'] = 'civicrm_phone';
+$handler->display->display_options['fields']['phone_ext']['field'] = 'phone_ext';
+$handler->display->display_options['fields']['phone_ext']['label'] = 'Work Phone Extension';
+$handler->display->display_options['fields']['phone_ext']['location_type'] = '2';
+$handler->display->display_options['fields']['phone_ext']['location_op'] = '0';
+$handler->display->display_options['fields']['phone_ext']['is_primary'] = 0;
+$handler->display->display_options['fields']['phone_ext']['phone_type'] = '0';
 /* Field: HRJobContract Details entity: Title */
 $handler->display->display_options['fields']['title']['id'] = 'title';
 $handler->display->display_options['fields']['title']['table'] = 'hrjc_details';
@@ -545,6 +611,7 @@ $translatables['civihr_staff_directory'] = array(
   t('.'),
   t('Name'),
   t('Work Phone'),
+  t('Work Phone Extension'),
   t('Job Title'),
   t('Email'),
   t('Location'),
