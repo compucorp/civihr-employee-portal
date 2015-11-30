@@ -294,6 +294,13 @@ $handler->display->display_options['fields']['is_active']['table'] = 'civicrm_re
 $handler->display->display_options['fields']['is_active']['field'] = 'is_active';
 $handler->display->display_options['fields']['is_active']['exclude'] = TRUE;
 $handler->display->display_options['fields']['is_active']['not'] = 0;
+/* Field: CiviCRM Relationships: Start Date */
+$handler->display->display_options['fields']['start_date']['id'] = 'start_date';
+$handler->display->display_options['fields']['start_date']['table'] = 'civicrm_relationship';
+$handler->display->display_options['fields']['start_date']['field'] = 'start_date';
+$handler->display->display_options['fields']['start_date']['exclude'] = TRUE;
+$handler->display->display_options['fields']['start_date']['date_format'] = 'long';
+$handler->display->display_options['fields']['start_date']['second_date_format'] = 'long';
 /* Sort criterion: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['sorts']['id']['id'] = 'id';
 $handler->display->display_options['sorts']['id']['table'] = 'civicrm_contact';
@@ -620,6 +627,7 @@ $translatables['civihr_staff_directory'] = array(
   t('Manager'),
   t('End Date'),
   t('Is Relationship Active'),
+  t('Start Date'),
   t('Phone'),
   t('Staff directory list page'),
   t('First'),
