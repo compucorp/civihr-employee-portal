@@ -57,6 +57,16 @@
                     <div data-graph-section="canvas">
                         <!-- Content generated in reports.js -->
                     </div>
+
+                    <div data-graph-section="graph-slider">
+                        <p>
+                            <label for="amount">Selected range:</label>
+                            <input type="text" id="amount" readonly style="width: 100%; border:0; color:#f6931f; font-weight:bold;">
+                        </p>
+
+                        <div id="slider-range"></div>
+                    </div>
+
                 </div>
                 <div class="col-md-2">
                     <div class="row">

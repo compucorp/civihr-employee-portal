@@ -3754,6 +3754,7 @@ function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 
 
     // Add custom datepicker
     drupal_add_library('system', 'ui.datepicker');
+    drupal_add_library('system', 'ui.slider');
 
     // Pass our custom data to js
     drupal_add_js(array('civihr_employee_portal_reports' => array('gender_options_data' => $gender_options_data, 'enabled_x_axis_defaults' => $enabled_x_axis_defaults, 'prefix' => arg(0))), 'setting');
@@ -3864,6 +3865,7 @@ function civihr_employee_portal_get_reports_monthly($view_name = FALSE, $view_di
 
     // Add custom datepicker
     drupal_add_library('system', 'ui.datepicker');
+    drupal_add_library('system', 'ui.slider');
 
     // Pass our custom data to js
     drupal_add_js(array('civihr_employee_portal_reports' => array('gender_options_data' => $gender_options_data, 'enabled_x_axis_defaults' => $enabled_x_axis_defaults, 'prefix' => arg(0))), 'setting');

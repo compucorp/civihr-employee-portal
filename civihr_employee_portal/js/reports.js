@@ -1086,7 +1086,12 @@
 
         this.getDOMElements();
 
+        // Init date single filter
         this.initCalendar();
+
+        // Init date slider
+        this.initSlider();
+
         this.generateMainFilters();
 
         this.hideButtonTpls();
@@ -1111,6 +1116,28 @@
                 // Filter the graph by specifing To Date (pass the same date for Start and End date in the views)
                 _this.drawGraph('/' + toDate + '/' + toDate);
             });
+    };
+
+    /**
+     * Initializes the slider element
+     */
+    CustomReport.prototype.initSlider = function() {
+        var _this = this;
+
+        $("#slider-range").slider({
+            range: true,
+            min: new Date('2010.01.01').getTime() / 1000, // min date
+            max: new Date('2014.01.01').getTime() / 1000, // max date
+            step: 86400,
+            values: [new Date('2013.01.01').getTime() / 1000, new Date('2013.06.01').getTime() / 1000], // default range
+            slide: function(event, ui) {
+                $("#amount").val((new Date(ui.values[0] * 1000).toDateString()) + " - " + (new Date(ui.values[1] * 1000)).toDateString());
+            }
+        });
+
+        $("#amount").val((new Date($( "#slider-range" ).slider("values", 0) * 1000).toDateString()) +
+            " - " + (new Date($( "#slider-range" ).slider("values", 1) * 1000)).toDateString());
+
     };
 
     /**
