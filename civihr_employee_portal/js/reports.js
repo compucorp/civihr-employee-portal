@@ -301,7 +301,8 @@
              *
              * @param {JSON} (optional) chartData - The data to visualize
              */
-            monthlyChart: function (chartData) {
+            monthlyChart: function (chartData, dateRange) {
+                console.log(dateRange);
                 _chart.type = 'monthlyChart';
 
                 if (typeof chartData !== 'undefined') {
@@ -310,20 +311,27 @@
 
                 var svg = _drawSvg(_chart);
 
-                //var x = d3.scale.ordinal()
-                //    .domain(d3.range(_chart.data.length))
-                //    .rangeBands([0, _chart.size.innerWidth], .2);
+                if (typeof dateRange === 'undefined'){
+                    // our range is not yet selected
+                    // fallback to some default date range
+                }
+                else {
+                    function createDateRange(dateValue) {
+                        if (dateValue != '') {
+                            console.log(dateValue);
+                            // Always for use the first day of the month so the range is set correctly
+                            return new Date(parseInt(dateValue.substring(0, 4)), parseInt(dateValue.substring(5, 7) - 1));
+                        }
+                    }
+                    var date_ranges = dateRange.split("/");
+                    var date_period = date_ranges.map(createDateRange);
+                    console.log(date_period);
 
-                var date_period = [];
-                date_period.push(new Date(2012, 3, 1));
-                date_period.push(new Date(2012, 11, 31));
-                date_period.push(new Date(2012, 8, 31));
-                date_period.push(new Date(2012, 9, 31));
-
+                }
                 // Monthly grouping (max and min date range value from the passed data)
                 var x = d3.time.scale()
                     .domain(d3.extent(date_period, function(d) {
-                        console.log(d);
+                        //console.log(d);
                         return d;
                     }))
                     .range([0, _chart.size.innerWidth]);
@@ -339,14 +347,6 @@
                     .range([_chart.size.innerHeight, 0])
                     .domain([0, d3.max(_chart.data, function(d) { return _roundUp5(d.data.count); })]);
 
-                //var xAxis = d3.svg.axis()
-                //    .scale(x)
-                //    .tickFormat(function(d, i) {
-                //        return _chart.data[i]['data']['department'];
-                //    })
-                //    .orient("bottom");
-
-
                 var yAxis = d3.svg.axis()
                     .scale(y)
                     .orient("left")
@@ -359,13 +359,13 @@
                 // Define the line
                 var valueline = d3.svg.line()
                     .x(function(d, i) {
-                        console.log(d.data.start_date);
+                        // console.log(d.data.start_date);
 
-                        console.log(makeDate(d.data.start_date));
+                        // console.log(makeDate(d.data.start_date));
                         return x(makeDate(d.data.start_date));
                     })
                     .y(function(d) {
-                        console.log(d.data);
+                        // console.log(d.data);
                         return y(Math.floor((Math.random() * 5)));
                     });
 
@@ -918,7 +918,7 @@
                     break;
                 case 'monthly_chart':
                     this.setChartType('monthly_chart');
-                    this.chartLibrary.monthlyChart(json.results);
+                    this.chartLibrary.monthlyChart(json.results, path);
                     break;
                 case 'bar':
                 default:
@@ -1138,11 +1138,22 @@
 
         $("#slider-range").slider({
             range: true,
-            min: new Date('2010.01.01').getTime() / 1000, // min date
-            max: new Date('2014.01.01').getTime() / 1000, // max date
+            min: new Date('2010/01/01').getTime() / 1000, // min date
+            max: new Date('2014/01/01').getTime() / 1000, // max date
             step: 86400,
-            values: [new Date('2013.01.01').getTime() / 1000, new Date('2013.06.01').getTime() / 1000], // default range
-            slide: function(event, ui) {
+            values: [new Date('2013/01/01').getTime() / 1000, new Date('2013/06/01').getTime() / 1000], // default range
+            change: function(event, ui) {
+                console.log(new Date(ui.values[0] * 1000));
+
+                var start_date = new Date(ui.values[0] * 1000);
+                var end_date = new Date(ui.values[1] * 1000);
+
+                start_date = start_date.getFullYear() + "-" + ("0" + (start_date.getMonth() + 1)).slice(-2) + "-" + ("0" + (start_date.getDate())).slice(-2);
+                end_date = end_date.getFullYear() + "-" + ("0" + (end_date.getMonth() + 1)).slice(-2) + "-" + ("0" + (end_date.getDate())).slice(-2);
+
+                // Filter the graph by specifing Start and End date range
+                _this.drawGraph('/' + start_date + '/' + end_date);
+
                 $("#amount").val((new Date(ui.values[0] * 1000).toDateString()) + " - " + (new Date(ui.values[1] * 1000)).toDateString());
             }
         });
@@ -1278,7 +1289,7 @@
                         }, {});
                     })(),
                     sub: function (type) {
-                        console.log(settings.civihr_employee_portal_reports);
+                        // console.log(settings.civihr_employee_portal_reports);
                         var prefix = settings.civihr_employee_portal_reports.prefix;
                         return settings.civihr_employee_portal_reports.enabled_x_axis_defaults[prefix + '_enabled_x_axis_filters_' + type];
                     }
