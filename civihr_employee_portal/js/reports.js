@@ -193,6 +193,19 @@
             return Math.ceil(x / 5) * 5;
         }
 
+        /**
+         * Creates Date object required for slider ranges
+         * @param dateValue
+         * @returns {Date}
+         */
+        function createDateRange(dateValue) {
+            if (dateValue != '') {
+                console.log(dateValue);
+                // Always for use the first day of the month so the range is set correctly
+                return new Date(parseInt(dateValue.substring(0, 4)), parseInt(dateValue.substring(5, 7) - 1));
+            }
+        }
+
 
         return {
 
@@ -314,23 +327,22 @@
                 if (typeof dateRange === 'undefined'){
                     // our range is not yet selected
                     // fallback to some default date range
+                    var date_ranges = []
+                    date_ranges.push(new Date(2012, 0));
+                    date_ranges.push(new Date(2012, 11));
                 }
                 else {
-                    function createDateRange(dateValue) {
-                        if (dateValue != '') {
-                            console.log(dateValue);
-                            // Always for use the first day of the month so the range is set correctly
-                            return new Date(parseInt(dateValue.substring(0, 4)), parseInt(dateValue.substring(5, 7) - 1));
-                        }
-                    }
                     var date_ranges = dateRange.split("/");
-                    var date_period = date_ranges.map(createDateRange);
-                    console.log(date_period);
+                    date_ranges = date_ranges.map(createDateRange);
+
+                    // Remove empty elements
+                    date_ranges = date_ranges.filter(function(e) { return e; });
+                    console.log(date_ranges);
 
                 }
                 // Monthly grouping (max and min date range value from the passed data)
                 var x = d3.time.scale()
-                    .domain(d3.extent(date_period, function(d) {
+                    .domain(d3.extent(date_ranges, function(d) {
                         //console.log(d);
                         return d;
                     }))
@@ -1141,7 +1153,7 @@
             min: new Date('2010/01/01').getTime() / 1000, // min date
             max: new Date('2014/01/01').getTime() / 1000, // max date
             step: 86400,
-            values: [new Date('2013/01/01').getTime() / 1000, new Date('2013/06/01').getTime() / 1000], // default range
+            values: [new Date('2012/01/01').getTime() / 1000, new Date('2012/12/31').getTime() / 1000], // default range
             change: function(event, ui) {
                 console.log(new Date(ui.values[0] * 1000));
 
