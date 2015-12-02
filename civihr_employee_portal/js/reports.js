@@ -386,6 +386,40 @@
                     .attr("style", "stroke: steelblue; stroke-width: 2; fill: none;")
                     .attr("d", valueline(_chart.data));
 
+                var valueline2 = d3.svg.line()
+                    .x(function(d, i) {
+                        // console.log(d.data.start_date);
+
+                        // console.log(makeDate(d.data.start_date));
+                        return x(makeDate(d.data.start_date));
+                    })
+                    .y(function(d) {
+                        // console.log(d.data);
+                        return y(Math.floor((Math.random() * 5)));
+                    });
+
+                svg.append("path")
+                    .attr("class", "line")
+                    .attr("style", "stroke: green; stroke-width: 2; fill: none;")
+                    .attr("d", valueline2(_chart.data));
+
+                var valueline3 = d3.svg.line()
+                    .x(function(d, i) {
+                        // console.log(d.data.start_date);
+
+                        // console.log(makeDate(d.data.start_date));
+                        return x(makeDate(d.data.start_date));
+                    })
+                    .y(function(d) {
+                        // console.log(d.data);
+                        return y(Math.floor((Math.random() * 5)));
+                    });
+
+                svg.append("path")
+                    .attr("class", "line")
+                    .attr("style", "stroke: red; stroke-width: 2; fill: none;")
+                    .attr("d", valueline3(_chart.data));
+
                 /**
                 var valueline2 = d3.svg.line()
                     .x(function(d, i) {
