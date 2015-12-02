@@ -47,7 +47,7 @@
         // The legend object
         var _legend = {
             constants: {
-                ENTRY_FONT_SIZE: 12,
+                ENTRY_FONT_SIZE: 13,
                 ENTRY_ROW_HEIGHT: 15,
                 ENTRY_ROW_MARGIN: 10,
                 ICON_MARGIN: 5,
@@ -129,6 +129,9 @@
                 .attr("width", _legend.constants.ICON_SIZE)
                 .attr("height", _legend.constants.ICON_SIZE)
                 .attr("fill", callbacks.color)
+                .attr('class', function (d, i) {
+                    return 'chart-color-' + i;
+                })
                 .attr("x", function(d, i) {
                     return 0;
                 })
@@ -143,7 +146,7 @@
                 .append("text")
                     .attr("font-family", "sans-serif")
                     .attr("font-size", _legend.constants.ENTRY_FONT_SIZE + "px")
-                    .attr("fill", callbacks.color)
+                    .attr("fill", '#535A67')
                     .attr("text-anchor", "left")
                     .text(callbacks.text)
                     .attr("x", function (d, i) {
@@ -261,6 +264,9 @@
                         } else {
                             return _settings.color(d.data.department);
                         }
+                    })
+                    .attr('class', function (d, i) {
+                        return d.data.department === 'HR' ? 'green' : 'chart-color-' + i;
                     })
                     .on("mouseover", function () {
                         d3.select(this)
@@ -401,6 +407,9 @@
                     .style("fill", function (d, i) {
                         return z(d.key);
                     })
+                    .attr('class', function (d, i) {
+                        return 'chart-color-' + i;
+                    })
                     .attr("transform", function (d, i) {
                         return "translate(" + x1(i) + ",0)";
                     })
@@ -515,6 +524,9 @@
                     })
                     .attr('fill', function (d, i) {
                         return _settings.color(d.data.data.department);
+                    })
+                    .attr('class', function (d, i) {
+                        return 'chart-color-' + i;
                     });
 
                 // Add count for each slice...
