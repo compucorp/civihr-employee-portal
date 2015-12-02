@@ -291,6 +291,151 @@
             },
 
             /**
+             * Draws a bar chart
+             *
+             * @param {JSON} (optional) chartData - The data to visualize
+             */
+            monthlyChart: function (chartData) {
+                _chart.type = 'monthlyChart';
+
+                if (typeof chartData !== 'undefined') {
+                    _chart.data =  chartData;
+                }
+
+                var svg = _drawSvg(_chart);
+
+                //var x = d3.scale.ordinal()
+                //    .domain(d3.range(_chart.data.length))
+                //    .rangeBands([0, _chart.size.innerWidth], .2);
+
+                var date_period = [];
+                date_period.push(new Date(2012, 3, 1));
+                date_period.push(new Date(2012, 11, 31));
+                date_period.push(new Date(2012, 8, 31));
+                date_period.push(new Date(2012, 9, 31));
+
+                // Monthly grouping (max and min date range value from the passed data)
+                var x = d3.time.scale()
+                    .domain(d3.extent(date_period, function(d) {
+                        console.log(d);
+                        return d;
+                    }))
+                    .range([0, _chart.size.innerWidth]);
+
+                var xAxis = d3.svg.axis()
+                    .scale(x)
+                    .orient("bottom")
+                    .ticks(d3.time.months)
+                    .tickSize(16, 0)
+                    .tickFormat(d3.time.format("%B"));
+
+                var y = d3.scale.linear()
+                    .range([_chart.size.innerHeight, 0])
+                    .domain([0, d3.max(_chart.data, function(d) { return _roundUp5(d.data.count); })]);
+
+                //var xAxis = d3.svg.axis()
+                //    .scale(x)
+                //    .tickFormat(function(d, i) {
+                //        return _chart.data[i]['data']['department'];
+                //    })
+                //    .orient("bottom");
+
+
+                var yAxis = d3.svg.axis()
+                    .scale(y)
+                    .orient("left")
+                    .ticks(_settings.setTicks);
+
+                document.querySelector(_legend.selector).innerHTML = '';
+
+                var makeDate = d3.time.format("%Y-%m-%d %X").parse;
+
+                // Define the line
+                var valueline = d3.svg.line()
+                    .x(function(d, i) {
+                        console.log(d.data.start_date);
+
+                        console.log(makeDate(d.data.start_date));
+                        return x(makeDate(d.data.start_date));
+                    })
+                    .y(function(d) {
+                        console.log(d.data);
+                        return y(Math.floor((Math.random() * 5)));
+                    });
+
+                svg.append("path")
+                    .attr("class", "line")
+                    .attr("style", "stroke: steelblue; stroke-width: 2; fill: none;")
+                    .attr("d", valueline(_chart.data));
+
+                /**
+                var valueline2 = d3.svg.line()
+                    .x(function(d, i) {
+                        console.log(date_period[i]);
+                        console.log(i);
+                        return x(date_period[i]);
+                    })
+                    .y(function(d, i) {
+                        console.log(d.data.count);
+                        return y(d.data.count);
+                    });
+
+                */
+
+                //svg.append("path")
+                //    .datum(_chart.data)
+                //    .attr("class", "line")
+                //    .attr("d", valueline2);
+
+                //svg.selectAll("rect")
+                // .data(_chart.data)
+                //    .append("path")      // Add the valueline2 path.
+                //    .attr("class", "line")
+                //    .style("stroke", "red")
+                //    .attr("d", valueline2(_chart.data));
+
+                /**
+                svg.selectAll("rect")
+                    .data(_chart.data)
+                    .enter()
+                    .append("rect")
+                    .attr("fill", function (d, i) {
+                        if (d.data.department === 'HR') {
+                            return 'green';
+                        } else {
+                            return _settings.color(d.data.department);
+                        }
+                    })
+                    .on("mouseover", function () {
+                        d3.select(this)
+                            .attr("cursor", "pointer")
+                            .attr("fill", "orange");
+                    })
+                    .on("mouseout", function (d) {
+                        d3.select(this)
+                            .transition()
+                            .duration(_settings.duration)
+                            .attr("fill", _settings.color(d.data.department));
+                    })
+                    .on("click", function (d, i) {
+                        _settings.clickHandler(d);
+                    })
+                    .attr("x", function (d, i) {
+                        return x(i);
+                    })
+                    .attr("y", function (d) {
+                        return y(d.data.count);
+                    })
+                    .attr("width", x.range())
+                    .attr("height", function (d) {
+                        return _chart.size.innerHeight - y(d.data.count);
+                    });
+                 */
+
+                _drawAxis(svg, xAxis, yAxis);
+            },
+
+            /**
              * Draws a multiple bar chart
              *
              * @param {JSON} chartData - The data to visualize
@@ -632,6 +777,15 @@
                     this.drawGraph();
                 }.bind(this)
             }, $graphFilters);
+
+            this.addButton({
+                active: this.getChartType() === 'monthly_chart',
+                label: 'monthly chart',
+                click: function () {
+                    this.setChartType('monthly_chart');
+                    this.drawGraph();
+                }.bind(this)
+            }, $graphFilters);
         }
     };
 
@@ -749,6 +903,10 @@
                 case 'pie':
                     this.setChartType('pie');
                     this.chartLibrary.pieChart(json.results);
+                    break;
+                case 'monthly_chart':
+                    this.setChartType('monthly_chart');
+                    this.chartLibrary.monthlyChart(json.results);
                     break;
                 case 'bar':
                 default:
