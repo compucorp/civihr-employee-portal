@@ -341,6 +341,18 @@ function civihr_employee_portal_views_pre_render(&$view) {
     }
 }
 
+/**
+ * Implements hook_views_post_render().
+ * Remove additional commas
+ */
+function civihr_employee_portal_views_post_render(&$view, &$output, &$cache) {
+  foreach($view->style_plugin->rendered_fields as $renderedField){
+    $fieldsToClean[$renderedField['display_name_1']] = trim($renderedField['display_name_1'], ', ');
+    $fieldsToClean[$renderedField['department']] = trim($renderedField['department'], ', ');
+  }
+  $output = strtr($output, $fieldsToClean);
+}
+
 function removeInactiveManagers($results = array()) {
   foreach ($results as $key => $value) {
     if ($value->civicrm_relationship_is_active == 0 ||
