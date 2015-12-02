@@ -48,7 +48,7 @@
                     <div class="form-inline text-right">
                         <div class="form-group">
                             <label for="date-filter" class="control-label">Select Date:</label>
-                            <div data-graph-calendar class="input-group input-group-sm input-group-unstyled">
+                            <div data-graph-calendar class="input-group input-group-unstyled">
                                 <input type="text" id="date-filter" class="form-control">
                                 <span class="input-group-addon fa fa-calendar"></span>
                             </div>
