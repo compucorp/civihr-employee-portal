@@ -47,7 +47,7 @@
         // The legend object
         var _legend = {
             constants: {
-                ENTRY_FONT_SIZE: 12,
+                ENTRY_FONT_SIZE: 13,
                 ENTRY_ROW_HEIGHT: 15,
                 ENTRY_ROW_MARGIN: 10,
                 ICON_MARGIN: 5,
@@ -129,6 +129,9 @@
                 .attr("width", _legend.constants.ICON_SIZE)
                 .attr("height", _legend.constants.ICON_SIZE)
                 .attr("fill", callbacks.color)
+                .attr('class', function (d, i) {
+                    return 'chart-color-' + i;
+                })
                 .attr("x", function(d, i) {
                     return 0;
                 })
@@ -143,7 +146,7 @@
                 .append("text")
                     .attr("font-family", "sans-serif")
                     .attr("font-size", _legend.constants.ENTRY_FONT_SIZE + "px")
-                    .attr("fill", callbacks.color)
+                    .attr("fill", '#535A67')
                     .attr("text-anchor", "left")
                     .text(callbacks.text)
                     .attr("x", function (d, i) {
@@ -188,6 +191,19 @@
          */
         function _roundUp5 (x) {
             return Math.ceil(x / 5) * 5;
+        }
+
+        /**
+         * Creates Date object required for slider ranges
+         * @param dateValue
+         * @returns {Date}
+         */
+        function createDateRange(dateValue) {
+            if (dateValue != '') {
+                console.log(dateValue);
+                // Always for use the first day of the month so the range is set correctly
+                return new Date(parseInt(dateValue.substring(0, 4)), parseInt(dateValue.substring(5, 7) - 1));
+            }
         }
 
 
@@ -262,6 +278,9 @@
                             return _settings.color(d.data.department);
                         }
                     })
+                    .attr('class', function (d, i) {
+                        return d.data.department === 'HR' ? 'green' : 'chart-color-' + i;
+                    })
                     .on("mouseover", function () {
                         d3.select(this)
                             .attr("cursor", "pointer")
@@ -286,6 +305,184 @@
                     .attr("height", function (d) {
                         return _chart.size.innerHeight - y(d.data.count);
                     });
+
+                _drawAxis(svg, xAxis, yAxis);
+            },
+
+            /**
+             * Draws a bar chart
+             *
+             * @param {JSON} (optional) chartData - The data to visualize
+             */
+            monthlyChart: function (chartData, dateRange) {
+                console.log(dateRange);
+                _chart.type = 'monthlyChart';
+
+                if (typeof chartData !== 'undefined') {
+                    _chart.data =  chartData;
+                }
+
+                var svg = _drawSvg(_chart);
+
+                if (typeof dateRange === 'undefined'){
+                    // our range is not yet selected
+                    // fallback to some default date range
+                    var date_ranges = []
+                    date_ranges.push(new Date(2012, 0));
+                    date_ranges.push(new Date(2012, 11));
+                }
+                else {
+                    var date_ranges = dateRange.split("/");
+                    date_ranges = date_ranges.map(createDateRange);
+
+                    // Remove empty elements
+                    date_ranges = date_ranges.filter(function(e) { return e; });
+                    console.log(date_ranges);
+
+                }
+                // Monthly grouping (max and min date range value from the passed data)
+                var x = d3.time.scale()
+                    .domain(d3.extent(date_ranges, function(d) {
+                        //console.log(d);
+                        return d;
+                    }))
+                    .range([0, _chart.size.innerWidth]);
+
+                var xAxis = d3.svg.axis()
+                    .scale(x)
+                    .orient("bottom")
+                    .ticks(d3.time.months)
+                    .tickSize(16, 0)
+                    .tickFormat(d3.time.format("%B"));
+
+                var y = d3.scale.linear()
+                    .range([_chart.size.innerHeight, 0])
+                    .domain([0, d3.max(_chart.data, function(d) { return _roundUp5(d.data.count); })]);
+
+                var yAxis = d3.svg.axis()
+                    .scale(y)
+                    .orient("left")
+                    .ticks(_settings.setTicks);
+
+                document.querySelector(_legend.selector).innerHTML = '';
+
+                var makeDate = d3.time.format("%Y-%m-%d %X").parse;
+
+                // Define the line
+                var valueline = d3.svg.line()
+                    .x(function(d, i) {
+                        // console.log(d.data.start_date);
+
+                        // console.log(makeDate(d.data.start_date));
+                        return x(makeDate(d.data.start_date));
+                    })
+                    .y(function(d) {
+                        // console.log(d.data);
+                        return y(Math.floor((Math.random() * 5)));
+                    });
+
+                svg.append("path")
+                    .attr("class", "line")
+                    .attr("style", "stroke: steelblue; stroke-width: 2; fill: none;")
+                    .attr("d", valueline(_chart.data));
+
+                var valueline2 = d3.svg.line()
+                    .x(function(d, i) {
+                        // console.log(d.data.start_date);
+
+                        // console.log(makeDate(d.data.start_date));
+                        return x(makeDate(d.data.start_date));
+                    })
+                    .y(function(d) {
+                        // console.log(d.data);
+                        return y(Math.floor((Math.random() * 5)));
+                    });
+
+                svg.append("path")
+                    .attr("class", "line")
+                    .attr("style", "stroke: green; stroke-width: 2; fill: none;")
+                    .attr("d", valueline2(_chart.data));
+
+                var valueline3 = d3.svg.line()
+                    .x(function(d, i) {
+                        // console.log(d.data.start_date);
+
+                        // console.log(makeDate(d.data.start_date));
+                        return x(makeDate(d.data.start_date));
+                    })
+                    .y(function(d) {
+                        // console.log(d.data);
+                        return y(Math.floor((Math.random() * 5)));
+                    });
+
+                svg.append("path")
+                    .attr("class", "line")
+                    .attr("style", "stroke: red; stroke-width: 2; fill: none;")
+                    .attr("d", valueline3(_chart.data));
+
+                /**
+                var valueline2 = d3.svg.line()
+                    .x(function(d, i) {
+                        console.log(date_period[i]);
+                        console.log(i);
+                        return x(date_period[i]);
+                    })
+                    .y(function(d, i) {
+                        console.log(d.data.count);
+                        return y(d.data.count);
+                    });
+
+                */
+
+                //svg.append("path")
+                //    .datum(_chart.data)
+                //    .attr("class", "line")
+                //    .attr("d", valueline2);
+
+                //svg.selectAll("rect")
+                // .data(_chart.data)
+                //    .append("path")      // Add the valueline2 path.
+                //    .attr("class", "line")
+                //    .style("stroke", "red")
+                //    .attr("d", valueline2(_chart.data));
+
+                /**
+                svg.selectAll("rect")
+                    .data(_chart.data)
+                    .enter()
+                    .append("rect")
+                    .attr("fill", function (d, i) {
+                        if (d.data.department === 'HR') {
+                            return 'green';
+                        } else {
+                            return _settings.color(d.data.department);
+                        }
+                    })
+                    .on("mouseover", function () {
+                        d3.select(this)
+                            .attr("cursor", "pointer")
+                            .attr("fill", "orange");
+                    })
+                    .on("mouseout", function (d) {
+                        d3.select(this)
+                            .transition()
+                            .duration(_settings.duration)
+                            .attr("fill", _settings.color(d.data.department));
+                    })
+                    .on("click", function (d, i) {
+                        _settings.clickHandler(d);
+                    })
+                    .attr("x", function (d, i) {
+                        return x(i);
+                    })
+                    .attr("y", function (d) {
+                        return y(d.data.count);
+                    })
+                    .attr("width", x.range())
+                    .attr("height", function (d) {
+                        return _chart.size.innerHeight - y(d.data.count);
+                    });
+                 */
 
                 _drawAxis(svg, xAxis, yAxis);
             },
@@ -401,6 +598,9 @@
                     .style("fill", function (d, i) {
                         return z(d.key);
                     })
+                    .attr('class', function (d, i) {
+                        return 'chart-color-' + i;
+                    })
                     .attr("transform", function (d, i) {
                         return "translate(" + x1(i) + ",0)";
                     })
@@ -435,6 +635,7 @@
                         // Get the y-axis filter value (Gender, Age)
                         d.data.gender = d3.select(this.parentNode).attr("data-legend");
 
+                        console.log('click');
                         _settings.clickHandler(d);
                     })
                     .attr("x", function (d, i) {
@@ -514,6 +715,9 @@
                     })
                     .attr('fill', function (d, i) {
                         return _settings.color(d.data.data.department);
+                    })
+                    .attr('class', function (d, i) {
+                        return 'chart-color-' + i;
                     });
 
                 // Add count for each slice...
@@ -628,6 +832,15 @@
                 label: 'pie chart',
                 click: function () {
                     this.setChartType('pie');
+                    this.drawGraph();
+                }.bind(this)
+            }, $graphFilters);
+
+            this.addButton({
+                active: this.getChartType() === 'monthly_chart',
+                label: 'monthly chart',
+                click: function () {
+                    this.setChartType('monthly_chart');
                     this.drawGraph();
                 }.bind(this)
             }, $graphFilters);
@@ -749,6 +962,10 @@
                     this.setChartType('pie');
                     this.chartLibrary.pieChart(json.results);
                     break;
+                case 'monthly_chart':
+                    this.setChartType('monthly_chart');
+                    this.chartLibrary.monthlyChart(json.results, path);
+                    break;
                 case 'bar':
                 default:
                     this.setChartType('bar');
@@ -850,7 +1067,8 @@
      */
     CustomReport.prototype.getJsonUrl = function () {
         // Returns the report graph url from (mainFilter and subFilter values)
-        return Drupal.settings.basePath + this.getMainFilter() + '-' + this.getSubFilter();
+        console.log(Drupal.settings.civihr_employee_portal_reports);
+        return Drupal.settings.basePath + Drupal.settings.civihr_employee_portal_reports.prefix + '_' + this.getMainFilter() + '-' + this.getSubFilter();
     };
 
     /**
@@ -926,7 +1144,12 @@
 
         this.getDOMElements();
 
+        // Init date single filter
         this.initCalendar();
+
+        // Init date slider
+        this.initSlider();
+
         this.generateMainFilters();
 
         this.hideButtonTpls();
@@ -951,6 +1174,39 @@
                 // Filter the graph by specifing To Date (pass the same date for Start and End date in the views)
                 _this.drawGraph('/' + toDate + '/' + toDate);
             });
+    };
+
+    /**
+     * Initializes the slider element
+     */
+    CustomReport.prototype.initSlider = function() {
+        var _this = this;
+
+        $("#slider-range").slider({
+            range: true,
+            min: new Date('2010/01/01').getTime() / 1000, // min date
+            max: new Date('2014/01/01').getTime() / 1000, // max date
+            step: 86400,
+            values: [new Date('2012/01/01').getTime() / 1000, new Date('2012/12/31').getTime() / 1000], // default range
+            change: function(event, ui) {
+                console.log(new Date(ui.values[0] * 1000));
+
+                var start_date = new Date(ui.values[0] * 1000);
+                var end_date = new Date(ui.values[1] * 1000);
+
+                start_date = start_date.getFullYear() + "-" + ("0" + (start_date.getMonth() + 1)).slice(-2) + "-" + ("0" + (start_date.getDate())).slice(-2);
+                end_date = end_date.getFullYear() + "-" + ("0" + (end_date.getMonth() + 1)).slice(-2) + "-" + ("0" + (end_date.getDate())).slice(-2);
+
+                // Filter the graph by specifing Start and End date range
+                _this.drawGraph('/' + start_date + '/' + end_date);
+
+                $("#amount").val((new Date(ui.values[0] * 1000).toDateString()) + " - " + (new Date(ui.values[1] * 1000)).toDateString());
+            }
+        });
+
+        $("#amount").val((new Date($( "#slider-range" ).slider("values", 0) * 1000).toDateString()) +
+            " - " + (new Date($( "#slider-range" ).slider("values", 1) * 1000)).toDateString());
+
     };
 
     /**
@@ -1079,7 +1335,9 @@
                         }, {});
                     })(),
                     sub: function (type) {
-                        return settings.civihr_employee_portal_reports.enabled_x_axis_defaults['enabled_x_axis_filters_' + type];
+                        // console.log(settings.civihr_employee_portal_reports);
+                        var prefix = settings.civihr_employee_portal_reports.prefix;
+                        return settings.civihr_employee_portal_reports.enabled_x_axis_defaults[prefix + '_enabled_x_axis_filters_' + type];
                     }
                 },
                 on: {

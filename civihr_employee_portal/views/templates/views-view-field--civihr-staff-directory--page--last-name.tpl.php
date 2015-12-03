@@ -29,6 +29,9 @@ $profile_image = $row->civicrm_contact_image_url ? $row->civicrm_contact_image_u
         <img src="<?php print $profile_image; ?>" />
     </div>
     <div class="chr_profile-card__name">
-        <?php print $row->civicrm_contact_display_name ?>
+        <?php
+            $fullName = $row->civicrm_contact_first_name . " " . $row->civicrm_contact_last_name;
+            print $fullName;
+        ?>
     </div>
 </div>

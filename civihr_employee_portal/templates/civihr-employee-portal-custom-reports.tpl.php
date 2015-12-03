@@ -1,11 +1,25 @@
-<?php $enabled_y_axis_filters = variable_get('enabled_y_axis_filters', array()); ?>
+<?php $enabled_y_axis_filters = variable_get(arg(0) . '_enabled_y_axis_filters', array()); ?>
 
 <div data-graph>
     <section class="panel panel-primary">
         <header class="panel-heading">
-            <h2 class="panel-title">
-                My People
-            </h2>
+            <div class="row">
+                <div class="col-xs-1 text-left">
+                    <a href="/<?php print $next_url;?>">
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
+                </div>
+                <div class="col-xs-10">
+                    <h2 class="panel-title">
+                        <?php print $report_title; ?>
+                    </h2>
+                </div>
+                <div class="col-xs-1 text-right">
+                    <a href="/<?php print $next_url;?>">
+                        <i class="fa fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
         </header>
         <div class="panel-body">
             <div class="row">
@@ -34,7 +48,7 @@
                     <div class="form-inline text-right">
                         <div class="form-group">
                             <label for="date-filter" class="control-label">Select Date:</label>
-                            <div data-graph-calendar class="input-group input-group-sm input-group-unstyled">
+                            <div data-graph-calendar class="input-group input-group-unstyled">
                                 <input type="text" id="date-filter" class="form-control">
                                 <span class="input-group-addon fa fa-calendar"></span>
                             </div>
@@ -43,6 +57,16 @@
                     <div data-graph-section="canvas">
                         <!-- Content generated in reports.js -->
                     </div>
+
+                    <div data-graph-section="graph-slider">
+                        <p>
+                            <label for="amount">Selected range:</label>
+                            <input type="text" id="amount" readonly style="width: 100%; border:0; color:#f6931f; font-weight:bold;">
+                        </p>
+
+                        <div id="slider-range"></div>
+                    </div>
+
                 </div>
                 <div class="col-md-2">
                     <div class="row">
