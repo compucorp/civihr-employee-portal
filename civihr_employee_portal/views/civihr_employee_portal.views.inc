@@ -338,7 +338,61 @@ function civihr_employee_portal_views_pre_render(&$view) {
     
     if($view->name == "civihr_staff_directory"){
       $view->result = removeInactiveManagers($view->result);
+      $view->result = removeInactiveDepartments($view->result);
     }
+}
+
+/**
+ * Implements hook_views_post_render().
+ *
+ */
+function civihr_employee_portal_views_post_render(&$view, &$output, &$cache) {
+  if($view->name == "civihr_staff_directory"){
+    $fieldsToClean = removeAdditionalCommas($view);
+    if(!empty($fieldsToClean)){
+      $output = strtr($output, $fieldsToClean);
+    }
+  }
+}
+
+function removeAdditionalCommas($view){
+  $fieldsToClean = array();
+
+  foreach($view->style_plugin->rendered_fields as $renderedField){
+    $managerFieldValues = $renderedField['display_name_1'];
+    $departmentFieldValues = $renderedField['department'];
+
+    if($managerFieldValues != NULL)
+    {
+      $cleanedValue = preg_replace('/,( *,)+/', ',', trim($managerFieldValues, ', '));
+      $fieldsToClean[$managerFieldValues] = $cleanedValue;
+    }
+
+    if($departmentFieldValues != NULL)
+    {
+      $cleanedValue = preg_replace('/,( *,)+/', ',', trim($departmentFieldValues, ', '));
+      $fieldsToClean[$departmentFieldValues] = $cleanedValue;
+    }
+  }
+
+  return $fieldsToClean;
+}
+
+
+function removeInactiveDepartments($results = array()){
+  foreach($results as $key => $value){
+    $startDate = $value->hrjc_role_civicrm_contact_start_date;
+    $endDate = $value->hrjc_role_civicrm_contact_end_date;
+
+    if(($endDate < date('Y-m-d h:i:s') && $endDate != "0000-00-00 00:00:00")
+       ||
+       ($startDate > date('Y-m-d h:i:s'))
+      )
+    {
+      $value->hrjc_role_civicrm_contact_department = NULL;
+    }
+  }
+  return $results;
 }
 
 function removeInactiveManagers($results = array()) {
