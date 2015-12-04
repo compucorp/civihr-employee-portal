@@ -206,6 +206,16 @@
             }
         }
 
+        function monthsDiff(day1,day2) {
+            var d1 = day1, d2 = day2;
+            if (day1 < day2) {
+                d1 = day2;
+                d2 = day1;
+            }
+            var m = (d1.getFullYear() - d2.getFullYear()) * 12 + (d1.getMonth() - d2.getMonth());
+            if (d1.getDate() < d2.getDate()) --m;
+            return m;
+        }
 
         return {
 
@@ -371,73 +381,81 @@
                 // Define the line
                 var valueline = d3.svg.line()
                     .x(function(d, i) {
-                        // console.log(d.data.start_date);
+                        console.log(d.start_date);
 
                         // console.log(makeDate(d.data.start_date));
-                        return x(makeDate(d.data.start_date));
+                        return x(makeDate(d.start_date));
                     })
                     .y(function(d) {
-                        // console.log(d.data);
-                        return y(Math.floor((Math.random() * 5)));
+                        console.log(d);
+                        return y(d.count);
                     });
 
-                svg.append("path")
-                    .attr("class", "line")
-                    .attr("style", "stroke: steelblue; stroke-width: 2; fill: none;")
-                    .attr("d", valueline(_chart.data));
+                var diff = monthsDiff(date_ranges[0], date_ranges[1]);
+                console.log(diff);
+                console.log(_chart.data);
 
-                var valueline2 = d3.svg.line()
-                    .x(function(d, i) {
-                        // console.log(d.data.start_date);
+                var monthly_data;
+                var CurrentDate;
+                var color_z = d3.scale.category10();
 
-                        // console.log(makeDate(d.data.start_date));
-                        return x(makeDate(d.data.start_date));
-                    })
-                    .y(function(d) {
-                        // console.log(d.data);
-                        return y(Math.floor((Math.random() * 5)));
-                    });
+                var nested_data = d3.nest()
+                    .key(function (d) {
+                        return d.data.department;
+                    }).sortKeys(d3.ascending).entries(_chart.data);
 
-                svg.append("path")
-                    .attr("class", "line")
-                    .attr("style", "stroke: green; stroke-width: 2; fill: none;")
-                    .attr("d", valueline2(_chart.data));
+                console.log(nested_data);
 
-                var valueline3 = d3.svg.line()
-                    .x(function(d, i) {
-                        // console.log(d.data.start_date);
+                for (var tt = 0; tt < nested_data.length; tt++) {
 
-                        // console.log(makeDate(d.data.start_date));
-                        return x(makeDate(d.data.start_date));
-                    })
-                    .y(function(d) {
-                        // console.log(d.data);
-                        return y(Math.floor((Math.random() * 5)));
-                    });
+                    CurrentDate = new Date(2012, 0);
 
-                svg.append("path")
-                    .attr("class", "line")
-                    .attr("style", "stroke: red; stroke-width: 2; fill: none;")
-                    .attr("d", valueline3(_chart.data));
+                    console.log(nested_data[tt]);
 
-                /**
-                var valueline2 = d3.svg.line()
-                    .x(function(d, i) {
-                        console.log(date_period[i]);
-                        console.log(i);
-                        return x(date_period[i]);
-                    })
-                    .y(function(d, i) {
-                        console.log(d.data.count);
-                        return y(d.data.count);
-                    });
+                        // Get monthly data / location
+                        monthly_data = [];
 
-                */
+                        // Loop the selected range count and group the results
+                        for (var i = 0; i <= diff; i++) {
 
-                //svg.append("path")
-                //    .datum(_chart.data)
-                //    .attr("class", "line")
-                //    .attr("d", valueline2);
+                            var result_array = [];
+                            result_array['count'] = 0;
+
+                            result_array['start_date'] = CurrentDate.getFullYear() + "-" + ("0" + (CurrentDate.getMonth() + 1)).slice(-2) + "-" + ("0" + (CurrentDate.getDate())).slice(-2) + " 00:00:00";
+
+                            for (var val_t = 0; val_t < nested_data[tt]['values'].length; val_t++) {
+
+                                var start_date = createDateRange(nested_data[tt]['values'][val_t]['data']['start_date']);
+                                var end_date = createDateRange(nested_data[tt]['values'][val_t]['data']['end_date']);
+
+                                console.log(start_date);
+                                console.log(end_date);
+                                console.log(end_date.getTime());
+                                console.log(CurrentDate);
+
+                                if (start_date.getTime() <= CurrentDate.getTime() && (end_date.getTime() >= CurrentDate.getTime())) {
+                                    // Calculate the total count for the month
+                                    result_array['count'] = result_array['count'] + 1;
+                                }
+                            }
+
+                            console.log(result_array['start_date']);
+
+                            // Increase Date
+                            CurrentDate.setMonth(CurrentDate.getMonth() + 1);
+
+                            // Add to monthly data
+                            monthly_data.push(result_array);
+                        }
+
+                        svg.append("path")
+                            .attr("class", "line")
+                            .attr("style", "stroke: " + color_z(tt) + "; stroke-width: 2; fill: none;")
+                            .attr("d", valueline(monthly_data));
+
+                        console.log(monthly_data);
+
+                }
 
                 //svg.selectAll("rect")
                 // .data(_chart.data)
