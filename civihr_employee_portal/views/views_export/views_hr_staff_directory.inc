@@ -639,6 +639,7 @@ $translatables['civihr_staff_directory'] = array(
   t('Manager'),
   t('End Date'),
   t('Is Relationship Active'),
+  t('Start Date'),
   t('End_date'),
   t('Start_date'),
   t('Phone'),
