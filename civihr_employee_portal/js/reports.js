@@ -200,12 +200,17 @@
          */
         function createDateRange(dateValue) {
             if (dateValue != '') {
-                console.log(dateValue);
                 // Always for use the first day of the month so the range is set correctly
                 return new Date(parseInt(dateValue.substring(0, 4)), parseInt(dateValue.substring(5, 7) - 1));
             }
         }
 
+        /**
+         * Return months difference between 2 set of dates
+         * @param day1
+         * @param day2
+         * @returns {number}
+         */
         function monthsDiff(day1,day2) {
             var d1 = day1, d2 = day2;
             if (day1 < day2) {
@@ -326,6 +331,7 @@
              */
             monthlyChart: function (chartData, dateRange) {
                 console.log(dateRange);
+
                 _chart.type = 'monthlyChart';
 
                 if (typeof chartData !== 'undefined') {
@@ -347,13 +353,11 @@
 
                     // Remove empty elements
                     date_ranges = date_ranges.filter(function(e) { return e; });
-                    console.log(date_ranges);
 
                 }
                 // Monthly grouping (max and min date range value from the passed data)
                 var x = d3.time.scale()
                     .domain(d3.extent(date_ranges, function(d) {
-                        //console.log(d);
                         return d;
                     }))
                     .range([0, _chart.size.innerWidth]);
@@ -381,19 +385,13 @@
                 // Define the line
                 var valueline = d3.svg.line()
                     .x(function(d, i) {
-                        console.log(d.start_date);
-
-                        // console.log(makeDate(d.data.start_date));
                         return x(makeDate(d.start_date));
                     })
                     .y(function(d) {
-                        console.log(d);
                         return y(d.count);
                     });
 
                 var diff = monthsDiff(date_ranges[0], date_ranges[1]);
-                console.log(diff);
-                console.log(_chart.data);
 
                 var monthly_data;
                 var CurrentDate;
@@ -404,13 +402,11 @@
                         return d.data.department;
                     }).sortKeys(d3.ascending).entries(_chart.data);
 
-                console.log(nested_data);
-
                 for (var tt = 0; tt < nested_data.length; tt++) {
 
-                    CurrentDate = new Date(2012, 0);
-
-                    console.log(nested_data[tt]);
+                    // Get the selected range start date so we can use it in our calculations
+                    CurrentDate = new Date(date_ranges[0].getFullYear(), date_ranges[0].getMonth());
+                    console.log(CurrentDate);
 
                         // Get monthly data / location
                         monthly_data = [];
@@ -428,18 +424,11 @@
                                 var start_date = createDateRange(nested_data[tt]['values'][val_t]['data']['start_date']);
                                 var end_date = createDateRange(nested_data[tt]['values'][val_t]['data']['end_date']);
 
-                                console.log(start_date);
-                                console.log(end_date);
-                                console.log(end_date.getTime());
-                                console.log(CurrentDate);
-
                                 if (start_date.getTime() <= CurrentDate.getTime() && (end_date.getTime() >= CurrentDate.getTime())) {
                                     // Calculate the total count for the month
                                     result_array['count'] = result_array['count'] + 1;
                                 }
                             }
-
-                            console.log(result_array['start_date']);
 
                             // Increase Date
                             CurrentDate.setMonth(CurrentDate.getMonth() + 1);
@@ -453,7 +442,7 @@
                             .attr("style", "stroke: " + color_z(tt) + "; stroke-width: 2; fill: none;")
                             .attr("d", valueline(monthly_data));
 
-                        console.log(monthly_data);
+                        // console.log(monthly_data);
 
                 }
 
@@ -1207,8 +1196,6 @@
             step: 86400,
             values: [new Date('2012/01/01').getTime() / 1000, new Date('2012/12/31').getTime() / 1000], // default range
             change: function(event, ui) {
-                console.log(new Date(ui.values[0] * 1000));
-
                 var start_date = new Date(ui.values[0] * 1000);
                 var end_date = new Date(ui.values[1] * 1000);
 
@@ -1353,7 +1340,6 @@
                         }, {});
                     })(),
                     sub: function (type) {
-                        // console.log(settings.civihr_employee_portal_reports);
                         var prefix = settings.civihr_employee_portal_reports.prefix;
                         return settings.civihr_employee_portal_reports.enabled_x_axis_defaults[prefix + '_enabled_x_axis_filters_' + type];
                     }
