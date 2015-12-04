@@ -308,11 +308,11 @@ $handler->display->display_options['fields']['end_date_1']['field'] = 'end_date'
 $handler->display->display_options['fields']['end_date_1']['relationship'] = 'hrjc_role';
 $handler->display->display_options['fields']['end_date_1']['exclude'] = TRUE;
 /* Field: HRJobContract Role entity: Start_date */
-$handler->display->display_options['fields']['start_date']['id'] = 'start_date';
-$handler->display->display_options['fields']['start_date']['table'] = 'hrjc_role';
-$handler->display->display_options['fields']['start_date']['field'] = 'start_date';
-$handler->display->display_options['fields']['start_date']['relationship'] = 'hrjc_role';
-$handler->display->display_options['fields']['start_date']['exclude'] = TRUE;
+$handler->display->display_options['fields']['start_date_1']['id'] = 'start_date_1';
+$handler->display->display_options['fields']['start_date_1']['table'] = 'hrjc_role';
+$handler->display->display_options['fields']['start_date_1']['field'] = 'start_date';
+$handler->display->display_options['fields']['start_date_1']['relationship'] = 'hrjc_role';
+$handler->display->display_options['fields']['start_date_1']['exclude'] = TRUE;
 /* Sort criterion: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['sorts']['id']['id'] = 'id';
 $handler->display->display_options['sorts']['id']['table'] = 'civicrm_contact';
