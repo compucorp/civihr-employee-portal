@@ -344,7 +344,8 @@ function civihr_employee_portal_views_pre_render(&$view) {
 function removeInactiveManagers($results = array()) {
   foreach ($results as $key => $value) {
     if ($value->civicrm_relationship_is_active == 0 ||
-       ($value->civicrm_relationship_end_date < date('Y-m-d') && $value->civicrm_relationship_end_date != NULL))
+       ($value->civicrm_relationship_end_date < date('Y-m-d') && $value->civicrm_relationship_end_date != NULL) ||
+        $value->civicrm_relationship_start_date > date('Y-m-d'))
         {
           $value->civicrm_contact_civicrm_relationship_display_name = NULL;
         }
