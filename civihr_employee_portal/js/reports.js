@@ -200,12 +200,27 @@
          */
         function createDateRange(dateValue) {
             if (dateValue != '') {
-                console.log(dateValue);
                 // Always for use the first day of the month so the range is set correctly
                 return new Date(parseInt(dateValue.substring(0, 4)), parseInt(dateValue.substring(5, 7) - 1));
             }
         }
 
+        /**
+         * Return months difference between 2 set of dates
+         * @param day1
+         * @param day2
+         * @returns {number}
+         */
+        function monthsDiff(day1,day2) {
+            var d1 = day1, d2 = day2;
+            if (day1 < day2) {
+                d1 = day2;
+                d2 = day1;
+            }
+            var m = (d1.getFullYear() - d2.getFullYear()) * 12 + (d1.getMonth() - d2.getMonth());
+            if (d1.getDate() < d2.getDate()) --m;
+            return m;
+        }
 
         return {
 
@@ -314,8 +329,12 @@
              *
              * @param {JSON} (optional) chartData - The data to visualize
              */
-            monthlyChart: function (chartData, dateRange) {
-                console.log(dateRange);
+            monthlyChart: function (chartData, dateRange, object) {
+                console.log(object);
+                console.log(object.getResultSummary());
+                // This is results page through js
+                //dataWrapper.show();
+
                 _chart.type = 'monthlyChart';
 
                 if (typeof chartData !== 'undefined') {
@@ -337,13 +356,11 @@
 
                     // Remove empty elements
                     date_ranges = date_ranges.filter(function(e) { return e; });
-                    console.log(date_ranges);
 
                 }
                 // Monthly grouping (max and min date range value from the passed data)
                 var x = d3.time.scale()
                     .domain(d3.extent(date_ranges, function(d) {
-                        //console.log(d);
                         return d;
                     }))
                     .range([0, _chart.size.innerWidth]);
@@ -371,120 +388,90 @@
                 // Define the line
                 var valueline = d3.svg.line()
                     .x(function(d, i) {
-                        // console.log(d.data.start_date);
-
-                        // console.log(makeDate(d.data.start_date));
-                        return x(makeDate(d.data.start_date));
+                        return x(makeDate(d.start_date));
                     })
                     .y(function(d) {
-                        // console.log(d.data);
-                        return y(Math.floor((Math.random() * 5)));
+                        return y(d.count);
                     });
 
-                svg.append("path")
-                    .attr("class", "line")
-                    .attr("style", "stroke: steelblue; stroke-width: 2; fill: none;")
-                    .attr("d", valueline(_chart.data));
+                var diff = monthsDiff(date_ranges[0], date_ranges[1]);
 
-                var valueline2 = d3.svg.line()
-                    .x(function(d, i) {
-                        // console.log(d.data.start_date);
+                var monthly_data;
+                var CurrentDate;
+                var color_z = d3.scale.category10();
 
-                        // console.log(makeDate(d.data.start_date));
-                        return x(makeDate(d.data.start_date));
-                    })
-                    .y(function(d) {
-                        // console.log(d.data);
-                        return y(Math.floor((Math.random() * 5)));
-                    });
+                var nested_data = d3.nest()
+                    .key(function (d) {
+                        return d.data.department;
+                    }).sortKeys(d3.ascending).entries(_chart.data);
 
-                svg.append("path")
-                    .attr("class", "line")
-                    .attr("style", "stroke: green; stroke-width: 2; fill: none;")
-                    .attr("d", valueline2(_chart.data));
+                for (var tt = 0; tt < nested_data.length; tt++) {
 
-                var valueline3 = d3.svg.line()
-                    .x(function(d, i) {
-                        // console.log(d.data.start_date);
+                    // Get the selected range start date so we can use it in our calculations
+                    CurrentDate = new Date(date_ranges[0].getFullYear(), date_ranges[0].getMonth());
+                    console.log(CurrentDate);
 
-                        // console.log(makeDate(d.data.start_date));
-                        return x(makeDate(d.data.start_date));
-                    })
-                    .y(function(d) {
-                        // console.log(d.data);
-                        return y(Math.floor((Math.random() * 5)));
-                    });
+                        // Get monthly data / location
+                        monthly_data = [];
 
-                svg.append("path")
-                    .attr("class", "line")
-                    .attr("style", "stroke: red; stroke-width: 2; fill: none;")
-                    .attr("d", valueline3(_chart.data));
+                        // Loop the selected range count and group the results
+                        for (var i = 0; i <= diff; i++) {
 
-                /**
-                var valueline2 = d3.svg.line()
-                    .x(function(d, i) {
-                        console.log(date_period[i]);
-                        console.log(i);
-                        return x(date_period[i]);
-                    })
-                    .y(function(d, i) {
-                        console.log(d.data.count);
-                        return y(d.data.count);
-                    });
+                            var result_array = [];
+                            result_array['count'] = 0;
 
-                */
+                            result_array['start_date'] = CurrentDate.getFullYear() + "-" + ("0" + (CurrentDate.getMonth() + 1)).slice(-2) + "-" + ("0" + (CurrentDate.getDate())).slice(-2) + " 00:00:00";
 
-                //svg.append("path")
-                //    .datum(_chart.data)
-                //    .attr("class", "line")
-                //    .attr("d", valueline2);
+                            for (var val_t = 0; val_t < nested_data[tt]['values'].length; val_t++) {
 
-                //svg.selectAll("rect")
-                // .data(_chart.data)
-                //    .append("path")      // Add the valueline2 path.
-                //    .attr("class", "line")
-                //    .style("stroke", "red")
-                //    .attr("d", valueline2(_chart.data));
+                                var start_date = createDateRange(nested_data[tt]['values'][val_t]['data']['start_date']);
+                                var end_date = createDateRange(nested_data[tt]['values'][val_t]['data']['end_date']);
 
-                /**
-                svg.selectAll("rect")
-                    .data(_chart.data)
-                    .enter()
-                    .append("rect")
-                    .attr("fill", function (d, i) {
-                        if (d.data.department === 'HR') {
-                            return 'green';
-                        } else {
-                            return _settings.color(d.data.department);
+                                if (start_date.getTime() <= CurrentDate.getTime() && (end_date.getTime() >= CurrentDate.getTime())) {
+                                    // Calculate the total count for the month
+                                    result_array['count'] = result_array['count'] + 1;
+                                }
+                            }
+
+                            // Increase Date
+                            CurrentDate.setMonth(CurrentDate.getMonth() + 1);
+
+                            // Add to monthly data
+                            monthly_data.push(result_array);
                         }
-                    })
-                    .on("mouseover", function () {
-                        d3.select(this)
-                            .attr("cursor", "pointer")
-                            .attr("fill", "orange");
-                    })
-                    .on("mouseout", function (d) {
-                        d3.select(this)
-                            .transition()
-                            .duration(_settings.duration)
-                            .attr("fill", _settings.color(d.data.department));
-                    })
-                    .on("click", function (d, i) {
-                        _settings.clickHandler(d);
-                    })
-                    .attr("x", function (d, i) {
-                        return x(i);
-                    })
-                    .attr("y", function (d) {
-                        return y(d.data.count);
-                    })
-                    .attr("width", x.range())
-                    .attr("height", function (d) {
-                        return _chart.size.innerHeight - y(d.data.count);
-                    });
-                 */
+
+                        svg.append("path")
+                            .attr("class", "line")
+                            .attr("style", "stroke: " + color_z(tt) + "; stroke-width: 2; fill: none;")
+                            .attr("d", valueline(monthly_data));
+
+                        console.log(monthly_data);
+                        console.log(nested_data[tt]);
+
+                        // Set result summary column data
+                        object.addResultSummaryColumn(monthly_data, nested_data[tt]);
+
+
+                        //dataWrapper.append(nested_data[tt]['key'] + " - test test - " + tt);
+
+                }
+
+                // Create rows
+                object.setResultSummary(monthly_data);
+
+                console.log(object.getResultSummary());
+
+                // Generate results summary and override datawrapper
+                object.$DOM.sections.dataWrapper.show();
+                object.$DOM.sections.dataWrapper.html(object.getResultSummary());
 
                 _drawAxis(svg, xAxis, yAxis);
+                _drawLegend(svg, nested_data, {
+                    color: function (d, i) { return color_z(d.key); },
+                    text: function(d) { return d.key; }
+                });
+
+                console.log(nested_data);
             },
 
             /**
@@ -964,7 +951,11 @@
                     break;
                 case 'monthly_chart':
                     this.setChartType('monthly_chart');
-                    this.chartLibrary.monthlyChart(json.results, path);
+                    console.log(this.$DOM.sections.dataWrapper);
+                    console.log(this);
+                    // We will modify the results page from javascript (overriding the default view result page generated by drupal views)
+                    var dataWrapper = this.$DOM.sections.dataWrapper;
+                    this.chartLibrary.monthlyChart(json.results, path, this);
                     break;
                 case 'bar':
                 default:
@@ -1059,6 +1050,61 @@
             }
         };
     };
+
+    CustomReport.prototype.setResultSummary = function(rowInfo) {
+
+        // If not defined use the value passed from parameter, but if defined used what is already in the object
+        this.ResultTable = this.getResultSummary();
+
+        this.TableBody = this.getTableBody();
+
+        this.ResultTable.appendChild(this.TableBody);
+
+        console.log(this.getResultSummaryColumns());
+        var ColumnData = this.getResultSummaryColumns();
+
+        for (var i = 0; i < rowInfo.length; i++) {
+            console.log(rowInfo[i]);
+            var tr = document.createElement('TR');
+            this.TableBody.appendChild(tr);
+
+            // Add first column (Report Date)
+            var td = document.createElement('TD');
+            td.width = '200';
+
+            td.appendChild(document.createTextNode("Date: " + rowInfo[i]['start_date']));
+            tr.appendChild(td);
+
+            for (var j = 0; j < ColumnData.length; j++) {
+                var td = document.createElement('TD');
+                td.width = '200';
+                td.appendChild(document.createTextNode(ColumnData[j]['location'] + " - " + ColumnData[j]['data'][i]['count']));
+                tr.appendChild(td);
+            }
+        }
+
+    }
+
+    CustomReport.prototype.getResultSummary = function() {
+        return this.ResultTable || document.createElement('TABLE');
+    }
+
+    CustomReport.prototype.getTableBody = function() {
+        return this.TableBody || document.createElement('TBODY');
+    }
+
+    CustomReport.prototype.addResultSummaryColumn = function(column, location) {
+        this.ResultSummaryColumns = this.getResultSummaryColumns();
+        var coloumn_val = [];
+        coloumn_val['location'] = location['key'];
+        coloumn_val['data'] = column;
+        this.ResultSummaryColumns.push(coloumn_val);
+    }
+
+    CustomReport.prototype.getResultSummaryColumns = function() {
+        return this.ResultSummaryColumns || [];
+    }
+
 
     /**
      * Get reports basic json url for graph report
@@ -1189,8 +1235,6 @@
             step: 86400,
             values: [new Date('2012/01/01').getTime() / 1000, new Date('2012/12/31').getTime() / 1000], // default range
             change: function(event, ui) {
-                console.log(new Date(ui.values[0] * 1000));
-
                 var start_date = new Date(ui.values[0] * 1000);
                 var end_date = new Date(ui.values[1] * 1000);
 
@@ -1335,7 +1379,6 @@
                         }, {});
                     })(),
                     sub: function (type) {
-                        // console.log(settings.civihr_employee_portal_reports);
                         var prefix = settings.civihr_employee_portal_reports.prefix;
                         return settings.civihr_employee_portal_reports.enabled_x_axis_defaults[prefix + '_enabled_x_axis_filters_' + type];
                     }
