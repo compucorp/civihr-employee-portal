@@ -359,10 +359,10 @@ function removeAdditionalCommas($view){
   $fieldsToClean = array();
 
   foreach($view->style_plugin->rendered_fields as $renderedField){
-    $managerFieldValues = $renderedField['display_name_1'];
+    $managerFieldValues = $renderedField['last_name_1'];
     $departmentFieldValues = $renderedField['department'];
 
-    if($managerFieldValues != NULL)
+    if($managerFieldValues != NULL && trim($managerFieldValues) != "")
     {
       $cleanedValue = preg_replace('/,( *,)+/', ',', trim($managerFieldValues, ', '));
       $fieldsToClean[$managerFieldValues] = $cleanedValue;
@@ -401,7 +401,8 @@ function removeInactiveManagers($results = array()) {
        ($value->civicrm_relationship_end_date < date('Y-m-d') && $value->civicrm_relationship_end_date != NULL) ||
         $value->civicrm_relationship_start_date > date('Y-m-d'))
         {
-          $value->civicrm_contact_civicrm_relationship_display_name = NULL;
+          $value->civicrm_contact_civicrm_relationship_first_name = NULL;
+          $value->civicrm_contact_civicrm_relationship_last_name = NULL;
         }
     }
   return $results;

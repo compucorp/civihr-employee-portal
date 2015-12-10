@@ -56,6 +56,11 @@ $handler->display->display_options['style_options']['columns'] = array(
   'display_name_1' => 'display_name_1',
   'end_date' => 'end_date',
   'is_active' => 'is_active',
+  'start_date' => 'start_date',
+  'end_date_1' => 'end_date_1',
+  'start_date_1' => 'start_date_1',
+  'first_name_1' => 'first_name_1',
+  'last_name_1' => 'last_name_1',
 );
 $handler->display->display_options['style_options']['default'] = '-1';
 $handler->display->display_options['style_options']['info'] = array(
@@ -159,6 +164,41 @@ $handler->display->display_options['style_options']['info'] = array(
   ),
   'is_active' => array(
     'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'start_date' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'end_date_1' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'start_date_1' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'first_name_1' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'last_name_1' => array(
+    'sortable' => 1,
     'default_sort_order' => 'asc',
     'align' => '',
     'separator' => '',
@@ -280,6 +320,7 @@ $handler->display->display_options['fields']['display_name_1']['table'] = 'civic
 $handler->display->display_options['fields']['display_name_1']['field'] = 'display_name';
 $handler->display->display_options['fields']['display_name_1']['relationship'] = 'contact_id_b_';
 $handler->display->display_options['fields']['display_name_1']['label'] = 'Manager';
+$handler->display->display_options['fields']['display_name_1']['exclude'] = TRUE;
 $handler->display->display_options['fields']['display_name_1']['link_to_civicrm_contact'] = 0;
 /* Field: CiviCRM Relationships: End Date */
 $handler->display->display_options['fields']['end_date']['id'] = 'end_date';
@@ -313,6 +354,20 @@ $handler->display->display_options['fields']['start_date_1']['table'] = 'hrjc_ro
 $handler->display->display_options['fields']['start_date_1']['field'] = 'start_date';
 $handler->display->display_options['fields']['start_date_1']['relationship'] = 'hrjc_role';
 $handler->display->display_options['fields']['start_date_1']['exclude'] = TRUE;
+/* Field: CiviCRM Contacts: First Name */
+$handler->display->display_options['fields']['first_name_1']['id'] = 'first_name_1';
+$handler->display->display_options['fields']['first_name_1']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['first_name_1']['field'] = 'first_name';
+$handler->display->display_options['fields']['first_name_1']['relationship'] = 'contact_id_b_';
+$handler->display->display_options['fields']['first_name_1']['exclude'] = TRUE;
+$handler->display->display_options['fields']['first_name_1']['link_to_civicrm_contact'] = 0;
+/* Field: CiviCRM Contacts: Last Name */
+$handler->display->display_options['fields']['last_name_1']['id'] = 'last_name_1';
+$handler->display->display_options['fields']['last_name_1']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['last_name_1']['field'] = 'last_name';
+$handler->display->display_options['fields']['last_name_1']['relationship'] = 'contact_id_b_';
+$handler->display->display_options['fields']['last_name_1']['label'] = 'Manager';
+$handler->display->display_options['fields']['last_name_1']['link_to_civicrm_contact'] = 0;
 /* Sort criterion: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['sorts']['id']['id'] = 'id';
 $handler->display->display_options['sorts']['id']['table'] = 'civicrm_contact';
@@ -642,6 +697,7 @@ $translatables['civihr_staff_directory'] = array(
   t('Start Date'),
   t('End_date'),
   t('Start_date'),
+  t('First Name'),
   t('Phone'),
   t('Staff directory list page'),
   t('First'),
