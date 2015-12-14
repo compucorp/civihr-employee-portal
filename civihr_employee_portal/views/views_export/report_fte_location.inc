@@ -83,7 +83,7 @@ $handler->display->display_options['fields']['hours_fte']['field'] = 'hours_fte'
 $handler->display->display_options['fields']['hours_fte']['relationship'] = 'hrjc_hour';
 $handler->display->display_options['fields']['hours_fte']['group_type'] = 'sum';
 $handler->display->display_options['fields']['hours_fte']['label'] = 'count';
-$handler->display->display_options['path'] = 'fte-location';
+$handler->display->display_options['path'] = 'civihr_reports_fte-location';
 
 /* Display: Filter by Location */
 $handler = $view->new_display('block', 'Filter by Location', 'filter_fte_location');

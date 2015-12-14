@@ -123,7 +123,7 @@ $handler->display->display_options['arguments']['period_end_date']['summary']['f
 $handler->display->display_options['arguments']['period_end_date']['summary_options']['items_per_page'] = '25';
 $handler->display->display_options['arguments']['period_end_date']['civihr_range'] = '>=';
 $handler->display->display_options['arguments']['period_end_date']['civihr_range_empty'] = '1';
-$handler->display->display_options['path'] = 'fte-all';
+$handler->display->display_options['path'] = 'civihr_reports_fte-all';
 
 /* Display: Filter by All */
 $handler = $view->new_display('block', 'Filter by All', 'filter_fte_all');

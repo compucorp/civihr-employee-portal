@@ -71,7 +71,7 @@ $handler->display->display_options['fields']['location_1']['field'] = 'location'
 $handler->display->display_options['fields']['location_1']['group_type'] = 'count';
 $handler->display->display_options['fields']['location_1']['label'] = 'count';
 $handler->display->display_options['fields']['location_1']['separator'] = '';
-$handler->display->display_options['path'] = 'headcount-location';
+$handler->display->display_options['path'] = 'civihr_reports_headcount-location';
 
 /* Display: Filter by Location */
 $handler = $view->new_display('block', 'Filter by Location', 'filter_headcount_location');
