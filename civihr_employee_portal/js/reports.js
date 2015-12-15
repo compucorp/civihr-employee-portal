@@ -333,8 +333,7 @@
                 console.log(object);
                 console.log(object.getResultSummary());
 
-                // This is results page through js
-
+                // This is results summary page purely through js
                 // Reset object values
                 delete object.ResultSummaryColumns;
                 delete object.ResultTable;
@@ -1055,16 +1054,32 @@
 
         // If not defined use the value passed from parameter, but if defined used what is already in the object
         this.ResultTable = this.getResultSummary();
-
         this.TableBody = this.getTableBody();
-
         this.ResultTable.appendChild(this.TableBody);
 
-        console.log(this.getResultSummaryColumns());
         var ColumnData = this.getResultSummaryColumns();
 
+        // Create the header row
+        var tr = document.createElement('TR');
+        this.TableBody.appendChild(tr);
+
+        // Add first column TH (Report Date)
+        var th = document.createElement('TH');
+        th.width = '200';
+
+        th.appendChild(document.createTextNode("Reporting Date"));
+        tr.appendChild(th);
+
+        // Add header labels
+        for (var j = 0; j < ColumnData.length; j++) {
+            th = document.createElement('TD');
+            th.width = '200';
+            th.appendChild(document.createTextNode(ColumnData[j]['location']));
+            tr.appendChild(th);
+        }
+
+        // Add result rows
         for (var i = 0; i < rowInfo.length; i++) {
-            console.log(rowInfo[i]);
             var tr = document.createElement('TR');
             this.TableBody.appendChild(tr);
 
@@ -1072,13 +1087,13 @@
             var td = document.createElement('TD');
             td.width = '200';
 
-            td.appendChild(document.createTextNode("Date: " + rowInfo[i]['start_date']));
+            td.appendChild(document.createTextNode(rowInfo[i]['start_date']));
             tr.appendChild(td);
 
             for (var j = 0; j < ColumnData.length; j++) {
                 var td = document.createElement('TD');
                 td.width = '200';
-                td.appendChild(document.createTextNode(ColumnData[j]['location'] + " - " + ColumnData[j]['data'][i]['count']));
+                td.appendChild(document.createTextNode(ColumnData[j]['data'][i]['count']));
                 tr.appendChild(td);
             }
         }
