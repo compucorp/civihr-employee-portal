@@ -1,4 +1,4 @@
-(function($) {
+(function($, moment) {
     'use strict';
 
     /**
@@ -1039,6 +1039,7 @@
         this.$DOM.sections = {
             dataWrapper: this.$DOM.wrapper.find('[data-graph-section="data"]'),
             canvas: this.$DOM.wrapper.find('[data-graph-section="canvas"]'),
+            slider: this.$DOM.wrapper.find('[data-graph-section="slider"]'),
             filters: {
                 graph: this.$DOM.wrapper.find('[data-graph-section="graph-filters"]'),
                 main: this.$DOM.wrapper.find('[data-graph-section="main-filters"]'),
@@ -1281,12 +1282,19 @@
     CustomReport.prototype.initSlider = function() {
         var _this = this;
 
-        $("#slider-range").slider({
+        var $sliderControl = _this.$DOM.sections.slider.find('[data-graph-slider-control]');
+        var $sliderValue = _this.$DOM.sections.slider.find('[data-graph-slider-value]');
+        var range = {
+            min: moment('2010/01/01', 'YYYY/MM/DD'),
+            max: moment('2014/01/01', 'YYYY/MM/DD')
+        };
+
+        $sliderControl.slider({
             range: true,
-            min: new Date('2010/01/01').getTime() / 1000, // min date
-            max: new Date('2014/01/01').getTime() / 1000, // max date
+            min: range.min.unix(), // min date
+            max: range.max.unix(), // max date
             step: 86400,
-            values: [new Date('2012/01/01').getTime() / 1000, new Date('2012/12/31').getTime() / 1000], // default range
+            values: [moment('2012/01/01', 'YYYY/MM/DD').unix(), moment('2012/12/31', 'YYYY/MM/DD').unix()], // default range
             change: function(event, ui) {
                 var start_date = new Date(ui.values[0] * 1000);
                 var end_date = new Date(ui.values[1] * 1000);
@@ -1297,12 +1305,15 @@
                 // Filter the graph by specifing Start and End date range
                 _this.drawGraph('/' + start_date + '/' + end_date);
 
-                $("#amount").val((new Date(ui.values[0] * 1000).toDateString()) + " - " + (new Date(ui.values[1] * 1000)).toDateString());
+                $sliderValue.val((new Date(ui.values[0] * 1000).toDateString()) + " - " + (new Date(ui.values[1] * 1000)).toDateString());
             }
         });
 
-        $("#amount").val((new Date($( "#slider-range" ).slider("values", 0) * 1000).toDateString()) +
-            " - " + (new Date($( "#slider-range" ).slider("values", 1) * 1000)).toDateString());
+        _this.$DOM.sections.slider.find('[data-graph-slider-min-date]').html(range.min.format('DD/MM/YYYY'))
+        _this.$DOM.sections.slider.find('[data-graph-slider-max-date]').html(range.max.format('DD/MM/YYYY'))
+
+        $sliderValue.val((new Date($sliderControl.slider("values", 0) * 1000).toDateString()) +
+            " - " + (new Date($sliderControl.slider("values", 1) * 1000)).toDateString());
 
     };
 
@@ -1531,4 +1542,4 @@
             });
         }
     }
-})(jQuery);
+})(jQuery, moment);
