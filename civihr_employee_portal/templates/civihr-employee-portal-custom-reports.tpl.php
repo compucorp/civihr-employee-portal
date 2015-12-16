@@ -80,7 +80,6 @@
             <div class="row">
                 <div class="col-xs-12" data-graph-section="slider">
                     <div data-graph-slider>
-                        <input type="text" readonly data-graph-slider-value>
                         <span class="col-xs-2 text-center ui-slider-range-values" data-graph-slider-min-date></span>
                         <div class="col-xs-8" data-graph-slider-control></div>
                         <span class="col-xs-2 text-center ui-slider-range-values" data-graph-slider-max-date></span>

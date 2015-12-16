@@ -1283,38 +1283,44 @@
         var _this = this;
 
         var $sliderControl = _this.$DOM.sections.slider.find('[data-graph-slider-control]');
-        var $sliderValue = _this.$DOM.sections.slider.find('[data-graph-slider-value]');
-        var range = {
-            min: moment('2010/01/01', 'YYYY/MM/DD'),
-            max: moment('2014/01/01', 'YYYY/MM/DD')
-        };
+
+        var format = { view: 'DD/MM/YYYY', api: 'YYYY-MM-DD' };
+        var range = [moment('01/01/2010', format.view), moment('01/01/2014', format.view)];
+        var init = [moment('01/01/2012', format.view), moment('31/12/2012', format.view)];
 
         $sliderControl.slider({
             range: true,
-            min: range.min.unix(), // min date
-            max: range.max.unix(), // max date
             step: 86400,
-            values: [moment('2012/01/01', 'YYYY/MM/DD').unix(), moment('2012/12/31', 'YYYY/MM/DD').unix()], // default range
+            min: range[0].unix(),
+            max: range[1].unix(),
+            values: [init[0].unix(), init[1].unix()],
+            create: function () {
+                $sliderControl.find('.ui-slider-handle').each(function (index) {
+                    $(this).attr({
+                        'data-toggle': 'tooltip',
+                        'data-animation': 'false',
+                        'data-placement': 'bottom',
+                        'data-trigger': 'manual',
+                        'title': init[index].format(format.view)
+                    }).tooltip('show');
+                });
+            },
             change: function(event, ui) {
-                var start_date = new Date(ui.values[0] * 1000);
-                var end_date = new Date(ui.values[1] * 1000);
+                var startDate = moment.unix(ui.values[0]);
+                var endDate = moment.unix(ui.values[1]);
 
-                start_date = start_date.getFullYear() + "-" + ("0" + (start_date.getMonth() + 1)).slice(-2) + "-" + ("0" + (start_date.getDate())).slice(-2);
-                end_date = end_date.getFullYear() + "-" + ("0" + (end_date.getMonth() + 1)).slice(-2) + "-" + ("0" + (end_date.getDate())).slice(-2);
-
-                // Filter the graph by specifing Start and End date range
-                _this.drawGraph('/' + start_date + '/' + end_date);
-
-                $sliderValue.val((new Date(ui.values[0] * 1000).toDateString()) + " - " + (new Date(ui.values[1] * 1000)).toDateString());
+                _this.drawGraph('/' + startDate.format(format.api) + '/' + endDate.format(format.api));
+            },
+            slide: function (event, ui) {
+                $(ui.handle)
+                    .attr('title', moment.unix(ui.value).format(format.view))
+                    .tooltip('destroy')
+                    .tooltip('show');
             }
         });
 
-        _this.$DOM.sections.slider.find('[data-graph-slider-min-date]').html(range.min.format('DD/MM/YYYY'))
-        _this.$DOM.sections.slider.find('[data-graph-slider-max-date]').html(range.max.format('DD/MM/YYYY'))
-
-        $sliderValue.val((new Date($sliderControl.slider("values", 0) * 1000).toDateString()) +
-            " - " + (new Date($sliderControl.slider("values", 1) * 1000)).toDateString());
-
+        _this.$DOM.sections.slider.find('[data-graph-slider-min-date]').html(range[0].format(format.view))
+        _this.$DOM.sections.slider.find('[data-graph-slider-max-date]').html(range[1].format(format.view))
     };
 
     /**
