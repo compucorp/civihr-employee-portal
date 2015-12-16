@@ -442,7 +442,9 @@
                         }
 
                         svg.append("path")
-                            .attr("class", "line")
+                            .attr('class', function (d, i) {
+                                return 'line chart-color-stroke-' + tt;
+                            })
                             .attr("style", "stroke: " + color_z(tt) + "; stroke-width: 2; fill: none;")
                             .attr("d", valueline(monthly_data));
 
