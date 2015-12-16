@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-xs-1 text-left">
                     <a href="/<?php print $next_url;?>">
-                        <i class="fa fa-arrow-left"></i>
+                        <i class="fa fa-chevron-left"></i>
                     </a>
                 </div>
                 <div class="col-xs-10">
@@ -16,7 +16,7 @@
                 </div>
                 <div class="col-xs-1 text-right">
                     <a href="/<?php print $next_url;?>">
-                        <i class="fa fa-arrow-right"></i>
+                        <i class="fa fa-chevron-right"></i>
                     </a>
                 </div>
             </div>
