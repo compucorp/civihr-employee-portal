@@ -57,16 +57,6 @@
                     <div data-graph-section="canvas">
                         <!-- Content generated in reports.js -->
                     </div>
-
-                    <div data-graph-section="graph-slider">
-                        <p>
-                            <label for="amount">Selected range:</label>
-                            <input type="text" id="amount" readonly style="width: 100%; border:0; color:#f6931f; font-weight:bold;">
-                        </p>
-
-                        <div id="slider-range"></div>
-                    </div>
-
                 </div>
                 <div class="col-md-2">
                     <div class="row">
@@ -84,6 +74,15 @@
                         <div class="col-md-12" data-graph-section="legend">
                             <!-- Content generated in reports.js -->
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12" data-graph-section="slider">
+                    <div data-graph-slider>
+                        <span class="col-xs-2 text-center ui-slider-range-values" data-graph-slider-min-date></span>
+                        <div class="col-xs-8" data-graph-slider-control></div>
+                        <span class="col-xs-2 text-center ui-slider-range-values" data-graph-slider-max-date></span>
                     </div>
                 </div>
             </div>

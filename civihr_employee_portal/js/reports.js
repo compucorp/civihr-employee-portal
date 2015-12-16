@@ -1,4 +1,4 @@
-(function($) {
+(function($, moment) {
     'use strict';
 
     /**
@@ -334,10 +334,7 @@
                 console.log(object.getResultSummary());
 
                 // This is results summary page purely through js
-                // Reset object values
-                delete object.ResultSummaryColumns;
-                delete object.ResultTable;
-                delete object.TableBody;
+                object.resetResultPanel();
 
                 _chart.type = 'monthlyChart';
 
@@ -445,7 +442,9 @@
                         }
 
                         svg.append("path")
-                            .attr("class", "line")
+                            .attr('class', function (d, i) {
+                                return 'line chart-color-stroke-' + tt;
+                            })
                             .attr("style", "stroke: " + color_z(tt) + "; stroke-width: 2; fill: none;")
                             .attr("d", valueline(monthly_data));
 
@@ -1042,6 +1041,7 @@
         this.$DOM.sections = {
             dataWrapper: this.$DOM.wrapper.find('[data-graph-section="data"]'),
             canvas: this.$DOM.wrapper.find('[data-graph-section="canvas"]'),
+            slider: this.$DOM.wrapper.find('[data-graph-section="slider"]'),
             filters: {
                 graph: this.$DOM.wrapper.find('[data-graph-section="graph-filters"]'),
                 main: this.$DOM.wrapper.find('[data-graph-section="main-filters"]'),
@@ -1050,18 +1050,44 @@
         };
     };
 
+    CustomReport.prototype.getResultPanel = function () {
+        var div = document.createElement('section');
+        div.className = 'panel panel-primary';
+
+        div.innerHTML = '<header class="panel-heading">' +
+            '<h2 class="panel-title">Data</h2>' +
+        '</header>' +
+        '<div class="table-responsive">' +
+        '</div>';
+
+        return div;
+    };
+
+    CustomReport.prototype.resetResultPanel = function () {
+        delete this.ResultSummaryColumns;
+        delete this.ResultPanel;
+        delete this.ResultTable;
+        delete this.TableBody;
+        delete this.TableHead;
+    };
+
     CustomReport.prototype.setResultSummary = function(rowInfo) {
 
+        this.ResultPanel = this.getResultPanel();
+
         // If not defined use the value passed from parameter, but if defined used what is already in the object
-        this.ResultTable = this.getResultSummary();
+        this.ResultTable = this.ResultTable || this.getTable();
         this.TableBody = this.getTableBody();
+        this.TableHead = this.getTableHead();
+
+        this.ResultTable.appendChild(this.TableHead);
         this.ResultTable.appendChild(this.TableBody);
 
         var ColumnData = this.getResultSummaryColumns();
 
         // Create the header row
         var tr = document.createElement('TR');
-        this.TableBody.appendChild(tr);
+        this.TableHead.appendChild(tr);
 
         // Add first column TH (Report Date)
         var th = document.createElement('TH');
@@ -1072,7 +1098,7 @@
 
         // Add header labels
         for (var j = 0; j < ColumnData.length; j++) {
-            th = document.createElement('TD');
+            th = document.createElement('TH');
             th.width = '200';
             th.appendChild(document.createTextNode(ColumnData[j]['location']));
             tr.appendChild(th);
@@ -1081,6 +1107,8 @@
         // Add result rows
         for (var i = 0; i < rowInfo.length; i++) {
             var tr = document.createElement('TR');
+            tr.className = (i + 1) % 2 ? 'odd' : 'even';
+
             this.TableBody.appendChild(tr);
 
             // Add first column (Report Date)
@@ -1098,27 +1126,40 @@
             }
         }
 
-    }
+        this.ResultPanel.querySelector('.table-responsive').appendChild(this.ResultTable);
+    };
 
     CustomReport.prototype.getResultSummary = function() {
-        return this.ResultTable || document.createElement('TABLE');
-    }
+        return this.ResultPanel || this.getResultPanel();
+    };
 
     CustomReport.prototype.getTableBody = function() {
         return this.TableBody || document.createElement('TBODY');
-    }
+    };
+
+    CustomReport.prototype.getTableHead = function() {
+        return this.TableHead || document.createElement('THEAD');
+    };
+
+    CustomReport.prototype.getTable = function () {
+        var table = document.createElement('TABLE');
+        table.className = 'table table-hover table-striped';
+
+        return table;
+    };
 
     CustomReport.prototype.addResultSummaryColumn = function(column, location) {
+        var column_val = [];
+        column_val['location'] = location['key'];
+        column_val['data'] = column;
+
         this.ResultSummaryColumns = this.getResultSummaryColumns();
-        var coloumn_val = [];
-        coloumn_val['location'] = location['key'];
-        coloumn_val['data'] = column;
-        this.ResultSummaryColumns.push(coloumn_val);
-    }
+        this.ResultSummaryColumns.push(column_val);
+    };
 
     CustomReport.prototype.getResultSummaryColumns = function() {
         return this.ResultSummaryColumns || [];
-    }
+    };
 
 
     /**
@@ -1243,29 +1284,45 @@
     CustomReport.prototype.initSlider = function() {
         var _this = this;
 
-        $("#slider-range").slider({
+        var $sliderControl = _this.$DOM.sections.slider.find('[data-graph-slider-control]');
+
+        var format = { view: 'DD/MM/YYYY', api: 'YYYY-MM-DD' };
+        var range = [moment('01/01/2010', format.view), moment('01/01/2014', format.view)];
+        var init = [moment('01/01/2012', format.view), moment('31/12/2012', format.view)];
+
+        $sliderControl.slider({
             range: true,
-            min: new Date('2010/01/01').getTime() / 1000, // min date
-            max: new Date('2014/01/01').getTime() / 1000, // max date
             step: 86400,
-            values: [new Date('2012/01/01').getTime() / 1000, new Date('2012/12/31').getTime() / 1000], // default range
+            min: range[0].unix(),
+            max: range[1].unix(),
+            values: [init[0].unix(), init[1].unix()],
+            create: function () {
+                $sliderControl.find('.ui-slider-handle').each(function (index) {
+                    $(this).attr({
+                        'data-toggle': 'tooltip',
+                        'data-animation': 'false',
+                        'data-placement': 'bottom',
+                        'data-trigger': 'manual',
+                        'title': init[index].format(format.view)
+                    }).tooltip('show');
+                });
+            },
             change: function(event, ui) {
-                var start_date = new Date(ui.values[0] * 1000);
-                var end_date = new Date(ui.values[1] * 1000);
+                var startDate = moment.unix(ui.values[0]);
+                var endDate = moment.unix(ui.values[1]);
 
-                start_date = start_date.getFullYear() + "-" + ("0" + (start_date.getMonth() + 1)).slice(-2) + "-" + ("0" + (start_date.getDate())).slice(-2);
-                end_date = end_date.getFullYear() + "-" + ("0" + (end_date.getMonth() + 1)).slice(-2) + "-" + ("0" + (end_date.getDate())).slice(-2);
-
-                // Filter the graph by specifing Start and End date range
-                _this.drawGraph('/' + start_date + '/' + end_date);
-
-                $("#amount").val((new Date(ui.values[0] * 1000).toDateString()) + " - " + (new Date(ui.values[1] * 1000)).toDateString());
+                _this.drawGraph('/' + startDate.format(format.api) + '/' + endDate.format(format.api));
+            },
+            slide: function (event, ui) {
+                $(ui.handle)
+                    .attr('title', moment.unix(ui.value).format(format.view))
+                    .tooltip('destroy')
+                    .tooltip('show');
             }
         });
 
-        $("#amount").val((new Date($( "#slider-range" ).slider("values", 0) * 1000).toDateString()) +
-            " - " + (new Date($( "#slider-range" ).slider("values", 1) * 1000)).toDateString());
-
+        _this.$DOM.sections.slider.find('[data-graph-slider-min-date]').html(range[0].format(format.view))
+        _this.$DOM.sections.slider.find('[data-graph-slider-max-date]').html(range[1].format(format.view))
     };
 
     /**
@@ -1493,4 +1550,4 @@
             });
         }
     }
-})(jQuery);
+})(jQuery, moment);
