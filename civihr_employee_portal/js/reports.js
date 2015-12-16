@@ -334,10 +334,7 @@
                 console.log(object.getResultSummary());
 
                 // This is results summary page purely through js
-                // Reset object values
-                delete object.ResultSummaryColumns;
-                delete object.ResultTable;
-                delete object.TableBody;
+                object.resetResultPanel();
 
                 _chart.type = 'monthlyChart';
 
@@ -1050,18 +1047,44 @@
         };
     };
 
+    CustomReport.prototype.getResultPanel = function () {
+        var div = document.createElement('section');
+        div.className = 'panel panel-primary';
+
+        div.innerHTML = '<header class="panel-heading">' +
+            '<h2 class="panel-title">Data</h2>' +
+        '</header>' +
+        '<div class="table-responsive">' +
+        '</div>';
+
+        return div;
+    };
+
+    CustomReport.prototype.resetResultPanel = function () {
+        delete this.ResultSummaryColumns;
+        delete this.ResultPanel;
+        delete this.ResultTable;
+        delete this.TableBody;
+        delete this.TableHead;
+    };
+
     CustomReport.prototype.setResultSummary = function(rowInfo) {
 
+        this.ResultPanel = this.getResultPanel();
+
         // If not defined use the value passed from parameter, but if defined used what is already in the object
-        this.ResultTable = this.getResultSummary();
+        this.ResultTable = this.ResultTable || this.getTable();
         this.TableBody = this.getTableBody();
+        this.TableHead = this.getTableHead();
+
+        this.ResultTable.appendChild(this.TableHead);
         this.ResultTable.appendChild(this.TableBody);
 
         var ColumnData = this.getResultSummaryColumns();
 
         // Create the header row
         var tr = document.createElement('TR');
-        this.TableBody.appendChild(tr);
+        this.TableHead.appendChild(tr);
 
         // Add first column TH (Report Date)
         var th = document.createElement('TH');
@@ -1072,7 +1095,7 @@
 
         // Add header labels
         for (var j = 0; j < ColumnData.length; j++) {
-            th = document.createElement('TD');
+            th = document.createElement('TH');
             th.width = '200';
             th.appendChild(document.createTextNode(ColumnData[j]['location']));
             tr.appendChild(th);
@@ -1081,6 +1104,8 @@
         // Add result rows
         for (var i = 0; i < rowInfo.length; i++) {
             var tr = document.createElement('TR');
+            tr.className = (i + 1) % 2 ? 'odd' : 'even';
+
             this.TableBody.appendChild(tr);
 
             // Add first column (Report Date)
@@ -1098,27 +1123,40 @@
             }
         }
 
-    }
+        this.ResultPanel.querySelector('.table-responsive').appendChild(this.ResultTable);
+    };
 
     CustomReport.prototype.getResultSummary = function() {
-        return this.ResultTable || document.createElement('TABLE');
-    }
+        return this.ResultPanel || this.getResultPanel();
+    };
 
     CustomReport.prototype.getTableBody = function() {
         return this.TableBody || document.createElement('TBODY');
-    }
+    };
+
+    CustomReport.prototype.getTableHead = function() {
+        return this.TableHead || document.createElement('THEAD');
+    };
+
+    CustomReport.prototype.getTable = function () {
+        var table = document.createElement('TABLE');
+        table.className = 'table table-hover table-striped';
+
+        return table;
+    };
 
     CustomReport.prototype.addResultSummaryColumn = function(column, location) {
+        var column_val = [];
+        column_val['location'] = location['key'];
+        column_val['data'] = column;
+
         this.ResultSummaryColumns = this.getResultSummaryColumns();
-        var coloumn_val = [];
-        coloumn_val['location'] = location['key'];
-        coloumn_val['data'] = column;
-        this.ResultSummaryColumns.push(coloumn_val);
-    }
+        this.ResultSummaryColumns.push(column_val);
+    };
 
     CustomReport.prototype.getResultSummaryColumns = function() {
         return this.ResultSummaryColumns || [];
-    }
+    };
 
 
     /**
