@@ -386,7 +386,7 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
 function civihr_employee_portal_custom_theme() {
 
     // Set the civihr_reports related pages to use the custom civihr admin theme and not the self service theme
-    if (arg(0) == 'civihr_reports' || arg(0) == 'civihr_reports_monthly') {
+    if (arg(0) == 'civihr_reports' || arg(0) == 'civihr_reports_monthly' || arg(0) == 'civihr_reports_settings' || arg(0) == 'civihr_reports_monthly_settings') {
         return 'civihr_admin_theme';
     }
 }

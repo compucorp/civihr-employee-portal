@@ -382,6 +382,9 @@
                     .orient("left")
                     .ticks(_settings.setTicks);
 
+                // We draw axis before the lines are added to the chart
+                _drawAxis(svg, xAxis, yAxis);
+
                 document.querySelector(_legend.selector).innerHTML = '';
 
                 var makeDate = d3.time.format("%Y-%m-%d %X").parse;
@@ -465,7 +468,6 @@
                 object.$DOM.sections.dataWrapper.show();
                 object.$DOM.sections.dataWrapper.html(object.getResultSummary());
 
-                _drawAxis(svg, xAxis, yAxis);
                 _drawLegend(svg, nested_data, {
                     color: function (d, i) { return color_z(d.key); },
                     text: function(d) { return d.key; }
