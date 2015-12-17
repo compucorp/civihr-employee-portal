@@ -1311,18 +1311,30 @@
                 var startDate = moment.unix(ui.values[0]);
                 var endDate = moment.unix(ui.values[1]);
 
+                redrawTooltip(ui.handle, ui.value);
+
                 _this.drawGraph('/' + startDate.format(format.api) + '/' + endDate.format(format.api));
             },
             slide: function (event, ui) {
-                $(ui.handle)
-                    .attr('title', moment.unix(ui.value).format(format.view))
-                    .tooltip('destroy')
-                    .tooltip('show');
+                redrawTooltip(ui.handle, ui.value);
             }
         });
 
         _this.$DOM.sections.slider.find('[data-graph-slider-min-date]').html(range[0].format(format.view))
         _this.$DOM.sections.slider.find('[data-graph-slider-max-date]').html(range[1].format(format.view))
+
+        /**
+         * Redraws the tooltip for an handle
+         *
+         * @param {HTLMElement} handle
+         * @param {string/int} value - The value to display on the tooltip
+         */
+        function redrawTooltip(handle, value) {
+            $(handle)
+                .attr('title', moment.unix(value).format(format.view))
+                .tooltip('destroy')
+                .tooltip('show');
+        }
     };
 
     /**
