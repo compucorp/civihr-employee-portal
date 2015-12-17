@@ -17,7 +17,10 @@ class BaseForm {
     public $moduleName = 'civihr_employee_portal';
 
     // Set our class names what we want use
-    public $classRegister = ['civihr_reports' => 'ReportSettingsForm', 'civihr_reports_monthly' => 'ReportMonthlyForm'];
+    public $classRegister = [   'civihr_reports' => 'ReportSettingsForm',
+                                'civihr_reports_monthly' => 'ReportMonthlyForm',
+                                'civihr_reports_absence' => 'ReportAbsenceForm',
+    ];
 
     /**
      * Constructor
