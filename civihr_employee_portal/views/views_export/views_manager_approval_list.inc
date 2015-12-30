@@ -248,6 +248,11 @@ $handler->display->display_options['fields']['absence_status']['field'] = 'absen
 $handler->display->display_options['fields']['absence_status']['label'] = 'Status';
 $handler->display->display_options['fields']['absence_status']['alter']['alter_text'] = TRUE;
 $handler->display->display_options['fields']['absence_status']['alter']['text'] = '<div id="act-id-[id]">[absence_status]</div>';
+/* Field: Absence approval entity: Manager ID */
+$handler->display->display_options['fields']['manager_id']['id'] = 'manager_id';
+$handler->display->display_options['fields']['manager_id']['table'] = 'absence_approval_list';
+$handler->display->display_options['fields']['manager_id']['field'] = 'manager_id';
+$handler->display->display_options['fields']['manager_id']['exclude'] = TRUE;
 $handler->display->display_options['defaults']['sorts'] = FALSE;
 /* Sort criterion: Absence approval entity: Absence_start_date_timestamp */
 $handler->display->display_options['sorts']['absence_start_date_timestamp']['id'] = 'absence_start_date_timestamp';
@@ -321,6 +326,7 @@ $translatables['approvals'] = array(
   t('next ›'),
   t('last »'),
   t('Nothing to show yet!'),
+  t('Manager ID'),
   t('Awaiting Approvals'),
   t('Awaiting Approvals dashboard block'),
   t('<a href="absence_all/nojs/view" class="chr_action--icon--list chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-custom-large-style"><span>Show all Absences</span></a><a href="manager_approval/nojs/calendar/show" class="chr_action--icon--calendar chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-default-style"><span>Open Calendar</span></a>'),

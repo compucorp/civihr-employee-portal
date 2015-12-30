@@ -462,6 +462,26 @@ function civihr_employee_portal_views_data_alter(&$data) {
         'sort' => array('handler' => 'views_handler_sort'),
     );
     
+    $data['absence_approval_list']['manager_id'] = array(
+        'title' => t('Manager ID'),
+        'help' => t('Manager ID field value'),
+        'real field' => 'manager_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_manager_id',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_handler_argument_string',
+            'name_field' => 'title',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_string',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_handler_sort'),
+    );
+
     // Add custom date handler
     $data['absence_approval_list']['absence_start_date_timestamp']['field']['handler'] = 'views_handler_field_date';
     $data['absence_approval_list']['absence_start_date_timestamp']['sort']['handler'] = 'views_handler_sort_date';
@@ -503,6 +523,28 @@ function civihr_employee_portal_views_pre_render(&$view) {
       $view->result = removeInactiveManagers($view->result);
       $view->result = removeInactiveDepartments($view->result);
     }
+
+    if($view->name == "approvals"){
+      $view->result = removeAbsencesForOtherManagers($view->result);
+    }
+}
+
+/**
+ * Remove absences of contacts that belong to managers other than the currently logged in manager
+ *
+ */
+function removeAbsencesForOtherManagers($results){
+  global $user;
+  $managerData = get_civihr_uf_match_data($user->uid);
+  $managerId = $managerData['contact_id'];
+
+  foreach($results as $key => $value){
+    $managers = _getManagerContacts($value->absence_approval_list_employee_id);
+    if(!in_array($managerId, $managers)){
+      unset($results[$key]);
+    }
+  }
+  return $results;
 }
 
 /**
