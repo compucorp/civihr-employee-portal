@@ -167,6 +167,125 @@ function civihr_employee_portal_views_data_alter(&$data) {
         
     );
     
+    // Appraisals handlers
+    $data['json']['appraisal_cycle_type'] = array(
+        'title' => t('Appraisal Cycle Type'),
+        'help' => t('Appraisal Cycle Type'),
+        'real field' => 'api.AppraisalCycle.getsingle/cycle_type_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_appraisal_cycle_type',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'appraisal_cycle_type',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['json']['appraisal_cycle_period'] = array(
+        'title' => t('Appraisal Cycle Period'),
+        'help' => t('Appraisal Cycle Period'),
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_appraisal_cycle_period',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'appraisal_cycle_period',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['json']['appraisal_status'] = array(
+        'title' => t('Appraisal Status'),
+        'help' => t('Appraisal Status'),
+        'real field' => 'status_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_appraisal_status',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'appraisal_status',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['json']['appraisal_line_manager'] = array(
+        'title' => t('Appraisal Line Manager'),
+        'help' => t('Appraisal Line Manager'),
+        'real field' => 'manager_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_appraisal_line_manager',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'appraisal_line_manager',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['json']['appraisal_due_date'] = array(
+        'title' => t('Appraisal Due Date'),
+        'help' => t('Appraisal Due Date'),
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_appraisal_due_date',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'appraisal_due_date',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['json']['appraisal_contact_id'] = array(
+        'title' => t('Appraisal Contact ID'),
+        'help' => t('Appraisal Contact ID'),
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_appraisal_contact_id',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_appraisal_contact_id_request_handler',
+            'name_field' => 'appraisal_contact_id',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    
     // Add custom date handler
     $data['absence_list']['absence_start_date_timestamp']['field']['handler'] = 'views_handler_field_date';
     $data['absence_list']['absence_start_date_timestamp']['sort']['handler'] = 'views_handler_sort_date';
@@ -334,6 +453,13 @@ function civihr_employee_portal_views_pre_render(&$view) {
             ctools_modal_add_js();
 
         }
+    }
+    
+    if ($view->name == 'appraisals') {
+
+        ctools_include('modal');
+        ctools_modal_add_js();
+
     }
     
     if($view->name == "civihr_staff_directory"){

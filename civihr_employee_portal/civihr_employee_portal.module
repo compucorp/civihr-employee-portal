@@ -657,6 +657,95 @@ function get_task_type($type_id = NULL) {
     return $type_id_value;
 }
 
+function get_appraisal_cycle_type($type_id = NULL) {
+    $appraisalCycleTypes = &drupal_static(__FUNCTION__);
+
+    if (!isset($appraisalCycleTypes)) {
+
+        if ($cache = cache_get('civihr_appraisal_cycle_types')) {
+            $appraisalCycleTypes = $cache->data;
+        }
+        else {
+            try {
+                // Civi init
+                civicrm_initialize();
+
+                // Appraisal cycle types array
+                $appraisalCycleTypes = CRM_Core_OptionGroup::values('appraisal_cycle_type');
+            }
+
+            catch (CiviCRM_API3_Exception $e) {
+                $error = $e->getMessage();
+            }
+
+            // Cache the Appraisal cycle types for 5 minutes
+            cache_set('civihr_appraisal_cycle_types', $appraisalCycleTypes, 'cache', time() + 360);
+        }
+    }
+
+    if ($type_id === null) {
+        return '-';
+    }
+
+    // Get the type values based on the type_id
+    $type_value = $appraisalCycleTypes[$type_id];
+
+    return $type_value;
+}
+
+function get_appraisal_cycle_period($cycleStartDate, $cycleEndDate) {
+    return $cycleStartDate . ' - ' . $cycleEndDate;
+}
+
+function get_appraisal_status($status_id = NULL) {
+    $appraisalStatuses = &drupal_static(__FUNCTION__);
+
+    if (!isset($appraisalStatuses)) {
+
+        if ($cache = cache_get('civihr_appraisal_statuses')) {
+            $appraisalStatuses = $cache->data;
+        }
+        else {
+            try {
+                // Civi init
+                civicrm_initialize();
+
+                // Appraisal cycle types array
+                $appraisalStatuses = CRM_Core_OptionGroup::values('appraisal_status');
+            }
+
+            catch (CiviCRM_API3_Exception $e) {
+                $error = $e->getMessage();
+            }
+
+            // Cache the Appraisal cycle types for 5 minutes
+            cache_set('civihr_appraisal_statuses', $appraisalStatuses, 'cache', time() + 360);
+        }
+    }
+
+    if ($status_id === null) {
+        return '-';
+    }
+
+    // Get the type values based on the type_id
+    $status_value = $appraisalStatuses[$status_id];
+
+    return $status_value;
+}
+
+function get_appraisal_due_date($selfAppraisalDue, $managerAppraisalDue, $gradeDue) {
+    $today = date('Y-m-d');
+    $dueDate = $selfAppraisalDue;
+    if ($selfAppraisalDue < $today) {
+        $dueDate = $managerAppraisalDue;
+    }
+    if ($managerAppraisalDue < $today) {
+        $dueDate = $gradeDue;
+    }
+
+    return $dueDate;
+}
+
 /**
  * Function for caching civicrm_uf_match table from CiviCRM
  */
@@ -854,6 +943,17 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
+    
+    /**
+     * Appraisals menu items.
+     */
+    $items['appraisals_list'] = array(
+        'title' => 'View Appraisals',
+        'page callback' => 'civihr_employee_portal_get_appraisals_list',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
 
     /**
      * Not used currently
@@ -3064,6 +3164,32 @@ function _task_can_be_edited($taskId = null) {
     }
 
     return $result;
+}
+
+
+/**
+ * Returns the document list
+ */
+function civihr_employee_portal_get_appraisals_list() {
+
+    $result_output = array(
+        'values' => array(),
+    );
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (!empty($extensions['uk.co.compucorp.civicrm.appraisals'])) {
+        $result_output = civicrm_api3('Appraisal', 'get', array(
+            'sequential' => 1,
+            //'is_deleted' => 0,
+            'is_current' => 1,
+            'api.AppraisalCycle.getsingle' => array('id' => "\$value.appraisal_cycle_id"),
+            'return' => "id,appraisal_cycle_id,contact_id,manager_id,self_appraisal_due,manager_appraisal_due,grade_due,due_changed,meeting_date,meeting_completed,approved_by_employee,grade,notes,status_id,original_id,created_date,is_current",
+            'options' => array('limit' => 0),
+        ));
+    }
+
+    // Output json
+    drupal_json_output($result_output);
+    drupal_exit();
 }
 
 
