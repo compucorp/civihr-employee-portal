@@ -330,9 +330,6 @@
              * @param {JSON} (optional) chartData - The data to visualize
              */
             monthlyChart: function (chartData, dateRange, object) {
-                console.log(object);
-                console.log(object.getResultSummary());
-
                 // This is results summary page purely through js
                 object.resetResultPanel();
 
@@ -413,7 +410,6 @@
 
                     // Get the selected range start date so we can use it in our calculations
                     CurrentDate = new Date(date_ranges[0].getFullYear(), date_ranges[0].getMonth());
-                    console.log(CurrentDate);
 
                         // Get monthly data / location
                         monthly_data = [];
@@ -451,9 +447,6 @@
                             .attr("style", "stroke: " + color_z(tt) + "; stroke-width: 2; fill: none;")
                             .attr("d", valueline(monthly_data));
 
-                        console.log(monthly_data);
-                        console.log(nested_data[tt]);
-
                         // Set result summary column data
                         object.addResultSummaryColumn(monthly_data, nested_data[tt]);
 
@@ -461,8 +454,6 @@
 
                 // Create rows
                 object.setResultSummary(monthly_data);
-
-                console.log(object.getResultSummary());
 
                 // Generate results summary and override datawrapper
                 object.$DOM.sections.dataWrapper.show();
@@ -473,7 +464,6 @@
                     text: function(d) { return d.key; }
                 });
 
-                console.log(nested_data);
             },
 
             /**
@@ -1288,16 +1278,17 @@
 
         var $sliderControl = _this.$DOM.sections.slider.find('[data-graph-slider-control]');
 
-        var format = { view: 'DD/MM/YYYY', api: 'YYYY-MM-DD' };
-        var range = [moment('01/01/2010', format.view), moment('01/01/2014', format.view)];
+        var format = { view: 'DD/MM/YYYY', month_view: 'MM/YYYY', api: 'YYYY-MM-DD' };
+        var range = [moment('01/01/2010', format.view), moment('31/12/2013', format.view)];
         var init = [moment('01/01/2012', format.view), moment('31/12/2012', format.view)];
+        var start_range_date = '01/01/2010';
 
         $sliderControl.slider({
             range: true,
-            step: 86400,
-            min: range[0].unix(),
-            max: range[1].unix(),
-            values: [init[0].unix(), init[1].unix()],
+            step: 1,
+            min: 0,
+            max: 47,
+            values: [24, 35],
             create: function () {
                 $sliderControl.find('.ui-slider-handle').each(function (index) {
                     $(this).attr({
@@ -1305,13 +1296,16 @@
                         'data-animation': 'false',
                         'data-placement': 'bottom',
                         'data-trigger': 'manual',
-                        'title': init[index].format(format.view)
+                        'title': init[index].format(format.month_view)
                     }).tooltip('show');
                 });
             },
             change: function(event, ui) {
-                var startDate = moment.unix(ui.values[0]);
-                var endDate = moment.unix(ui.values[1]);
+                var startDate = moment(start_range_date, format.view);
+                startDate = startDate.add(ui.values[0], 'months');
+
+                var endDate = moment(start_range_date, format.view);
+                endDate = endDate.add(ui.values[1], 'months');
 
                 redrawTooltip(ui.handle, ui.value);
 
@@ -1333,7 +1327,7 @@
          */
         function redrawTooltip(handle, value) {
             $(handle)
-                .attr('title', moment.unix(value).format(format.view))
+                .attr('title', moment(start_range_date, format.view).add(value, 'months').format(format.month_view))
                 .tooltip('destroy')
                 .tooltip('show');
         }
