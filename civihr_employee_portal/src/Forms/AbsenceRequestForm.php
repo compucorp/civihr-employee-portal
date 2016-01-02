@@ -414,6 +414,7 @@ class AbsenceRequestForm {
         // fetch all leaves that has End time greater than today
         $absencesDataQuery = db_select('absence_list', 'al')
             ->condition('contact_id', $_SESSION['CiviCRM']['userID'])
+            ->condition('absence_status', 3, '<>')
             //->condition('absence_end_date_timestamp', strtotime('today'), '>')
             ->fields('al', array('absence_start_date_timestamp', 'absence_end_date_timestamp'));
 
