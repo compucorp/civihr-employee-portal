@@ -65,6 +65,7 @@ foreach ($contactsResult['values'] as $key => $value) {
 
 function _get_task_filter_by_date($date) {
     $today = date('Y-m-d');
+    $tomorrow = new DateTime('tomorrow');
     $nbDay = date('N', strtotime($today));
     $sunday = new DateTime($today);
     $sunday->modify('+' . (7 - $nbDay) . ' days');
@@ -79,6 +80,9 @@ function _get_task_filter_by_date($date) {
     }
     if ($taskDate > $weekEnd) {
         return 4;
+    }
+    if ($taskDate == $tomorrow->format('Y-m-d')){
+        return 5;
     }
     return 3;
 }
@@ -155,7 +159,16 @@ function _get_task_filter_by_date($date) {
                             endif; ?>
                            <?php
                            if($field == 'activity_date_time') {
-                             $content = date('m/d/Y', strtotime(strip_tags($content)));
+                             $taskDate = strtotime(strip_tags($content));
+                             $dateFilter = _get_task_filter_by_date(date('Y-m-d', $taskDate));
+
+                             if($dateFilter == 5){
+                               $content = 'Tomorrow';
+                             }else if($dateFilter == 2){
+                               $content = 'Today';
+                             }else{
+                               $content = date('m/d/Y', $taskDate);
+                             }
                            }
                            ?>
                             <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
