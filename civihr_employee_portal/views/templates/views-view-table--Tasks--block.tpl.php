@@ -122,7 +122,7 @@ function _get_task_filter_by_date($date) {
                     <thead>
                         <tr>
                         <?php foreach ($header as $field => $label): ?>
-                            <?php if ($field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2' || $field == 'activity_date_time'):
+                            <?php if ($field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2'):
                                 continue;
                             endif; ?>
                             <th <?php if ($header_classes[$field]) { print 'class="'. $header_classes[$field] . '" '; } ?>>
@@ -150,9 +150,14 @@ function _get_task_filter_by_date($date) {
                     <?php $class = 'task-row task-filter-id-' . _get_task_filter_by_date($row['activity_date_time']) . ' ' . $rowType; ?>
                     <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $contactsFilterValues[strip_tags($row['task_contacts'])]; ?>">
                         <?php foreach ($row as $field => $content): ?>
-                            <?php if ($field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2' || $field == 'activity_date_time'):
+                            <?php if ($field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2'):
                                 continue;
                             endif; ?>
+                           <?php
+                           if($field == 'activity_date_time') {
+                             $content = date('m/d/Y', strtotime(strip_tags($content)));
+                           }
+                           ?>
                             <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
 								<?php //if (_task_can_be_edited($row['id'])): ?>
                                 <a
