@@ -55,6 +55,7 @@ files[] = views/includes/civihr_employee_portal_handler_task_type.inc
 files[] = views/includes/civihr_employee_portal_handler_appraisal_cycle_type.inc
 files[] = views/includes/civihr_employee_portal_handler_appraisal_cycle_period.inc
 files[] = views/includes/civihr_employee_portal_handler_appraisal_status.inc
+files[] = views/includes/civihr_employee_portal_handler_appraisal_employee.inc
 files[] = views/includes/civihr_employee_portal_handler_appraisal_line_manager.inc
 files[] = views/includes/civihr_employee_portal_handler_appraisal_due_date.inc
 files[] = views/includes/civihr_employee_portal_handler_appraisal_contact_id.inc

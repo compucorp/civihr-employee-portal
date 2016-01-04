@@ -23,33 +23,23 @@ global $user;
 $civiUser = get_civihr_uf_match_data($user->uid);
 
 $filters = array(
-    1 => t('Overdue'),
-    2 => t('Due'),
-    3 => t('Previous'),
+    1 => t('Ongoing Appraisals'),
+    2 => t('Previous Appraisals'),
 );
 $filtersCount = array_combine(array_keys($filters), array_fill(0, count($filters), 0));
 
 // Calculating filter counters.
 // TODO: maybe move this code part below into separate function in SSP module?
 foreach ($rows as $row):
-    $filtersCount[_get_appraisal_manager_filter_type($row['status_id'], $row['self_appraisal_due'], $row['manager_appraisal_due'], $row['grade_due'])]++;
+    $filtersCount[_get_appraisal_employee_filter_type($row['status_id'], $row['self_appraisal_due'], $row['manager_appraisal_due'], $row['grade_due'])]++;
 endforeach;
 
-function _get_appraisal_manager_filter_type($status, $selfAppraisalDue, $managerAppraisalDue, $gradeDue) {
+function _get_appraisal_employee_filter_type($status, $selfAppraisalDue, $managerAppraisalDue, $gradeDue) {
     $today = date('Y-m-d');
-    if ($status === 5) {
-        return 3;
+    if ($gradeDue < $today) {
+        return 2;
     }
-    if ($status === 1 && $selfAppraisalDue < $today) {
-        return 1;
-    }
-    if ($status === 2 && $managerAppraisalDue < $today) {
-        return 1;
-    }
-    if ($status === 3 && $gradeDue < $today) {
-        return 1;
-    }
-    return 2;
+    return 1;
 }
 
 ?>
@@ -97,14 +87,12 @@ function _get_appraisal_manager_filter_type($status, $selfAppraisalDue, $manager
                         <?php endforeach; ?>
                             <th class="appraisal-column-view-self-appraisal"></th>
                             <th class="appraisal-column-view-manager-appraisal"></th>
-                            <th class="appraisal-column-upload-appraisal"></th>
-                            <th class="appraisal-column-view"></th>
                         </tr>
                     </thead>
                 <?php endif; ?>
                 <tbody>
                 <?php foreach ($rows as $row_count => $row): ?>
-                    <?php $class = 'appraisal-row appraisal-filter-type-' . _get_appraisal_manager_filter_type($row['status_id'], $row['self_appraisal_due'], $row['manager_appraisal_due'], $row['grade_due']); ?>
+                    <?php $class = 'appraisal-row appraisal-filter-type-' . _get_appraisal_employee_filter_type($row['status_id'], $row['self_appraisal_due'], $row['manager_appraisal_due'], $row['grade_due']); ?>
                     <tr id="row-appraisal-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?>">
                         <?php foreach ($row as $field => $content): ?>
                             <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
@@ -119,6 +107,11 @@ function _get_appraisal_manager_filter_type($status, $selfAppraisalDue, $manager
                                 <a href="/civicrm/appraisals/file/zip?entityID=<?php print $row['id']; ?>&entityTable=civicrm_appraisal-self" target="_blank">
                                     <?php print t('View Self Appraisal'); ?>
                                 </a>
+<?php else: ?>
+                                <a href="/hr-appraisals-employee/nojs/upload/<?php print strip_tags($row['id']); ?>"
+                                    class="ctools-use-modal ctools-modal-civihr-custom-style ctools-use-modal-processed">
+                                    <?php print t('Upload Self Appraisal'); ?>
+                                </a>
 <?php endif; ?>
                             </td>
                             <td class="appraisal-column-view-manager-appraisal">
@@ -126,19 +119,9 @@ function _get_appraisal_manager_filter_type($status, $selfAppraisalDue, $manager
                                 <a href="/civicrm/appraisals/file/zip?entityID=<?php print $row['id']; ?>&entityTable=civicrm_appraisal-manager" target="_blank">
                                     <?php print t('View Manager Appraisal'); ?>
                                 </a>
+<?php else: ?>
+                                <?php print t('Awaiting Manager Appraisal'); ?>
 <?php endif; ?>
-                            </td>
-                            <td class="appraisal-column-upload-appraisal">
-                                <a href="/hr-appraisals-manager/nojs/upload/<?php print strip_tags($row['id']); ?>"
-                                    class="ctools-use-modal ctools-modal-civihr-custom-style ctools-use-modal-processed">
-                                    <?php print t('Upload Appraisal'); ?>
-                                </a>
-                            </td>
-                            <td class="appraisal-column-view">
-                                <a href="/hr-appraisals-manager/nojs/view/<?php print strip_tags($row['id']); ?>"
-                                    class="ctools-use-modal ctools-modal-civihr-custom-style ctools-use-modal-processed">
-                                    <?php print t('View'); ?>
-                                </a>
                             </td>
                     </tr>
                 <?php endforeach; ?>
@@ -203,26 +186,10 @@ function _get_appraisal_manager_filter_type($status, $selfAppraisalDue, $manager
         function showAppraisalColumns(filterId) {
             var allColumns = [
                 'views-field-appraisal-due-date',
-                'views-field-grade',
-                'appraisal-column-view-manager-appraisal',
-                'appraisal-column-upload-appraisal',
-                'appraisal-column-view'
             ];
             var hideColumns = {
-                0: [],
-                1: [
-                    'views-field-grade',
-                    'appraisal-column-view-manager-appraisal',
-                    'appraisal-column-view'
-                ],
                 2: [
-                    'views-field-grade',
-                    'appraisal-column-view-manager-appraisal',
-                    'appraisal-column-view'
-                ],
-                3: [
                     'views-field-appraisal-due-date',
-                    'appraisal-column-upload-appraisal'
                 ]
             };
             

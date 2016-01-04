@@ -227,6 +227,26 @@ function civihr_employee_portal_views_data_alter(&$data) {
         'sort' => array('handler' => 'views_json_query_handler_sort'),
     );
     
+    $data['json']['appraisal_employee'] = array(
+        'title' => t('Appraisal Employee'),
+        'help' => t('Appraisal Employee'),
+        'real field' => 'contact_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_appraisal_employee',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'appraisal_employee',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
     $data['json']['appraisal_line_manager'] = array(
         'title' => t('Appraisal Line Manager'),
         'help' => t('Appraisal Line Manager'),

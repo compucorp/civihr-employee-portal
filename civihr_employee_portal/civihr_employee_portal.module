@@ -954,6 +954,30 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
     
+    $items['hr-appraisals-manager/%ctools_js/upload/%'] = array(
+        'title' => 'Appraisal Upload',
+        'page callback' => 'civihr_employee_portal_appraisal_manager_upload',
+        'page arguments' => array(1, 3),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    $items['hr-appraisals-manager/%ctools_js/view/%'] = array(
+        'title' => 'Appraisal View',
+        'page callback' => 'civihr_employee_portal_appraisal_manager_view',
+        'page arguments' => array(1, 3),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    $items['hr-appraisals-employee/%ctools_js/upload/%'] = array(
+        'title' => 'Appraisal Upload',
+        'page callback' => 'civihr_employee_portal_appraisal_employee_upload',
+        'page arguments' => array(1, 3),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
 
     /**
      * Not used currently
@@ -2285,7 +2309,7 @@ function civihr_employee_portal_document_form($form, &$form_state) {
             <br />
             <pre id="console"></pre>
             <script>
-            CRM.$(document).trigger("uploaderFormReady", {id: ' . $document['id'] . ', formId: "civihr-employee-portal-document-form", files:' . json_encode($files) . '});
+            CRM.$(document).trigger("uploaderFormReady", {id: ' . $document['id'] . ', table: "civicrm_activity", url: "/civicrm/tasksassignments/file/upload", formId: "civihr-employee-portal-document-form", title: "Document files", files:' . json_encode($files) . '});
             </script>
         </div></div>',
     );
@@ -3168,7 +3192,7 @@ function _task_can_be_edited($taskId = null) {
 
 
 /**
- * Returns the document list
+ * Returns the JSON containing Appraisals list
  */
 function civihr_employee_portal_get_appraisals_list() {
 
@@ -3191,6 +3215,508 @@ function civihr_employee_portal_get_appraisals_list() {
     drupal_json_output($result_output);
     drupal_exit();
 }
+
+/**
+* Ajax menu callback.
+*/
+function civihr_employee_portal_appraisal_manager_upload($ajax, $id) {
+
+    if ($ajax) {
+        ctools_include('ajax');
+        ctools_include('modal');
+
+        $title = t('Appraisal Upload');
+
+        $form_state = array(
+            'ajax' => TRUE,
+            'is_ajax_update' => TRUE,
+            'title' => $title,
+            'id' => $id,
+        );
+
+        // Since this will run again on form rebuild while still in the modal, prevent
+        // form IDs from being incremented.
+        // @todo https://drupal.org/node/1305882
+        if (!empty($_POST['ajax_html_ids'])) {
+            unset($_POST['ajax_html_ids']);
+        }
+
+        // Use ctools to generate ajax instructions for the browser to create
+        // a form in a modal popup.
+        $output = ctools_modal_form_wrapper('civihr_employee_portal_appraisal_manager_form', $form_state);
+
+        // If the form has been submitted, there may be additional instructions
+        // such as dismissing the modal popup.
+        if (!empty($form_state['executed'])) {
+
+            // Add the responder javascript, required by ctools
+            ctools_add_js('ajax-responder');
+
+            $output[] = ajax_command_replace('.messages', 'all good');
+            $output[] = ctools_modal_command_dismiss();
+            $output[] = ctools_ajax_command_redirect('hr-appraisals-manager');
+
+        }
+
+        // Return the ajax instructions to the browser via ajax_render().
+        print ajax_render($output);
+        drupal_exit();
+
+    }
+
+    else {
+        return drupal_get_form('civihr_employee_portal_appraisal_manager_form');
+    }
+
+}
+
+/**
+ * Custom Document dashboard block form.
+ */
+function civihr_employee_portal_appraisal_manager_form($form, &$form_state) {
+
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.appraisals'])) {
+        return $form;
+    }
+
+    $result = civicrm_api3('Appraisal', 'get', array(
+        'sequential' => 1,
+        'id' => $form_state['id'],
+    ));
+    $appraisal = CRM_Utils_Array::first($result['values']);
+
+    $files = CRM_Appraisals_Page_Files::fileList(
+        array(
+            'entityTable' => 'civicrm_appraisal-manager',
+            'entityID' => $appraisal['id'],
+        )
+    );
+
+    $form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
+    $form['#suffix'] = '</div></article>';
+
+    $form['id'] = array(
+        '#type' => 'hidden',
+        '#value' => $appraisal['id'],
+    );
+
+    $form['files'] = array(
+        '#type' => 'plupload',
+        '#title' => 'Files',
+        '#prefix' => '<div class="row"><div class="col-md-12"><div class="well drop-zone" id="drop-target">Drop document here</div>',
+        '#suffix' => '<div id="notsupported">Your browser doesn\'t support multiupload feature.</div>
+            <div>
+                <table class="table table-condensed table-upload">
+                    <colgroup>
+                            <col class="col-index">
+                            <col class="col-name">
+                            <col class="col-size">
+                            <col class="col-status">
+                            <col class="col-action">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Size</th>
+                            <th>Progress</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="filelist">
+                    </tbody>
+                </table>
+            </div>
+            <br />
+            <div id="container">
+                <a href class="btn btn-primary" id="pickfiles">Select files</a>
+            </div>
+            <br />
+            <pre id="console"></pre>
+            <script>
+            CRM.$(document).trigger("uploaderFormReady", {id: ' . $appraisal['id'] . ', table: "civicrm_appraisal-manager", url: "/civicrm/appraisals/file/upload", formId: "civihr-employee-portal-appraisal-manager-form", title: "Appraisal file", files:' . json_encode($files) . '});
+            </script>
+        </div></div>',
+    );
+
+    $form['meeting_date'] = array(
+        '#type' => 'date_popup',
+        '#title' => t('Appraisal meeting date'),
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div></div>',
+        '#date_format' => 'Y-m-d',
+        '#date_year_range' => '-10:+10',
+        '#default_value' => isset($appraisal['meeting_date']) ? strip_tags($appraisal['meeting_date']) : '',
+    );
+    
+    $form['checkboxes'] = array(
+        '#type' => 'checkboxes',
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div></div>',
+        '#options' => array(
+            1 => t('Appraisal meeting completed'),
+            2 => t('Discussed and approved with employee')
+        ),
+        '#default_value' => array(
+            $appraisal['meeting_completed'] ? 1 : 0,
+            $appraisal['approved_by_employee'] ? 2 : 0,
+        ),
+    );
+
+    $form['notes'] = array(
+        '#type' => 'textarea',
+        '#title' => t('Notes'),
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div></div>',
+        '#rows' => 5,
+        '#cols' => 100,
+        '#default_value' => isset($appraisal['notes']) ? strip_tags($appraisal['notes']) : '',
+    );
+    
+    $form['grade'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Grade'),
+        '#prefix' => '<div class="row"><div class="col-md-12">',
+        '#suffix' => '</div></div>',
+        '#default_value' => isset($appraisal['grade']) ? strip_tags($appraisal['grade']) : '0',
+    );
+
+    $form['delete_files'] = array(
+        '#type' => 'hidden',
+    );
+
+    $form['save'] = array(
+        '#type' => 'submit',
+        '#value' => t('Save and set to Awaiting Grade'),
+        '#attributes' => array(
+            'class' => array(
+                'btn',
+                'btn-primary'
+            ),
+        ),
+    );
+
+    // Add the validation function
+    $form['#validate'][] = 'civihr_employee_portal_appraisal_manager_form_validate';
+
+    // Add the submit function
+    $form['#submit'][] = 'civihr_employee_portal_appraisal_manager_form_submit';
+
+    return $form;
+}
+
+function civihr_employee_portal_appraisal_manager_form_validate($form, &$form_state) {
+    if (empty($form_state['values']['meeting_date'])) {
+        form_set_error('meeting_date', t('Please specify Appraisal meeting date.'));
+    }
+}
+
+function civihr_employee_portal_appraisal_manager_form_submit($form, &$form_state) {
+    $result_output = array();
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.appraisals'])) {
+        return false;
+    }
+
+    $id = (int)strip_tags($form_state['values']['id']);
+    $meetingDate = substr(strip_tags($form_state['values']['meeting_date']), 0, 10);
+    $meetingCompleted = strip_tags($form_state['values']['checkboxes'][1]) ? 1 : 0;
+    $meetingApproved = (int)strip_tags($form_state['values']['checkboxes'][2]) ? 1 : 0;
+    $notes = strip_tags($form_state['values']['notes']);
+    $grade = (int)strip_tags($form_state['values']['grade']);
+    
+    $params = array(
+        'sequential' => 1,
+        'id' => $id,
+        'meeting_date' => $meetingDate,
+        'meeting_completed' => $meetingCompleted,
+        'approved_by_employee' => $meetingApproved,
+        'notes' => $notes,
+    );
+    //TODO: if (has_appraisal_permissions to grade) {
+    $params['grade'] = $grade;
+    //}
+    
+    // setting appraisal status to Awaiting Grade:
+    $params['status_id'] = 3;
+
+    $result = civicrm_api3('Appraisal', 'create', $params);
+
+    $deleteFiles = json_decode($form_state['values']['delete_files'], true);
+    if (!empty($deleteFiles)) {
+        foreach ($deleteFiles as $deleteFile) {
+            $result = CRM_Appraisals_Page_Files::fileDelete(
+                array(
+                    'fileID' => (int)$deleteFile['id'],
+                    'entityTable' => 'civicrm_appraisal-manager',
+                    'entityID' => $form_state['values']['id'],
+                )
+            );
+        }
+    }
+
+    //clear views cache to reflect changes
+    _clear_json_cache();
+
+    drupal_set_message(t('Appraisal changes has been saved.'), 'success');
+    //drupal_goto('hr-appraisals-manager');
+}
+
+function civihr_employee_portal_appraisal_manager_view($ajax, $id) {
+    
+    $appraisal = civicrm_api3('Appraisal', 'getsingle', array(
+        'sequential' => 1,
+        'id' => (int)$id,
+    ));
+    $appraisal['meeting_date'] = substr($appraisal['meeting_date'], 0, 10);
+    $appraisalCycle = civicrm_api3('AppraisalCycle', 'getsingle', array(
+        'sequential' => 1,
+        'id' => $appraisal['appraisal_cycle_id'],
+    ));
+    $contact = get_civihr_contact_data($appraisal['contact_id']);
+    $manager = get_civihr_contact_data($appraisal['manager_id']);
+    $title = $contact['display_name'] . ' Appraisal';
+    $documents = civihr_employee_portal_get_appraisal_documents($appraisal['id']);
+    
+    $output = theme_render_template(
+        drupal_get_path('module', 'civihr_employee_portal') .
+        '/templates/civihr-employee-portal-appraisal-manager-view-modal.tpl.php',
+        array(
+            'appraisal' => $appraisal,
+            'appraisalCycle' => $appraisalCycle,
+            'contact' => $contact,
+            'manager' => $manager,
+            'appraisalStatus' => get_appraisal_status($appraisal['status_id']),
+            'appraisalCycleType' => get_appraisal_cycle_type($appraisalCycle['type_id']),
+            'documents' => $documents,
+        )
+    );
+    
+    if ($ajax) {
+        ctools_include('ajax');
+        ctools_include('modal');
+
+        ctools_modal_render($title, $output);
+        drupal_exit();
+    } else {
+        return $output;
+    }
+
+}
+
+function civihr_employee_portal_appraisal_employee_upload($ajax, $id) {
+
+    if ($ajax) {
+        ctools_include('ajax');
+        ctools_include('modal');
+
+        $title = t('Appraisal Upload');
+
+        $form_state = array(
+            'ajax' => TRUE,
+            'is_ajax_update' => TRUE,
+            'title' => $title,
+            'id' => $id,
+        );
+
+        // Since this will run again on form rebuild while still in the modal, prevent
+        // form IDs from being incremented.
+        // @todo https://drupal.org/node/1305882
+        if (!empty($_POST['ajax_html_ids'])) {
+            unset($_POST['ajax_html_ids']);
+        }
+
+        // Use ctools to generate ajax instructions for the browser to create
+        // a form in a modal popup.
+        $output = ctools_modal_form_wrapper('civihr_employee_portal_appraisal_employee_form', $form_state);
+
+        // If the form has been submitted, there may be additional instructions
+        // such as dismissing the modal popup.
+        if (!empty($form_state['executed'])) {
+
+            // Add the responder javascript, required by ctools
+            ctools_add_js('ajax-responder');
+
+            $output[] = ajax_command_replace('.messages', 'all good');
+            $output[] = ctools_modal_command_dismiss();
+            $output[] = ctools_ajax_command_redirect('dashboard');
+
+        }
+
+        // Return the ajax instructions to the browser via ajax_render().
+        print ajax_render($output);
+        drupal_exit();
+
+    }
+
+    else {
+        return drupal_get_form('civihr_employee_portal_appraisal_employee_form');
+    }
+
+}
+
+/**
+ * Custom Document dashboard block form.
+ */
+function civihr_employee_portal_appraisal_employee_form($form, &$form_state) {
+
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.appraisals'])) {
+        return $form;
+    }
+
+    $result = civicrm_api3('Appraisal', 'get', array(
+        'sequential' => 1,
+        'id' => $form_state['id'],
+    ));
+    $appraisal = CRM_Utils_Array::first($result['values']);
+
+    $files = CRM_Appraisals_Page_Files::fileList(
+        array(
+            'entityTable' => 'civicrm_appraisal-self',
+            'entityID' => $appraisal['id'],
+        )
+    );
+
+    $form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
+    $form['#suffix'] = '</div></article>';
+
+    $form['id'] = array(
+        '#type' => 'hidden',
+        '#value' => $appraisal['id'],
+    );
+
+    $form['files'] = array(
+        '#type' => 'plupload',
+        '#title' => 'Files',
+        '#prefix' => '<div class="row"><div class="col-md-12"><div class="well drop-zone" id="drop-target">Drop document here</div>',
+        '#suffix' => '<div id="notsupported">Your browser doesn\'t support multiupload feature.</div>
+            <div>
+                <table class="table table-condensed table-upload">
+                    <colgroup>
+                            <col class="col-index">
+                            <col class="col-name">
+                            <col class="col-size">
+                            <col class="col-status">
+                            <col class="col-action">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Size</th>
+                            <th>Progress</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="filelist">
+                    </tbody>
+                </table>
+            </div>
+            <br />
+            <div id="container">
+                <a href class="btn btn-primary" id="pickfiles">Select files</a>
+            </div>
+            <br />
+            <pre id="console"></pre>
+            <script>
+            CRM.$(document).trigger("uploaderFormReady", {id: ' . $appraisal['id'] . ', table: "civicrm_appraisal-self", url: "/civicrm/appraisals/file/upload", formId: "civihr-employee-portal-appraisal-employee-form", title: "Appraisal file", files:' . json_encode($files) . '});
+            </script>
+        </div></div>',
+    );
+
+    $form['delete_files'] = array(
+        '#type' => 'hidden',
+    );
+
+    $form['save'] = array(
+        '#type' => 'submit',
+        '#value' => t('Save and Assign to Manager'),
+        '#attributes' => array(
+            'class' => array(
+                'btn',
+                'btn-primary'
+            ),
+        ),
+    );
+
+    // Add the validation function
+    $form['#validate'][] = 'civihr_employee_portal_appraisal_employee_form_validate';
+
+    // Add the submit function
+    $form['#submit'][] = 'civihr_employee_portal_appraisal_employee_form_submit';
+
+    return $form;
+}
+
+function civihr_employee_portal_appraisal_employee_form_validate($form, &$form_state) {
+    return TRUE;
+}
+
+function civihr_employee_portal_appraisal_employee_form_submit($form, &$form_state) {
+    $result_output = array();
+    $extensions = CRM_Core_PseudoConstant::getExtensions();
+    if (empty($extensions['uk.co.compucorp.civicrm.appraisals'])) {
+        return false;
+    }
+
+    $id = (int)strip_tags($form_state['values']['id']);
+    
+    $params = array(
+        'sequential' => 1,
+        'id' => $id,
+    );
+    
+    // setting appraisal status to Awaiting Manager Appraisal:
+    $params['status_id'] = 2;
+
+    $result = civicrm_api3('Appraisal', 'create', $params);
+
+    $deleteFiles = json_decode($form_state['values']['delete_files'], true);
+    if (!empty($deleteFiles)) {
+        foreach ($deleteFiles as $deleteFile) {
+            $result = CRM_Appraisals_Page_Files::fileDelete(
+                array(
+                    'fileID' => (int)$deleteFile['id'],
+                    'entityTable' => 'civicrm_appraisal-self',
+                    'entityID' => $form_state['values']['id'],
+                )
+            );
+        }
+    }
+
+    //clear views cache to reflect changes
+    _clear_json_cache();
+
+    drupal_set_message(t('Appraisal changes has been saved.'), 'success');
+    //drupal_goto('hr-appraisals-manager');
+}
+
+function civihr_employee_portal_get_appraisal_documents($appraisalId) {
+    
+    $documents = array();
+    $selfAppraisalFiles = CRM_Appraisals_Page_Files::fileList(array(
+        'entityTable' => 'civicrm_appraisal-self',
+        'entityID' => $appraisalId,
+    ));
+    foreach ($selfAppraisalFiles as $file) {
+        $file['appraisalFileTypeLabel'] = 'Self Appraisal';
+        $documents['selfAppraisal'] = $file;
+    }
+    $managerAppraisalFiles = CRM_Appraisals_Page_Files::fileList(array(
+        'entityTable' => 'civicrm_appraisal-manager',
+        'entityID' => $appraisalId,
+    ));
+    foreach ($managerAppraisalFiles as $file) {
+        $file['appraisalFileTypeLabel'] = 'Manager Appraisal';
+        $documents['managerAppraisal'] = $file;
+    }
+    
+    return $documents;
+}
+
+////////////////////////////// end of Appraisals functions.
 
 
 /**
