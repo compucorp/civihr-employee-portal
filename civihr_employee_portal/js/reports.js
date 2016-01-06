@@ -797,32 +797,36 @@
                 }.bind(this)
             }, $graphFilters);
         } else {
-            this.addButton({
-                active: this.getChartType() === 'bar',
-                label: 'bar chart',
-                click: function () {
-                    this.setChartType('bar');
-                    this.drawGraph();
-                }.bind(this)
-            }, $graphFilters);
 
-            this.addButton({
-                active: this.getChartType() === 'pie',
-                label: 'pie chart',
-                click: function () {
-                    this.setChartType('pie');
-                    this.drawGraph();
-                }.bind(this)
-            }, $graphFilters);
+            if (Drupal.settings.civihr_employee_portal_reports.prefix == 'civihr_reports_monthly') {
+                this.addButton({
+                    active: this.getChartType() === 'monthly_chart',
+                    label: 'monthly chart',
+                    click: function () {
+                        this.setChartType('monthly_chart');
+                        this.drawGraph();
+                    }.bind(this)
+                }, $graphFilters);
+            }
+            else {
+                this.addButton({
+                    active: this.getChartType() === 'bar',
+                    label: 'bar chart',
+                    click: function () {
+                        this.setChartType('bar');
+                        this.drawGraph();
+                    }.bind(this)
+                }, $graphFilters);
 
-            this.addButton({
-                active: this.getChartType() === 'monthly_chart',
-                label: 'monthly chart',
-                click: function () {
-                    this.setChartType('monthly_chart');
-                    this.drawGraph();
-                }.bind(this)
-            }, $graphFilters);
+                this.addButton({
+                    active: this.getChartType() === 'pie',
+                    label: 'pie chart',
+                    click: function () {
+                        this.setChartType('pie');
+                        this.drawGraph();
+                    }.bind(this)
+                }, $graphFilters);
+            }
         }
     };
 
@@ -1222,6 +1226,24 @@
     };
 
     /**
+     * Initializes the required date filter element
+     *
+     */
+    CustomReport.prototype.initDateFilters = function() {
+        // For montly reports load the date slider
+        // Otherwise load the date picker filter
+        // If more logic needed maybe we can change to switch statement
+        if (Drupal.settings.civihr_employee_portal_reports.prefix == 'civihr_reports_monthly') {
+            // Init date slider
+            this.initSlider();
+        }
+        else {
+            // Init date single filter (datepicker)
+            this.initCalendar();
+        }
+    };
+
+    /**
      * Initializes the object
      *
      */
@@ -1238,11 +1260,8 @@
 
         this.getDOMElements();
 
-        // Init date single filter
-        this.initCalendar();
-
-        // Init date slider
-        this.initSlider();
+        // Set datepicker or date range filter
+        this.initDateFilters();
 
         this.generateMainFilters();
 
@@ -1353,6 +1372,11 @@
                 // grouped_bar chart, reset it to default bar chart
                 if (this.setChartType() === 'grouped_bar') {
                     this.setChartType('bar');
+                }
+
+                // Monthly chart (set the monthly chart type)
+                if (Drupal.settings.civihr_employee_portal_reports.prefix == 'civihr_reports_monthly') {
+                    this.setChartType('monthly_chart');
                 }
             }
         }
