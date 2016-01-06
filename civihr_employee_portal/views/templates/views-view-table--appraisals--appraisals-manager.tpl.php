@@ -1,4 +1,54 @@
 <?php
+global $user;
+$civiUser = get_civihr_uf_match_data($user->uid);
+$managerChartData = get_appraisal_manager_chart_data($civiUser['contact_id']);
+$previousCycleAverageGrade = CRM_Appraisals_BAO_AppraisalCycle::getPreviousCycleAverageGrade($civiUser['contact_id']);
+$allCyclesAverageGrade = CRM_Appraisals_BAO_AppraisalCycle::getAllCyclesAverageGrade($civiUser['contact_id']);
+?>
+
+<div class="appraisals-manager-chart col-md-12">
+    <div class="col-md-4">
+        <h3><?php print t('Progress (current cycle)'); ?></h3>
+        <hr>
+        <canvas id="appraisals-manager-chart-canvas" height="150"></canvas>
+    </div>
+    <div class="col-md-4">
+        <h3><?php print t('Avg. Grade (previous cycle)'); ?></h3>
+        <hr>
+        <div class="grade text-center"><?php print number_format($previousCycleAverageGrade, 2, '.', ''); ?></div>
+        <hr>
+        <small class="text-center"><?php print t('Average grade for staff you manage from previous cycle'); ?></small>
+    </div>
+    <div class="col-md-4">
+        <h3><?php print t('Avg. Grade (all cycles)'); ?></h3>
+        <hr>
+        <div class="grade text-center"><?php print number_format($allCyclesAverageGrade, 2, '.', ''); ?></div>
+        <hr>
+        <small class="text-center"><?php print t('Average grade for staff you manage from all cycles'); ?></small>
+    </div>
+</div>
+
+<script>
+    var barChartData = {
+            labels : [<?php print implode(', ', $managerChartData['labels']); ?>],
+            datasets : [
+                {
+                    fillColor : "rgba(220,220,220,0.5)",
+                    strokeColor : "rgba(220,220,220,0.8)",
+                    highlightFill: "rgba(220,220,220,0.75)",
+                    highlightStroke: "rgba(220,220,220,1)",
+                    data : [<?php print implode(', ', $managerChartData['cycleStatusData']); ?>]
+                }
+            ]
+    };
+    window.onload = function(){
+        var ctx = document.getElementById("appraisals-manager-chart-canvas").getContext("2d");
+        window.myBar = new Chart(ctx).Bar(barChartData, {
+            responsive : true
+        });
+    }
+</script>
+<?php
 
 /**
  * @file
@@ -18,9 +68,6 @@
  *   field id, then row number. This matches the index in $rows.
  * @ingroup views_templates
  */
-
-global $user;
-$civiUser = get_civihr_uf_match_data($user->uid);
 
 $filters = array(
     1 => t('Overdue'),

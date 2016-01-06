@@ -112,3 +112,16 @@ and open the template in the editor.
       text-overflow: ellipsis;
 }
 
+div.appraisals-manager-chart {
+    margin-bottom: 28px;
+}
+div.appraisals-manager-chart .grade {
+    font-size: 74px;
+}
+
+span.appraisals-employee-legend {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    margin-right: 8px;
+}

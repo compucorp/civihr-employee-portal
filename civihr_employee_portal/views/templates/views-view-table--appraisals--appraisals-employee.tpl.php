@@ -1,4 +1,62 @@
 <?php
+global $user;
+$civiUser = get_civihr_uf_match_data($user->uid);
+$employeeChartData = get_appraisal_employee_chart_data($civiUser['contact_id']);
+?>
+
+<div class="appraisals-employee-chart col-md-12">
+    <div class="col-md-9">
+        <canvas id="appraisals-employee-chart-canvas" height="60"></canvas>
+    </div>
+    <div class="col-md-3">
+        <div id="appraisals-employee-chart-legend"></div>
+    </div>
+</div>
+
+<script>
+    var lineChartData = {
+        labels : [<?php print implode(', ', $employeeChartData['cyclesDates']); ?>],
+        datasets : [
+            {
+                label: "<?php print t('Your Grade'); ?>",
+                fillColor : "rgba(151,187,205,0.2)",
+                strokeColor : "rgba(151,187,205,1)",
+                pointColor : "rgba(151,187,205,1)",
+                pointStrokeColor : "#fff",
+                pointHighlightFill : "#fff",
+                pointHighlightStroke : "rgba(151,187,205,1)",
+                data : [<?php print implode(', ', $employeeChartData['cyclesMyGrades']); ?>]
+            },
+            {
+                label: "<?php print t('Department Average'); ?>",
+                fillColor : "rgba(220,220,220,0.2)",
+                strokeColor : "rgba(220,220,220,1)",
+                pointColor : "rgba(220,220,220,1)",
+                pointStrokeColor : "#fff",
+                pointHighlightFill : "#fff",
+                pointHighlightStroke : "rgba(220,220,220,1)",
+                data : [<?php print implode(', ', $employeeChartData['cyclesAvgGrades']); ?>]
+            }
+        ]
+    };
+    var LineChartOptions = {
+        responsive: true,
+        legendTemplate : '<ul>'
+                        +'<% for (var i=0; i<datasets.length; i++) { %>'
+                          +'<li>'
+                          +'<span class=\"appraisals-employee-legend\" style=\"background-color:<%=datasets[i].strokeColor%>\"></span>'
+                          +'<% if (datasets[i].label) { %><%= datasets[i].label %><% } %>'
+                        +'</li>'
+                      +'<% } %>'
+                    +'</ul>'
+    };
+    window.onload = function(){
+        var ctx = document.getElementById("appraisals-employee-chart-canvas").getContext("2d");
+        window.myLine = new Chart(ctx).Line(lineChartData, LineChartOptions);
+        document.getElementById("appraisals-employee-chart-legend").innerHTML = window.myLine.generateLegend();
+    }
+</script>
+<?php
 
 /**
  * @file
@@ -18,9 +76,6 @@
  *   field id, then row number. This matches the index in $rows.
  * @ingroup views_templates
  */
-
-global $user;
-$civiUser = get_civihr_uf_match_data($user->uid);
 
 $filters = array(
     1 => t('Ongoing Appraisals'),
@@ -73,7 +128,7 @@ function _get_appraisal_employee_filter_type($status, $selfAppraisalDue, $manage
     </div>
     <div class="chr_table-w-filters__table-wrapper col-md-9">
         <div class="chr_table-w-filters__table">
-            <table id="appraisals-manager-table" <?php if ($classes) { print 'class="'. $classes . ' appraisals-manager-table" '; } ?><?php print $attributes; ?>>
+            <table id="appraisals-employee-table" <?php if ($classes) { print 'class="'. $classes . ' appraisals-employee-table" '; } ?><?php print $attributes; ?>>
                 <?php if (!empty($title) || !empty($caption)) : ?>
                     <caption><?php print $caption . $title; ?></caption>
                 <?php endif; ?>
@@ -134,7 +189,7 @@ function _get_appraisal_employee_filter_type($status, $selfAppraisalDue, $manage
     (function($){
         var $navDocFilter = $('#nav-appraisals-filter'),
             $dropdownFilter = $('#select-appraisals-filter'),
-            $tableDocStaff = $('#appraisals-manager-table'),
+            $tableDocStaff = $('#appraisals-employee-table'),
             $tableDocStaffRows = $tableDocStaff.find('.appraisal-row');
 
         var $selectedRowFilter =  $tableDocStaff.find('.appraisal-row'),

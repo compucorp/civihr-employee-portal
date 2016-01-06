@@ -746,6 +746,56 @@ function get_appraisal_due_date($selfAppraisalDue, $managerAppraisalDue, $gradeD
     return $dueDate;
 }
 
+function get_appraisal_employee_chart_data($contactId) {
+    $cycleIds = CRM_Appraisals_BAO_AppraisalCycle::getAllCycleIds(null, $contactId);
+    $cyclesDates = array();
+    $cyclesMyGrades = array();
+    $cyclesAvgGrades = array();
+    $cycleDatesResult = civicrm_api3('AppraisalCycle', 'get', array(
+        'sequential' => 1,
+        'id' => array('IN' => $cycleIds),
+        'return' => "cycle_start_date",
+        'options' => array('sort' => "cycle_start_date ASC"),
+    ));
+    foreach ($cycleDatesResult['values'] as $cycleDateResult) {
+        $cyclesDates[] = '"' . $cycleDateResult['cycle_start_date'] . '"';
+    }
+    foreach ($cycleIds as $cycleId) {
+        $myGradeResult = civicrm_api3('Appraisal', 'getsingle', array(
+            'sequential' => 1,
+            'appraisal_cycle_id' => $cycleId,
+            'contact_id' => $contactId,
+            'is_current' => 1,
+            'return' => "grade",
+        ));
+        $cyclesMyGrades[] = !empty($myGradeResult['grade']) ? (int)$myGradeResult['grade'] : 0;
+        $cyclesAvgGrades[] = CRM_Appraisals_BAO_AppraisalCycle::getCycleAverageGrade($cycleId);
+    }
+    return array(
+        'cyclesDates' => $cyclesDates,
+        'cyclesMyGrades' => $cyclesMyGrades,
+        'cyclesAvgGrades' => $cyclesAvgGrades
+    );
+}
+
+function get_appraisal_manager_chart_data($managerId) {
+    $appraisalStatuses = CRM_Core_OptionGroup::values('appraisal_status');
+    $cycleStatusDefault = array_combine(array_keys($appraisalStatuses), array_fill(1, count($appraisalStatuses), 0));
+    $cycleStatuses = CRM_Appraisals_BAO_AppraisalCycle::getCurrentCycleStatus($managerId);
+    $labels = array('"Stage 1"', '"Stage 2"', '"Stage 3"', '"Stage 4"', '"Stage 5"');
+    $cycleStatusData = array();
+    foreach ($cycleStatusDefault as $key => $value) {
+        $cycleStatusData[$key] = $value;
+        if (!empty($cycleStatuses[$key])) {
+            $cycleStatusData[$key] += $cycleStatuses[$key];
+        }
+    }
+    return array(
+        'labels' => $labels,
+        'cycleStatusData' => $cycleStatusData,
+    );
+}
+
 /**
  * Function for caching civicrm_uf_match table from CiviCRM
  */
