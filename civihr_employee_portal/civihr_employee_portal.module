@@ -386,7 +386,15 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
 function civihr_employee_portal_custom_theme() {
 
     // Set the civihr_reports related pages to use the custom civihr admin theme and not the self service theme
-    if (arg(0) == 'civihr_reports' || arg(0) == 'civihr_reports_monthly') {
+    $whitelist_urls = [];
+    $whitelist_urls[] = 'civihr_reports';
+    $whitelist_urls[] = 'civihr_reports_monthly';
+    $whitelist_urls[] = 'civihr_reports_absence';
+    $whitelist_urls[] = 'civihr_reports_settings';
+    $whitelist_urls[] = 'civihr_reports_monthly_settings';
+
+    // Check if the URL is whitelisted, if yes apply the civihr_admin_theme
+    if (in_array(arg(0), $whitelist_urls)) {
         return 'civihr_admin_theme';
     }
 }
@@ -1128,6 +1136,15 @@ function civihr_employee_portal_menu() {
     $items['civihr_reports_monthly'] = array(
         'title' => 'CiviHR reports',
         'page callback' => 'civihr_employee_portal_get_reports_monthly',
+        'page arguments' => array(1, 2),
+        'access callback' => '_user_has_role',
+        'access arguments' => array(array('civihr_admin', 'administrator')),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['civihr_reports_absence'] = array(
+        'title' => 'CiviHR reports',
+        'page callback' => 'civihr_employee_portal_get_reports_absence',
         'page arguments' => array(1, 2),
         'access callback' => '_user_has_role',
         'access arguments' => array(array('civihr_admin', 'administrator')),
@@ -4578,11 +4595,47 @@ function civihr_employee_portal_get_reports_monthly($view_name = FALSE, $view_di
     return theme('civihr_employee_portal_custom_reports',
         array(
             'report_title' => t('My People (Monthly)'),
-            'custom_data' => 'test data',
+            'custom_data' => '', // This report type has the results page generated in js file
             'next_url' => 'civihr_reports',
             'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
         )
     );
+}
+
+function civihr_employee_portal_get_reports_absence($view_name = FALSE, $view_display = 'default') {
+
+    ctools_include('modal');
+    ctools_modal_add_js();
+
+    // Load the reports page
+    // Add the javascript library for D3
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/d3/d3.v3.min.js');
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/moment/moment.min.js');
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
+
+    // Get available gender options from CiviCRM
+    $gender_options_data =  _getGenderReportOptions();
+
+    // Get available X Axis Group by options
+    $enabled_x_axis_defaults = _getXAxisDefaults();
+
+    // Add custom datepicker
+    drupal_add_library('system', 'ui.datepicker');
+    drupal_add_library('system', 'ui.slider');
+
+    // Pass our custom data to js
+    drupal_add_js(array('civihr_employee_portal_reports' => array('gender_options_data' => $gender_options_data, 'enabled_x_axis_defaults' => $enabled_x_axis_defaults, 'prefix' => arg(0))), 'setting');
+
+    // Output the custom report theme page
+    return theme('civihr_employee_portal_custom_reports',
+        array(
+            'report_title' => t('Leave and Absences'),
+            'custom_data' => '', // This report type has the results page generated in js file
+            'next_url' => 'civihr_reports',
+            'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
+        )
+    );
+
 }
 
 /**

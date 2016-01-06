@@ -45,15 +45,18 @@
                 </div>
                 <div class="col-md-8">
                     <div class="clearfix visible-xs-block visible-sm-block">&nbsp;</div>
-                    <div class="form-inline text-right">
-                        <div class="form-group">
-                            <label for="date-filter" class="control-label">Select Date:</label>
-                            <div data-graph-calendar class="input-group input-group-unstyled">
-                                <input type="text" id="date-filter" class="form-control">
-                                <span class="input-group-addon fa fa-calendar"></span>
+
+                    <?php if (arg(0) == 'civihr_reports') { ?>
+                        <div class="form-inline text-right">
+                            <div class="form-group">
+                                <label for="date-filter" class="control-label">Select Date:</label>
+                                <div data-graph-calendar class="input-group input-group-unstyled">
+                                    <input type="text" id="date-filter" class="form-control">
+                                    <span class="input-group-addon fa fa-calendar"></span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    <?php } ?>
                     <div data-graph-section="canvas">
                         <!-- Content generated in reports.js -->
                     </div>
@@ -77,15 +80,18 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-12" data-graph-section="slider">
-                    <div data-graph-slider>
-                        <span class="col-xs-2 text-center ui-slider-range-values" data-graph-slider-min-date></span>
-                        <div class="col-xs-8" data-graph-slider-control></div>
-                        <span class="col-xs-2 text-center ui-slider-range-values" data-graph-slider-max-date></span>
+
+            <?php if (arg(0) == 'civihr_reports_monthly') { ?>
+                <div class="row">
+                    <div class="col-xs-12" data-graph-section="slider">
+                        <div data-graph-slider>
+                            <span class="col-xs-2 text-center ui-slider-range-values" data-graph-slider-min-date></span>
+                            <div class="col-xs-8" data-graph-slider-control></div>
+                            <span class="col-xs-2 text-center ui-slider-range-values" data-graph-slider-max-date></span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            <?php } ?>
         </div>
         <footer class="panel-footer text-center" data-graph-section="sub-filters">
             <button
