@@ -118,7 +118,8 @@ class ReportSettingsForm extends BaseForm {
         $filters = array(
             'all' => t('All'),
             'location' => t('Location'),
-            'department' => t('Department')
+            'department' => t('Department'),
+            'level' => t('Level')
         );
 
         // This function allows to add any new X Axis types if needed and passed to the function properly
