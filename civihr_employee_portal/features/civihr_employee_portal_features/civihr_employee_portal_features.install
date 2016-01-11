@@ -1,5 +1,7 @@
 <?php
 
+const CIVIHR_ADMIN_ROLE_ID = 55120974;
+
 /**
  * Implements hook_install().
  */
@@ -45,9 +47,9 @@ function civihr_employee_portal_features_install() {
             'weight' => 0
         ),
         array(
-            'rid' => 55120974,
+            'rid' => CIVIHR_ADMIN_ROLE_ID,
             'mode' => 'redirect',
-            'data' => 'civicrm',
+            'data' => 'civicrm/tasksassignments/dashboard#/tasks',
             'filter_format' => '',
             'weight' => 0
         ),
@@ -75,6 +77,22 @@ function civihr_employee_portal_features_install() {
 
     $query->execute();
     
+}
+
+function civihr_employee_portal_update_7000()
+{
+    /** @var UpdateQuery $query */
+    $dashboardUrl = 'civicrm/tasksassignments/dashboard#/tasks';
+
+    db_update('front_page')
+      ->fields(array('data' => $dashboardUrl))
+      ->condition('rid', CIVIHR_ADMIN_ROLE_ID, '=')
+      ->execute();
+
+    db_update('login_destination')
+      ->fields(array('destination' => $dashboardUrl))
+      ->condition('destination', 'civicrm/dashboard', '=')
+      ->execute();
 }
 
 /**
