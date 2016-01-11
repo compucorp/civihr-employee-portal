@@ -160,7 +160,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
       'settings' => NULL,
     );
     $pane->css = array(
-      'css_id' => '',
+      'css_id' => 'documents',
       'css_class' => 'chr_panel chr_panel--no-padding',
     );
     $pane->extras = array();
@@ -251,7 +251,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     'settings' => NULL,
   );
   $pane->css = array(
-    'css_id' => '',
+      'css_id' => 'tasks',
     'css_class' => 'chr_panel chr_panel--no-padding chr_panel--tasks',
   );
   $pane->extras = array();
