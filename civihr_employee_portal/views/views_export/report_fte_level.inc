@@ -202,7 +202,7 @@ $handler->display->display_options['arguments']['level_type']['summary_options']
 $handler->display->display_options['arguments']['level_type']['limit'] = '0';
 $handler->display->display_options['path'] = 'fte-level-export';
 $handler->display->display_options['displays'] = array(
-    'filter_fte_location' => 'filter_fte_location',
+    'filter_fte_level' => 'filter_fte_level',
     'default' => 0,
     'page' => 0,
 );
