@@ -3405,6 +3405,12 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'not null' => TRUE,
         'description' => 'Activity ID.',
     );
+    $schema['absence_list']['fields']['contact_id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'CiviCRM Contact ID.',
+    );
     $schema['absence_list']['fields']['absence_title'] = array(
         'type' => 'varchar',
         'length' => 200,

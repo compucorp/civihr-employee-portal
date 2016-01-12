@@ -894,6 +894,10 @@ function civihr_hrjobcontract_entities_entity_property_info_alter(&$info) {
     $info['hrjobcontract_pay']['properties']['contact_id']['type'] = 'civicrm_contact';
     $info['hrjobcontract_pension']['properties']['contact_id']['type'] = 'civicrm_contact';
     $info['hrjobcontract_role']['properties']['contact_id']['type'] = 'civicrm_contact';
+
+    // Add relationship to CiviCRM contact for the Absence Entity
+    $info['civihr_absences']['properties']['contact_id']['type'] = 'civicrm_contact';
+
 }
 
 /**
