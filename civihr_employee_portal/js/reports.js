@@ -486,8 +486,10 @@
                         return d.data.department;
                     })
                     .rollup(function (d) {
-                        return d3.sum(d, function(g) {
-                            return 1;
+                        return d3.sum(d, function(d) {
+                            // If specific count field is defined, use it as count
+                            // Otherwise fallback to count as 1 (summing up results)
+                            return d.data.count || 1;
                         });
                     })
                     .entries(_chart.data);
