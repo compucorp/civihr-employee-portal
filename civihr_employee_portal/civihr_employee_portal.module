@@ -3437,17 +3437,29 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'not null' => TRUE,
         'description' => 'Absence activity (Is Credit type?)',
     );
-    $schema['absence_list']['fields']['absence_start_date_timestamp'] = array(
+    $schema['absence_list']['fields']['absence_start_date'] = array(
         'type' => 'varchar',
         'mysql_type' => 'DATETIME',
         'not null' => FALSE,
         'description' => 'Absence start date.',
     );
-    $schema['absence_list']['fields']['absence_end_date_timestamp'] = array(
+    $schema['absence_list']['fields']['absence_end_date'] = array(
         'type' => 'varchar',
         'mysql_type' => 'DATETIME',
         'not null' => FALSE,
         'description' => 'Absence end date.',
+    );
+    $schema['absence_list']['fields']['absence_start_date_timestamp'] = array(
+        'type' => 'varchar',
+        'mysql_type' => 'DATETIME',
+        'not null' => FALSE,
+        'description' => 'Absence start date. (TIMESTAMP)',
+    );
+    $schema['absence_list']['fields']['absence_end_date_timestamp'] = array(
+        'type' => 'varchar',
+        'mysql_type' => 'DATETIME',
+        'not null' => FALSE,
+        'description' => 'Absence end date. (TIMESTAMP)',
     );
     $schema['absence_list']['fields']['details'] = array(
         'type' => 'text',

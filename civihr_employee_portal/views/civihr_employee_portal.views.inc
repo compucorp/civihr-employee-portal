@@ -38,6 +38,9 @@ function civihr_employee_portal_views_data_alter(&$data) {
     // Add custom date handler for job contract start/end dates
     $data['hrjc_details']['period_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
     $data['hrjc_details']['period_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
+
+    $data['absence_list']['absence_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
+    $data['absence_list']['absence_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
         
     $data['json']['absence_entitlement'] = array(
         'title' => t('Absence entitlement value'),
