@@ -370,9 +370,15 @@
                     .tickSize(16, 0)
                     .tickFormat(d3.time.format("%B"));
 
+                var monthly_highest = 5;
+
                 var y = d3.scale.linear()
                     .range([_chart.size.innerHeight, 0])
-                    .domain([0, d3.max(_chart.data, function(d) { return _roundUp5(d.data.count); })]);
+                    .domain([0, d3.max(_chart.data, function (d) {
+                        // Get the highest column value
+                        console.log(monthly_highest);
+                        return _roundUp5(monthly_highest);
+                    })]);
 
                 var yAxis = d3.svg.axis()
                     .scale(y)
@@ -438,6 +444,12 @@
 
                             // Add to monthly data
                             monthly_data.push(result_array);
+
+                            // Calculates the highest value for Y Axis
+                            if (result_array['count'] > monthly_highest) {
+                                monthly_highest = result_array['count'];
+                            }
+
                         }
 
                         svg.append("path")
