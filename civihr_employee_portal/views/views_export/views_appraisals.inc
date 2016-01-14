@@ -114,6 +114,14 @@ $handler->display->display_options['arguments']['appraisal_contact_id']['name'] 
 
 /* Display: Page */
 $handler = $view->new_display('page', 'Page', 'appraisals_manager');
+$handler->display->display_options['defaults']['title'] = FALSE;
+$handler->display->display_options['title'] = 'Appraisals';
+$handler->display->display_options['defaults']['access'] = FALSE;
+$handler->display->display_options['access']['type'] = 'role';
+$handler->display->display_options['access']['role'] = array(
+  3 => '3',
+  57573969 => '57573969',
+);
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Json: Appraisal Employee */
 $handler->display->display_options['fields']['appraisal_employee']['id'] = 'appraisal_employee';
@@ -197,7 +205,7 @@ $handler->display->display_options['fields']['id']['element_label_class'] = 'hid
 $handler->display->display_options['fields']['id']['key'] = 'id';
 $handler->display->display_options['path'] = 'hr-appraisals-manager';
 $handler->display->display_options['menu']['type'] = 'normal';
-$handler->display->display_options['menu']['title'] = 'Appraisals Manager';
+$handler->display->display_options['menu']['title'] = 'Appraisals';
 $handler->display->display_options['menu']['weight'] = '22';
 $handler->display->display_options['menu']['name'] = 'main-menu';
 $handler->display->display_options['menu']['context'] = 0;
@@ -313,12 +321,12 @@ $translatables['appraisals'] = array(
   t('Appraisal ID'),
   t('All'),
   t('Page'),
+  t('Appraisals'),
   t('Employee'),
   t('Cycle Period'),
   t('Status'),
   t('Due Date'),
   t('Block'),
-  t('Appraisals'),
   t('Appraisal Cycle Type'),
   t('Appraisal Period'),
 );
