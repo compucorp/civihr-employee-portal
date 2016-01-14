@@ -69,7 +69,7 @@ scripts[] = js/scripts.js
 scripts[] = js/filters.js
 scripts[] = js/plupload/plupload.full.min.js
 scripts[] = js/plupload-init.js
-scripts[] = js/Chart.js/Chart.js
+scripts[] = js/chart.min.js
 
 ; Additional js
 scripts[] = lib/tablesorter/jquery.tablesorter.min.js
