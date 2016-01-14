@@ -115,11 +115,16 @@ class ReportSettingsForm extends BaseForm {
      */
     public function setXAxisFilterTypes($additional_filters = array()) {
 
+        // @TODO -> Filter machine name contract type should be contract_type,
+        // But then the label in the page is showing with underscore
+        // Fix use the label value not the key!
         $filters = array(
             'all' => t('All'),
             'location' => t('Location'),
             'department' => t('Department'),
-            'level' => t('Level')
+            'level' => t('Level'),
+            'contract type' => t('Contract Type'),
+            'project type' => t('Project Type'),
         );
 
         // This function allows to add any new X Axis types if needed and passed to the function properly
