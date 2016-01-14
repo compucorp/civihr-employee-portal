@@ -81,7 +81,7 @@
                 </div>
             </div>
 
-            <?php if (arg(0) == 'civihr_reports_monthly') { ?>
+            <?php if (arg(0) == 'civihr_reports_monthly' || arg(0) == 'civihr_reports_absence') { ?>
                 <div class="row">
                     <div class="col-xs-12" data-graph-section="slider">
                         <div data-graph-slider>

@@ -297,31 +297,21 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
     // This will set the template file for any view page which is custom report (overriding the theme file what is suggested by drupal views as default)
     $template_url = 'templates/civihr-employee-portal-custom-reports-filter-result';
 
-    // @TODO test with more custom views
-    $view_displays_to_rewrite = array();
-
-    // Fte groups
-    $view_displays_to_rewrite['views_view__filter_fte_location'] = 1;
-
-    // Headcount groups
-    $view_displays_to_rewrite['views_view__filter_headcount_location'] = 1;
-    $view_displays_to_rewrite['views_view__filter_headcount_department'] = 1;
-
-    // Gender groups
-    $view_displays_to_rewrite['views_view__filter_gender_location'] = 1;
-
-    // Age groups
-    $view_displays_to_rewrite['views_view__filter_age_location'] = 1;
+    // Whitelist the available report types
+    $register_class = new ReportSettingsForm('report_settings_form', 'civihr_reports');
+    $register_class->getYAxisFilterTypes();
 
     // This will hold any custom view display names where we need to override the template file
     $theme_hooks = array();
 
-    foreach ($view_displays_to_rewrite as $view_name => $val) {
-        $theme_hooks[$view_name] = array(
-            'template' => $template_url,
-            'base hook' => 'views_view',
-            'arguments' => array('view' => NULL)
-        );
+    foreach ($register_class->getYAxisFilterTypes() as $YAxis => $Y) {
+        foreach ($register_class->getXAxisFilterTypes() as $XAxis => $X) {
+            $theme_hooks['views_view__filter_' . $YAxis . '_' . $XAxis] = array(
+                'template' => $template_url,
+                'base hook' => 'views_view',
+                'arguments' => array('view' => NULL)
+            );
+        }
     }
 
     return $theme_hooks + array(
@@ -4117,6 +4107,12 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'not null' => TRUE,
         'description' => 'Activity ID.',
     );
+    $schema['absence_list']['fields']['contact_id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'CiviCRM Contact ID.',
+    );
     $schema['absence_list']['fields']['absence_title'] = array(
         'type' => 'varchar',
         'length' => 200,
@@ -4143,17 +4139,29 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'not null' => TRUE,
         'description' => 'Absence activity (Is Credit type?)',
     );
-    $schema['absence_list']['fields']['absence_start_date_timestamp'] = array(
+    $schema['absence_list']['fields']['absence_start_date'] = array(
         'type' => 'varchar',
         'mysql_type' => 'DATETIME',
         'not null' => FALSE,
         'description' => 'Absence start date.',
     );
-    $schema['absence_list']['fields']['absence_end_date_timestamp'] = array(
+    $schema['absence_list']['fields']['absence_end_date'] = array(
         'type' => 'varchar',
         'mysql_type' => 'DATETIME',
         'not null' => FALSE,
         'description' => 'Absence end date.',
+    );
+    $schema['absence_list']['fields']['absence_start_date_timestamp'] = array(
+        'type' => 'varchar',
+        'mysql_type' => 'DATETIME',
+        'not null' => FALSE,
+        'description' => 'Absence start date. (TIMESTAMP)',
+    );
+    $schema['absence_list']['fields']['absence_end_date_timestamp'] = array(
+        'type' => 'varchar',
+        'mysql_type' => 'DATETIME',
+        'not null' => FALSE,
+        'description' => 'Absence end date. (TIMESTAMP)',
     );
     $schema['absence_list']['fields']['details'] = array(
         'type' => 'text',

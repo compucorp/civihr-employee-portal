@@ -35,7 +35,12 @@ class civihr_employee_portal_handler_absence_duration extends views_handler_fiel
         
         else {
             $value = $this->get_value($values);
-            
+
+            // If the raw format type is selected return the count but not add any specific formatting
+            if (isset($this->options['duration_type']) && $this->options['duration_type'] == 'no_format') {
+                return $value / (6 * 80);
+            }
+
             return $value <= 480 ? $value / (6 * 80) . ' day' : $value / (6 * 80) . ' days';
         }
         
@@ -56,6 +61,7 @@ class civihr_employee_portal_handler_absence_duration extends views_handler_fiel
     function options_form(&$form, &$form_state) {    
         
         $options = array();
+        $options['no_format'] = t('Raw result output');
         
         // Get the absence types
         $absenceTypes = get_civihr_absence_types();

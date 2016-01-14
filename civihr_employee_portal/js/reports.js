@@ -486,8 +486,10 @@
                         return d.data.department;
                     })
                     .rollup(function (d) {
-                        return d3.sum(d, function(g) {
-                            return 1;
+                        return d3.sum(d, function(d) {
+                            // If specific count field is defined, use it as count
+                            // Otherwise fallback to count as 1 (summing up results)
+                            return d.data.count || 1;
                         });
                     })
                     .entries(_chart.data);
@@ -1233,7 +1235,7 @@
         // For montly reports load the date slider
         // Otherwise load the date picker filter
         // If more logic needed maybe we can change to switch statement
-        if (Drupal.settings.civihr_employee_portal_reports.prefix == 'civihr_reports_monthly') {
+        if (Drupal.settings.civihr_employee_portal_reports.prefix == 'civihr_reports_monthly' || Drupal.settings.civihr_employee_portal_reports.prefix == 'civihr_reports_absence') {
             // Init date slider
             this.initSlider();
         }
@@ -1298,7 +1300,7 @@
         var $sliderControl = _this.$DOM.sections.slider.find('[data-graph-slider-control]');
 
         var format = { view: 'DD/MM/YYYY', month_view: 'MM/YYYY', api: 'YYYY-MM-DD' };
-        var range = [moment('01/01/2010', format.view), moment('31/12/2013', format.view)];
+        var range = [moment('01/01/2010', format.view), moment('31/12/2016', format.view)];
         var init = [moment('01/01/2012', format.view), moment('31/12/2012', format.view)];
         var start_range_date = '01/01/2010';
 
@@ -1306,7 +1308,7 @@
             range: true,
             step: 1,
             min: 0,
-            max: 47,
+            max: 83,
             values: [24, 35],
             create: function () {
                 $sliderControl.find('.ui-slider-handle').each(function (index) {
