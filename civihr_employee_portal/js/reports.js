@@ -919,73 +919,80 @@
                         }
 
                         this.$DOM.sections.dataWrapper.fadeIn();
-                        var $DOM = this.$DOM;
-
-                        $.ajax({
-                            'type': 'GET',
-                            'url': this.getJsonUrl() + ( typeof path !== 'undefined' ? path : '' ),
-                            'success': function(data) {
-                                var mappedResults = {},
-                                    key,
-                                    countRow = $('<tr />'),
-                                    headerRow = $('<tr />'),
-                                    percentageRow = $('<tr />'),
-                                    total = 0;
-
-                                if(data.results[0] !== undefined && data.results[0].data.count !== undefined) {
-                                    for(var i in data.results) {
-                                        mappedResults[data.results[i].data.department] = +data.results[i].data.count;
-                                    }
-                                } else {
-                                    mappedResults = data.results.map(function (row) {
-                                        return {y: row.data.gender, x: 1}
-                                    }).reduce(function (accumulator, row) {
-                                        if (accumulator[row.y] === undefined) {
-                                            accumulator[row.y] = 0;
-                                        }
-
-                                        accumulator[row.y] += row.x;
-
-                                        return accumulator;
-                                    }, {});
-                                }
-
-                                for(key in mappedResults) {
-                                    total += mappedResults[key];
-                                }
-
-                                for(key in mappedResults) {
-                                    if(!mappedResults.hasOwnProperty(key)) {
-                                        continue;
-                                    }
-
-                                    var percentage = Math.round((mappedResults[key]/total)*10000)/100;
-
-                                    headerRow.append($('<th />').text(key));
-                                    countRow.append($('<td />').text(mappedResults[key]));
-                                    percentageRow.append($('<td />').text(percentage + '%'));
-                                }
-
-                                var table = $('<table />').addClass('table table-striped table-hover')
-                                    .append($('<thead />').append(headerRow))
-                                    .append($('<tbody />').append(countRow).append(percentageRow));
-
-                                var header = $('<header />').addClass('panel-heading')
-                                    .append($('<h2>Summary</h2>').addClass('panel-title'));
-
-                                var section = $('<section />').addClass('panel panel-primary')
-                                    .append(header)
-                                    .append(table);
-
-                                $DOM.sections.summaryWrapper.show().html(section);
-                            }
-                        });
                     }.bind(this));
             }.bind(this),
             error: function (data) {
                 this.$DOM.sections.dataWrapper.html('An error occured!');
             }.bind(this)
         });
+
+        $.ajax({
+            type: 'GET',
+            url: this.getJsonUrl() + ( typeof path !== 'undefined' ? path : '' ),
+            success: function(data) {
+                var mappedResults = normaliseSummaryData(data.results);
+
+                replaceSummaryTable(mappedResults, this.$DOM);
+            }.bind(this)
+        });
+
+        function normaliseSummaryData(summary) {
+            var normalisedSummary = {},
+                i;
+
+            // The data can have two formats, depending on particular report:
+            // data = { results: [{ departament: "xxx", count: 1 }, ...]) }
+            // or
+            // data = { results: [{ gender: "aaa" }, { gender: "aaa" }, ...] }
+            //
+            // The code inside if takes care of the first possibility
+            // The else takes care of the second
+            if (summary[0] !== undefined && summary[0].data.count !== undefined) {
+                for(i in summary) {
+                    normalisedSummary[summary[i].data.department] = +summary[i].data.count;
+                }
+            } else {
+                normalisedSummary = summary.map(function (row) {
+                    return { y: row.data.gender, x: 1 }
+                }).reduce(function (accumulator, row) {
+                    if (accumulator[row.y] === undefined) {
+                        accumulator[row.y] = 0;
+                    }
+
+                    accumulator[row.y] += row.x;
+
+                    return accumulator;
+                }, {});
+            }
+
+            return normalisedSummary;
+        }
+
+        function replaceSummaryTable(summary, $DOM) {
+            var $countRow = $('<tr />'),
+                $headerRow = $('<tr />'),
+                $percentageRow = $('<tr />'),
+                summaryKeys = Object.keys(summary),
+                total = summaryKeys.reduce(function(accumulator, key) { return accumulator + summary[key]; }, 0);
+
+            summaryKeys
+                .forEach(function(key) {
+                    var percentage;
+
+                    percentage = Math.round((summary[key]/total)*10000)/100;
+
+                    $headerRow.append($('<th />').text(key));
+                    $countRow.append($('<td />').text(summary[key]));
+                    $percentageRow.append($('<td />').text(percentage + '%'));
+                });
+
+            $DOM.sections.summaryWrapper
+                .show()
+                .find('table')
+                .empty()
+                .append($('<thead />').append($headerRow))
+                .append($('<tbody />').append($countRow).append($percentageRow));
+        }
 
         // Returns the URL for the ajax call
         function buildURL() {
@@ -1344,6 +1351,7 @@
         this.hideButtonTpls();
         this.hideSubFilters();
         this.setDataWrapperVisibility();
+        this.$DOM.sections.summaryWrapper.hide();
     };
 
     /**
