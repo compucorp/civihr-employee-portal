@@ -919,6 +919,67 @@
                         }
 
                         this.$DOM.sections.dataWrapper.fadeIn();
+                        var $DOM = this.$DOM;
+
+                        $.ajax({
+                            'type': 'GET',
+                            'url': this.getJsonUrl() + ( typeof path !== 'undefined' ? path : '' ),
+                            'success': function(data) {
+                                var mappedResults = {},
+                                    key,
+                                    countRow = $('<tr />'),
+                                    headerRow = $('<tr />'),
+                                    percentageRow = $('<tr />'),
+                                    total = 0;
+
+                                if(data.results[0] !== undefined && data.results[0].data.count !== undefined) {
+                                    for(var i in data.results) {
+                                        mappedResults[data.results[i].data.department] = +data.results[i].data.count;
+                                    }
+                                } else {
+                                    mappedResults = data.results.map(function (row) {
+                                        return {y: row.data.gender, x: 1}
+                                    }).reduce(function (accumulator, row) {
+                                        if (accumulator[row.y] === undefined) {
+                                            accumulator[row.y] = 0;
+                                        }
+
+                                        accumulator[row.y] += row.x;
+
+                                        return accumulator;
+                                    }, {});
+                                }
+
+                                for(key in mappedResults) {
+                                    total += mappedResults[key];
+                                }
+
+                                for(key in mappedResults) {
+                                    if(!mappedResults.hasOwnProperty(key)) {
+                                        continue;
+                                    }
+
+                                    var percentage = Math.round((mappedResults[key]/total)*10000)/100;
+
+                                    headerRow.append($('<th />').text(key));
+                                    countRow.append($('<td />').text(mappedResults[key]));
+                                    percentageRow.append($('<td />').text(percentage + '%'));
+                                }
+
+                                var table = $('<table />').addClass('table table-striped table-hover')
+                                    .append($('<thead />').append(headerRow))
+                                    .append($('<tbody />').append(countRow).append(percentageRow));
+
+                                var header = $('<header />').addClass('panel-heading')
+                                    .append($('<h2>Summary</h2>').addClass('panel-title'));
+
+                                var section = $('<section />').addClass('panel panel-primary')
+                                    .append(header)
+                                    .append(table);
+
+                                $DOM.sections.summaryWrapper.show().html(section);
+                            }
+                        });
                     }.bind(this));
             }.bind(this),
             error: function (data) {
@@ -1052,6 +1113,7 @@
             dataWrapper: this.$DOM.wrapper.find('[data-graph-section="data"]'),
             canvas: this.$DOM.wrapper.find('[data-graph-section="canvas"]'),
             slider: this.$DOM.wrapper.find('[data-graph-section="slider"]'),
+            summaryWrapper: this.$DOM.wrapper.find('[data-graph-section="summary"]'),
             filters: {
                 graph: this.$DOM.wrapper.find('[data-graph-section="graph-filters"]'),
                 main: this.$DOM.wrapper.find('[data-graph-section="main-filters"]'),
@@ -1408,6 +1470,8 @@
 
         // Generate X Axis Group By buttons, when Y Axis Group By is clicked
         this.generateSubFilters($button.data('value'));
+
+        this.$DOM.sections.summaryWrapper.hide();
     };
 
     /**

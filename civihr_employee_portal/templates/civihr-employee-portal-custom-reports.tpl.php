@@ -105,6 +105,9 @@
             </div>
         </footer>
     </section>
+    <div data-graph-section="summary">
+        <!-- Content populated from JavaScript -->
+    </div>
     <div data-graph-section="data">
         <?php print $custom_data; ?>
     </div>
