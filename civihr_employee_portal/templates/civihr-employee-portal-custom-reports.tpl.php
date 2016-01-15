@@ -105,6 +105,15 @@
             </div>
         </footer>
     </section>
+    <div data-graph-section="summary">
+        <section class="panel panel-primary">
+            <header class="panel-heading">
+                <h2 class="panel-title">Summary</h2>
+            </header>
+            <table class="table table-stripped table-hover"></table>
+        </section>
+        <!-- Content populated from JavaScript -->
+    </div>
     <div data-graph-section="data">
         <?php print $custom_data; ?>
     </div>

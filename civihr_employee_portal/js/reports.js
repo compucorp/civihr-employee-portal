@@ -926,6 +926,93 @@
             }.bind(this)
         });
 
+        $.ajax({
+            type: 'GET',
+            url: this.getJsonUrl() + ( typeof path !== 'undefined' ? path : '' ),
+            success: function(data) {
+                var summary = normaliseSummaryData(data.results);
+
+                if (summary.length === 0) {
+                    return;
+                }
+
+                replaceSummaryTable(summary, this.$DOM);
+            }.bind(this)
+        });
+
+        /**
+         * Normalise summary data returned from drupal view into consistent format: { "Key1": 0, "Key2": 2, ... }
+         *
+         * @param {Object[]} summary
+         * @returns {Object.<string,number>}
+         */
+        function normaliseSummaryData(summary) {
+            var normalisedSummary = {},
+                i;
+
+            // The data can have two formats, depending on particular report:
+            // data = { results: [{ departament: "xxx", count: 1 }, ...]) }
+            // or
+            // data = { results: [{ gender: "aaa" }, { gender: "aaa" }, ...] }
+            //
+            // The code inside if takes care of the first possibility
+            // The else takes care of the second
+            //
+            // The "gender" and "department" keys are hardcoded in Drupal Views
+            // Probably they should be renamed to something like "xaxis"/"yaxis"
+            if (summary[0] !== undefined && summary[0].data.count !== undefined) {
+                for (i in summary) {
+                    normalisedSummary[summary[i].data.department] = +summary[i].data.count;
+                }
+            } else {
+                normalisedSummary = summary.reduce(function (accumulator, row) {
+                    var key = row.data.gender;
+
+                    (typeof accumulator[key] === 'undefined') && (accumulator[key] = 0);
+
+                    return ++accumulator[key] && accumulator;
+                }, {});
+            }
+
+            return normalisedSummary;
+        }
+
+        /**
+         * Populate summary table
+         *
+         * @param {Object.<string,number>} summary
+         * @param {{sections}} $DOM
+         */
+        function replaceSummaryTable(summary, $DOM) {
+            var $countRow = $('<tr />'),
+                $headerRow = $('<tr />'),
+                $percentageRow = $('<tr />'),
+                summaryKeys = Object.keys(summary),
+                total;
+
+            total = summaryKeys.reduce(function(accumulator, key) {
+                return accumulator + summary[key];
+            }, 0);
+
+            summaryKeys
+                .forEach(function(key) {
+                    var percentage;
+
+                    percentage = Math.round((summary[key]/total)*10000)/100;
+
+                    $headerRow.append($('<th />').text(key));
+                    $countRow.append($('<td />').text(summary[key]));
+                    $percentageRow.append($('<td />').text(percentage + '%'));
+                });
+
+            $DOM.sections.summaryWrapper
+                .show()
+                .find('table')
+                .empty()
+                .append($('<thead />').append($headerRow))
+                .append($('<tbody />').append($countRow).append($percentageRow));
+        }
+
         // Returns the URL for the ajax call
         function buildURL() {
             var base_path = Drupal.settings.basePath;
@@ -1052,6 +1139,7 @@
             dataWrapper: this.$DOM.wrapper.find('[data-graph-section="data"]'),
             canvas: this.$DOM.wrapper.find('[data-graph-section="canvas"]'),
             slider: this.$DOM.wrapper.find('[data-graph-section="slider"]'),
+            summaryWrapper: this.$DOM.wrapper.find('[data-graph-section="summary"]'),
             filters: {
                 graph: this.$DOM.wrapper.find('[data-graph-section="graph-filters"]'),
                 main: this.$DOM.wrapper.find('[data-graph-section="main-filters"]'),
@@ -1282,6 +1370,7 @@
         this.hideButtonTpls();
         this.hideSubFilters();
         this.setDataWrapperVisibility();
+        this.$DOM.sections.summaryWrapper.hide();
     };
 
     /**
@@ -1408,6 +1497,8 @@
 
         // Generate X Axis Group By buttons, when Y Axis Group By is clicked
         this.generateSubFilters($button.data('value'));
+
+        this.$DOM.sections.summaryWrapper.hide();
     };
 
     /**
