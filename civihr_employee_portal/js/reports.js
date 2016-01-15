@@ -957,6 +957,9 @@
             //
             // The code inside if takes care of the first possibility
             // The else takes care of the second
+            //
+            // The "gender" and "department" keys are hardcoded in Drupal Views
+            // Probably they should be renamed to something like "xaxis"/"yaxis"
             if (summary[0] !== undefined && summary[0].data.count !== undefined) {
                 for (i in summary) {
                     normalisedSummary[summary[i].data.department] = +summary[i].data.count;
