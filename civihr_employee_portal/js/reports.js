@@ -930,12 +930,22 @@
             type: 'GET',
             url: this.getJsonUrl() + ( typeof path !== 'undefined' ? path : '' ),
             success: function(data) {
-                var mappedResults = normaliseSummaryData(data.results);
+                var summary = normaliseSummaryData(data.results);
 
-                replaceSummaryTable(mappedResults, this.$DOM);
+                if (summary.length === 0) {
+                    return;
+                }
+
+                replaceSummaryTable(summary, this.$DOM);
             }.bind(this)
         });
 
+        /**
+         * Normalise summary data returned from drupal view into consistent format: { "Key1": 0, "Key2": 2, ... }
+         *
+         * @param {Object[]} summary
+         * @returns {Object.<string,number>}
+         */
         function normaliseSummaryData(summary) {
             var normalisedSummary = {},
                 i;
@@ -948,32 +958,38 @@
             // The code inside if takes care of the first possibility
             // The else takes care of the second
             if (summary[0] !== undefined && summary[0].data.count !== undefined) {
-                for(i in summary) {
+                for (i in summary) {
                     normalisedSummary[summary[i].data.department] = +summary[i].data.count;
                 }
             } else {
-                normalisedSummary = summary.map(function (row) {
-                    return { y: row.data.gender, x: 1 }
-                }).reduce(function (accumulator, row) {
-                    if (accumulator[row.y] === undefined) {
-                        accumulator[row.y] = 0;
-                    }
+                normalisedSummary = summary.reduce(function (accumulator, row) {
+                    var key = row.data.gender;
 
-                    accumulator[row.y] += row.x;
+                    (typeof accumulator[key] === 'undefined') && (accumulator[key] = 0);
 
-                    return accumulator;
+                    return ++accumulator[key] && accumulator;
                 }, {});
             }
 
             return normalisedSummary;
         }
 
+        /**
+         * Populate summary table
+         *
+         * @param {Object.<string,number>} summary
+         * @param {{sections}} $DOM
+         */
         function replaceSummaryTable(summary, $DOM) {
             var $countRow = $('<tr />'),
                 $headerRow = $('<tr />'),
                 $percentageRow = $('<tr />'),
                 summaryKeys = Object.keys(summary),
-                total = summaryKeys.reduce(function(accumulator, key) { return accumulator + summary[key]; }, 0);
+                total;
+
+            total = summaryKeys.reduce(function(accumulator, key) {
+                return accumulator + summary[key];
+            }, 0);
 
             summaryKeys
                 .forEach(function(key) {
