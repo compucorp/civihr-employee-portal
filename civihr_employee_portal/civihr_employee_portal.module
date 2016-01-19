@@ -5321,12 +5321,13 @@ function _getManagerContacts($contact_id) {
 
     // If Leave approver is find, assign him as the manager (add contact ID to $assigned_manager_contact_ids array)
     foreach ($contactRelationships as $key => $relation) {
-        if ($relation['relation'] == variable_get('relationship_name_to_use', 'has Leave Approved by')) {
-            if($relation['is_active'] == 1){
-                $assigned_manager_contact_ids[] = $relation['contact_id_b'];
-                $manager_found++;
-            }
+      if ($relation['relation'] == variable_get('relationship_name_to_use', 'has Leave Approved by')) {
+        if(relationActiveAndCurrent($relation))
+        {
+          $assigned_manager_contact_ids[] = $relation['contact_id_b'];
+          $manager_found++;
         }
+      }
     }
 
     // If no assigned managers found
@@ -5346,4 +5347,14 @@ function _getManagerContacts($contact_id) {
     }
 
     return $assigned_manager_contact_ids;
+}
+
+/**
+ * Function to determine if given manager-contact relationship is inactive or active
+ *
+ * @param array $relation
+ * @return boolean
+ */
+function relationActiveAndCurrent($relation){
+  return $relation['is_active'] == 1 && (strtotime($relation['end_date']) >= time() || empty($relation['end_date']));
 }
