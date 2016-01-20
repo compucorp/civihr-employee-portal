@@ -308,7 +308,21 @@ function civihr_employee_portal_views_data_alter(&$data) {
         'sort' => array('handler' => 'views_json_query_handler_sort'),
     );
     
-    
+    $data['civicrm_value_emergency_contacts_21']['id'] = array(
+        'title' => t('Emergency Contact ID'),
+        'help' => t('Emergency Contact ID field value'),
+        'real field' => 'id',
+        'field' => array(
+          'handler' => 'views_handler_field_numeric',
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_numeric',
+        ),
+        'sort' => array(
+            'handler' => 'views_handler_sort'
+        ),
+    );
+
     // Add custom date handler
     $data['absence_list']['absence_start_date_timestamp']['field']['handler'] = 'views_handler_field_date';
     $data['absence_list']['absence_start_date_timestamp']['sort']['handler'] = 'views_handler_sort_date';
