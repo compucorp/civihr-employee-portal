@@ -20,6 +20,13 @@
  */
 
 global $user;
+
+define('PAST_DAY', 1);
+define('TODAY', 2);
+define('DAY_AFTER_WEEKEND', 4);
+define('TOMORROW', 5);
+define('ANY_OTHER_DAY', 3);
+
 $civiUser = get_civihr_uf_match_data($user->uid);
 
 $typeResult = civicrm_api3('Activity', 'getoptions', array(
@@ -73,18 +80,22 @@ function _get_task_filter_by_date($date) {
     $taskDate = date('Y-m-d', strtotime(strip_tags($date)));
 
     if ($taskDate < $today) {
-        return 1;
+        return PAST_DAY;
     }
     if ($taskDate == $today) {
-        return 2;
+        return TODAY;
     }
     if ($taskDate > $weekEnd) {
-        return 4;
+        return DAY_AFTER_WEEKEND;
     }
     if ($taskDate == $tomorrow->format('Y-m-d')){
-        return 5;
+        return TOMORROW;
     }
-    return 3;
+    return ANY_OTHER_DAY;
+}
+
+function isFieldName($field){
+   return $field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2';
 }
 
 ?>
@@ -125,10 +136,12 @@ function _get_task_filter_by_date($date) {
                 <?php if (!empty($header)) : ?>
                     <thead>
                         <tr>
-                        <?php foreach ($header as $field => $label): ?>
-                            <?php if ($field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2'):
-                                continue;
-                            endif; ?>
+                        <?php
+                          foreach ($header as $field => $label):
+                            if (isFieldName($field)) {
+                              continue;
+                            }
+                        ?>
                             <th <?php if ($header_classes[$field]) { print 'class="'. $header_classes[$field] . '" '; } ?>>
                                 <?php print $label; ?>
                             </th>
@@ -153,24 +166,25 @@ function _get_task_filter_by_date($date) {
                     ?>
                     <?php $class = 'task-row task-filter-id-' . _get_task_filter_by_date($row['activity_date_time']) . ' ' . $rowType; ?>
                     <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $contactsFilterValues[strip_tags($row['task_contacts'])]; ?>">
-                        <?php foreach ($row as $field => $content): ?>
-                            <?php if ($field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2'):
-                                continue;
-                            endif; ?>
-                           <?php
-                           if($field == 'activity_date_time') {
-                             $taskDate = strtotime(strip_tags($content));
-                             $dateFilter = _get_task_filter_by_date(date('Y-m-d', $taskDate));
+                        <?php
+                          foreach ($row as $field => $content):
+                            if (isFieldName($field)) {
+                              continue;
+                            }
 
-                             if($dateFilter == 5){
-                               $content = 'Tomorrow';
-                             }else if($dateFilter == 2){
-                               $content = 'Today';
-                             }else{
-                               $content = date('m/d/Y', $taskDate);
-                             }
-                           }
-                           ?>
+                            if($field == 'activity_date_time') {
+                              $taskDate = strtotime(strip_tags($content));
+                              $dateFilter = _get_task_filter_by_date(date('Y-m-d', $taskDate));
+
+                              if($dateFilter == TOMORROW){
+                                $content = 'Tomorrow';
+                              }else if($dateFilter == TODAY){
+                                $content = 'Today';
+                              }else{
+                                $content = date('m/d/Y', $taskDate);
+                              }
+                            }
+                        ?>
                             <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
 								<?php //if (_task_can_be_edited($row['id'])): ?>
                                 <a
