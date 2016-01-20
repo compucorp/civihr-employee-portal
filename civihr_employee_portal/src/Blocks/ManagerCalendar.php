@@ -19,7 +19,7 @@ class ManagerCalendar {
 
         $uid = $user->uid;
         $result = db_query('SELECT aal.employee_id, aal.id, aal.activity_type_id, aal.absence_title, aal.duration, aal.absence_start_date_timestamp, aal.absence_end_date_timestamp, absence_status
-        FROM {absence_approval_list} aal WHERE aal.drupal_uid = :uid', array(':uid' => $user->uid));
+        FROM {absence_approval_list} aal');
 
         // Result is returned as a iterable object that returns a stdClass object on each iteration
         foreach ($result as $record) {
