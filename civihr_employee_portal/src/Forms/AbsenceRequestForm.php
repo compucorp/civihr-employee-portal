@@ -8,6 +8,8 @@ class AbsenceRequestForm {
     protected $form;
     protected $form_state;
 
+    const CANCELLED_LEAVE_TYPE_ID = 3;
+
     /**
      * Constructor
      *
@@ -412,8 +414,10 @@ class AbsenceRequestForm {
      */
     protected function duplicate_dates_exist($requestedStartTimestamp, $requestedEndTimestamp) {
         // fetch all leaves that has End time greater than today
+
         $absencesDataQuery = db_select('absence_list', 'al')
             ->condition('contact_id', $_SESSION['CiviCRM']['userID'])
+            ->condition('absence_status', self::CANCELLED_LEAVE_TYPE_ID, '<>')
             //->condition('absence_end_date_timestamp', strtotime('today'), '>')
             ->fields('al', array('absence_start_date_timestamp', 'absence_end_date_timestamp'));
 

@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Exported view headcount_location report
+ * Exported view headcount_location monthly report
  */
 
 $view = new view();
-$view->name = 'headcount_location';
+$view->name = 'headcount_location_monthly';
 $view->description = '';
 $view->tag = 'default';
 $view->base_table = 'hrjc_role';
-$view->human_name = 'Headcount / Location';
+$view->human_name = 'Headcount / Location (Monthly)';
 $view->core = 7;
 $view->api_version = '3.0';
 $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
@@ -71,7 +71,17 @@ $handler->display->display_options['fields']['location_1']['field'] = 'location'
 $handler->display->display_options['fields']['location_1']['group_type'] = 'count';
 $handler->display->display_options['fields']['location_1']['label'] = 'count';
 $handler->display->display_options['fields']['location_1']['separator'] = '';
-$handler->display->display_options['path'] = 'civihr_reports_headcount-location';
+/* Field: HRJobContract Role entity: Start_date */
+$handler->display->display_options['fields']['start_date']['id'] = 'start_date';
+$handler->display->display_options['fields']['start_date']['table'] = 'hrjc_role';
+$handler->display->display_options['fields']['start_date']['field'] = 'start_date';
+$handler->display->display_options['fields']['start_date']['label'] = 'start_date';
+/* Field: HRJobContract Role entity: End_date */
+$handler->display->display_options['fields']['end_date']['id'] = 'end_date';
+$handler->display->display_options['fields']['end_date']['table'] = 'hrjc_role';
+$handler->display->display_options['fields']['end_date']['field'] = 'end_date';
+$handler->display->display_options['fields']['end_date']['label'] = 'end_date';
+$handler->display->display_options['path'] = 'civihr_reports_monthly_headcount-location';
 
 /* Display: Filter by Location */
 $handler = $view->new_display('block', 'Filter by Location', 'filter_headcount_location');
@@ -174,7 +184,7 @@ $handler->display->display_options['displays'] = array(
 'default' => 0,
 'page' => 0,
 );
-$translatables['headcount_location'] = array(
+$translatables['headcount_location_monthly'] = array(
 t('Master'),
 t('Headcount / Filter by Location'),
 t('more'),
@@ -193,6 +203,8 @@ t('last »'),
 t('department'),
 t('count'),
 t('Headcount / Location (count)'),
+t('start_date'),
+t('end_date'),
 t('Filter by Location'),
 t('Contact_id'),
 t('.'),

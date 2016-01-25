@@ -58,7 +58,7 @@ $handler->display->display_options['fields']['department']['separator'] = '';
 
 /* Display: Headcount / Department (count) */
 $handler = $view->new_display('page', 'Headcount / Department (count)', 'page');
-$handler->display->display_options['path'] = 'headcount-department';
+$handler->display->display_options['path'] = 'civihr_reports_headcount-department';
 
 /* Display: Filter by Department */
 $handler = $view->new_display('block', 'Filter by Department', 'filter_headcount_department');

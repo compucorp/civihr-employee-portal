@@ -1,4 +1,4 @@
-(function($) {
+(function($, moment) {
     'use strict';
 
     /**
@@ -330,10 +330,8 @@
              * @param {JSON} (optional) chartData - The data to visualize
              */
             monthlyChart: function (chartData, dateRange, object) {
-                console.log(object);
-                console.log(object.getResultSummary());
-                // This is results page through js
-                //dataWrapper.show();
+                // This is results summary page purely through js
+                object.resetResultPanel();
 
                 _chart.type = 'monthlyChart';
 
@@ -346,7 +344,7 @@
                 if (typeof dateRange === 'undefined'){
                     // our range is not yet selected
                     // fallback to some default date range
-                    var date_ranges = []
+                    var date_ranges = [];
                     date_ranges.push(new Date(2012, 0));
                     date_ranges.push(new Date(2012, 11));
                 }
@@ -372,14 +370,23 @@
                     .tickSize(16, 0)
                     .tickFormat(d3.time.format("%B"));
 
+                var monthly_highest = 5;
+
                 var y = d3.scale.linear()
                     .range([_chart.size.innerHeight, 0])
-                    .domain([0, d3.max(_chart.data, function(d) { return _roundUp5(d.data.count); })]);
+                    .domain([0, d3.max(_chart.data, function (d) {
+                        // Get the highest column value
+                        console.log(monthly_highest);
+                        return _roundUp5(monthly_highest);
+                    })]);
 
                 var yAxis = d3.svg.axis()
                     .scale(y)
                     .orient("left")
                     .ticks(_settings.setTicks);
+
+                // We draw axis before the lines are added to the chart
+                _drawAxis(svg, xAxis, yAxis);
 
                 document.querySelector(_legend.selector).innerHTML = '';
 
@@ -409,7 +416,6 @@
 
                     // Get the selected range start date so we can use it in our calculations
                     CurrentDate = new Date(date_ranges[0].getFullYear(), date_ranges[0].getMonth());
-                    console.log(CurrentDate);
 
                         // Get monthly data / location
                         monthly_data = [];
@@ -438,40 +444,38 @@
 
                             // Add to monthly data
                             monthly_data.push(result_array);
+
+                            // Calculates the highest value for Y Axis
+                            if (result_array['count'] > monthly_highest) {
+                                monthly_highest = result_array['count'];
+                            }
+
                         }
 
                         svg.append("path")
-                            .attr("class", "line")
+                            .attr('class', function (d, i) {
+                                return 'line chart-color-stroke-' + tt;
+                            })
                             .attr("style", "stroke: " + color_z(tt) + "; stroke-width: 2; fill: none;")
                             .attr("d", valueline(monthly_data));
 
-                        console.log(monthly_data);
-                        console.log(nested_data[tt]);
-
                         // Set result summary column data
                         object.addResultSummaryColumn(monthly_data, nested_data[tt]);
-
-
-                        //dataWrapper.append(nested_data[tt]['key'] + " - test test - " + tt);
 
                 }
 
                 // Create rows
                 object.setResultSummary(monthly_data);
 
-                console.log(object.getResultSummary());
-
                 // Generate results summary and override datawrapper
                 object.$DOM.sections.dataWrapper.show();
                 object.$DOM.sections.dataWrapper.html(object.getResultSummary());
 
-                _drawAxis(svg, xAxis, yAxis);
                 _drawLegend(svg, nested_data, {
                     color: function (d, i) { return color_z(d.key); },
                     text: function(d) { return d.key; }
                 });
 
-                console.log(nested_data);
             },
 
             /**
@@ -494,8 +498,10 @@
                         return d.data.department;
                     })
                     .rollup(function (d) {
-                        return d3.sum(d, function(g) {
-                            return 1;
+                        return d3.sum(d, function(d) {
+                            // If specific count field is defined, use it as count
+                            // Otherwise fallback to count as 1 (summing up results)
+                            return d.data.count || 1;
                         });
                     })
                     .entries(_chart.data);
@@ -805,32 +811,36 @@
                 }.bind(this)
             }, $graphFilters);
         } else {
-            this.addButton({
-                active: this.getChartType() === 'bar',
-                label: 'bar chart',
-                click: function () {
-                    this.setChartType('bar');
-                    this.drawGraph();
-                }.bind(this)
-            }, $graphFilters);
 
-            this.addButton({
-                active: this.getChartType() === 'pie',
-                label: 'pie chart',
-                click: function () {
-                    this.setChartType('pie');
-                    this.drawGraph();
-                }.bind(this)
-            }, $graphFilters);
+            if (Drupal.settings.civihr_employee_portal_reports.prefix == 'civihr_reports_monthly') {
+                this.addButton({
+                    active: this.getChartType() === 'monthly_chart',
+                    label: 'monthly chart',
+                    click: function () {
+                        this.setChartType('monthly_chart');
+                        this.drawGraph();
+                    }.bind(this)
+                }, $graphFilters);
+            }
+            else {
+                this.addButton({
+                    active: this.getChartType() === 'bar',
+                    label: 'bar chart',
+                    click: function () {
+                        this.setChartType('bar');
+                        this.drawGraph();
+                    }.bind(this)
+                }, $graphFilters);
 
-            this.addButton({
-                active: this.getChartType() === 'monthly_chart',
-                label: 'monthly chart',
-                click: function () {
-                    this.setChartType('monthly_chart');
-                    this.drawGraph();
-                }.bind(this)
-            }, $graphFilters);
+                this.addButton({
+                    active: this.getChartType() === 'pie',
+                    label: 'pie chart',
+                    click: function () {
+                        this.setChartType('pie');
+                        this.drawGraph();
+                    }.bind(this)
+                }, $graphFilters);
+            }
         }
     };
 
@@ -916,6 +926,93 @@
             }.bind(this)
         });
 
+        $.ajax({
+            type: 'GET',
+            url: this.getJsonUrl() + ( typeof path !== 'undefined' ? path : '' ),
+            success: function(data) {
+                var summary = normaliseSummaryData(data.results);
+
+                if (summary.length === 0) {
+                    return;
+                }
+
+                replaceSummaryTable(summary, this.$DOM);
+            }.bind(this)
+        });
+
+        /**
+         * Normalise summary data returned from drupal view into consistent format: { "Key1": 0, "Key2": 2, ... }
+         *
+         * @param {Object[]} summary
+         * @returns {Object.<string,number>}
+         */
+        function normaliseSummaryData(summary) {
+            var normalisedSummary = {},
+                i;
+
+            // The data can have two formats, depending on particular report:
+            // data = { results: [{ departament: "xxx", count: 1 }, ...]) }
+            // or
+            // data = { results: [{ gender: "aaa" }, { gender: "aaa" }, ...] }
+            //
+            // The code inside if takes care of the first possibility
+            // The else takes care of the second
+            //
+            // The "gender" and "department" keys are hardcoded in Drupal Views
+            // Probably they should be renamed to something like "xaxis"/"yaxis"
+            if (summary[0] !== undefined && summary[0].data.count !== undefined) {
+                for (i in summary) {
+                    normalisedSummary[summary[i].data.department] = +summary[i].data.count;
+                }
+            } else {
+                normalisedSummary = summary.reduce(function (accumulator, row) {
+                    var key = row.data.gender;
+
+                    (typeof accumulator[key] === 'undefined') && (accumulator[key] = 0);
+
+                    return ++accumulator[key] && accumulator;
+                }, {});
+            }
+
+            return normalisedSummary;
+        }
+
+        /**
+         * Populate summary table
+         *
+         * @param {Object.<string,number>} summary
+         * @param {{sections}} $DOM
+         */
+        function replaceSummaryTable(summary, $DOM) {
+            var $countRow = $('<tr />'),
+                $headerRow = $('<tr />'),
+                $percentageRow = $('<tr />'),
+                summaryKeys = Object.keys(summary),
+                total;
+
+            total = summaryKeys.reduce(function(accumulator, key) {
+                return accumulator + summary[key];
+            }, 0);
+
+            summaryKeys
+                .forEach(function(key) {
+                    var percentage;
+
+                    percentage = Math.round((summary[key]/total)*10000)/100;
+
+                    $headerRow.append($('<th />').text(key));
+                    $countRow.append($('<td />').text(summary[key]));
+                    $percentageRow.append($('<td />').text(percentage + '%'));
+                });
+
+            $DOM.sections.summaryWrapper
+                .show()
+                .find('table')
+                .empty()
+                .append($('<thead />').append($headerRow))
+                .append($('<tbody />').append($countRow).append($percentageRow));
+        }
+
         // Returns the URL for the ajax call
         function buildURL() {
             var base_path = Drupal.settings.basePath;
@@ -951,10 +1048,8 @@
                     break;
                 case 'monthly_chart':
                     this.setChartType('monthly_chart');
-                    console.log(this.$DOM.sections.dataWrapper);
                     console.log(this);
                     // We will modify the results page from javascript (overriding the default view result page generated by drupal views)
-                    var dataWrapper = this.$DOM.sections.dataWrapper;
                     this.chartLibrary.monthlyChart(json.results, path, this);
                     break;
                 case 'bar':
@@ -1043,6 +1138,8 @@
         this.$DOM.sections = {
             dataWrapper: this.$DOM.wrapper.find('[data-graph-section="data"]'),
             canvas: this.$DOM.wrapper.find('[data-graph-section="canvas"]'),
+            slider: this.$DOM.wrapper.find('[data-graph-section="slider"]'),
+            summaryWrapper: this.$DOM.wrapper.find('[data-graph-section="summary"]'),
             filters: {
                 graph: this.$DOM.wrapper.find('[data-graph-section="graph-filters"]'),
                 main: this.$DOM.wrapper.find('[data-graph-section="main-filters"]'),
@@ -1051,59 +1148,116 @@
         };
     };
 
+    CustomReport.prototype.getResultPanel = function () {
+        var div = document.createElement('section');
+        div.className = 'panel panel-primary';
+
+        div.innerHTML = '<header class="panel-heading">' +
+            '<h2 class="panel-title">Data</h2>' +
+        '</header>' +
+        '<div class="table-responsive">' +
+        '</div>';
+
+        return div;
+    };
+
+    CustomReport.prototype.resetResultPanel = function () {
+        delete this.ResultSummaryColumns;
+        delete this.ResultPanel;
+        delete this.ResultTable;
+        delete this.TableBody;
+        delete this.TableHead;
+    };
+
     CustomReport.prototype.setResultSummary = function(rowInfo) {
 
+        this.ResultPanel = this.getResultPanel();
+
         // If not defined use the value passed from parameter, but if defined used what is already in the object
-        this.ResultTable = this.getResultSummary();
-
+        this.ResultTable = this.ResultTable || this.getTable();
         this.TableBody = this.getTableBody();
+        this.TableHead = this.getTableHead();
 
+        this.ResultTable.appendChild(this.TableHead);
         this.ResultTable.appendChild(this.TableBody);
 
-        console.log(this.getResultSummaryColumns());
         var ColumnData = this.getResultSummaryColumns();
 
+        // Create the header row
+        var tr = document.createElement('TR');
+        this.TableHead.appendChild(tr);
+
+        // Add first column TH (Report Date)
+        var th = document.createElement('TH');
+        th.width = '200';
+
+        th.appendChild(document.createTextNode("Reporting Date"));
+        tr.appendChild(th);
+
+        // Add header labels
+        for (var j = 0; j < ColumnData.length; j++) {
+            th = document.createElement('TH');
+            th.width = '200';
+            th.appendChild(document.createTextNode(ColumnData[j]['location']));
+            tr.appendChild(th);
+        }
+
+        // Add result rows
         for (var i = 0; i < rowInfo.length; i++) {
-            console.log(rowInfo[i]);
             var tr = document.createElement('TR');
+            tr.className = (i + 1) % 2 ? 'odd' : 'even';
+
             this.TableBody.appendChild(tr);
 
             // Add first column (Report Date)
             var td = document.createElement('TD');
             td.width = '200';
 
-            td.appendChild(document.createTextNode("Date: " + rowInfo[i]['start_date']));
+            td.appendChild(document.createTextNode(rowInfo[i]['start_date']));
             tr.appendChild(td);
 
             for (var j = 0; j < ColumnData.length; j++) {
                 var td = document.createElement('TD');
                 td.width = '200';
-                td.appendChild(document.createTextNode(ColumnData[j]['location'] + " - " + ColumnData[j]['data'][i]['count']));
+                td.appendChild(document.createTextNode(ColumnData[j]['data'][i]['count']));
                 tr.appendChild(td);
             }
         }
 
-    }
+        this.ResultPanel.querySelector('.table-responsive').appendChild(this.ResultTable);
+    };
 
     CustomReport.prototype.getResultSummary = function() {
-        return this.ResultTable || document.createElement('TABLE');
-    }
+        return this.ResultPanel || this.getResultPanel();
+    };
 
     CustomReport.prototype.getTableBody = function() {
         return this.TableBody || document.createElement('TBODY');
-    }
+    };
+
+    CustomReport.prototype.getTableHead = function() {
+        return this.TableHead || document.createElement('THEAD');
+    };
+
+    CustomReport.prototype.getTable = function () {
+        var table = document.createElement('TABLE');
+        table.className = 'table table-hover table-striped';
+
+        return table;
+    };
 
     CustomReport.prototype.addResultSummaryColumn = function(column, location) {
+        var column_val = [];
+        column_val['location'] = location['key'];
+        column_val['data'] = column;
+
         this.ResultSummaryColumns = this.getResultSummaryColumns();
-        var coloumn_val = [];
-        coloumn_val['location'] = location['key'];
-        coloumn_val['data'] = column;
-        this.ResultSummaryColumns.push(coloumn_val);
-    }
+        this.ResultSummaryColumns.push(column_val);
+    };
 
     CustomReport.prototype.getResultSummaryColumns = function() {
         return this.ResultSummaryColumns || [];
-    }
+    };
 
 
     /**
@@ -1174,6 +1328,24 @@
     };
 
     /**
+     * Initializes the required date filter element
+     *
+     */
+    CustomReport.prototype.initDateFilters = function() {
+        // For montly reports load the date slider
+        // Otherwise load the date picker filter
+        // If more logic needed maybe we can change to switch statement
+        if (Drupal.settings.civihr_employee_portal_reports.prefix == 'civihr_reports_monthly' || Drupal.settings.civihr_employee_portal_reports.prefix == 'civihr_reports_absence') {
+            // Init date slider
+            this.initSlider();
+        }
+        else {
+            // Init date single filter (datepicker)
+            this.initCalendar();
+        }
+    };
+
+    /**
      * Initializes the object
      *
      */
@@ -1190,17 +1362,15 @@
 
         this.getDOMElements();
 
-        // Init date single filter
-        this.initCalendar();
-
-        // Init date slider
-        this.initSlider();
+        // Set datepicker or date range filter
+        this.initDateFilters();
 
         this.generateMainFilters();
 
         this.hideButtonTpls();
         this.hideSubFilters();
         this.setDataWrapperVisibility();
+        this.$DOM.sections.summaryWrapper.hide();
     };
 
     /**
@@ -1228,29 +1398,61 @@
     CustomReport.prototype.initSlider = function() {
         var _this = this;
 
-        $("#slider-range").slider({
+        var $sliderControl = _this.$DOM.sections.slider.find('[data-graph-slider-control]');
+
+        var format = { view: 'DD/MM/YYYY', month_view: 'MM/YYYY', api: 'YYYY-MM-DD' };
+        var range = [moment('01/01/2010', format.view), moment('31/12/2016', format.view)];
+        var init = [moment('01/01/2012', format.view), moment('31/12/2012', format.view)];
+        var start_range_date = '01/01/2010';
+
+        $sliderControl.slider({
             range: true,
-            min: new Date('2010/01/01').getTime() / 1000, // min date
-            max: new Date('2014/01/01').getTime() / 1000, // max date
-            step: 86400,
-            values: [new Date('2012/01/01').getTime() / 1000, new Date('2012/12/31').getTime() / 1000], // default range
+            step: 1,
+            min: 0,
+            max: 83,
+            values: [24, 35],
+            create: function () {
+                $sliderControl.find('.ui-slider-handle').each(function (index) {
+                    $(this).attr({
+                        'data-toggle': 'tooltip',
+                        'data-animation': 'false',
+                        'data-placement': 'bottom',
+                        'data-trigger': 'manual',
+                        'title': init[index].format(format.month_view)
+                    }).tooltip('show');
+                });
+            },
             change: function(event, ui) {
-                var start_date = new Date(ui.values[0] * 1000);
-                var end_date = new Date(ui.values[1] * 1000);
+                var startDate = moment(start_range_date, format.view);
+                startDate = startDate.add(ui.values[0], 'months');
 
-                start_date = start_date.getFullYear() + "-" + ("0" + (start_date.getMonth() + 1)).slice(-2) + "-" + ("0" + (start_date.getDate())).slice(-2);
-                end_date = end_date.getFullYear() + "-" + ("0" + (end_date.getMonth() + 1)).slice(-2) + "-" + ("0" + (end_date.getDate())).slice(-2);
+                var endDate = moment(start_range_date, format.view);
+                endDate = endDate.add(ui.values[1], 'months');
 
-                // Filter the graph by specifing Start and End date range
-                _this.drawGraph('/' + start_date + '/' + end_date);
+                redrawTooltip(ui.handle, ui.value);
 
-                $("#amount").val((new Date(ui.values[0] * 1000).toDateString()) + " - " + (new Date(ui.values[1] * 1000)).toDateString());
+                _this.drawGraph('/' + startDate.format(format.api) + '/' + endDate.format(format.api));
+            },
+            slide: function (event, ui) {
+                redrawTooltip(ui.handle, ui.value);
             }
         });
 
-        $("#amount").val((new Date($( "#slider-range" ).slider("values", 0) * 1000).toDateString()) +
-            " - " + (new Date($( "#slider-range" ).slider("values", 1) * 1000)).toDateString());
+        _this.$DOM.sections.slider.find('[data-graph-slider-min-date]').html(range[0].format(format.view))
+        _this.$DOM.sections.slider.find('[data-graph-slider-max-date]').html(range[1].format(format.view))
 
+        /**
+         * Redraws the tooltip for an handle
+         *
+         * @param {HTLMElement} handle
+         * @param {string/int} value - The value to display on the tooltip
+         */
+        function redrawTooltip(handle, value) {
+            $(handle)
+                .attr('title', moment(start_range_date, format.view).add(value, 'months').format(format.month_view))
+                .tooltip('destroy')
+                .tooltip('show');
+        }
     };
 
     /**
@@ -1274,6 +1476,11 @@
                 if (this.setChartType() === 'grouped_bar') {
                     this.setChartType('bar');
                 }
+
+                // Monthly chart (set the monthly chart type)
+                if (Drupal.settings.civihr_employee_portal_reports.prefix == 'civihr_reports_monthly') {
+                    this.setChartType('monthly_chart');
+                }
             }
         }
 
@@ -1290,6 +1497,8 @@
 
         // Generate X Axis Group By buttons, when Y Axis Group By is clicked
         this.generateSubFilters($button.data('value'));
+
+        this.$DOM.sections.summaryWrapper.hide();
     };
 
     /**
@@ -1478,4 +1687,4 @@
             });
         }
     }
-})(jQuery);
+})(jQuery, moment);
