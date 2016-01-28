@@ -38,6 +38,9 @@ function civihr_employee_portal_views_data_alter(&$data) {
     // Add custom date handler for job contract start/end dates
     $data['hrjc_details']['period_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
     $data['hrjc_details']['period_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
+
+    $data['absence_list']['absence_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
+    $data['absence_list']['absence_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
         
     $data['json']['absence_entitlement'] = array(
         'title' => t('Absence entitlement value'),
@@ -167,6 +170,159 @@ function civihr_employee_portal_views_data_alter(&$data) {
         
     );
     
+    // Appraisals handlers
+    $data['json']['appraisal_cycle_type'] = array(
+        'title' => t('Appraisal Cycle Type'),
+        'help' => t('Appraisal Cycle Type'),
+        'real field' => 'api.AppraisalCycle.getsingle/cycle_type_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_appraisal_cycle_type',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'appraisal_cycle_type',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['json']['appraisal_cycle_period'] = array(
+        'title' => t('Appraisal Cycle Period'),
+        'help' => t('Appraisal Cycle Period'),
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_appraisal_cycle_period',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'appraisal_cycle_period',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['json']['appraisal_status'] = array(
+        'title' => t('Appraisal Status'),
+        'help' => t('Appraisal Status'),
+        'real field' => 'status_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_appraisal_status',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'appraisal_status',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['json']['appraisal_employee'] = array(
+        'title' => t('Appraisal Employee'),
+        'help' => t('Appraisal Employee'),
+        'real field' => 'contact_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_appraisal_employee',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'appraisal_employee',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['json']['appraisal_line_manager'] = array(
+        'title' => t('Appraisal Line Manager'),
+        'help' => t('Appraisal Line Manager'),
+        'real field' => 'manager_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_appraisal_line_manager',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'appraisal_line_manager',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['json']['appraisal_due_date'] = array(
+        'title' => t('Appraisal Due Date'),
+        'help' => t('Appraisal Due Date'),
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_appraisal_due_date',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_request_handler',
+            'name_field' => 'appraisal_due_date',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['json']['appraisal_contact_id'] = array(
+        'title' => t('Appraisal Contact ID'),
+        'help' => t('Appraisal Contact ID'),
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_appraisal_contact_id',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_json_query_argument_appraisal_contact_id_request_handler',
+            'name_field' => 'appraisal_contact_id',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_json_query_handler_filter',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    
+    $data['civicrm_value_emergency_contacts_21']['id'] = array(
+        'title' => t('Emergency Contact ID'),
+        'help' => t('Emergency Contact ID field value'),
+        'real field' => 'id',
+        'field' => array(
+          'handler' => 'views_handler_field_numeric',
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_numeric',
+        ),
+        'sort' => array(
+            'handler' => 'views_handler_sort'
+        ),
+    );
+
     // Add custom date handler
     $data['absence_list']['absence_start_date_timestamp']['field']['handler'] = 'views_handler_field_date';
     $data['absence_list']['absence_start_date_timestamp']['sort']['handler'] = 'views_handler_sort_date';
@@ -306,6 +462,26 @@ function civihr_employee_portal_views_data_alter(&$data) {
         'sort' => array('handler' => 'views_handler_sort'),
     );
     
+    $data['absence_approval_list']['manager_id'] = array(
+        'title' => t('Manager ID'),
+        'help' => t('Manager ID field value'),
+        'real field' => 'manager_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_manager_id',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_handler_argument_string',
+            'name_field' => 'title',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_string',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_handler_sort'),
+    );
+
     // Add custom date handler
     $data['absence_approval_list']['absence_start_date_timestamp']['field']['handler'] = 'views_handler_field_date';
     $data['absence_approval_list']['absence_start_date_timestamp']['sort']['handler'] = 'views_handler_sort_date';
@@ -336,10 +512,39 @@ function civihr_employee_portal_views_pre_render(&$view) {
         }
     }
     
+    if ($view->name == 'appraisals') {
+
+        ctools_include('modal');
+        ctools_modal_add_js();
+
+    }
+    
     if($view->name == "civihr_staff_directory"){
       $view->result = removeInactiveManagers($view->result);
       $view->result = removeInactiveDepartments($view->result);
     }
+
+    if($view->name == "approvals"){
+      $view->result = removeAbsencesForOtherManagers($view->result);
+    }
+}
+
+/**
+ * Remove absences of contacts that belong to managers other than the currently logged in manager
+ *
+ */
+function removeAbsencesForOtherManagers($results){
+  global $user;
+  $managerData = get_civihr_uf_match_data($user->uid);
+  $managerId = $managerData['contact_id'];
+
+  foreach($results as $key => $value){
+    $managers = _getManagerContacts($value->absence_approval_list_employee_id);
+    if(!in_array($managerId, $managers)){
+      unset($results[$key]);
+    }
+  }
+  return $results;
 }
 
 /**
@@ -359,10 +564,10 @@ function removeAdditionalCommas($view){
   $fieldsToClean = array();
 
   foreach($view->style_plugin->rendered_fields as $renderedField){
-    $managerFieldValues = $renderedField['display_name_1'];
+    $managerFieldValues = $renderedField['last_name_1'];
     $departmentFieldValues = $renderedField['department'];
 
-    if($managerFieldValues != NULL)
+    if($managerFieldValues != NULL && trim($managerFieldValues) != "")
     {
       $cleanedValue = preg_replace('/,( *,)+/', ',', trim($managerFieldValues, ', '));
       $fieldsToClean[$managerFieldValues] = $cleanedValue;
@@ -401,7 +606,8 @@ function removeInactiveManagers($results = array()) {
        ($value->civicrm_relationship_end_date < date('Y-m-d') && $value->civicrm_relationship_end_date != NULL) ||
         $value->civicrm_relationship_start_date > date('Y-m-d'))
         {
-          $value->civicrm_contact_civicrm_relationship_display_name = NULL;
+          $value->civicrm_contact_civicrm_relationship_first_name = NULL;
+          $value->civicrm_contact_civicrm_relationship_last_name = NULL;
         }
     }
   return $results;

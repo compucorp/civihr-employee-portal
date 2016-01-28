@@ -25,18 +25,18 @@
             drop_element : 'drop-target',
             browse_button : 'pickfiles', // you can pass an id...
             container: document.getElementById('container'), // ... or DOM Element itself
-            url : '/civicrm/tasksassignments/file/upload',
+            url : that.config.url,
             flash_swf_url : '../js/Moxie.swf',
             silverlight_xap_url : '../js/Moxie.xap',
             multipart_params : {
-                'entityTable' : 'civicrm_activity',
+                'entityTable' : that.config.table,
                 'entityID' : that.config.id
             },
 
             filters : {
                 max_file_size : '10mb',
                 mime_types: [
-                    {title : "Document files", extensions : "doc,docx,pdf,xls"}
+                    {title : that.config.title, extensions : "pdf"}
                 ]
             },
 
@@ -44,7 +44,7 @@
                 PostInit: function() {
                     document.getElementById('notsupported').innerHTML = '';
 
-                    $('#civihr-employee-portal-document-form #edit-save').bind('click', function(e) {
+                    $('#' + that.config.formId + ' #edit-save').bind('click', function(e) {
                         if (that.uploader.files.length && !that.uploaded) {
                             that.uploadFiles();
                             e.preventDefault();
@@ -71,7 +71,7 @@
                 FileUploaded: function(up, file) {
                     if (up.files.length == (up.total.uploaded + up.total.failed)) {
                         that.uploaded = true;
-                        $('#civihr-employee-portal-document-form #edit-save').click();
+                        $('#' + that.config.formId + ' #edit-save').click();
                     }
                 },
 

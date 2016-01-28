@@ -103,7 +103,7 @@ $handler->display->display_options['fields']['id']['relationship'] = 'contact_id
 $handler->display->display_options['fields']['id']['label'] = 'contact_id';
 $handler->display->display_options['fields']['id']['separator'] = '';
 $handler->display->display_options['defaults']['sorts'] = FALSE;
-$handler->display->display_options['path'] = 'age-location';
+$handler->display->display_options['path'] = 'civihr_reports_age-location';
 
 /* Display: Filter by Age */
 $handler = $view->new_display('block', 'Filter by Age', 'filter_age_location');

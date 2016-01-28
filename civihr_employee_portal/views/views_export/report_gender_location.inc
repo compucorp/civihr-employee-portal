@@ -89,7 +89,7 @@ $handler->display->display_options['fields']['id']['relationship'] = 'contact_id
 $handler->display->display_options['fields']['id']['label'] = 'contact_id';
 $handler->display->display_options['fields']['id']['separator'] = '';
 $handler->display->display_options['defaults']['sorts'] = FALSE;
-$handler->display->display_options['path'] = 'gender-location';
+$handler->display->display_options['path'] = 'civihr_reports_gender-location';
 
 /* Display: Filter by Location */
 $handler = $view->new_display('block', 'Filter by Location', 'filter_gender_location');

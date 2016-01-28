@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-xs-1 text-left">
                     <a href="/<?php print $next_url;?>">
-                        <i class="fa fa-arrow-left"></i>
+                        <i class="fa fa-chevron-left"></i>
                     </a>
                 </div>
                 <div class="col-xs-10">
@@ -16,7 +16,7 @@
                 </div>
                 <div class="col-xs-1 text-right">
                     <a href="/<?php print $next_url;?>">
-                        <i class="fa fa-arrow-right"></i>
+                        <i class="fa fa-chevron-right"></i>
                     </a>
                 </div>
             </div>
@@ -45,28 +45,21 @@
                 </div>
                 <div class="col-md-8">
                     <div class="clearfix visible-xs-block visible-sm-block">&nbsp;</div>
-                    <div class="form-inline text-right">
-                        <div class="form-group">
-                            <label for="date-filter" class="control-label">Select Date:</label>
-                            <div data-graph-calendar class="input-group input-group-unstyled">
-                                <input type="text" id="date-filter" class="form-control">
-                                <span class="input-group-addon fa fa-calendar"></span>
+
+                    <?php if (arg(0) == 'civihr_reports') { ?>
+                        <div class="form-inline text-right">
+                            <div class="form-group">
+                                <label for="date-filter" class="control-label">Select Date:</label>
+                                <div data-graph-calendar class="input-group input-group-unstyled">
+                                    <input type="text" id="date-filter" class="form-control">
+                                    <span class="input-group-addon fa fa-calendar"></span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    <?php } ?>
                     <div data-graph-section="canvas">
                         <!-- Content generated in reports.js -->
                     </div>
-
-                    <div data-graph-section="graph-slider">
-                        <p>
-                            <label for="amount">Selected range:</label>
-                            <input type="text" id="amount" readonly style="width: 100%; border:0; color:#f6931f; font-weight:bold;">
-                        </p>
-
-                        <div id="slider-range"></div>
-                    </div>
-
                 </div>
                 <div class="col-md-2">
                     <div class="row">
@@ -87,6 +80,18 @@
                     </div>
                 </div>
             </div>
+
+            <?php if (arg(0) == 'civihr_reports_monthly' || arg(0) == 'civihr_reports_absence') { ?>
+                <div class="row">
+                    <div class="col-xs-12" data-graph-section="slider">
+                        <div data-graph-slider>
+                            <span class="col-xs-2 text-center ui-slider-range-values" data-graph-slider-min-date></span>
+                            <div class="col-xs-8" data-graph-slider-control></div>
+                            <span class="col-xs-2 text-center ui-slider-range-values" data-graph-slider-max-date></span>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
         </div>
         <footer class="panel-footer text-center" data-graph-section="sub-filters">
             <button
@@ -100,6 +105,15 @@
             </div>
         </footer>
     </section>
+    <div data-graph-section="summary">
+        <section class="panel panel-primary">
+            <header class="panel-heading">
+                <h2 class="panel-title">Summary</h2>
+            </header>
+            <table class="table table-stripped table-hover"></table>
+        </section>
+        <!-- Content populated from JavaScript -->
+    </div>
     <div data-graph-section="data">
         <?php print $custom_data; ?>
     </div>

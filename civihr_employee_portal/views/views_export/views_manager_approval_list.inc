@@ -29,25 +29,25 @@ $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['style_plugin'] = 'table';
 $handler->display->display_options['style_options']['row_class'] = 'manager-approval-row';
 $handler->display->display_options['style_options']['columns'] = array(
-    'id' => 'id',
-    'absence_title' => 'absence_title',
+  'id' => 'id',
+  'absence_title' => 'absence_title',
 );
 $handler->display->display_options['style_options']['default'] = '-1';
 $handler->display->display_options['style_options']['info'] = array(
-    'id' => array(
-        'sortable' => 0,
-        'default_sort_order' => 'asc',
-        'align' => '',
-        'separator' => '',
-        'empty_column' => 0,
-    ),
-    'absence_title' => array(
-        'sortable' => 0,
-        'default_sort_order' => 'asc',
-        'align' => '',
-        'separator' => '',
-        'empty_column' => 0,
-    ),
+  'id' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
+  'absence_title' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
 );
 /* Header: Global: Text area */
 $handler->display->display_options['header']['area']['id'] = 'area';
@@ -155,15 +155,6 @@ $handler->display->display_options['fields']['nothing_1']['alter']['text'] = '<d
 $handler->display->display_options['sorts']['absence_start_date_timestamp']['id'] = 'absence_start_date_timestamp';
 $handler->display->display_options['sorts']['absence_start_date_timestamp']['table'] = 'absence_approval_list';
 $handler->display->display_options['sorts']['absence_start_date_timestamp']['field'] = 'absence_start_date_timestamp';
-/* Contextual filter: Absence approval entity: Drupal_uid */
-$handler->display->display_options['arguments']['drupal_uid']['id'] = 'drupal_uid';
-$handler->display->display_options['arguments']['drupal_uid']['table'] = 'absence_approval_list';
-$handler->display->display_options['arguments']['drupal_uid']['field'] = 'drupal_uid';
-$handler->display->display_options['arguments']['drupal_uid']['default_action'] = 'default';
-$handler->display->display_options['arguments']['drupal_uid']['default_argument_type'] = 'current_user';
-$handler->display->display_options['arguments']['drupal_uid']['summary']['number_of_records'] = '0';
-$handler->display->display_options['arguments']['drupal_uid']['summary']['format'] = 'default_summary';
-$handler->display->display_options['arguments']['drupal_uid']['summary_options']['items_per_page'] = '25';
 
 /* Display: Approved / Rejected */
 $handler = $view->new_display('page', 'Approved / Rejected', 'page');
@@ -257,6 +248,11 @@ $handler->display->display_options['fields']['absence_status']['field'] = 'absen
 $handler->display->display_options['fields']['absence_status']['label'] = 'Status';
 $handler->display->display_options['fields']['absence_status']['alter']['alter_text'] = TRUE;
 $handler->display->display_options['fields']['absence_status']['alter']['text'] = '<div id="act-id-[id]">[absence_status]</div>';
+/* Field: Absence approval entity: Manager ID */
+$handler->display->display_options['fields']['manager_id']['id'] = 'manager_id';
+$handler->display->display_options['fields']['manager_id']['table'] = 'absence_approval_list';
+$handler->display->display_options['fields']['manager_id']['field'] = 'manager_id';
+$handler->display->display_options['fields']['manager_id']['exclude'] = TRUE;
 $handler->display->display_options['defaults']['sorts'] = FALSE;
 /* Sort criterion: Absence approval entity: Absence_start_date_timestamp */
 $handler->display->display_options['sorts']['absence_start_date_timestamp']['id'] = 'absence_start_date_timestamp';
@@ -292,47 +288,46 @@ $handler->display->display_options['filters']['absence_status']['table'] = 'abse
 $handler->display->display_options['filters']['absence_status']['field'] = 'absence_status';
 $handler->display->display_options['filters']['absence_status']['value'] = '1';
 $translatables['approvals'] = array(
-    t('Master'),
-    t('Manager Absence Approval'),
-    t('more'),
-    t('Apply'),
-    t('Reset'),
-    t('Sort by'),
-    t('Asc'),
-    t('Desc'),
-    t('<a href="manager_approval/nojs/calendar/show" class="ctools-use-modal ctools-modal-civihr-default-style">Open manager calendar</a>'),
-    t('Nothing to approve yet!'),
-    t('Employee CiviCRM Contact ID'),
-    t('.'),
-    t('Main Absence ID'),
-    t('Activity type ID'),
-    t('Employee name'),
-    t('Type'),
-    t('Duration'),
-    t('Dates'),
-    t('[absence_start_date_timestamp] - [absence_end_date_timestamp] ([duration])'),
-    t('Status'),
-    t('<div id="act-id-[id]">[absence_status]</div>'),
-    t('Pick days'),
-    t('<a href="manager_approval/nojs/pick_days/[employee_id]/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-default-style fa fa-calendar"></a>'),
-    t('Choose days'),
-    t('1'),
-    t('Action'),
-    t('<div class="manager-approval-main-table__actions"><span id="[id]" class="manager-approval-main-table__actions__action manager-approval-main-table__actions__action--approve fa fa-lg fa-check-circle" aria-hidden="true"></span><span id="[id]" class="manager-approval-main-table__actions__action manager-approval-main-table__actions__action--deny fa fa-lg fa-times-circle" aria-hidden="true"></span></div>
+  t('Master'),
+  t('Manager Absence Approval'),
+  t('more'),
+  t('Apply'),
+  t('Reset'),
+  t('Sort by'),
+  t('Asc'),
+  t('Desc'),
+  t('<a href="manager_approval/nojs/calendar/show" class="ctools-use-modal ctools-modal-civihr-default-style">Open manager calendar</a>'),
+  t('Nothing to approve yet!'),
+  t('Employee CiviCRM Contact ID'),
+  t('.'),
+  t('Main Absence ID'),
+  t('Activity type ID'),
+  t('Employee name'),
+  t('Type'),
+  t('Duration'),
+  t('Dates'),
+  t('[absence_start_date_timestamp] - [absence_end_date_timestamp] ([duration])'),
+  t('Status'),
+  t('<div id="act-id-[id]">[absence_status]</div>'),
+  t('Pick days'),
+  t('<a href="manager_approval/nojs/pick_days/[employee_id]/[id]/[activity_type_id]" class="ctools-use-modal ctools-modal-civihr-custom-large-style fa fa-calendar"></a>'),
+  t('Choose days'),
+  t('1'),
+  t('Action'),
+  t('<div class="manager-approval-main-table__actions"><span id="[id]" class="manager-approval-main-table__actions__action manager-approval-main-table__actions__action--approve fa fa-lg fa-check-circle" aria-hidden="true"></span><span id="[id]" class="manager-approval-main-table__actions__action manager-approval-main-table__actions__action--deny fa fa-lg fa-times-circle" aria-hidden="true"></span></div>
 [tooltip]'),
-    t('All'),
-    t('Approved / Rejected'),
-    t('All Assigned Absences except awaiting approvals'),
-    t('Items per page'),
-    t('- All -'),
-    t('Offset'),
-    t('« first'),
-    t('‹ previous'),
-    t('next ›'),
-    t('last »'),
-    t('Nothing to show yet!'),
-    t('Awaiting Approvals'),
-    t('Awaiting Approvals dashboard block'),
-    t('<a href="manager_approval/nojs/calendar/show" class="ctools-use-modal ctools-modal-civihr-default-style">Open Manager Calendar</a>
-<a href="absence_all/nojs/view" class="ctools-use-modal ctools-modal-civihr-default-style show-all-absences">Show all Absences</a>'),
+  t('Approved / Rejected'),
+  t('All Assigned Absences except awaiting approvals'),
+  t('Items per page'),
+  t('- All -'),
+  t('Offset'),
+  t('« first'),
+  t('‹ previous'),
+  t('next ›'),
+  t('last »'),
+  t('Nothing to show yet!'),
+  t('Manager ID'),
+  t('Awaiting Approvals'),
+  t('Awaiting Approvals dashboard block'),
+  t('<a href="absence_all/nojs/view" class="chr_action--icon--list chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-custom-large-style"><span>Show all Absences</span></a><a href="manager_approval/nojs/calendar/show" class="chr_action--icon--calendar chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-default-style"><span>Open Calendar</span></a>'),
 );
