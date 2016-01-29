@@ -366,6 +366,15 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
 //            'template' => 'templates/civihr-employee-portal-document-form',
             'render element' => 'form',
         ),
+        'civihr_employee_portal_civihr_report' => array(
+            'variables' => array(
+                'title' => NULL,
+                'data' => NULL,
+                'next_url' => NULL,
+                'settings_url' => NULL
+            ),
+            'template' => 'templates/civihr-employee-portal-civihr-report',
+        ),
     );
 }
 
@@ -1166,6 +1175,13 @@ function civihr_employee_portal_menu() {
         'page arguments' => array(2, 3),
         'access callback' => '_user_has_role',
         'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin', 'administrator')),
+    );
+    
+    $items['hrreport_people_test'] = array(
+        'title' => 'CiviHR Report - People (test)',
+        'page callback' => 'civihr_employee_portal_hrreport_people',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
     );
 
     return $items;
@@ -4943,6 +4959,56 @@ function civihr_employee_portal_my_details() {
     $block = module_invoke('civihr_employee_portal', 'block_view', 'my_details');
 
     return render($block['content']);
+}
+
+/**
+ * CiviHR Report - People page.
+ */
+function civihr_employee_portal_hrreport_people() {
+
+    global $base_url;
+    
+    // Pivot Table:
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivot.min.js');
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/c3.min.js');
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/d3.min.js');
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/c3_renderers.js');
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable/c3.min.css");
+    
+    // PivotTable with NReco extensions:
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/jquery-ui-1.9.2.custom.min.js');
+    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/pivot.js');
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/gchart_renderers.js');
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/nrecopivot.js');
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable/pivot.css");
+    
+    // React-Pivot:
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/react-pivot-standalone-1.13.0.min.js');
+    
+    // Orb:
+    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/react-0.12.2.min.js');
+    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/orb.min.js');
+    //drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/orb/main.css");
+    //drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/orb/bootstrap_superhero.css");
+    //drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/orb/font-awesome-4.3.min.css");
+    //drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/orb/orb.css");
+    
+    $view = views_get_view('civihr_report_people');
+    $view->set_display('civihr_report_people_table');
+    $view->execute();
+    $table = $view->render();
+    $data = file_get_contents($base_url . '/civihr-report---people');
+    
+    return theme('civihr_employee_portal_civihr_report',
+        array(
+            'title' => t('People'),
+            'table' => $table,//module_invoke('civihr_employee_portal', 'block_view', 'civihr_report_people_table'),
+            'data' => $data,
+            'next_url' => '',
+            'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
+        )
+    );
+
 }
 
 /**
