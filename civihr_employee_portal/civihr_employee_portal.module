@@ -5356,7 +5356,7 @@ function _getManagerContacts($contact_id) {
  * @return boolean
  */
 function relationActiveAndCurrent($relation){
-  $endDate = empty($relation['end_date']) ? $relation['end_date'] : $relation['end_date'] . " 23:59:59";
+  $endDate = empty($relation['end_date']) ? NULL : $relation['end_date'] . " 23:59:59";
 
   return $relation['is_active'] == 1 && (strtotime($endDate) >= time() || empty($endDate))
           && (empty($relation['start_date']) || strtotime($relation['start_date']) <= time());
