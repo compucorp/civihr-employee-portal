@@ -91,7 +91,7 @@ function civihr_employee_portal_init() {
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/documents.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/tasks.css");
-
+    
     // Check the variable and decide if we need to rebuild the absence_list mysql view
     $rebuild_absence_list_view = variable_get('rebuild_absence_list_view', 'TRUE');
 
@@ -199,6 +199,20 @@ function civihr_employee_portal_init() {
         variable_set('rebuild_absence_list_view', 'FALSE');
     }
 
+    $rebuild_length_of_service = variable_get('rebuild_length_of_service', 'TRUE');
+    if (isset($rebuild_length_of_service) && $rebuild_length_of_service == 'TRUE') {
+        // Civi init
+        civicrm_initialize();
+        $civi_settings = parse_url(CIVICRM_DSN);
+        $civi_db_name = trim($civi_settings['path'], '/');
+        /**
+         * Length of Service view
+         */
+        $result = db_query('DROP view if exists civicrm_value_length_of_service_11');
+        $result = db_query("CREATE VIEW civicrm_value_length_of_service_11 AS
+                            SELECT id, entity_id, length_of_service, updated_date
+                            FROM {$civi_db_name}.civicrm_value_length_of_service_11");
+    }
 }
 
 /**
