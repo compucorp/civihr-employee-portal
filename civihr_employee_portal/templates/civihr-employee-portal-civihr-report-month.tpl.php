@@ -13,7 +13,13 @@
 <script src="sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable/c3.min.js"></script>
 <script src="sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable/d3.min.js"></script>
 <script src="sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable/c3_renderers.js"></script>
+<script src="sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable/export_renderers.js"></script>
 <script src="sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable-nreco/jquery-ui-1.9.2.custom.min.js"></script>
+<script src="sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable-nreco/nrecopivot.js"></script>
+<?php /*<script src="sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable-nreco/nrecowebpivot.js"></script>
+<script src="sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable-nreco/nrecopivotdataapi.js"></script>
+<script src="sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable-nreco/nrecopivotdataapi.jquery.nrecorelexbuilder-1.0"></script>
+ */?>
 
 
 <?php /*	
@@ -72,13 +78,12 @@
 
 <div><?php print drupal_render($date_filter); ?></div>
 
-<h4>Flat Table</h4>
-<div id="reportTable"><?php print $table; ?></div>
-
 <?php /*<h4>Pivot Table</h4>
 <div id="reportPivotTable"></div>*/ ?>
 <h4>PivotTable library with NReco extensions</h4>
 <div id="reportPivotTable"></div>
+<div id="reportPivotTable2"></div>
+<div id="pivotRelexBuilder">wtf?</div>
 <button id="export">export</button>
 
 <h4>Month-by-month Report</h4>
@@ -98,12 +103,16 @@
     CRM.$(function () {
         var data = <?php print $data; ?>;
         
+
+        
+        
         /*** PivotTable library initialization: ***/
         jQuery("#reportPivotTable").pivotUI(data, {
             rendererName: "Table",
             renderers: CRM.$.extend(
                 jQuery.pivotUtilities.renderers, 
-                jQuery.pivotUtilities.c3_renderers
+                jQuery.pivotUtilities.c3_renderers,
+                jQuery.pivotUtilities.export_renderers
             ),
             unusedAttrsVertical: false
         }, false);
@@ -125,7 +134,7 @@
         });
 
         var stdRendererNames = ["Table", "Table Barchart", "Heatmap", "Row Heatmap", "Col Heatmap"];
-        var wrappedRenderers = CRM.$.extend({}, jQuery.pivotUtilities.renderers);
+        var wrappedRenderers = CRM.$.extend({}, jQuery.pivotUtilities.renderers, jQuery.pivotUtilities.export_renderers);
         CRM.$.each(stdRendererNames, function () {
             var rName = this;
             wrappedRenderers[rName] = nrecoPivotExt.wrapTableRenderer(wrappedRenderers[rName]);
@@ -154,16 +163,155 @@
         }
 
 
+        var sum = $.pivotUtilities.aggregatorTemplates.sum;
+        var numberFormat = $.pivotUtilities.numberFormat;
+        var intFormat = numberFormat({digitsAfterDecimal: 0});
+        var tpl = $.pivotUtilities.aggregatorTemplates;
+
         var pvtOpts = {
             renderers: wrappedRenderers,
-            //rendererOptions: {sort: {direction: "desc", column_key: [2014]}},
             vals: ["Total"],
-            rows: ["First name", "Contract type"],
-            //cols: ["Age"],
-            aggregatorName: "Count",
+            rows: ["Gender"/*, "Location"*/],
+            cols: ["Month by month"],
+            //aggregatorName: "Count", //"Count Unique Values",
             rendererName: "Row Heatmap",
-            unusedAttrsVertical: false
+            unusedAttrsVertical: false,
+            derivedAttributes: {
+//                "2015-01": function(row) {
+//                    return row["Gender"] == "Male" ? 1 : -1;
+//                }
+            },
+            /*aggregators: {
+                "Sum1": function() { return tpl.sum()(["Gender"])}
+            },
+            aggregatorName: "Sum1"*/
+            //aggregator: sum(intFormat)(["2015-01"])
+            
         }
+        
+        var monthsFilter = [];
+        var monthsCount = {};
+        var yearFilter = '2015';
+        var pad = '00';
+        for (var monthI = 1; monthI < 1; monthI++) {
+            var dateKey = yearFilter + '-' + (pad+monthI).slice(-pad.length);
+            monthsFilter.push(dateKey);
+            monthsCount[dateKey] = 0;
+        }
+        
+        for (var i in monthsFilter) {
+            /*pvtOpts.derivedAttributes[monthsFilter[i]] = (function(row) {
+                return function() {
+                    return row;
+                }
+            })(monthsFilter[i]);*/
+            pvtOpts.rows.push(monthsFilter[i]);
+            
+            
+            pvtOpts.derivedAttributes[monthsFilter[i]] = function(i) {
+               return function(row) {
+                                var result = row["Period start date"].substring(0,7) < monthsFilter[i] ? monthsFilter[i] : 0;
+                                return result;
+                                return monthsCount[monthsFilter[i]] += result;
+                            }
+                        
+             }(i);
+         }
+         
+         
+         
+        pvtOpts.derivedAttributes["Month by month"] = function(row) {
+            return row["Period start date"].substring(0,7);
+        }
+         
+var monthByMonth = function() {
+  return function(data, rowKey, colKey) {
+    /*console.info('successRate aggregator');
+    console.info('data:');
+    console.info(data);
+    console.info('rowKey:');
+    console.info(rowKey);
+    console.info('colKey:');
+    console.info(colKey);*/
+        if (typeof colKey !== 'undefined' && colKey[0] === '1980-06') {
+            console.info('cell:');
+            console.info(data.rowAttrs);
+            console.info(rowKey);
+            console.info(colKey);
+        }
+
+    return {
+      count: 0,
+      push: function(record) {
+          //console.info('record:');
+          //console.info(record);
+        //if (!isNaN(parseFloat(record.successes))) {
+//parseInt(record["2015-01"]);
+        //}
+        return this.count++;
+      },
+      value: function() {
+        var countResult = 0;
+        if (typeof data !== 'undefined') {
+            countResult = getCountsMonthByMonth(data.rowAttrs, rowKey, colKey);
+        }
+        if (countResult === 0) {
+            ///countResult = this.count;
+        }
+        //this.sumSuccesses = countResult;
+        return countResult;//this.sumSuccesses / 1;
+      },
+      format: function(x) { return x; },
+      numInputs: 0
+    };
+  };
+};
+
+function getCountsMonthByMonth(fields, values, date) {
+    //console.info('searching for:');
+    //console.info(fields);
+    //console.info(values);
+    //console.info(date);
+    var i = 0;
+    var result = 0;
+    if (fields.length === 0 || values.length === 0 ||  date.length === 0) {
+        return result;
+    }
+    for (i in data) {
+        if (typeof data[i]["Period start date"] === 'undefined') {
+            //console.info('deb1');
+            continue;
+        }
+        if (data[i]["Period start date"].substring(0,7) > date[0]) {
+            //console.info('deb2');
+            continue;
+        }
+        var valuesMatch = 0;
+        for (var j in fields) {
+            if (values[j] === '') {
+                valuesMatch++;
+                continue;
+            }
+            if (data[i][fields[j]] === values[j]) {
+                valuesMatch++;
+            }
+        }
+        //console.info('valuesMatch: '  + valuesMatch);
+        //console.info('fields.length: ' + fields.length);
+        if (valuesMatch === fields.length) {
+            result++;
+            //console.info('found:');
+            //console.info(data[i]);
+        }
+    }
+    return result;
+}
+
+         pvtOpts.aggregators = { "Month by month": monthByMonth };
+         pvtOpts.aggregatorName = "Month by month";
+    
+pvtOpts.derivedAttributes.monthAndDayDeriver = $.pivotUtilities.derivers.dateFormat("Period start date", "%y-%m");
+pvtOpts.derivedAttributes.ageBinDeriver = $.pivotUtilities.derivers.bin("Age", 10);
 
         jQuery('#reportPivotTable').pivotUI(data, pvtOpts);
 

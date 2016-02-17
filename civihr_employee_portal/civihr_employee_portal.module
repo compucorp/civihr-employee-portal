@@ -370,10 +370,33 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
             'variables' => array(
                 'title' => NULL,
                 'data' => NULL,
-                'next_url' => NULL,
                 'settings_url' => NULL
             ),
             'template' => 'templates/civihr-employee-portal-civihr-report',
+        ),
+        'civihr_employee_portal_civihr_report_month' => array(
+            'variables' => array(
+                'title' => NULL,
+                'data' => NULL,
+                'settings_url' => NULL
+            ),
+            'template' => 'templates/civihr-employee-portal-civihr-report-month',
+        ),
+        'civihr_employee_portal_civihr_report_leave' => array(
+            'variables' => array(
+                'title' => NULL,
+                'data' => NULL,
+                'settings_url' => NULL
+            ),
+            'template' => 'templates/civihr-employee-portal-civihr-report-leave',
+        ),
+        'civihr_employee_portal_civihr_report_joiners_and_leavers' => array(
+            'variables' => array(
+                'title' => NULL,
+                'data' => NULL,
+                'settings_url' => NULL
+            ),
+            'template' => 'templates/civihr-employee-portal-civihr-report-joiners-and-leavers',
         ),
     );
 }
@@ -1180,6 +1203,39 @@ function civihr_employee_portal_menu() {
     $items['hrreport_people_test'] = array(
         'title' => 'CiviHR Report - People (test)',
         'page callback' => 'civihr_employee_portal_hrreport_people',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    $items['hrreport_people_test_printtable'] = array(
+        'page callback' => 'civihr_employee_portal_hrreport_people_printtable',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    $items['hrreport_people_test_getdatereport'] = array(
+        'page callback' => 'civihr_employee_portal_hrreport_getdatereport',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    $items['hrreport_people_month_test'] = array(
+        'title' => 'CiviHR Report - People - Month by month (test)',
+        'page callback' => 'civihr_employee_portal_hrreport_people_month',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    $items['hrreport_leave_test'] = array(
+        'title' => 'CiviHR Report - Leave (test)',
+        'page callback' => 'civihr_employee_portal_hrreport_leave',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    $items['hrreport_joiners_and_leavers_test'] = array(
+        'title' => 'CiviHR Report - Joiners and Leavers (test)',
+        'page callback' => 'civihr_employee_portal_hrreport_joiners_and_leavers',
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
@@ -4223,17 +4279,29 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'not null' => TRUE,
         'description' => 'Absence activity (Is Credit type?)',
     );
-    $schema['absence_approval_list']['fields']['absence_start_date_timestamp'] = array(
+    $schema['absence_approval_list']['fields']['absence_start_date'] = array(
         'type' => 'varchar',
         'mysql_type' => 'DATETIME',
         'not null' => FALSE,
         'description' => 'Absence start date.',
     );
-    $schema['absence_approval_list']['fields']['absence_end_date_timestamp'] = array(
+    $schema['absence_approval_list']['fields']['absence_end_date'] = array(
         'type' => 'varchar',
         'mysql_type' => 'DATETIME',
         'not null' => FALSE,
         'description' => 'Absence end date.',
+    );
+    $schema['absence_approval_list']['fields']['absence_start_date_timestamp'] = array(
+        'type' => 'varchar',
+        'mysql_type' => 'DATETIME',
+        'not null' => FALSE,
+        'description' => 'Absence start date timestamp.',
+    );
+    $schema['absence_approval_list']['fields']['absence_end_date_timestamp'] = array(
+        'type' => 'varchar',
+        'mysql_type' => 'DATETIME',
+        'not null' => FALSE,
+        'description' => 'Absence end date timestamp.',
     );
 
 
@@ -4969,42 +5037,344 @@ function civihr_employee_portal_hrreport_people() {
     global $base_url;
     
     // Pivot Table:
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivot.min.js');
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/c3.min.js');
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/d3.min.js');
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/c3_renderers.js');
-    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable/c3.min.css");
+    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivot.min.js');
+    //drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable/pivot.css");
+    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/c3.min.js');
+    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/d3.min.js');
+    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/c3_renderers.js');
+    //drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/c3.min.css');
+    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/jquery-ui-1.9.2.custom.min.js');
     
     // PivotTable with NReco extensions:
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/jquery-ui-1.9.2.custom.min.js');
+    /*drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/jquery-ui-1.9.2.custom.min.js');
     //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/pivot.js');
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/gchart_renderers.js');
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/nrecopivot.js');
-    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable/pivot.css");
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable/pivot.css");*/
     
-    // React-Pivot:
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/react-pivot-standalone-1.13.0.min.js');
+    // PivotTable NReco:
+    //drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable-nreco/pivot.css");
+    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/jquery-ui-1.9.2.custom.min.js');
+    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/pivot.js');
+    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/gchart_renderers.js');
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js');
+    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivotdataapi.js');
     
-    // Orb:
-    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/react-0.12.2.min.js');
-    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/orb.min.js');
-    //drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/orb/main.css");
-    //drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/orb/bootstrap_superhero.css");
-    //drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/orb/font-awesome-4.3.min.css");
-    //drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/orb/orb.css");
-    
-    $view = views_get_view('civihr_report_people');
-    $view->set_display('civihr_report_people_table');
-    $view->execute();
-    $table = $view->render();
+    $table = civihr_employee_portal_hrreport_people_gettable();
     $data = file_get_contents($base_url . '/civihr-report---people');
     
     return theme('civihr_employee_portal_civihr_report',
         array(
             'title' => t('People'),
-            'table' => $table,//module_invoke('civihr_employee_portal', 'block_view', 'civihr_report_people_table'),
+            'date_filter' => drupal_get_form('civihr_employee_portal_hrreport_people_date_form'),
+            'per_date_filter' => drupal_get_form('civihr_employee_portal_hrreport_people_per_date_form'),
+            'table' => $table,
             'data' => $data,
             'next_url' => '',
+            'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
+        )
+    );
+
+}
+
+function civihr_employee_portal_hrreport_people_date_form($form, &$form_state) {
+
+    $form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
+    $form['#suffix'] = '</div></article>';
+
+    $form['date_filter'] = array(
+        '#type' => 'date_popup',
+        '#title' => t('Date filter'),
+        //'#prefix' => '<div class="row"><div class="col-md-12">',
+        //'#suffix' => '</div></div>',
+        '#date_format' => 'Y-m-d',
+        '#date_year_range' => '-10:+10',
+        '#default_value' => '',
+    );
+
+    $form['save'] = array(
+        '#type' => 'button',
+        '#value' => 'Apply date filter',
+        '#attributes' => array(
+            'class' => array(
+                'btn',
+                'btn-primary',
+                'btn-report-date-filter'
+            ),
+        ),
+    );
+    
+    return $form;
+}
+
+function civihr_employee_portal_hrreport_people_date_form2($form, &$form_state) {
+
+    $form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
+    $form['#suffix'] = '</div></article>';
+
+    $form['start_date_filter'] = array(
+        '#type' => 'date_popup',
+        '#title' => t('Start Date filter'),
+        //'#prefix' => '<div class="row"><div class="col-md-12">',
+        //'#suffix' => '</div></div>',
+        '#date_format' => 'Y-m-d',
+        '#date_year_range' => '-10:+10',
+        '#default_value' => '',
+    );
+    $form['end_date_filter'] = array(
+        '#type' => 'date_popup',
+        '#title' => t('End Date filter'),
+        //'#prefix' => '<div class="row"><div class="col-md-12">',
+        //'#suffix' => '</div></div>',
+        '#date_format' => 'Y-m-d',
+        '#date_year_range' => '-10:+10',
+        '#default_value' => '',
+    );
+
+    $form['save'] = array(
+        '#type' => 'button',
+        '#value' => 'Apply date filter',
+        '#attributes' => array(
+            'class' => array(
+                'btn',
+                'btn-primary',
+                'btn-report-date-filter'
+            ),
+        ),
+    );
+    
+    return $form;
+}
+
+function civihr_employee_portal_hrreport_people_per_date_form($form, &$form_state) {
+
+    //$form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
+    //$form['#suffix'] = '</div></article>';
+
+    $form['field'] = array(
+        '#title' => t('Field'),
+        '#type' => 'select',
+        '#description' => 'Select field',
+        '#options' => array('aaa', 'bbb', 'ccc'),
+        '#default_value' => '1',
+    );
+
+    $form['save'] = array(
+        '#type' => 'button',
+        '#value' => 'Apply field filter',
+        '#attributes' => array(
+            'class' => array(
+                'btn',
+                'btn-primary',
+                'btn-report-date-filter'
+            ),
+        ),
+    );
+    
+    return $form;
+}
+
+function civihr_employee_portal_hrreport_people_gettable($dateFilterValue = 'any') {
+    $view = views_get_view('civihr_report_people');
+    $view->set_display('civihr_report_people_table');
+    $view->set_arguments(array($dateFilterValue, $dateFilterValue));
+    $view->execute();
+    $table = $view->preview();
+    
+    return $table;
+}
+
+function civihr_employee_portal_hrreport_people_printtable($dateFilterValue = null) {
+    print civihr_employee_portal_hrreport_people_gettable($dateFilterValue);
+}
+
+function civihr_employee_portal_hrreport_getdatereport($field = null, $dateFilterValue = null, $contractEndDate = null, $roleStartDate = null, $roleEndDate = null) {
+    $fieldMap = array(
+        'location' => array(
+            'table' => 'hrjc_details', //'civicrm_hrjobcontract_details',
+            'alias' => 'hrjc_d',
+            'field' => 'location',
+        ),
+        'contract_type' => array(
+            'table' => 'hrjc_details', //'civicrm_hrjobcontract_details',
+            'alias' => 'hrjc_d',
+            'field' => 'contract_type',
+        ),
+        'headcount' => array(
+            'table' => 'hrjc_details', //'civicrm_hrjobcontract_details',
+            'alias' => 'hrjc_d',
+            'field' => 'headcount',
+        ),
+    );
+    
+    if (!$field || empty($fieldMap[$field])) {
+        return 'a';
+    }
+    if (!$contractStartDate || $contractStartDate === 'any') {
+        $contractStartDate = '2006-01-01';
+    }
+    if (!$contractEndDate || $contractEndDate === 'any') {
+        $contractEndDate = '2016-01-01';
+    }
+    
+    $civi_settings = parse_url(CIVICRM_UF_DSN);
+    $db_name = trim($civi_settings['path'], '/');
+    
+    $headers = array();
+    $data = array();
+    $keys = array();
+    $output = '';
+    
+    
+    $headers[] = $field;
+    
+    $dateQuery = "
+        SELECT 
+        DATE_FORMAT(m1, '%Y-%m') date_key
+
+        FROM
+        (
+        SELECT 
+        (%1 - INTERVAL DAYOFMONTH(%1)-1 DAY) 
+        +INTERVAL m MONTH as m1
+        FROM
+        (
+        SELECT @rownum:=@rownum+1 as m from
+        (SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4) t1,
+        (SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4) t2,
+        (SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4) t3,
+        (SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4) t4,
+        (SELECT @rownum:=-1) t0
+        ) d1
+        ) d2 
+        WHERE m1<=%2
+        ORDER BY m1
+    ";
+    $params = array(
+        1 => array($contractStartDate, 'String'),
+        2 => array($contractEndDate, 'String'),
+    );
+    $dateQueryResult = CRM_Core_DAO::executeQuery($dateQuery, $params);
+    while ($dateQueryResult->fetch()) {
+        $keys[] = $dateQueryResult->date_key;
+    }
+    
+    $query = "
+    SELECT dk.date_key, {$fieldMap[$field]['alias']}.{$fieldMap[$field]['field']}, COUNT({$fieldMap[$field]['alias']}.{$fieldMap[$field]['field']}) AS count_{$field} FROM
+    (
+        {$dateQuery}
+    ) AS dk
+    LEFT JOIN {$db_name}.{$fieldMap[$field]['table']} {$fieldMap[$field]['alias']} ON 1=1
+    WHERE DATE_FORMAT(hrjc_d.period_start_date, '%Y-%m') < dk.date_key AND
+    (
+        DATE_FORMAT(hrjc_d.period_end_date, '%Y-%m') > dk.date_key
+        OR
+        DATE_FORMAT(hrjc_d.period_end_date, '%Y-%m') IS NULL
+    )
+    GROUP BY {$fieldMap[$field]['alias']}.{$fieldMap[$field]['field']}, dk.date_key
+    ";
+    $sqlResult = CRM_Core_DAO::executeQuery($query, $params);
+    while ($sqlResult->fetch()) {
+        //echo 'date_key: ' . $sqlResult->date_key . ', ';
+        //echo 'location: ' . $sqlResult->{$field} . ' , ';
+        //echo 'count_location: ' . $sqlResult->{"count_{$field}"} . '<br/>';
+        $headers[$sqlResult->date_key] = $sqlResult->date_key;
+        if (empty($data[$sqlResult->{$field}])) {
+            $data[$sqlResult->{$field}] = array_merge(
+                array($sqlResult->{$field}),
+                array_combine($keys, array_fill(1, count($keys), 0))
+            );
+        }
+        $data[$sqlResult->{$field}][$sqlResult->date_key] = $sqlResult->{"count_{$field}"};
+    }
+    
+    echo civihr_employee_portal_hrreport_getdatereport_output($headers, $data);
+    exit;
+}
+
+function civihr_employee_portal_hrreport_getdatereport_output(array $headers, array $data) {
+    $output = '<table>';
+    $output .= '<thead><tr>';
+    foreach ($headers as $title) {
+        $output .= '<th>' . $title . '</th>';
+    }
+    $output .= '</tr></thead>';
+    $output .= '<tbody>';
+    $rows = array_keys($data);
+    foreach ($rows as $row) {
+        $output .= '<tr>';
+        foreach ($data[$row] as $value) {
+            $output .= '<td>' . $value . '</td>';
+        }
+        $output .= '</tr>';
+    }
+    $output .= '</tbody>';
+    $output .= '</table>';
+    
+    return $output;
+}
+
+/**
+ * CiviHR Report - People - Month by month page.
+ */
+function civihr_employee_portal_hrreport_people_month() {
+
+    global $base_url;
+    
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js');
+    
+    $data = file_get_contents($base_url . '/civihr-report---people');
+    
+    return theme('civihr_employee_portal_civihr_report_month',
+        array(
+            'title' => t('People') . ' - Month by month',
+            'date_filter' => drupal_get_form('civihr_employee_portal_hrreport_people_date_form'),
+            'data' => $data,
+            'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
+        )
+    );
+
+}
+
+/**
+ * CiviHR Report - Leave page.
+ */
+function civihr_employee_portal_hrreport_leave() {
+
+    global $base_url;
+    
+    ///drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js');
+    
+    $table = civihr_employee_portal_hrreport_people_gettable();
+    $data = file_get_contents($base_url . '/civihr-report---leave');
+    
+    return theme('civihr_employee_portal_civihr_report_leave',
+        array(
+            'title' => t('Leave'),
+            'date_filter' => drupal_get_form('civihr_employee_portal_hrreport_people_date_form2'),
+            'data' => $data,
+            'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
+        )
+    );
+
+}
+
+/**
+ * CiviHR Report - Leave page.
+ */
+function civihr_employee_portal_hrreport_joiners_and_leavers() {
+
+    global $base_url;
+    
+    ///drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js');
+    
+    $data = file_get_contents($base_url . '/civihr-report---people');
+    
+    return theme('civihr_employee_portal_civihr_report_joiners_and_leavers',
+        array(
+            'title' => t('Leave'),
+            'date_filter' => drupal_get_form('civihr_employee_portal_hrreport_people_date_form'),
+            'data' => $data,
             'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
         )
     );
