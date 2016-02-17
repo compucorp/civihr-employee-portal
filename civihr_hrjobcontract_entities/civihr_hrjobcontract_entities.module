@@ -3,12 +3,13 @@
 function civihr_hrjobcontract_entities_init() {
     
     $rebuild_hrjobcontract_entities_view = variable_get('rebuild_hrjobcontract_entities_view', 'TRUE');
-    if (isset($rebuild_hrjobcontract_entities_view) && $rebuild_hrjobcontract_entities_view == 'TRUE') {
+    if (isset($rebuild_hrjobcontract_entities_view) && $rebuild_hrjobcontract_entities_view == 'TRUE' || 1) {
         civicrm_initialize();
         $civi_settings = parse_url(CIVICRM_DSN);
         $civi_db_name = trim($civi_settings['path'], '/');
         
         db_query('DROP VIEW IF EXISTS hrjc_details');
+        // ov_location.label AS location, => t.location
         db_query("CREATE OR REPLACE VIEW hrjc_details AS
                     SELECT
                     c.contact_id,
@@ -24,8 +25,9 @@ function civihr_hrjobcontract_entities_init() {
                     t.notice_unit,
                     t.notice_amount_employee,
                     t.notice_unit_employee,
-                    ov_location.label AS location,
-                    c.is_primary
+                    t.location,
+                    c.is_primary,
+                    1 AS headcount
                     FROM {$civi_db_name}.civicrm_hrjobcontract_details AS t
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.details_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
@@ -93,7 +95,8 @@ function civihr_hrjobcontract_entities_init() {
                     t.hours_unit,
                     t.hours_fte,
                     t.fte_num,
-                    t.fte_denom
+                    t.fte_denom,
+                    1 AS headcount
                     FROM {$civi_db_name}.civicrm_hrjobcontract_hour AS t
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.hour_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
@@ -472,6 +475,11 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'type' => 'int',
         'not null' => FALSE,
         'description' => 'FTE denom.',
+    );
+    $schema['hrjc_hour']['fields']['headcount'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Headcount.',
     );
     $schema['hrjc_hour']['primary key'] = array('jobcontract_id');
     
@@ -907,6 +915,7 @@ function civihr_hrjobcontract_entities_entity_property_info_alter(&$info) {
 
     // Add relationship to CiviCRM contact for the Absence Entity
     $info['civihr_absences']['properties']['contact_id']['type'] = 'civicrm_contact';
+    $info['civihr_absence_approvals']['properties']['employee_id']['type'] = 'civicrm_contact';
 
 }
 
