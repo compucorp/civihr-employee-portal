@@ -41,6 +41,9 @@ function civihr_employee_portal_views_data_alter(&$data) {
 
     $data['absence_list']['absence_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
     $data['absence_list']['absence_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
+    
+    $data['absence_approval_list']['absence_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
+    $data['absence_approval_list']['absence_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
         
     $data['json']['absence_entitlement'] = array(
         'title' => t('Absence entitlement value'),
