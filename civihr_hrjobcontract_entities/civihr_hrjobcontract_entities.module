@@ -21,6 +21,7 @@ function civihr_hrjobcontract_entities_init() {
                     ov_contract_type.label AS contract_type,
                     t.period_start_date,
                     t.period_end_date,
+                    t.end_reason,
                     t.notice_amount,
                     t.notice_unit,
                     t.notice_amount_employee,
@@ -47,7 +48,7 @@ function civihr_hrjobcontract_entities_init() {
                         LIMIT 1
                     )
 
-                    AND (t.period_end_date >= NOW() OR t.period_end_date IS NULL)
+#                    AND (t.period_end_date >= NOW() OR t.period_end_date IS NULL)
                     AND c.deleted = 0
                     GROUP BY r.jobcontract_id");
         
@@ -79,7 +80,7 @@ function civihr_hrjobcontract_entities_init() {
                         ORDER BY r2.effective_date DESC, r2.id DESC 
                         LIMIT 1
                     )
-                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
+#                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
                     AND c.deleted = 0
                     GROUP BY r.jobcontract_id");
         
@@ -114,7 +115,7 @@ function civihr_hrjobcontract_entities_init() {
                         ORDER BY r2.effective_date DESC, r2.id DESC 
                         LIMIT 1
                     )
-                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
+#                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
                     AND c.deleted = 0
                     GROUP BY r.jobcontract_id");
         
@@ -142,7 +143,7 @@ function civihr_hrjobcontract_entities_init() {
                         ORDER BY r2.effective_date DESC, r2.id DESC 
                         LIMIT 1
                     )
-                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
+#                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
                     AND c.deleted = 0
                     GROUP BY r.jobcontract_id");
         
@@ -187,7 +188,7 @@ function civihr_hrjobcontract_entities_init() {
                         ORDER BY r2.effective_date DESC, r2.id DESC 
                         LIMIT 1
                     )
-                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
+#                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
                     AND c.deleted = 0
                     GROUP BY r.jobcontract_id");
         
@@ -220,7 +221,7 @@ function civihr_hrjobcontract_entities_init() {
                         ORDER BY r2.effective_date DESC, r2.id DESC 
                         LIMIT 1
                     )
-                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
+#                    AND (d.period_end_date >= NOW() OR d.period_end_date IS NULL)
                     AND c.deleted = 0
                     GROUP BY r.jobcontract_id");
         
@@ -323,6 +324,11 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'mysql_type' => 'DATETIME',
         'not null' => FALSE,
         'description' => 'Period end date.',
+    );
+    $schema['hrjc_details']['fields']['end_reason'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'End reason.',
     );
     $schema['hrjc_details']['fields']['notice_amount'] = array(
         'type' => 'varchar',
