@@ -70,14 +70,15 @@ var config = function(f, d) {
     };
 };
 
-loadOrb = function(f, d) {
-    var pgridElem = document.getElementById('demo-pgrid');
+loadOrb = function(f, d, pgridElem) {
+    //var pgridElem = document.getElementById('demo-pgrid');
     var sideMenuElement = document.getElementById('sidenav');
     var topMenuButton = document.getElementById('linkstoggle');
     var topMenuElement = document.getElementById('headerlinks');
+    var instance = null;
 
     if(pgridElem) {
-        new orb.pgridwidget(config(f, d)).render(pgridElem);
+        instance = new orb.pgridwidget(config(f, d)).render(pgridElem);
     }
 
     if(sideMenuElement) {
@@ -119,6 +120,9 @@ loadOrb = function(f, d) {
             }
         });
     }
+    console.info('instance:');
+    console.info(instance);
+    return instance;
 };
 
 var togglers = [];

@@ -38,12 +38,14 @@
 
 <div><?php print drupal_render($date_filter); ?></div>
 
+<a href="/civihr-report---leave-csv" id="export-csv" class="btn btn-primary btn-default">Export to CSV</a>
+
 <h4>Pivot Table</h4>
 <div id="reportPivotTable"></div>
 <br/><br/>
 
 <h4>Pivot Table using Orb.js library (with subtotals)</h4>
-<div id="demo-pgrid" class="demo-pgrid"></div>
+<div id="reportOrbPivotTable"></div>
 
 <script type="text/javascript">
     CRM.$(function () {
@@ -87,49 +89,85 @@
         
         
         ///// Orb.js:
-        var orbData = [];
-        for (var i in data) {
-            var orbRow = [];
-            for (var j in data[i]) {
-                if (
-                    j === 'Contact ID' || 
-                    j === 'Age' || 
-                    j === 'Duration' || 
-                    j === 'Absolute duration' ||
-                    j === 'Is credit' || 
-                    j === 'Amount Taken' || 
-                    j === 'Amount accrued'
-                ) {
-                    data[i][j] = parseFloat(data[i][j]);
+        function orbConvertData(data) {
+            var orbData = [];
+            for (var i in data) {
+                var orbRow = [];
+                for (var j in data[i]) {
+                    if (
+                        j === 'Contact ID' || 
+                        j === 'Age' || 
+                        j === 'Duration' || 
+                        j === 'Absolute duration' ||
+                        j === 'Is credit' || 
+                        j === 'Amount Taken' || 
+                        j === 'Amount accrued'
+                    ) {
+                        data[i][j] = parseFloat(data[i][j]);
+                    }
+                    orbRow.push(data[i][j]);
                 }
-                orbRow.push(data[i][j]);
+                orbData.push(orbRow);
             }
-            orbData.push(orbRow);
-        }
-        var orbFields = [];
-        var j = 0;
-        for (var i in data[0]) {
-            orbFields.push({
-                name: j++,
-                caption: i
-            });
-        }
-        orbFields.push(
-            {
-                name: j++,
-                caption: 'Duration',
-                dataSettings: {
-                    aggregateFunc: 'avg',
-                    formatFunc: function(value) {
-                        return Number(value).toFixed(0);
+            var orbFields = [];
+            var j = 0;
+            for (var i in data[0]) {
+                orbFields.push({
+                    name: j++,
+                    caption: i
+                });
+            }
+            orbFields.push(
+                {
+                    name: j++,
+                    caption: 'Duration',
+                    dataSettings: {
+                        aggregateFunc: 'avg',
+                        formatFunc: function(value) {
+                            return Number(value).toFixed(0);
+                        }
                     }
                 }
+            );
+    
+            return {
+                'data': orbData,
+                'fields': orbFields
             }
-        );
-console.info(orbData[0]);
-        loadOrb(orbFields, orbData);
+        }
         
-
+        var orbConfig = function(f, d) {
+            return {
+                width: 1110,
+                height: 645,
+                dataSource: d,
+                dataHeadersLocation: 'columns',
+                theme: 'blue',
+                toolbar: {
+                    visible: true
+                },
+                grandTotal: {
+                        rowsvisible: true,
+                        columnsvisible: true
+                },
+                subTotal: {
+                        visible: true,
+                    collapsed: true
+                },
+                fields: f,
+                rows    : []/*[ 'Manufacturer', 'Category' ]*/,
+                columns : []/*[ 'Class' ]*/,
+                data    : []/*[ 'Quantity', 'Amount' ]*/,
+                preFilters : {
+                    //'Manufacturer': { 'Matches': /n/ },
+                    //'Amount'      : { '>':  40 }
+                }
+            };
+        };
+        var orbElem = document.getElementById('reportOrbPivotTable');
+        var orbConvertedData = orbConvertData(data);
+        var orbInstance = new orb.pgridwidget(orbConfig(orbConvertedData.fields, orbConvertedData.data));
+        orbInstance.render(orbElem);
 
 
 
@@ -164,6 +202,7 @@ console.info(orbData[0]);
                     console.info('error');
                 },
                 success: function (data) {
+                    // Refreshing Pivot Table:
                     console.info('refreshing Pivot Table');
                     jQuery("#reportPivotTable").pivotUI(data, {
                         rendererName: "Table",
@@ -178,6 +217,9 @@ console.info(orbData[0]);
                             }
                         }*/
                     }, false);
+                    // Refreshing Orb Pivot Table:
+                    var orbConvertedData = orbConvertData(data);
+                    orbInstance.refreshData(orbConvertedData.data);
                 },
                 type: 'GET'
             });
