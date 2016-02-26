@@ -212,6 +212,8 @@ function civihr_employee_portal_init() {
         $result = db_query("CREATE VIEW civicrm_value_length_of_service_11 AS
                             SELECT id, entity_id, length_of_service, updated_date
                             FROM {$civi_db_name}.civicrm_value_length_of_service_11");
+        // Set to false so it will not rebuild until not asked to rebuild
+        variable_set('rebuild_length_of_service', 'FALSE');
     }
 }
 

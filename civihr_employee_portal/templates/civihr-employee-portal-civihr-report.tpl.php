@@ -119,10 +119,121 @@
                     }
                     return "Over 20 years";
                 },
-                "Start Date Months": jQuery.pivotUtilities.derivers.dateFormat("Period start date", "%y-%m"),
-                "End Date Months": jQuery.pivotUtilities.derivers.dateFormat("Period end date", "%y-%m")
+                "End reason label":  function(row) {
+                    var er = row["End reason"];//parseInt(row["End reason"], 10);
+                    if (er === '1') {
+                        return "Voluntary";
+                    }
+                    if (er === '2') {
+                        return "Involuntary";
+                    }
+                    if (er === '3') {
+                        return "Planned";
+                    }
+                    return "Unspecified";
+                },
+
+                "Contract Start Months": jQuery.pivotUtilities.derivers.dateFormat("Period start date", "%y-%m"),
+                "Contract End Months": jQuery.pivotUtilities.derivers.dateFormat("Period end date", "%y-%m"),
+
+                // Derived Attributes for Absence:
+                /*"Absence Amount Taken": function(row) {
+                    if (parseInt(row['Is credit'], 10) === 0) {
+                        return row['Duration'];
+                    }
+                    return 0;
+                },
+                "Absence Amount Accrued": function(row) {
+                    if (parseInt(row['Is credit'], 10) === 1) {
+                        return row['Duration'];
+                    }
+                    return 0;
+                },
+                "Absence Absolute Duration": function(row) {
+                    if (parseInt(row['Is credit'], 10) === 1) {
+                        return -row['Duration'];
+                    }
+                    return row['Duration'];
+                },*/
+                "Absence Start Months": jQuery.pivotUtilities.derivers.dateFormat("Absence start date", "%y-%m"),
+                "Absence Start Day of Week": jQuery.pivotUtilities.derivers.dateFormat("Absence start date", "%w"),
+
+                "Absence type": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
+                    }
+                    return row["Absence type"];
+                },
+                "Absence start date": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
+                    }
+                    return row["Absence start date"];
+                },
+                "Absence end date": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
+                    }
+                    return row["Absence end date"];
+                },
+                "Absence status": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
+                    }
+                    return row["Absence status"];
+                },
+                "Duration": function(row) {
+                    if (checkAbsenceInContract(row)) {
+                        return row["Duration"];
+                    }
+                    return '';
+                },
+                "Is credit": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
+                    }
+                    return row["Is credit"];
+                },
+                "Absence Amount Taken": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
+                    }
+                    if (parseInt(row['Is credit'], 10) === 0) {
+                        return row['Duration'];
+                    }
+                    return 0;
+                },
+                "Absence Amount Accrued": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
+                    }
+                    if (parseInt(row['Is credit'], 10) === 1) {
+                        return row['Duration'];
+                    }
+                    return 0;
+                },
+                "Absence Absolute Duration": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
+                    }
+                    if (parseInt(row['Is credit'], 10) === 1) {
+                        return -row['Duration'];
+                    }
+                    return row['Duration'];
+                },
             }
         }, false);
+        
+        function checkAbsenceInContract(row) {
+            var contractStart = row["Period start date"].substring(0, 10);
+            var contractEnd = row["Period end date"].substring(0, 10);
+            var absenceStart = row["Absence start date"].substring(0, 10);
+            var absenceEnd = row["Absence end date"].substring(0, 10);
+            if (!contractStart || !absenceStart || absenceEnd < contractStart || absenceStart > contractEnd) {
+                return false;
+            }
+            return true;
+        }
         
         ///// Orb.js:
         function orbConvertData(data) {

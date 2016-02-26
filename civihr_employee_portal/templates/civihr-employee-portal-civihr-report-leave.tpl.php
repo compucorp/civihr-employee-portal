@@ -64,25 +64,26 @@
             aggregatorName: "Count",
             unusedAttrsVertical: false,
             derivedAttributes: {
-                "Amount Taken": function(row) {
+                "Absence Amount Taken": function(row) {
                     if (parseInt(row['Is credit'], 10) === 0) {
                         return row['Duration'];
                     }
                     return 0;
                 },
-                "Amount accrued": function(row) {
+                "Absence Amount Accrued": function(row) {
                     if (parseInt(row['Is credit'], 10) === 1) {
                         return row['Duration'];
                     }
                     return 0;
                 },
-                "Absolute duration": function(row) {
+                "Absence Absolute Duration": function(row) {
                     if (parseInt(row['Is credit'], 10) === 1) {
                         return -row['Duration'];
                     }
                     return row['Duration'];
                 },
-                "Months": jQuery.pivotUtilities.derivers.dateFormat("Absence start date", "%y-%m")
+                "Absence Start Months": jQuery.pivotUtilities.derivers.dateFormat("Absence start date", "%y-%m"),
+                "Absence Start Day of Week": jQuery.pivotUtilities.derivers.dateFormat("Absence start date", "%w")
             }
         }, false);
         
