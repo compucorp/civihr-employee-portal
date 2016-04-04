@@ -95,13 +95,13 @@ $handler->display->display_options['row_options']['inline'] = array(
 );
 $handler->display->display_options['row_options']['colors']['legend'] = 'absence_type';
 $handler->display->display_options['row_options']['colors']['calendar_colors_absence_type'] = array(
-  52 => '#E48282', // sick
-  53 => '#4D6C81', // vacation
-  54 => '#EBA782', // maternity
-  55 => '#91C68E', // paternity
-  57 => '#1606c3', // TOIL (CREDIT)
-  56 => '#977CA9', // TOIL
-  58 => '#C198AC', // Other
+  52 => '#E48282',
+  53 => '#4D6C81',
+  54 => '#EBA782',
+  55 => '#91C68E',
+  57 => '#1606c3',
+  56 => '#977CA9',
+  58 => '#C198AC',
 );
 $handler->display->display_options['defaults']['row_options'] = FALSE;
 $handler->display->display_options['defaults']['footer'] = FALSE;
@@ -177,6 +177,14 @@ $handler->display->display_options['arguments']['drupal_uid']['default_argument_
 $handler->display->display_options['arguments']['drupal_uid']['summary']['number_of_records'] = '0';
 $handler->display->display_options['arguments']['drupal_uid']['summary']['format'] = 'default_summary';
 $handler->display->display_options['arguments']['drupal_uid']['summary_options']['items_per_page'] = '25';
+$handler->display->display_options['defaults']['filter_groups'] = FALSE;
+$handler->display->display_options['defaults']['filters'] = FALSE;
+/* Filter criterion: Absence entity: Absence status */
+$handler->display->display_options['filters']['absence_status']['id'] = 'absence_status';
+$handler->display->display_options['filters']['absence_status']['table'] = 'absence_list';
+$handler->display->display_options['filters']['absence_status']['field'] = 'absence_status';
+$handler->display->display_options['filters']['absence_status']['operator'] = '!=';
+$handler->display->display_options['filters']['absence_status']['value'] = '3';
 $handler->display->display_options['path'] = 'calendar-absence-list';
 $handler->display->display_options['menu']['type'] = 'default tab';
 $handler->display->display_options['menu']['title'] = 'Month';
