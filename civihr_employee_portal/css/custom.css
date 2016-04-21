@@ -125,3 +125,75 @@ span.appraisals-employee-legend {
     display: inline-block;
     margin-right: 8px;
 }
+
+
+/* Report temporary styling. TODO: move to scss Theme files. */
+#reportTable .table-responsive {
+    overflow-x: scroll;
+}
+
+#reportTable table {
+    width: auto;
+}
+#reportTable table tr td{
+    white-space: nowrap;
+}
+
+#reportTable th, #reportTable td {
+    padding: 2px 6px;
+}
+
+#reportPivotTable {
+    background-color: #fff;
+}
+#reportPivotTable td:first-child {
+    width: 20%;
+}
+#reportPerDate {
+    background-color: #fff;
+}
+#reportPerDate th, #reportPerDate td {
+    text-align: center;
+}
+
+.orb-container table {
+   width: auto;
+}
+
+.orb-container  tbody {
+   border-top: 0 none;
+}
+
+.orb-container th,
+.orb-container td {
+   padding: 0;
+}
+
+.orb .fld-btn .caption {
+    white-space: nowrap;
+}
+
+.orb-blue .orb .drp-trgt > table > tbody > tr > td {
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.report-filters .btn-report-date-filter {
+    float: none;
+}
+
+.report-tabs {
+    margin-top: 12px;
+}
+
+.report-content {
+    margin-top: 12px;
+}
+
+.report-content h4 {
+    display: none;
+}
+
+#reportTable form {
+    display: none;
+}
