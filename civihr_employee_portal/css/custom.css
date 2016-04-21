@@ -128,8 +128,15 @@ span.appraisals-employee-legend {
 
 
 /* Report temporary styling. TODO: move to scss Theme files. */
+#reportTable .table-responsive {
+    overflow-x: scroll;
+}
+
 #reportTable table {
-    font-size: 10px;
+    width: auto;
+}
+#reportTable table tr td{
+    white-space: nowrap;
 }
 
 #reportTable th, #reportTable td {
@@ -169,4 +176,24 @@ span.appraisals-employee-legend {
 .orb-blue .orb .drp-trgt > table > tbody > tr > td {
     display: inline-block;
     margin-bottom: 5px;
+}
+
+.report-filters .btn-report-date-filter {
+    float: none;
+}
+
+.report-tabs {
+    margin-top: 12px;
+}
+
+.report-content {
+    margin-top: 12px;
+}
+
+.report-content h4 {
+    display: none;
+}
+
+#reportTable form {
+    display: none;
 }

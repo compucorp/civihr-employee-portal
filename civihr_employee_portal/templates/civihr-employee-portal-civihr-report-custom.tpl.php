@@ -1,7 +1,6 @@
 <link href="/sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable/pivot.css" rel="stylesheet" />
 <link href="/sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable/c3.min.css" rel="stylesheet" />
-
-<script src="/sites/all/modules/civihr-custom/civihr_employee_portal/js/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 <script src="/sites/all/modules/civihr-custom/civihr_employee_portal/js/pivot.min.js"></script>
 <script src="/sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable/c3.min.js"></script>
 <script src="/sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable/d3.min.js"></script>
@@ -9,6 +8,10 @@
 <script src="/sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable/export_renderers.js"></script>
 <script src="/sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable-nreco/jquery-ui-1.9.2.custom.min.js"></script>
 <script src="/sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable-nreco/nrecopivot.js"></script>
+<?php /*<script src="sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable-nreco/nrecowebpivot.js"></script>
+<script src="sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable-nreco/nrecopivotdataapi.js"></script>
+<script src="sites/all/modules/civihr-custom/civihr_employee_portal/js/pivottable-nreco/nrecopivotdataapi.jquery.nrecorelexbuilder-1.0"></script>
+ */?>
 
 <?php /******** ORB includes **********/ ?>
 <?php /*<link rel="stylesheet" type="text/css" href="sites/all/modules/civihr-custom/civihr_employee_portal/js/orb/css/bootstrap_superhero.css" />*/ ?>
@@ -22,38 +25,36 @@
 <script type="text/javascript" src="/sites/all/modules/civihr-custom/civihr_employee_portal/js/orb/main.js"></script>
 <script type="text/javascript" src="/sites/all/modules/civihr-custom/civihr_employee_portal/js/orb/prism.js"></script>
 
-
+<?php if (!empty($filters)): ?>
 <a id="expose-filters-btn" class="btn btn-primary btn-default">Expose filters &raquo;</a>
 <a id="collapse-filters-btn" class="btn btn-primary btn-default hidden">Collapse filters &laquo;</a>
 <div id="report-filters" class="hidden">
-    <?php print drupal_render($date_filter); ?>
+    <?php print render($filters); ?>
 </div>
+<?php endif; ?>
 
 <ul class="nav nav-tabs nav-justified report-tabs">
+<?php if (!empty($tableUrl)): ?>
     <li role="presentation" class="active"><a class="btn btn-default" data-tab="data">Data</a></li>
+<?php endif; ?>
+<?php if (!empty($jsonUrl)): ?>
     <li role="presentation"><a class="btn btn-default" data-tab="pivot-table">Pivot Table</a></li>
+<?php endif; ?>
+<?php if (!empty($jsonUrl)): ?>
     <li role="presentation"><a class="btn btn-default" data-tab="orb-pivot-table">Orb Pivot Table</a></li>
+<?php endif; ?>
 </ul>
 
 <div class="report-content">
     <div class="report-block data">
         <h4>Data</h4>
         <div id="reportTable"><?php print $table; ?></div>
-        <a href="/civihr-report-export-leave-and-absence-csv" id="export-csv" class="btn btn-primary btn-default">Export</a>
+<?php if (!empty($exportUrl)): ?>
+        <a href="<?php print $exportUrl; ?>" id="export-report" class="btn btn-primary btn-default">Export</a>
+<?php endif; ?>
     </div>
     <div class="report-block pivot-table hidden">
         <h4>Pivot Table</h4>
-        <table width="100%">
-            <tr>
-                <td><button id="reportJoinersAndLeaversExample1">Example output 1</button> If I want to know how many people joined the whole company, split by gender by month</td>
-            </tr>
-            <tr>
-                <td><button id="reportJoinersAndLeaversExample2">Example output 2</button> If I want to know how many people joined a department by month</td>
-            </tr>
-            <tr>
-                <td><button id="reportJoinersAndLeaversExample3">Example output 3</button> If I want to know how many people left by month</td>
-            </tr>
-        </table>
         <div id="reportPivotTable"></div>
     </div>
     <div class="report-block orb-pivot-table hidden">
@@ -62,9 +63,9 @@
     </div>
 </div>
 
-
 <script type="text/javascript">
     CRM.$(function () {
+<?php if (!empty($data)): ?>
         var data = <?php print $data; ?>;
         
         /*** PivotTable library initialization: ***/
@@ -75,41 +76,12 @@
                 jQuery.pivotUtilities.c3_renderers,
                 jQuery.pivotUtilities.export_renderers
             ),
+            vals: ["Total"],
             rows: [],
             cols: [],
             aggregatorName: "Count",
             unusedAttrsVertical: false,
-            derivedAttributes: {
-                "Absence is credit": function(row) {
-                    if (!checkAbsenceInContract(row)) {
-                        return '';
-                    }
-                    if (row["Absence type"] === 'TOIL (Credit)') {
-                        return 'Yes';
-                    }
-                    return 'No';
-                },
-                "Amount Taken": function(row) {
-                    if (parseInt(row['Is credit'], 10) === 0) {
-                        return row['Duration'];
-                    }
-                    return 0;
-                },
-                "Amount accrued": function(row) {
-                    if (parseInt(row['Is credit'], 10) === 1) {
-                        return row['Duration'];
-                    }
-                    return 0;
-                },
-                "Absolute duration": function(row) {
-                    if (parseInt(row['Is credit'], 10) === 1) {
-                        return -row['Duration'];
-                    }
-                    return row['Duration'];
-                },
-                "Start Date Months": jQuery.pivotUtilities.derivers.dateFormat("Period start date", "%y-%m"),
-                "End Date Months": jQuery.pivotUtilities.derivers.dateFormat("Period end date", "%y-%m")
-            }
+            derivedAttributes: {}
         }, false);
         
         ///// Orb.js:
@@ -120,12 +92,7 @@
                 for (var j in data[i]) {
                     if (
                         j === 'Contact ID' || 
-                        j === 'Age' || 
-                        j === 'Duration' || 
-                        j === 'Absolute duration' ||
-                        j === 'Is credit' || 
-                        j === 'Amount Taken' || 
-                        j === 'Amount accrued'
+                        j === 'Employee age'
                     ) {
                         data[i][j] = parseFloat(data[i][j]);
                     }
@@ -179,12 +146,10 @@
                     collapsed: true
                 },
                 fields: f,
-                rows    : []/*[ 'Manufacturer', 'Category' ]*/,
-                columns : []/*[ 'Class' ]*/,
-                data    : []/*[ 'Quantity', 'Amount' ]*/,
+                rows    : [],
+                columns : [],
+                data    : [],
                 preFilters : {
-                    //'Manufacturer': { 'Matches': /n/ },
-                    //'Amount'      : { '>':  40 }
                 }
             };
         };
@@ -192,71 +157,28 @@
         var orbConvertedData = orbConvertData(data);
         var orbInstance = new orb.pgridwidget(orbConfig(orbConvertedData.fields, orbConvertedData.data));
         orbInstance.render(orbElem);
-
+<?php endif; ?>
         ////////////////////////////////////////////////////////////////////////
-        
-        var dateFilterValue = 'any',
-            perDateField = '';
 
-        CRM.$('.btn-report-date-filter').bind('click', function(e) {
-            e.preventDefault();
-            console.info('Applying date filter.');
-            dateFilterValue = CRM.$('input[name="date_filter[date]"]').val();
-            if (dateFilterValue === '') {
-                dateFilterValue = 'any';
-            }
-            console.info('dateFilterValue: ' + dateFilterValue);
-
-            reportRefreshPivotTable(dateFilterValue);
-            reportRefreshTable(dateFilterValue);
-        });
-        
-        CRM.$('#reportJoinersAndLeaversExample1').bind('click', function() {
-            reportRefreshPivotTable(dateFilterValue, true, ["Gender"], ["Start Date Months"], "Count");
-        });
-        CRM.$('#reportJoinersAndLeaversExample2').bind('click', function() {
-            reportRefreshPivotTable(dateFilterValue, true, ["Department"], ["Start Date Months"], "Count");
-        });
-        CRM.$('#reportJoinersAndLeaversExample3').bind('click', function() {
-            reportRefreshPivotTable(dateFilterValue, true, ["Department"], ["End Date Months"], "Count");
-        });
-        
-        function reportRefreshPivotTable(dateFilterValue, reload, r, c, a) {
-            console.info('reportRefreshPivotTable()');
-            var cfg = {
-                rendererName: "Table",
-                renderers: CRM.$.extend(
-                    jQuery.pivotUtilities.renderers, 
-                    jQuery.pivotUtilities.c3_renderers
-                ),
-                unusedAttrsVertical: false,
-                derivedAttributes: {
-                    "Start Date Months": jQuery.pivotUtilities.derivers.dateFormat("Period start date", "%y-%m"),
-                    "End Date Months": jQuery.pivotUtilities.derivers.dateFormat("Period end date", "%y-%m")
-                }
-            };
-            if (typeof reload === 'undefined') {
-                reload = false;
-            }
-            if (typeof r !== 'undefined') {
-                cfg.rows = r;
-            }
-            if (typeof c !== 'undefined') {
-                cfg.cols = c;
-            }
-            if (typeof a !== 'undefined') {
-                cfg.aggregatorName = a;
-            }
-            console.info(cfg);
+<?php if (!empty($jsonUrl)): ?>
+        function reportRefreshJson(filterValues) {
+            console.info('reportRefreshJson()');
             CRM.$.ajax({
-                url: '/civihr-report---people/' + dateFilterValue + '/' + dateFilterValue,
+                url: '<?php print $jsonUrl; ?>' + filterValues,
                 error: function () {
                     console.info('error');
                 },
                 success: function (data) {
                     // Refreshing Pivot Table:
                     console.info('refreshing Pivot Table');
-                    jQuery("#reportPivotTable").pivotUI(data, cfg, reload);
+                    jQuery("#reportPivotTable").pivotUI(data, {
+                        rendererName: "Table",
+                        renderers: CRM.$.extend(
+                            jQuery.pivotUtilities.renderers, 
+                            jQuery.pivotUtilities.c3_renderers
+                        ),
+                        unusedAttrsVertical: false
+                    }, false);
                     // Refreshing Orb Pivot Table:
                     var orbConvertedData = orbConvertData(data);
                     orbInstance.refreshData(orbConvertedData.data);
@@ -264,20 +186,58 @@
                 type: 'GET'
             });
         }
-
-        function reportRefreshTable(dateFilterValue) {
+<?php endif; ?>
+<?php if (!empty($tableUrl)): ?>
+        function reportRefreshTable(filterValues) {
             console.info('reportRefreshTable()');
             CRM.$.ajax({
-                url: '/hrreport_people_test_printtable/' + dateFilterValue,
+                url: '<?php print $tableUrl; ?>' + filterValues,
                 error: function () {
                     console.info('error');
                 },
                 success: function (data) {
                     CRM.$('#reportTable').html(data);
+                    //CRM.$('#reportTable form').hide(); // temporary
                 },
                 type: 'GET'
             });
         }
-
+        //CRM.$('#reportTable form').hide(); // temporary
+<?php endif; ?>
+<?php if (!empty($filters)): ?>
+        CRM.$('#expose-filters-btn').bind('click', function(e) {
+            e.preventDefault();
+            CRM.$(this).addClass('hidden');
+            CRM.$('#collapse-filters-btn').removeClass('hidden');
+            CRM.$('#report-filters').removeClass('hidden');
+        });
+        CRM.$('#collapse-filters-btn').bind('click', function(e) {
+            e.preventDefault();
+            CRM.$(this).addClass('hidden');
+            CRM.$('#expose-filters-btn').removeClass('hidden');
+            CRM.$('#report-filters').addClass('hidden');
+        });
+        CRM.$('#report-filters input[type="submit"]').bind('click', function(e) {
+            e.preventDefault();
+            console.info('submitting filters');
+            var formSerialize = CRM.$('#report-filters form:first').formSerialize();
+            console.info('formSerialize:');
+            console.info(formSerialize);
+<?php if (!empty($jsonUrl)): ?>
+            reportRefreshJson('?' + formSerialize);
+<?php endif; ?>
+<?php if (!empty($tableUrl)): ?>
+            reportRefreshTable('?' + formSerialize);
+<?php endif; ?>
+        });
+<?php endif; ?>
+        CRM.$('.report-tabs a').bind('click', function(e) {
+            e.preventDefault();
+            CRM.$('.report-tabs li').removeClass('active');
+            CRM.$(this).parent().addClass('active');
+            CRM.$('.report-block').addClass('hidden');
+            CRM.$('.report-block.' + CRM.$(this).data('tab')).removeClass('hidden');
+        });
+        CRM.$('.report-tabs a:first').click();
     });
 </script>

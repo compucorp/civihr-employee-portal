@@ -39,21 +39,10 @@
     <div class="report-block data">
         <h4>Data</h4>
         <div id="reportTable"><?php print $table; ?></div>
-        <a href="/civihr-report-export-leave-and-absence-csv" id="export-csv" class="btn btn-primary btn-default">Export</a>
+        <a href="/civihr-report-export-leave-and-absence-csv" id="export-csv" class="btn btn-primary btn-default">Export to CSV</a>
     </div>
     <div class="report-block pivot-table hidden">
         <h4>Pivot Table</h4>
-        <table width="100%">
-            <tr>
-                <td><button id="reportJoinersAndLeaversExample1">Example output 1</button> If I want to know how many people joined the whole company, split by gender by month</td>
-            </tr>
-            <tr>
-                <td><button id="reportJoinersAndLeaversExample2">Example output 2</button> If I want to know how many people joined a department by month</td>
-            </tr>
-            <tr>
-                <td><button id="reportJoinersAndLeaversExample3">Example output 3</button> If I want to know how many people left by month</td>
-            </tr>
-        </table>
         <div id="reportPivotTable"></div>
     </div>
     <div class="report-block orb-pivot-table hidden">
@@ -61,7 +50,6 @@
         <div id="reportOrbPivotTable"></div>
     </div>
 </div>
-
 
 <script type="text/javascript">
     CRM.$(function () {
@@ -75,42 +63,116 @@
                 jQuery.pivotUtilities.c3_renderers,
                 jQuery.pivotUtilities.export_renderers
             ),
+            vals: ["Total"],
             rows: [],
             cols: [],
             aggregatorName: "Count",
             unusedAttrsVertical: false,
             derivedAttributes: {
+                "Employee length of service group": function(row) {
+                    var los = parseInt(row['Employee length of service'] / 365, 10);
+                    if (los < 1) {
+                        return "Under 1 year";
+                    }
+                    if (los < 2) {
+                        return "1 - 2 years";
+                    }
+                    if (los < 5) {
+                        return "2 - 5 years";
+                    }
+                    if (los < 10) {
+                        return "5 - 10 years";
+                    }
+                    if (los < 15) {
+                        return "10 - 15 years";
+                    }
+                    if (los < 20) {
+                        return "15 - 20 years";
+                    }
+                    return "Over 20 years";
+                },
+
+                "Group by month": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
+                    }
+                    return row["Group by month"];
+                },
+                "Absence day of week": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
+                    }
+                    return row["Absence day of week"];
+                },
+
+                "Absence duration in days": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
+                    }
+                    return row["Absence duration in days"];
+                },
+/*                "Absence length": function(row) {
+                    if (row["Absence length"]) {
+                        return parseInt(row["Absence length"]);
+                    }
+                    return '';
+                },
+                "Absence length (in days)": function(row) {
+                    if (row["Absence length"]) {
+                        return parseInt(row["Absence length"]) / (60 * 8);
+                    }
+                    return '';
+                },*/
+                "Absence type": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
+                    }
+                    return row["Absence type"];
+                },
+                "Absence status": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
+                    }
+                    return row["Absence status"];
+                },
                 "Absence is credit": function(row) {
                     if (!checkAbsenceInContract(row)) {
                         return '';
                     }
-                    if (row["Absence type"] === 'TOIL (Credit)') {
-                        return 'Yes';
-                    }
-                    return 'No';
+                    return row['Absence is credit'];
                 },
-                "Amount Taken": function(row) {
-                    if (parseInt(row['Is credit'], 10) === 0) {
-                        return row['Duration'];
+                "Absence amount taken": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
                     }
-                    return 0;
+                    return row['Absence amount taken'];
                 },
-                "Amount accrued": function(row) {
-                    if (parseInt(row['Is credit'], 10) === 1) {
-                        return row['Duration'];
+                "Absence amount accrued": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
                     }
-                    return 0;
+                    return row['Absence amount accrued'];
                 },
-                "Absolute duration": function(row) {
-                    if (parseInt(row['Is credit'], 10) === 1) {
-                        return -row['Duration'];
+                "Absence absolute duration": function(row) {
+                    if (!checkAbsenceInContract(row)) {
+                        return '';
                     }
-                    return row['Duration'];
-                },
-                "Start Date Months": jQuery.pivotUtilities.derivers.dateFormat("Period start date", "%y-%m"),
-                "End Date Months": jQuery.pivotUtilities.derivers.dateFormat("Period end date", "%y-%m")
+                    return row['Absence absolute duration'];
+                }
             }
         }, false);
+        
+        function checkAbsenceInContract(row) {
+            var contractStart = row["Contract start date"].substring(0, 10);
+            var contractEnd = row["Contract end date"].substring(0, 10);
+            ///var absenceStart = row["Absence start date"].substring(0, 10);
+            ///var absenceEnd = row["Absence end date"].substring(0, 10);
+            var absenceDate = row["Absence date"].substring(0, 10);
+            if (!contractStart || !absenceDate || (absenceDate < contractStart) || (contractEnd !== "" && absenceDate > contractEnd)) {
+                return false;
+            }
+            return true;
+        }
         
         ///// Orb.js:
         function orbConvertData(data) {
@@ -120,12 +182,12 @@
                 for (var j in data[i]) {
                     if (
                         j === 'Contact ID' || 
-                        j === 'Age' || 
-                        j === 'Duration' || 
-                        j === 'Absolute duration' ||
-                        j === 'Is credit' || 
-                        j === 'Amount Taken' || 
-                        j === 'Amount accrued'
+                        j === 'Employee age' || 
+                        j === 'Absence duration' || 
+                        j === 'Absence absolute duration' ||
+//                        j === 'Absence is credit' || 
+                        j === 'Absence amount taken' || 
+                        j === 'Absence amount accrued'
                     ) {
                         data[i][j] = parseFloat(data[i][j]);
                     }
@@ -193,70 +255,50 @@
         var orbInstance = new orb.pgridwidget(orbConfig(orbConvertedData.fields, orbConvertedData.data));
         orbInstance.render(orbElem);
 
+
+
         ////////////////////////////////////////////////////////////////////////
         
-        var dateFilterValue = 'any',
+        var startDateFilterValue = 'all',
+            endDateFilterValue = 'all',
             perDateField = '';
 
         CRM.$('.btn-report-date-filter').bind('click', function(e) {
             e.preventDefault();
             console.info('Applying date filter.');
-            dateFilterValue = CRM.$('input[name="date_filter[date]"]').val();
-            if (dateFilterValue === '') {
-                dateFilterValue = 'any';
+            startDateFilterValue = CRM.$('input[name="start_date_filter[date]"]').val();
+            endDateFilterValue = CRM.$('input[name="end_date_filter[date]"]').val();
+            if (startDateFilterValue === '') {
+                startDateFilterValue = 'all';
             }
-            console.info('dateFilterValue: ' + dateFilterValue);
+            if (endDateFilterValue === '') {
+                endDateFilterValue = 'all';
+            }
+            console.info('startDateFilterValue: ' + startDateFilterValue);
+            console.info('endDateFilterValue: ' + endDateFilterValue);
 
-            reportRefreshPivotTable(dateFilterValue);
-            reportRefreshTable(dateFilterValue);
+            reportRefreshPivotTable(startDateFilterValue, endDateFilterValue);
+            reportRefreshTable(startDateFilterValue, endDateFilterValue);
         });
         
-        CRM.$('#reportJoinersAndLeaversExample1').bind('click', function() {
-            reportRefreshPivotTable(dateFilterValue, true, ["Gender"], ["Start Date Months"], "Count");
-        });
-        CRM.$('#reportJoinersAndLeaversExample2').bind('click', function() {
-            reportRefreshPivotTable(dateFilterValue, true, ["Department"], ["Start Date Months"], "Count");
-        });
-        CRM.$('#reportJoinersAndLeaversExample3').bind('click', function() {
-            reportRefreshPivotTable(dateFilterValue, true, ["Department"], ["End Date Months"], "Count");
-        });
-        
-        function reportRefreshPivotTable(dateFilterValue, reload, r, c, a) {
+        function reportRefreshPivotTable(startDateFilterValue, endDateFilterValue) {
             console.info('reportRefreshPivotTable()');
-            var cfg = {
-                rendererName: "Table",
-                renderers: CRM.$.extend(
-                    jQuery.pivotUtilities.renderers, 
-                    jQuery.pivotUtilities.c3_renderers
-                ),
-                unusedAttrsVertical: false,
-                derivedAttributes: {
-                    "Start Date Months": jQuery.pivotUtilities.derivers.dateFormat("Period start date", "%y-%m"),
-                    "End Date Months": jQuery.pivotUtilities.derivers.dateFormat("Period end date", "%y-%m")
-                }
-            };
-            if (typeof reload === 'undefined') {
-                reload = false;
-            }
-            if (typeof r !== 'undefined') {
-                cfg.rows = r;
-            }
-            if (typeof c !== 'undefined') {
-                cfg.cols = c;
-            }
-            if (typeof a !== 'undefined') {
-                cfg.aggregatorName = a;
-            }
-            console.info(cfg);
             CRM.$.ajax({
-                url: '/civihr-report---people/' + dateFilterValue + '/' + dateFilterValue,
+                url: '/civihr-report-json-leave-and-absence/' + startDateFilterValue + '/' + endDateFilterValue,
                 error: function () {
                     console.info('error');
                 },
                 success: function (data) {
                     // Refreshing Pivot Table:
                     console.info('refreshing Pivot Table');
-                    jQuery("#reportPivotTable").pivotUI(data, cfg, reload);
+                    jQuery("#reportPivotTable").pivotUI(data, {
+                        rendererName: "Table",
+                        renderers: CRM.$.extend(
+                            jQuery.pivotUtilities.renderers, 
+                            jQuery.pivotUtilities.c3_renderers
+                        ),
+                        unusedAttrsVertical: false
+                    }, false);
                     // Refreshing Orb Pivot Table:
                     var orbConvertedData = orbConvertData(data);
                     orbInstance.refreshData(orbConvertedData.data);
@@ -265,10 +307,10 @@
             });
         }
 
-        function reportRefreshTable(dateFilterValue) {
+        function reportRefreshTable(startDateFilterValue, endDateFilterValue) {
             console.info('reportRefreshTable()');
             CRM.$.ajax({
-                url: '/hrreport_people_test_printtable/' + dateFilterValue,
+                url: '/reports/leave_and_absence/table/' + startDateFilterValue + '/' + endDateFilterValue,
                 error: function () {
                     console.info('error');
                 },
@@ -278,6 +320,25 @@
                 type: 'GET'
             });
         }
-
+        CRM.$('#expose-filters-btn').bind('click', function(e) {
+            e.preventDefault();
+            CRM.$(this).addClass('hidden');
+            CRM.$('#collapse-filters-btn').removeClass('hidden');
+            CRM.$('#report-filters').removeClass('hidden');
+        });
+        CRM.$('#collapse-filters-btn').bind('click', function(e) {
+            e.preventDefault();
+            CRM.$(this).addClass('hidden');
+            CRM.$('#expose-filters-btn').removeClass('hidden');
+            CRM.$('#report-filters').addClass('hidden');
+        });
+        CRM.$('.report-tabs a').bind('click', function(e) {
+            e.preventDefault();
+            CRM.$('.report-tabs li').removeClass('active');
+            CRM.$(this).parent().addClass('active');
+            CRM.$('.report-block').addClass('hidden');
+            CRM.$('.report-block.' + CRM.$(this).data('tab')).removeClass('hidden');
+        });
+        CRM.$('.report-tabs a:first').click();
     });
 </script>
