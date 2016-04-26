@@ -644,5 +644,15 @@ function civihr_employee_portal_features_user_default_permissions() {
     'module' => 'civicrm',
   );
 
+  // Exported permission: 'administer roles and teams'.
+  $permissions['administer roles and teams'] = array(
+    'name' => 'administer roles and teams',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+    ),
+    'module' => 'civicrm',
+  );
+
   return $permissions;
 }
