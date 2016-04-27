@@ -899,6 +899,12 @@ function get_civihr_contact_data($contact_id = NULL, $user_id = '') {
  * Implementation of hook_menu()
  */
 function civihr_employee_portal_menu() {
+    //get all drupal roles except the default ones (anonymous user) and (authenticated user)
+    $all_roles = user_roles();
+    unset($all_roles[array_search('anonymous user', $all_roles)]);
+    unset($all_roles[array_search('authenticated user', $all_roles)]);
+    $all_roles = array_values($all_roles);
+
     $items = array();
     $items['request_new_account/%ctools_js'] = array(
         'title' => 'Edit Document',
@@ -1162,7 +1168,7 @@ function civihr_employee_portal_menu() {
         'title' => 'My Details',
         'page callback' => 'civihr_employee_portal_my_details',
         'access callback' => '_user_has_role',
-        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin', 'administrator')),
+        'access arguments' => array($all_roles),
         'type' => MENU_NORMAL_ITEM,
         'menu_name' => 'main-menu',
         'weight' => 4
