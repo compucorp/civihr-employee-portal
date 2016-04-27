@@ -2,9 +2,6 @@
 
 use Drupal\civihr_employee_portal\Blocks\Base;
 use Drupal\civihr_employee_portal\Blocks\Leave;
-use Drupal\civihr_employee_portal\Forms\BaseForm;
-use Drupal\civihr_employee_portal\Forms\ReportSettingsForm;
-use Drupal\civihr_employee_portal\Forms\ReportMonthlyForm;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 
@@ -75,38 +72,10 @@ function _setup_modals() {
     ), 'setting');
 }
 
-function _civihr_install_reports_menu() {
-    return false;
-    $menu = array();
-    $menu['menu_name'] = "menu-frank-presentation-tabs";
-    $menu['title'] = "FrankPresentation tabs";
-    $menu['description'] = "The <em>Presentation tabs</em> menu contains links to presentation detail";
-    menu_save($menu);
-
-    $path = 'reports/people/';
-
-    // Add 'menu-' to the menu name to help avoid name-space conflicts.
-    ////$menu['menu_name'] = 'menu-' . $menu['menu_name'];
-    $link['link_path'] = $path;
-    $link['link_title'] = 'Raporcik 1';
-    $link['menu_name'] = $menu['menu_name'];
-    $link['router_path'] = $path . '%';
-    $link['module'] = 'menu';
-    /*$link['plid'] = db_query("SELECT mlid FROM {menu_links} WHERE link_path = :link AND module = :module", array(
-      ':link' => 'admin/structure/menu',
-      ':module' => 'system'
-    ))
-    ->fetchField();*/
-
-    menu_link_save($link);
-    ////menu_save($menu);
-}
-
 /**
  * Implements hook_init().
  */
 function civihr_employee_portal_init() {
-_civihr_install_reports_menu();
     // @TODO -> init civi only on pages where we need to (e.g. Dashboard)
     // Civi init + load the singleton needed for the AJAX calls
     civicrm_initialize();
@@ -236,7 +205,7 @@ _civihr_install_reports_menu();
 
     // MySQL View containing Absence Activity data (designed for Reports).
     $rebuild_absence_activity = variable_get('rebuild_absence_activity', 'TRUE');
-    if (isset($rebuild_absence_activity) && $rebuild_absence_activity == 'TRUE' || 1) {
+    if (isset($rebuild_absence_activity) && $rebuild_absence_activity == 'TRUE') {
         db_query('DROP VIEW IF EXISTS absence_activity');
         db_query("CREATE VIEW absence_activity AS
                   SELECT ac.contact_id AS absence_contact_id,
@@ -361,6 +330,14 @@ function civihr_employee_portal_permission() {
       'title' => t('Manage CiviHR Leave and Absences'),
       'description' => t('Availability for the Manager to access leave block and calendar and manage leave requests')
     ),
+    'access hrreports' => array(
+      'title' => t('Access HR Reports'),
+      'description' => t('Availability to access HR Report pages'),
+    ),
+    'manage hrreports settings' => array(
+      'title' => t('Manage HR Reports settings'),
+      'description' => t('Availability to manage HR Reports settings'),
+    ),
   );
 }
 
@@ -368,27 +345,8 @@ function civihr_employee_portal_permission() {
  * Implements hook_theme().
  */
 function civihr_employee_portal_theme($existing, $type, $theme, $path) {
-
-    // This will set the template file for any view page which is custom report (overriding the theme file what is suggested by drupal views as default)
-    $template_url = 'templates/civihr-employee-portal-custom-reports-filter-result';
-
-    // Whitelist the available report types
-    $register_class = new ReportSettingsForm('report_settings_form', 'civihr_reports');
-    $register_class->getYAxisFilterTypes();
-
     // This will hold any custom view display names where we need to override the template file
     $theme_hooks = array();
-
-    foreach ($register_class->getYAxisFilterTypes() as $YAxis => $Y) {
-        foreach ($register_class->getXAxisFilterTypes() as $XAxis => $X) {
-            $theme_hooks['views_view__filter_' . $YAxis . '_' . $XAxis] = array(
-                'template' => $template_url,
-                'base hook' => 'views_view',
-                'arguments' => array('view' => NULL)
-            );
-        }
-    }
-
     return $theme_hooks + array(
         'user_login_block' => array(
             'render element' => 'form',
@@ -424,15 +382,6 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
             ),
             'template' => 'templates/civihr-employee-portal-print-leave-report',
         ),
-        'civihr_employee_portal_custom_reports' => array(
-            'variables' => array(
-                'report_title' => NULL,
-                'custom_data' => NULL,
-                'next_url' => NULL,
-                'settings_url' => NULL
-            ),
-            'template' => 'templates/civihr-employee-portal-custom-reports',
-        ),
         'civihr_employee_portal_document_form' => array(
             //'arguments' => array('form' => NULL),
             'variables' => array(
@@ -457,30 +406,6 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
             ),
             'template' => 'templates/civihr-employee-portal-civihr-report-settings-age-group',
         ),
-        'civihr_employee_portal_civihr_report_people' => array(
-            'variables' => array(
-                'title' => NULL,
-                'data' => NULL,
-                'settings_url' => NULL
-            ),
-            'template' => 'templates/civihr-employee-portal-civihr-report-people',
-        ),
-        'civihr_employee_portal_civihr_report_month' => array(
-            'variables' => array(
-                'title' => NULL,
-                'data' => NULL,
-                'settings_url' => NULL
-            ),
-            'template' => 'templates/civihr-employee-portal-civihr-report-month',
-        ),
-        'civihr_employee_portal_civihr_report_leave_and_absence' => array(
-            'variables' => array(
-                'title' => NULL,
-                'data' => NULL,
-                'settings_url' => NULL
-            ),
-            'template' => 'templates/civihr-employee-portal-civihr-report-leave-and-absence',
-        ),
         'civihr_employee_portal_civihr_report_custom' => array(
             'variables' => array(
                 'title' => NULL,
@@ -488,14 +413,6 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
                 'settings_url' => NULL
             ),
             'template' => 'templates/civihr-employee-portal-civihr-report-custom',
-        ),
-        'civihr_employee_portal_civihr_report_joiners_and_leavers' => array(
-            'variables' => array(
-                'title' => NULL,
-                'data' => NULL,
-                'settings_url' => NULL
-            ),
-            'template' => 'templates/civihr-employee-portal-civihr-report-joiners-and-leavers',
         ),
     );
 }
@@ -506,13 +423,8 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
  */
 function civihr_employee_portal_custom_theme() {
 
-    // Set the civihr_reports related pages to use the custom civihr admin theme and not the self service theme
+    // Set the pages to use the custom civihr admin theme and not the self service theme
     $whitelist_urls = [];
-    $whitelist_urls[] = 'civihr_reports';
-    $whitelist_urls[] = 'civihr_reports_monthly';
-    $whitelist_urls[] = 'civihr_reports_absence';
-    $whitelist_urls[] = 'civihr_reports_settings';
-    $whitelist_urls[] = 'civihr_reports_monthly_settings';
 
     // Check if the URL is whitelisted, if yes apply the civihr_admin_theme
     if (in_array(arg(0), $whitelist_urls)) {
@@ -994,7 +906,7 @@ function get_jobcontract_location_standard_hours($hoursLocationId = NULL) {
         return '';
     }
     // Get the type values based on the $reasonId
-    return $locationStandardHours[$hoursLocationId];
+    return !empty($locationStandardHours[$hoursLocationId]) ? $locationStandardHours[$hoursLocationId] : '';
 }
 
 /*
@@ -1395,42 +1307,6 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
-    $items['civihr_reports'] = array(
-        'title' => 'CiviHR reports',
-        'page callback' => 'civihr_employee_portal_get_reports',
-        'page arguments' => array(1, 2),
-        'access callback' => '_user_has_role',
-        'access arguments' => array(array('civihr_admin', 'administrator')),
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['civihr_reports_monthly'] = array(
-        'title' => 'CiviHR reports',
-        'page callback' => 'civihr_employee_portal_get_reports_monthly',
-        'page arguments' => array(1, 2),
-        'access callback' => '_user_has_role',
-        'access arguments' => array(array('civihr_admin', 'administrator')),
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['civihr_reports_absence'] = array(
-        'title' => 'CiviHR reports',
-        'page callback' => 'civihr_employee_portal_get_reports_absence',
-        'page arguments' => array(1, 2),
-        'access callback' => '_user_has_role',
-        'access arguments' => array(array('civihr_admin', 'administrator')),
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['civihr_reports_settings/%ctools_js/view'] = array(
-        'title' => 'CiviHR Reports settings form',
-        'page callback' => 'civihr_employee_portal_report_settings_form_callback',
-        'page arguments' => array(1, 3),
-        'access callback' => '_user_has_role',
-        'access arguments' => array(array('civihr_admin', 'administrator')),
-        'type' => MENU_CALLBACK,
-    );
-
     $items['hr-details'] = array(
         'title' => 'My Details',
         'page callback' => 'civihr_employee_portal_my_details',
@@ -1499,37 +1375,6 @@ function civihr_employee_portal_menu() {
         'title' => 'Delete Age Group',
         'page callback' => 'civihr_employee_portal_hrreport_settings_age_group_delete',
         'page arguments' => array(3, 5),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['reports/people'] = array(
-        'title' => 'CiviHR Report - People',
-        'page callback' => 'civihr_employee_portal_hrreport_people',
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-    $items['reports/people/table'] = array(
-        'page callback' => 'civihr_employee_portal_hrreport_people_printtable',
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['reports/leave_and_absence'] = array(
-        'title' => 'CiviHR Report - Leave and Absence',
-        'page callback' => 'civihr_employee_portal_hrreport_leave_and_absence',
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-    $items['reports/leave_and_absence/table'] = array(
-        'page callback' => 'civihr_employee_portal_hrreport_leave_and_absence_printtable',
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['reports/joiners_and_leavers'] = array(
-        'title' => 'CiviHR Report - Joiners and Leavers',
-        'page callback' => 'civihr_employee_portal_hrreport_joiners_and_leavers',
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
@@ -1682,16 +1527,6 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
         ) . '';
     }
 
-    if ($link_type == 'leave_report') {
-        return '' . l("<span>$link_text</span>", 'print-leave-report/',
-            array(
-                'query' => array('absence_start_date_period_filter' => $nid),
-                'attributes' => array('class' => "chr_action--icon--print $class", 'target'=>'_blank'),
-                'html' => true
-            )
-        ) . '';
-    }
-
     if ($link_type == 'hr-resource') {
         return '' . l($link_text, 'hr_resources/nojs/resource/' . $nid,
             array('attributes' => array('class' => "ctools-use-modal ctools-modal-civihr-custom-style $class"))
@@ -1701,13 +1536,6 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
     if ($link_type == 'document') {
         return '' . l($link_text, 'civi_documents/nojs/edit/' . $nid,
             array('attributes' => array('class' => "ctools-use-modal ctools-modal-civihr-default-style $class"))
-        ) . '';
-    }
-
-    if ($link_type == 'civihr_report_settings') {
-        // pass arg(0) so we know which report type we want to display in the settings modal
-        return '' . l($link_text, 'civihr_reports_settings/nojs/view/' . arg(0),
-            array('attributes' => array('class' => "ctools-use-modal ctools-modal-civihr-bootstrap-style $class"))
         ) . '';
     }
 
@@ -4335,46 +4163,6 @@ function civihr_employee_portal_request_new_account_submit($form, &$form_state) 
 }
 
 /**
- * CiviHR Report settings form
- */
-function civihr_employee_portal_report_settings_form_callback($ajax, $report_type) {
-
-    // First parameter: form name of the function which will be used for validation, submit
-    // Second parameter: report type
-    $register_class = new BaseForm('report_settings_form', $report_type);
-
-    $class_name = 'Drupal\civihr_employee_portal\Forms' . '\\' . $register_class->getClassName($report_type);
-    $reports = new $class_name('report_settings_form', $report_type);
-
-    return $reports->initModal($ajax, t('CiviHR Report settings form'));
-
-}
-
-function civihr_employee_portal_report_settings_form($form, $form_state, $object) {
-
-    // Returns the form
-    return $object['form_object']->getForm();
-}
-
-function civihr_employee_portal_report_settings_form_validate($form, &$form_state) {
-
-    // Get our custom object
-    $reports = array_shift($form_state['build_info']['args'])['form_object'];
-
-    // Validates the form (+ passes our object)
-    return $reports->validateForm($form, $form_state, $reports);
-}
-
-function civihr_employee_portal_report_settings_form_submit($form, &$form_state) {
-
-    // Get our custom object
-    $reports = array_shift($form_state['build_info']['args'])['form_object'];
-
-    // Submits the form
-    return $reports->submitForm($form, $form_state);
-}
-
-/**
  * Returns the contact list from CiviCRM in json format
  * The json response will be cached in local file when the VIEWS requests to load data from this endpoint
  */
@@ -4902,270 +4690,6 @@ function civihr_employee_portal_theme_registry_alter(&$theme_registry) {
     }
 }
 
-function _getGenderReportOptions() {
-
-    $gender_data = '';
-
-    try {
-        $option_group = civicrm_api3('OptionGroup', 'get', array(
-            'sequential' => 1,
-            'name' => "gender",
-        ));
-
-        // Get the Gender IDs
-        $gender_data = civicrm_api3('OptionValue', 'get', array(
-            'sequential' => 1,
-            'option_group_id' => $option_group['id'],
-        ));
-
-        function cleanGenderData($input_data) {
-
-            if (isset($input_data[0])) {
-
-                $output_data = [];
-
-                // Prepare data
-                $output_data[$input_data[0]['label']] = $input_data[0]['value'];
-
-                // Remove the first element after it's appended in the output
-                $input_data = array_splice($input_data, 1);
-
-                if (count($input_data) >= 0) {
-                    // Return until array is not empty
-                    return array_merge_recursive($output_data, cleanGenderData($input_data));
-                }
-
-            }
-
-            // This will end the recursive call
-            return [];
-        }
-
-        return cleanGenderData($gender_data['values']);
-
-
-    }
-    catch (CiviCRM_API3_Exception $e) {
-        $error = $e->getMessage();
-        watchdog('REPORTS', $error);
-    }
-
-}
-
-/**
- * Get all default X Axis Group by settings
- * @return array
- */
-function _getXAxisDefaults() {
-
-    // All the variables for defined X Axis settings
-    $name = 'enabled_x_axis_filters_';
-
-    // Get additional details about the absence
-    $q = db_select('variable', 'var')
-        ->fields('var', array('name'))
-        ->condition('name', '%' . db_like(arg(0) . '_' . $name) . '%', 'LIKE');
-
-    $result = $q->execute()->fetchAllAssoc('name');
-
-    // Build the available X Axis options
-    $return = [];
-
-    foreach ($result as $key => $x_axis) {
-        $return[$key] = variable_get($key);
-
-        // Unset not available values
-        foreach ($return[$key] as $val_key => $val) {
-            if ($val == '0') {
-                unset($return[$key][$val_key]);
-            }
-        }
-
-    }
-
-    return $return;
-}
-
-/**
- * @param $view_name
- * @param string $view_display
- * Load view as html block
- */
-function civihr_employee_portal_get_reports($view_name = FALSE, $view_display = 'default') {
-
-    // Get available gender options from CiviCRM
-    $gender_options_data =  _getGenderReportOptions();
-
-    // Get available X Axis Group by options
-    $enabled_x_axis_defaults = _getXAxisDefaults();
-
-    // Add custom datepicker
-    drupal_add_library('system', 'ui.datepicker');
-    drupal_add_library('system', 'ui.slider');
-
-    // Pass our custom data to js
-    drupal_add_js(array('civihr_employee_portal_reports' => array('gender_options_data' => $gender_options_data, 'enabled_x_axis_defaults' => $enabled_x_axis_defaults, 'prefix' => arg(0))), 'setting');
-
-    // Array for contextual filters
-    $args = [];
-
-    // Set the contextual filters (if any)
-    if (isset($_GET['x_axis'])) {
-        $args[] = $_GET['x_axis'];
-    }
-
-    // Set the contextual filters (if any)
-    if (isset($_GET['y_axis'])) {
-        $args[] = $_GET['y_axis'];
-    }
-
-    /**
-     * Generates the required view
-     * @param string $view_name
-     * @param string $view_display
-     * @return mixed
-     */
-    function _generateView($view_name = 'age_location', $view_display = 'filter_age_location', $args = []) {
-
-        ctools_include('modal');
-        ctools_modal_add_js();
-
-        // Load the reports page
-        // Add the javascript library for D3
-        drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/d3/d3.v3.min.js');
-        drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/moment/moment.min.js');
-        drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
-
-        // Load the view, set filters and display
-        $view = views_get_view($view_name);
-        $view->set_display($view_display);
-
-        // Set dom_id otherwise notice message is displayed from Drupal
-        $view->dom_id = 'filter-results';
-
-        // Set the contextual filters from graph (passed in GET['value'])
-        $view->set_arguments($args);
-
-        $view->execute();
-
-        return $view->render();
-
-    }
-
-    // No view display the default reports page (reports dashboard)
-    if (!$view_name) {
-
-        ctools_include('modal');
-        ctools_modal_add_js();
-
-        // Output the custom report theme page
-        return theme('civihr_employee_portal_custom_reports',
-            array(
-                'report_title' => t('My People'),
-                'custom_data' => _generateView(),
-                'next_url' => 'civihr_reports_monthly',
-                'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
-            )
-        );
-
-    }
-
-    // Special handling if we paginate, or sort the view
-    if (isset($_GET['order']) || isset($_GET['page']) || isset($_GET['sort']) || !isset($_GET['ajax'])) {
-
-        // Output the custom report theme page
-        return theme('civihr_employee_portal_custom_reports',
-            array(
-                'report_title' => t('My People'),
-                'custom_data' => _generateView($view_name, $view_display, $args),
-                'next_url' => 'civihr_reports_monthly',
-                'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
-            )
-        );
-
-    }
-    else {
-
-        // Reset ajax
-        unset($_GET['ajax']);
-
-        print _generateView($view_name, $view_display, $args);
-
-    }
-
-}
-
-function civihr_employee_portal_get_reports_monthly($view_name = FALSE, $view_display = 'default') {
-
-    ctools_include('modal');
-    ctools_modal_add_js();
-
-    // Load the reports page
-    // Add the javascript library for D3
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/d3/d3.v3.min.js');
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/moment/moment.min.js');
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
-
-    // Get available gender options from CiviCRM
-    $gender_options_data =  _getGenderReportOptions();
-
-    // Get available X Axis Group by options
-    $enabled_x_axis_defaults = _getXAxisDefaults();
-
-    // Add custom datepicker
-    drupal_add_library('system', 'ui.datepicker');
-    drupal_add_library('system', 'ui.slider');
-
-    // Pass our custom data to js
-    drupal_add_js(array('civihr_employee_portal_reports' => array('gender_options_data' => $gender_options_data, 'enabled_x_axis_defaults' => $enabled_x_axis_defaults, 'prefix' => arg(0))), 'setting');
-
-    // Output the custom report theme page
-    return theme('civihr_employee_portal_custom_reports',
-        array(
-            'report_title' => t('My People (Monthly)'),
-            'custom_data' => '', // This report type has the results page generated in js file
-            'next_url' => 'civihr_reports',
-            'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
-        )
-    );
-}
-
-function civihr_employee_portal_get_reports_absence($view_name = FALSE, $view_display = 'default') {
-
-    ctools_include('modal');
-    ctools_modal_add_js();
-
-    // Load the reports page
-    // Add the javascript library for D3
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/d3/d3.v3.min.js');
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/moment/moment.min.js');
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js');
-
-    // Get available gender options from CiviCRM
-    $gender_options_data =  _getGenderReportOptions();
-
-    // Get available X Axis Group by options
-    $enabled_x_axis_defaults = _getXAxisDefaults();
-
-    // Add custom datepicker
-    drupal_add_library('system', 'ui.datepicker');
-    drupal_add_library('system', 'ui.slider');
-
-    // Pass our custom data to js
-    drupal_add_js(array('civihr_employee_portal_reports' => array('gender_options_data' => $gender_options_data, 'enabled_x_axis_defaults' => $enabled_x_axis_defaults, 'prefix' => arg(0))), 'setting');
-
-    // Output the custom report theme page
-    return theme('civihr_employee_portal_custom_reports',
-        array(
-            'report_title' => t('Leave and Absences'),
-            'custom_data' => '', // This report type has the results page generated in js file
-            'next_url' => 'civihr_reports',
-            'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
-        )
-    );
-
-}
-
 /**
  * Custom Staff Directory dashboard block form.
  */
@@ -5470,7 +4994,7 @@ function civihr_employee_portal_my_details() {
  */
 function civihr_employee_portal_hrreport_landing_page() {
     //$menu = civihr_employee_portal_get_drupal_menu_items('main-menu', 'reports');
-    $menu = civihr_employee_portal_get_drupal_menu_items('menu-reports');
+    $menu = civihr_employee_portal_get_drupal_menu_items('hr-reports');
     return theme('civihr_employee_portal_civihr_report_landing_page',
         array(
             'title' => t('Reports'),
@@ -5483,8 +5007,8 @@ function civihr_employee_portal_hrreport_landing_page() {
  * CiviHR Report - Settings - Age group page
  */
 function civihr_employee_portal_hrreport_settings_age_group() {
-    $canEdit = true; // TODO
-    $canDelete = true; // TODO
+    $canEdit = user_access('manage hrreports settings');
+    $canDelete = user_access('manage hrreports settings');
 
     ctools_include('modal');
     ctools_modal_add_js();
@@ -5597,7 +5121,7 @@ function civihr_employee_portal_hrreport_settings_age_group_form($form, &$form_s
         'age_to' => '',
         'label' => '',
     );
-    $canEdit = true;
+    $canEdit = user_access('manage hrreports settings');
     $id = $form_state['id'];
     // If $id is defined, load the setting row from db table.
     if ($id) {
@@ -5669,7 +5193,7 @@ function civihr_employee_portal_hrreport_settings_age_group_form_validate($form,
 
 function civihr_employee_portal_hrreport_settings_age_group_form_submit($form, &$form_state) {
     global $user;
-    $canEdit = true;
+    $canEdit = user_access('manage hrreports settings');
 
     $id = !empty($form_state['values']['id']) ? (int)$form_state['values']['id'] : null;
     if ($canEdit) {
@@ -5779,7 +5303,7 @@ function civihr_employee_portal_hrreport_settings_age_group_form_delete_confirm(
 }
 
 function civihr_employee_portal_hrreport_settings_age_group_form_delete_submit($form, &$form_state) {
-    $canDelete = true;
+    $canDelete = user_access('manage hrreports settings');
     if ($canDelete) {
         $id = (int)$form_state['values']['id'];
         $result = db_delete('reports_settings_age_group')
@@ -5796,118 +5320,36 @@ function civihr_employee_portal_hrreport_settings_age_group_form_delete_submit($
 }
 
 /**
- * CiviHR Report - People page.
+ * Add CSS and JavaScript files required for Report pages.
  */
-function civihr_employee_portal_hrreport_people() {
+function _civihr_employee_portal_add_report_scripts() {
+    $jsOptions = array('type' => 'file', 'scope' => 'footer');
 
-    global $base_url;
-    
-    // Pivot Table:
-    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivot.min.js');
-    //drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable/pivot.css");
-    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/c3.min.js');
-    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/d3.min.js');
-    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/c3_renderers.js');
-    //drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/c3.min.css');
-    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/jquery-ui-1.9.2.custom.min.js');
-    
-    // PivotTable with NReco extensions:
-    /*drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/jquery-ui-1.9.2.custom.min.js');
-    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/pivot.js');
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/gchart_renderers.js');
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/nrecopivot.js');
-    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable/pivot.css");*/
-    
-    // PivotTable NReco:
-    //drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable-nreco/pivot.css");
-    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/jquery-ui-1.9.2.custom.min.js');
-    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/pivot.js');
-    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/gchart_renderers.js');
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js');
-    //drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivotdataapi.js');
-    
-    $table = civihr_employee_portal_hrreport_gettable('people');
-    $data = file_get_contents($base_url . '/civihr-report-json-people');
-    
-    return theme('civihr_employee_portal_civihr_report_people',
-        array(
-            'title' => t('People'),
-            'date_filter' => drupal_get_form('civihr_employee_portal_hrreport_people_date_form'),
-            'table' => $table,
-            'data' => $data,
-            'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
-        )
-    );
+    // PivotTable JavaScript library
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable/pivot.css");
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable/c3.min.css");
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/jquery-2.1.1.min.js', $jsOptions);
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivot.min.js', $jsOptions);
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/c3.min.js', $jsOptions);
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/d3.min.js', $jsOptions);
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/c3_renderers.js', $jsOptions);
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/export_renderers.js', $jsOptions);
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/jquery-ui-1.9.2.custom.min.js', $jsOptions);
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js', $jsOptions);
 
-}
+    // Orb.js JavaScript library
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/orb/css/prism.css");
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/orb/css/main.css");
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/orb/css/orb.min.css");
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/lib/respond.min.js', $jsOptions);
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/lib/react-0.12.2.min.js', $jsOptions);
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/orb.min.js', $jsOptions);
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/data.js', $jsOptions);
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/main.js', $jsOptions);
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/prism.js', $jsOptions);
 
-function civihr_employee_portal_hrreport_people_date_form($form, &$form_state) {
-
-    //$form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
-    //$form['#suffix'] = '</div></article>';
-
-    $form['date_filter'] = array(
-        '#type' => 'date_popup',
-        //'#title' => t('Date filter'),
-        //'#prefix' => '<div class="row"><div class="col-md-12">',
-        //'#suffix' => '</div></div>',
-        '#date_format' => 'Y-m-d',
-        '#date_year_range' => '-20:+20',
-        '#default_value' => '',
-    );
-
-    $form['save'] = array(
-        '#type' => 'button',
-        '#value' => 'Apply filter',
-        '#attributes' => array(
-            'class' => array(
-                'btn',
-                'btn-primary',
-                'btn-report-date-filter'
-            ),
-        ),
-    );
-    
-    return $form;
-}
-
-function civihr_employee_portal_hrreport_people_date_interval_form($form, &$form_state) {
-
-    $form['#prefix'] = '<article class="node node-webform contextual-links-region clearfix"><div class="content">';
-    $form['#suffix'] = '</div></article>';
-
-    $form['start_date_filter'] = array(
-        '#type' => 'date_popup',
-        '#title' => t('Start Date filter'),
-        //'#prefix' => '<div class="row"><div class="col-md-12">',
-        //'#suffix' => '</div></div>',
-        '#date_format' => 'Y-m-d',
-        '#date_year_range' => '-10:+10',
-        '#default_value' => '',
-    );
-    $form['end_date_filter'] = array(
-        '#type' => 'date_popup',
-        '#title' => t('End Date filter'),
-        //'#prefix' => '<div class="row"><div class="col-md-12">',
-        //'#suffix' => '</div></div>',
-        '#date_format' => 'Y-m-d',
-        '#date_year_range' => '-10:+10',
-        '#default_value' => '',
-    );
-
-    $form['save'] = array(
-        '#type' => 'button',
-        '#value' => 'Apply date filter',
-        '#attributes' => array(
-            'class' => array(
-                'btn',
-                'btn-primary',
-                'btn-report-date-filter'
-            ),
-        ),
-    );
-    
-    return $form;
+    // Base reports.js script
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js', $jsOptions);
 }
 
 function civihr_employee_portal_hrreport_gettable($viewName, $dateFilterValue = 'all') {
@@ -5929,66 +5371,17 @@ function civihr_employee_portal_hrreport_printtable($viewName, $dateFilterValue 
     print civihr_employee_portal_hrreport_gettable($viewName, $dateFilterValue);
 }
 
-function civihr_employee_portal_hrreport_people_printtable($dateFilterValue = null) {
-    return civihr_employee_portal_hrreport_printtable('people', $dateFilterValue);
-}
-
-function civihr_employee_portal_hrreport_leave_and_absence_printtable($dateFilterValue = null) {
-    return civihr_employee_portal_hrreport_printtable('leave_and_absence', $dateFilterValue);
-}
-
-/**
- * CiviHR Report - People - Month by month page.
- */
-/*function civihr_employee_portal_hrreport_people_month() {
-
-    global $base_url;
-    
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js');
-    
-    $data = file_get_contents($base_url . '/civihr-report---people');
-    
-    return theme('civihr_employee_portal_civihr_report_month',
-        array(
-            'title' => t('People') . ' - Month by month',
-            'date_filter' => drupal_get_form('civihr_employee_portal_hrreport_people_date_form'),
-            'data' => $data,
-            'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
-        )
-    );
-
-}*/
-
-/**
- * CiviHR Report - Leave page.
- */
-function civihr_employee_portal_hrreport_leave_and_absence() {
-
-    global $base_url;
-    
-    ///drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js');
-    
-    $table = civihr_employee_portal_hrreport_gettable('leave_and_absence');
-    $data = file_get_contents($base_url . '/civihr-report-json-leave-and-absence');
-    
-    return theme('civihr_employee_portal_civihr_report_leave_and_absence',
-        array(
-            'title' => t('Leave'),
-            'date_filter' => drupal_get_form('civihr_employee_portal_hrreport_people_date_interval_form'),
-            'table' => $table,
-            'data' => $data,
-            'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
-        )
-    );
-}
-
 /**
  * CiviHR Report - Custom Report page.
+ * 
+ * @param string $reportName
+ * @return array
  */
 function civihr_employee_portal_hrreport_custom($reportName) {
     global $base_url;
     // TODO: validate $reportName against existing views
 
+    _civihr_employee_portal_add_report_scripts();
     $table = civihr_employee_portal_hrreport_gettable($reportName, null);
     $data = @file_get_contents($base_url . '/civihr_report_json_' . $reportName);
     $view = views_get_view('civihr_report_' . $reportName);
@@ -6006,12 +5399,11 @@ function civihr_employee_portal_hrreport_custom($reportName) {
 
     return theme('civihr_employee_portal_civihr_report_custom',
         array(
+            'report_name' => $reportName,
             'table' => $table,
             'data' => $data,
             'tableUrl' => !empty($table) ? '/reports/' . $reportName . '/table' : null,
             'jsonUrl' => !empty($data) ? '/civihr_report_json_' . $reportName : null,
-            //'filters' => $view->display['default']->display_options['filters'],
-            //'viewDisplay' => $view->display['default'],
             'filters' => $filters,
             
         )
@@ -6020,27 +5412,6 @@ function civihr_employee_portal_hrreport_custom($reportName) {
 
 function civihr_employee_portal_hrreport_custom_printtable($reportName, $dateFilterValue = null) {
     return civihr_employee_portal_hrreport_printtable($reportName, $dateFilterValue);
-}
-
-/**
- * CiviHR Report - Leave page.
- */
-function civihr_employee_portal_hrreport_joiners_and_leavers() {
-
-    global $base_url;
-    
-    $table = civihr_employee_portal_hrreport_gettable('people');
-    $data = file_get_contents($base_url . '/civihr-report-json-people');
-    
-    return theme('civihr_employee_portal_civihr_report_joiners_and_leavers',
-        array(
-            'title' => t('Leave'),
-            'date_filter' => drupal_get_form('civihr_employee_portal_hrreport_people_date_form'),
-            'data' => $data,
-            'settings_url' => civihr_employee_portal_make_link(t('Settings'), 'civihr_report_settings')
-        )
-    );
-
 }
 
 /**
@@ -6410,22 +5781,11 @@ function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$obje
  * @param string $parentLink
  * @return array
  */
-function civihr_employee_portal_get_drupal_menu_items($menuName/*, $parentLink*/) {
-    /*$parentQuery = db_select('menu_links', 'ml')
-        ->fields('ml', array('mlid'))
-        ->condition('menu_name', $menuName)
-        ->condition('plid', 0)
-        ->condition('link_path', $parentLink)
-        ->condition('hidden', 0);
-    $parentResult = $parentQuery->execute()->fetchAssoc();
-    if (empty($parentResult['mlid'])) {
-        return null;
-    }*/
+function civihr_employee_portal_get_drupal_menu_items($menuName) {
     $menu = array();
     $query = db_select('menu_links', 'ml')
         ->fields('ml', array('link_path', 'router_path', 'link_title', 'options'))
         ->condition('menu_name', $menuName)
-//        ->condition('plid', $parentResult['mlid'])
         ->condition('hidden', 0)
         ->orderBy('weight');
     $result = $query->execute()->fetchAll();
@@ -6495,4 +5855,52 @@ function relationActiveAndCurrent($relation){
 
   return $relation['is_active'] == 1 && (strtotime($endDate) >= time() || empty($endDate))
           && (empty($relation['start_date']) || strtotime($relation['start_date']) <= time());
+}
+
+/**
+ * Implements hook_views_data()
+ */
+function civihr_employee_portal_views_data() {
+  $data = array();
+
+  $tables = date_views_base_tables();
+
+  foreach ($tables as $base_table => $entity) {
+    // The flexible date filter.
+    $data[$base_table]['between_date_filter'] = array(
+      'group' => t('Date'),
+      'title' => t('Between Dates (!base_table)', array('!base_table' => $base_table)),
+      'help' => t('Filter between two Views !base_table date fields.', array('!base_table' => $base_table)),
+      'filter' => array(
+        'handler' => 'views_between_dates_filter_handler',
+        'empty field name' => t('Undated'),
+        'is date' => TRUE,
+      ),
+    );
+  }
+
+  return $data;
+}
+
+/**
+ * Implements hook_date_views_fields()
+ * 
+ * @param string $field
+ * @return array
+ */
+function civihr_employee_portal_date_views_fields($field) {
+  $values = array();
+  $sqlTypes = array(
+      'date' => array(
+        'hrjc_details.period_end_date',
+        'hrjc_details.period_start_date',
+        'absence_activity.absence_date',
+      ),
+  );
+  if (in_array($field, $sqlTypes['date'])) {
+    $values = array(
+      'sql_type' => DATE_ISO,
+    );
+  }
+  return $values;
 }

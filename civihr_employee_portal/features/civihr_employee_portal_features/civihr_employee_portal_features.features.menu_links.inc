@@ -30,9 +30,30 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 0,
     'customized' => 1,
   );
+  // Exported menu link: main-menu_reports:reports
+  $menu_links['main-menu_reports:reports'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'reports',
+    'router_path' => 'reports',
+    'link_title' => 'Reports',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+      'identifier' => 'main-menu_reports:reports',
+    ),
+    'module' => 'system',
+    'hidden' => 0,
+    'external' => 0,
+    'has_children' => 0,
+    'expanded' => 0,
+    'weight' => 10,
+    'customized' => 1,
+  );
   // Translatables
   // Included for use with string extractors like potx.
   t('Home');
+  t('Reports');
 
 
   return $menu_links;

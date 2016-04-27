@@ -127,6 +127,13 @@ function civihr_employee_portal_features_user_default_permissions() {
     'module' => 'civicrm',
   );
 
+  // Exported permission: 'access hrreports'.
+  $permissions['access hrreports'] = array(
+    'name' => 'access hrreports',
+    'roles' => array(),
+    'module' => 'civihr_employee_portal',
+  );
+
   // Exported permission: 'access manager approval screen'.
   $permissions['access manager approval screen'] = array(
     'name' => 'access manager approval screen',
@@ -465,6 +472,13 @@ function civihr_employee_portal_features_user_default_permissions() {
     'name' => 'manage Applicants',
     'roles' => array(),
     'module' => 'civicrm',
+  );
+
+  // Exported permission: 'manage hrreports settings'.
+  $permissions['manage hrreports settings'] = array(
+    'name' => 'manage hrreports settings',
+    'roles' => array(),
+    'module' => 'civihr_employee_portal',
   );
 
   // Exported permission: 'manage own HRAbsences'.

@@ -1,11 +1,11 @@
 <?php
 
 $view = new view();
-$view->name = 'civihr_report_people';
+$view->name = 'civihr_report_leave_and_absence';
 $view->description = '';
 $view->tag = 'default';
 $view->base_table = 'civicrm_contact';
-$view->human_name = 'CiviHR Report - People';
+$view->human_name = 'CiviHR Report - Leave and Absence';
 $view->core = 7;
 $view->api_version = '3.0';
 $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
@@ -57,6 +57,10 @@ $handler->display->display_options['relationships']['role_jobcontract_id']['id']
 $handler->display->display_options['relationships']['role_jobcontract_id']['table'] = 'hrjc_revision';
 $handler->display->display_options['relationships']['role_jobcontract_id']['field'] = 'role_jobcontract_id';
 $handler->display->display_options['relationships']['role_jobcontract_id']['relationship'] = 'hrjc_revision';
+/* Relationship: CiviCRM Contacts: Absence Activity entity */
+$handler->display->display_options['relationships']['absence_activity']['id'] = 'absence_activity';
+$handler->display->display_options['relationships']['absence_activity']['table'] = 'civicrm_contact';
+$handler->display->display_options['relationships']['absence_activity']['field'] = 'absence_activity';
 /* Field: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'civicrm_contact';
@@ -255,19 +259,16 @@ $handler->display->display_options['fields']['role_funder']['id'] = 'role_funder
 $handler->display->display_options['fields']['role_funder']['table'] = 'hrjc_role';
 $handler->display->display_options['fields']['role_funder']['field'] = 'role_funder';
 $handler->display->display_options['fields']['role_funder']['relationship'] = 'role_jobcontract_id';
-$handler->display->display_options['fields']['role_funder']['exclude'] = TRUE;
 /* Field: HRJobContract Role entity: Role percent pay funder */
 $handler->display->display_options['fields']['role_percent_pay_funder']['id'] = 'role_percent_pay_funder';
 $handler->display->display_options['fields']['role_percent_pay_funder']['table'] = 'hrjc_role';
 $handler->display->display_options['fields']['role_percent_pay_funder']['field'] = 'role_percent_pay_funder';
 $handler->display->display_options['fields']['role_percent_pay_funder']['relationship'] = 'role_jobcontract_id';
-$handler->display->display_options['fields']['role_percent_pay_funder']['exclude'] = TRUE;
 /* Field: HRJobContract Role entity: Role cost center */
 $handler->display->display_options['fields']['role_cost_center']['id'] = 'role_cost_center';
 $handler->display->display_options['fields']['role_cost_center']['table'] = 'hrjc_role';
 $handler->display->display_options['fields']['role_cost_center']['field'] = 'role_cost_center';
 $handler->display->display_options['fields']['role_cost_center']['relationship'] = 'role_jobcontract_id';
-$handler->display->display_options['fields']['role_cost_center']['exclude'] = TRUE;
 /* Field: HRJobContract Role entity: Role percent pay cost center */
 $handler->display->display_options['fields']['role_percent_pay_cost_center']['id'] = 'role_percent_pay_cost_center';
 $handler->display->display_options['fields']['role_percent_pay_cost_center']['table'] = 'hrjc_role';
@@ -315,6 +316,61 @@ $handler->display->display_options['fields']['role_region']['table'] = 'hrjc_rol
 $handler->display->display_options['fields']['role_region']['field'] = 'role_region';
 $handler->display->display_options['fields']['role_region']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['fields']['role_region']['label'] = 'Role region';
+/* Field: Absence Activity entity: Absence date */
+$handler->display->display_options['fields']['absence_date']['id'] = 'absence_date';
+$handler->display->display_options['fields']['absence_date']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_date']['field'] = 'absence_date';
+$handler->display->display_options['fields']['absence_date']['relationship'] = 'absence_activity';
+/* Field: Absence Activity entity: Absence_month */
+$handler->display->display_options['fields']['absence_month']['id'] = 'absence_month';
+$handler->display->display_options['fields']['absence_month']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_month']['field'] = 'absence_month';
+$handler->display->display_options['fields']['absence_month']['relationship'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_month']['label'] = 'Group by month';
+/* Field: Absence Activity entity: Absence duration in days */
+$handler->display->display_options['fields']['absence_duration']['id'] = 'absence_duration';
+$handler->display->display_options['fields']['absence_duration']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_duration']['field'] = 'absence_duration';
+$handler->display->display_options['fields']['absence_duration']['relationship'] = 'absence_activity';
+/* Field: Absence Activity entity: Absence_type */
+$handler->display->display_options['fields']['absence_type']['id'] = 'absence_type';
+$handler->display->display_options['fields']['absence_type']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_type']['field'] = 'absence_type';
+$handler->display->display_options['fields']['absence_type']['relationship'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_type']['label'] = 'Absence type';
+/* Field: Absence Activity entity: Absence_status */
+$handler->display->display_options['fields']['absence_status']['id'] = 'absence_status';
+$handler->display->display_options['fields']['absence_status']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_status']['field'] = 'absence_status';
+$handler->display->display_options['fields']['absence_status']['relationship'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_status']['label'] = 'Absence status';
+/* Field: Absence Activity entity: Absence amount taken */
+$handler->display->display_options['fields']['absence_amount_taken']['id'] = 'absence_amount_taken';
+$handler->display->display_options['fields']['absence_amount_taken']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_amount_taken']['field'] = 'absence_amount_taken';
+$handler->display->display_options['fields']['absence_amount_taken']['relationship'] = 'absence_activity';
+/* Field: Absence Activity entity: Absence amount accrued */
+$handler->display->display_options['fields']['absence_amount_accrued']['id'] = 'absence_amount_accrued';
+$handler->display->display_options['fields']['absence_amount_accrued']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_amount_accrued']['field'] = 'absence_amount_accrued';
+$handler->display->display_options['fields']['absence_amount_accrued']['relationship'] = 'absence_activity';
+/* Field: Absence Activity entity: Absence absolute duration */
+$handler->display->display_options['fields']['absence_absolute_amount']['id'] = 'absence_absolute_amount';
+$handler->display->display_options['fields']['absence_absolute_amount']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_absolute_amount']['field'] = 'absence_absolute_amount';
+$handler->display->display_options['fields']['absence_absolute_amount']['relationship'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_absolute_amount']['label'] = 'Absence absolute amount';
+/* Field: Absence Activity entity: Absence is credit */
+$handler->display->display_options['fields']['absence_is_credit']['id'] = 'absence_is_credit';
+$handler->display->display_options['fields']['absence_is_credit']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_is_credit']['field'] = 'absence_is_credit';
+$handler->display->display_options['fields']['absence_is_credit']['relationship'] = 'absence_activity';
+/* Field: Absence Activity entity: Absence_day_of_week */
+$handler->display->display_options['fields']['absence_day_of_week']['id'] = 'absence_day_of_week';
+$handler->display->display_options['fields']['absence_day_of_week']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_day_of_week']['field'] = 'absence_day_of_week';
+$handler->display->display_options['fields']['absence_day_of_week']['relationship'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_day_of_week']['label'] = 'Absence day of week';
 /* Sort criterion: CiviCRM Contacts: Last Name */
 $handler->display->display_options['sorts']['last_name']['id'] = 'last_name';
 $handler->display->display_options['sorts']['last_name']['table'] = 'civicrm_contact';
@@ -328,48 +384,11 @@ $handler->display->display_options['sorts']['jobcontract_id']['id'] = 'jobcontra
 $handler->display->display_options['sorts']['jobcontract_id']['table'] = 'hrjc_revision';
 $handler->display->display_options['sorts']['jobcontract_id']['field'] = 'jobcontract_id';
 $handler->display->display_options['sorts']['jobcontract_id']['relationship'] = 'hrjc_revision';
-/* Contextual filter: HRJobContract Revision entity: Effective_date */
-$handler->display->display_options['arguments']['effective_date']['id'] = 'effective_date';
-$handler->display->display_options['arguments']['effective_date']['table'] = 'hrjc_revision';
-$handler->display->display_options['arguments']['effective_date']['field'] = 'effective_date';
-$handler->display->display_options['arguments']['effective_date']['relationship'] = 'hrjc_revision';
-$handler->display->display_options['arguments']['effective_date']['default_action'] = 'default';
-$handler->display->display_options['arguments']['effective_date']['default_argument_type'] = 'php';
-$handler->display->display_options['arguments']['effective_date']['default_argument_options']['code'] = '$date_filter = $_REQUEST[\'between_date_filter\'];
-if (!empty($date_filter)) {
-    if (!empty($date_filter[\'value\'][\'date\'])) {
-        $expl = explode(\'/\', $date_filter[\'value\'][\'date\']);
-        return $expl[2] . \'-\' . $expl[0] . \'-\' . $expl[1];
-    }
-    return date(\'Y-m-d\', mktime(0, 0, 0, $date_filter[\'value\'][\'month\'], $date_filter[\'value\'][\'day\'], $date_filter[\'value\'][\'year\']));
-}
-return date(\'Y-m-d\');';
-$handler->display->display_options['arguments']['effective_date']['summary']['number_of_records'] = '0';
-$handler->display->display_options['arguments']['effective_date']['summary']['format'] = 'default_summary';
-$handler->display->display_options['arguments']['effective_date']['summary_options']['items_per_page'] = '25';
-$handler->display->display_options['arguments']['effective_date']['civihr_range'] = '<=';
-$handler->display->display_options['arguments']['effective_date']['civihr_range_empty'] = '0';
-/* Contextual filter: HRJobContract Revision entity: Effective_end_date */
-$handler->display->display_options['arguments']['effective_end_date']['id'] = 'effective_end_date';
-$handler->display->display_options['arguments']['effective_end_date']['table'] = 'hrjc_revision';
-$handler->display->display_options['arguments']['effective_end_date']['field'] = 'effective_end_date';
-$handler->display->display_options['arguments']['effective_end_date']['relationship'] = 'hrjc_revision';
-$handler->display->display_options['arguments']['effective_end_date']['default_action'] = 'default';
-$handler->display->display_options['arguments']['effective_end_date']['default_argument_type'] = 'php';
-$handler->display->display_options['arguments']['effective_end_date']['default_argument_options']['code'] = '$date_filter = $_REQUEST[\'between_date_filter\'];
-if (!empty($date_filter)) {
-    if (!empty($date_filter[\'value\'][\'date\'])) {
-        $expl = explode(\'/\', $date_filter[\'value\'][\'date\']);
-        return $expl[2] . \'-\' . $expl[0] . \'-\' . $expl[1];
-    }
-    return date(\'Y-m-d\', mktime(0, 0, 0, $date_filter[\'value\'][\'month\'], $date_filter[\'value\'][\'day\'], $date_filter[\'value\'][\'year\']));
-}
-return date(\'Y-m-d\');';
-$handler->display->display_options['arguments']['effective_end_date']['summary']['number_of_records'] = '0';
-$handler->display->display_options['arguments']['effective_end_date']['summary']['format'] = 'default_summary';
-$handler->display->display_options['arguments']['effective_end_date']['summary_options']['items_per_page'] = '25';
-$handler->display->display_options['arguments']['effective_end_date']['civihr_range'] = '>=';
-$handler->display->display_options['arguments']['effective_end_date']['civihr_range_empty'] = '1';
+$handler->display->display_options['filter_groups']['groups'] = array(
+  1 => 'AND',
+  2 => 'OR',
+  3 => 'OR',
+);
 /* Filter criterion: CiviCRM Contacts: Is Deleted */
 $handler->display->display_options['filters']['is_deleted']['id'] = 'is_deleted';
 $handler->display->display_options['filters']['is_deleted']['table'] = 'civicrm_contact';
@@ -398,17 +417,55 @@ $handler->display->display_options['filters']['overrided']['field'] = 'overrided
 $handler->display->display_options['filters']['overrided']['relationship'] = 'hrjc_revision';
 $handler->display->display_options['filters']['overrided']['value']['value'] = '0';
 $handler->display->display_options['filters']['overrided']['group'] = 1;
-/* Filter criterion: Date: Between Dates (hrjc_details) */
-$handler->display->display_options['filters']['between_date_filter']['id'] = 'between_date_filter';
-$handler->display->display_options['filters']['between_date_filter']['table'] = 'hrjc_details';
-$handler->display->display_options['filters']['between_date_filter']['field'] = 'between_date_filter';
-$handler->display->display_options['filters']['between_date_filter']['relationship'] = 'details_revision_id';
-$handler->display->display_options['filters']['between_date_filter']['exposed'] = TRUE;
-$handler->display->display_options['filters']['between_date_filter']['expose']['operator_id'] = 'between_date_filter_op';
-$handler->display->display_options['filters']['between_date_filter']['expose']['label'] = 'Date';
-$handler->display->display_options['filters']['between_date_filter']['expose']['operator'] = 'between_date_filter_op';
-$handler->display->display_options['filters']['between_date_filter']['expose']['identifier'] = 'between_date_filter';
-$handler->display->display_options['filters']['between_date_filter']['expose']['remember_roles'] = array(
+/* Filter criterion: Global: Fields comparison */
+$handler->display->display_options['filters']['fields_compare']['id'] = 'fields_compare';
+$handler->display->display_options['filters']['fields_compare']['table'] = 'views';
+$handler->display->display_options['filters']['fields_compare']['field'] = 'fields_compare';
+$handler->display->display_options['filters']['fields_compare']['operator'] = '>=';
+$handler->display->display_options['filters']['fields_compare']['group'] = 2;
+$handler->display->display_options['filters']['fields_compare']['right_field'] = 'period_start_date';
+$handler->display->display_options['filters']['fields_compare']['left_field'] = 'absence_date';
+/* Filter criterion: Absence Activity entity: Absence date */
+$handler->display->display_options['filters']['absence_date']['id'] = 'absence_date';
+$handler->display->display_options['filters']['absence_date']['table'] = 'absence_activity';
+$handler->display->display_options['filters']['absence_date']['field'] = 'absence_date';
+$handler->display->display_options['filters']['absence_date']['relationship'] = 'absence_activity';
+$handler->display->display_options['filters']['absence_date']['operator'] = 'empty';
+$handler->display->display_options['filters']['absence_date']['group'] = 2;
+/* Filter criterion: Global: Fields comparison */
+$handler->display->display_options['filters']['fields_compare_1']['id'] = 'fields_compare_1';
+$handler->display->display_options['filters']['fields_compare_1']['table'] = 'views';
+$handler->display->display_options['filters']['fields_compare_1']['field'] = 'fields_compare';
+$handler->display->display_options['filters']['fields_compare_1']['operator'] = '<=';
+$handler->display->display_options['filters']['fields_compare_1']['group'] = 3;
+$handler->display->display_options['filters']['fields_compare_1']['right_field'] = 'period_end_date';
+$handler->display->display_options['filters']['fields_compare_1']['left_field'] = 'absence_date';
+/* Filter criterion: Absence Activity entity: Absence date */
+$handler->display->display_options['filters']['absence_date_1']['id'] = 'absence_date_1';
+$handler->display->display_options['filters']['absence_date_1']['table'] = 'absence_activity';
+$handler->display->display_options['filters']['absence_date_1']['field'] = 'absence_date';
+$handler->display->display_options['filters']['absence_date_1']['relationship'] = 'absence_activity';
+$handler->display->display_options['filters']['absence_date_1']['operator'] = 'empty';
+$handler->display->display_options['filters']['absence_date_1']['group'] = 3;
+/* Filter criterion: HRJobContract Details entity: Period end date */
+$handler->display->display_options['filters']['period_end_date']['id'] = 'period_end_date';
+$handler->display->display_options['filters']['period_end_date']['table'] = 'hrjc_details';
+$handler->display->display_options['filters']['period_end_date']['field'] = 'period_end_date';
+$handler->display->display_options['filters']['period_end_date']['relationship'] = 'details_revision_id';
+$handler->display->display_options['filters']['period_end_date']['operator'] = 'empty';
+$handler->display->display_options['filters']['period_end_date']['group'] = 3;
+/* Filter criterion: Date: Date (absence_activity) */
+$handler->display->display_options['filters']['date_filter']['id'] = 'date_filter';
+$handler->display->display_options['filters']['date_filter']['table'] = 'absence_activity';
+$handler->display->display_options['filters']['date_filter']['field'] = 'date_filter';
+$handler->display->display_options['filters']['date_filter']['relationship'] = 'absence_activity';
+$handler->display->display_options['filters']['date_filter']['operator'] = 'between';
+$handler->display->display_options['filters']['date_filter']['exposed'] = TRUE;
+$handler->display->display_options['filters']['date_filter']['expose']['operator_id'] = 'date_filter_op';
+$handler->display->display_options['filters']['date_filter']['expose']['label'] = 'Date';
+$handler->display->display_options['filters']['date_filter']['expose']['operator'] = 'date_filter_op';
+$handler->display->display_options['filters']['date_filter']['expose']['identifier'] = 'absence_date_filter';
+$handler->display->display_options['filters']['date_filter']['expose']['remember_roles'] = array(
   2 => '2',
   1 => 0,
   3 => 0,
@@ -416,11 +473,13 @@ $handler->display->display_options['filters']['between_date_filter']['expose']['
   17087012 => 0,
   57573969 => 0,
 );
-$handler->display->display_options['filters']['between_date_filter']['form_type'] = 'date_popup';
-$handler->display->display_options['filters']['between_date_filter']['default_date'] = 'now';
-$handler->display->display_options['filters']['between_date_filter']['year_range'] = '-10:+10';
-$handler->display->display_options['filters']['between_date_filter']['start_date_field'] = 'hrjc_details.period_start_date';
-$handler->display->display_options['filters']['between_date_filter']['end_date_field'] = 'hrjc_details.period_end_date';
+$handler->display->display_options['filters']['date_filter']['form_type'] = 'date_popup';
+$handler->display->display_options['filters']['date_filter']['default_date'] = 'now -1 month';
+$handler->display->display_options['filters']['date_filter']['default_to_date'] = 'now +1 month';
+$handler->display->display_options['filters']['date_filter']['year_range'] = '-10:+10';
+$handler->display->display_options['filters']['date_filter']['date_fields'] = array(
+  'absence_activity.absence_date' => 'absence_activity.absence_date',
+);
 
 /* Display: Page */
 $handler = $view->new_display('page', 'Page', 'page');
@@ -571,7 +630,7 @@ $handler->display->display_options['field_config'] = array(
     'separator' => ', ',
   ),
 );
-$handler->display->display_options['path'] = 'civihr_report_json_people';
+$handler->display->display_options['path'] = 'civihr_report_json_leave_and_absence';
 $handler->display->display_options['menu']['title'] = 'Report 1: CiviHR People Report';
 $handler->display->display_options['menu']['description'] = 'CiviHR People Report containing Contact, JobContract and Absence Activity data.';
 $handler->display->display_options['menu']['weight'] = '0';
@@ -580,7 +639,7 @@ $handler->display->display_options['menu']['context'] = 0;
 $handler->display->display_options['menu']['context_only_inline'] = 0;
 
 /* Display: Block */
-$handler = $view->new_display('block', 'Block', 'civihr_report_table_people');
+$handler = $view->new_display('block', 'Block', 'civihr_report_table_leave_and_absence');
 $handler->display->display_options['defaults']['use_ajax'] = FALSE;
 $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['defaults']['pager'] = FALSE;
@@ -813,8 +872,8 @@ $handler = $view->new_display('views_data_export', 'Data export', 'views_data_ex
 $handler->display->display_options['pager']['type'] = 'none';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['style_plugin'] = 'views_data_export_csv';
-$handler->display->display_options['path'] = 'civihr_report_export_people';
-$translatables['civihr_report_people'] = array(
+$handler->display->display_options['path'] = 'civihr_report_export_leave_and_absence';
+$translatables['civihr_report_leave_and_absence'] = array(
   t('Master'),
   t('CiviHR Report - People'),
   t('more'),
@@ -830,6 +889,7 @@ $translatables['civihr_report_people'] = array(
   t('HRJobContract Pay entity'),
   t('HRJobContract Pension entity'),
   t('HRJobContract Role entity'),
+  t('Absence Activity entity'),
   t('Employee ID'),
   t('.'),
   t('Employee display name'),
@@ -875,7 +935,16 @@ $translatables['civihr_report_people'] = array(
   t('Role level type'),
   t('Role organization'),
   t('Role region'),
-  t('All'),
+  t('Absence date'),
+  t('Group by month'),
+  t('Absence duration in days'),
+  t('Absence type'),
+  t('Absence status'),
+  t('Absence amount taken'),
+  t('Absence amount accrued'),
+  t('Absence absolute amount'),
+  t('Absence is credit'),
+  t('Absence day of week'),
   t('Date'),
   t('Page'),
   t('Block'),

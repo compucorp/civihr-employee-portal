@@ -3,7 +3,7 @@
 function civihr_hrjobcontract_entities_init() {
     
     $rebuild_hrjobcontract_entities_view = variable_get('rebuild_hrjobcontract_entities_view', 'TRUE');
-    if (isset($rebuild_hrjobcontract_entities_view) && $rebuild_hrjobcontract_entities_view == 'TRUE' || 1) {
+    if (isset($rebuild_hrjobcontract_entities_view) && $rebuild_hrjobcontract_entities_view == 'TRUE') {
         civicrm_initialize();
         $civi_settings = parse_url(CIVICRM_DSN);
         $civi_db_name = trim($civi_settings['path'], '/');
@@ -376,13 +376,13 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
     );
     $schema['hrjc_details']['fields']['period_end_date'] = array(
         'type' => 'varchar',
-//        'mysql_type' => 'DATETIME',
+        'mysql_type' => 'DATETIME',
         'not null' => FALSE,
         'description' => 'Period end date.',
     );
     $schema['hrjc_details']['fields']['period_start_month'] = array(
         'type' => 'varchar',
-//        'mysql_type' => 'DATETIME',
+        'mysql_type' => 'DATETIME',
         'not null' => FALSE,
         'description' => 'Period start month.',
     );

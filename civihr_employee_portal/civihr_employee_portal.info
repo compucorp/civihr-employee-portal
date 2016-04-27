@@ -11,6 +11,7 @@ dependencies[] = xautoload
 dependencies[] = ctools
 dependencies[] = date
 dependencies[] = date_popup
+dependencies[] = date_views
 dependencies[] = calendar
 dependencies[] = panels
 dependencies[] = rules
@@ -64,6 +65,7 @@ files[] = views/includes/views_json_query_argument_document_contacts_request_han
 files[] = views/includes/views_json_query_argument_task_contacts_request_handler.inc
 files[] = views/includes/views_json_query_argument_appraisal_contact_id_request_handler.inc
 files[] = views/includes/civihr_employee_portal_handler_manager_id.inc
+files[] = views/includes/views_between_dates_filter_handler.inc
 
 ; Reports Views handlers
 

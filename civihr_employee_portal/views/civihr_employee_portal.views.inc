@@ -62,8 +62,85 @@ function civihr_employee_portal_views_data_alter(&$data) {
     $data['hrjc_revision']['effective_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
     $data['hrjc_revision']['effective_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
 
-    $data['hrjc_details']['period_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
-    $data['hrjc_details']['period_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
+    $data['hrjc_details']['period_start_date'] = array(
+        'title' => t('Period start date'),
+        'real field' => 'period_start_date',
+        'field' => array(
+            'handler' => 'views_handler_field',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'civihr_employee_portal_argument_date_range',
+            'name field' => 'period_start_date',
+            'numeric' => FALSE,
+        ),
+        'sort' => array(
+           'handler' => 'views_handler_sort_date',
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_date',
+        ),
+    );
+
+    $data['hrjc_details']['period_end_date'] = array(
+        'title' => t('Period end date'),
+        'real field' => 'period_end_date',
+        'field' => array(
+            'handler' => 'views_handler_field',// 'views_handler_field_date',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'civihr_employee_portal_argument_date_range',
+            'name field' => 'period_end_date',
+            'numeric' => FALSE,
+        ),
+        'sort' => array(
+           'handler' => 'views_handler_sort_date',
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_date',
+        ),
+    );
+
+    $data['hrjc_details_hrjc_revision']['period_start_date'] = array(
+        'title' => t('Period start date'),
+        'real field' => 'period_start_date',
+        'field' => array(
+            'handler' => 'views_handler_field',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'civihr_employee_portal_argument_date_range',
+            'name field' => 'period_start_date',
+            'numeric' => FALSE,
+        ),
+        'sort' => array(
+           'handler' => 'views_handler_sort_date',
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_date',
+        ),
+    );
+
+    $data['hrjc_details_hrjc_revision']['period_end_date'] = array(
+        'title' => t('Period end date'),
+        'real field' => 'period_end_date',
+        'field' => array(
+            'handler' => 'views_handler_field',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'civihr_employee_portal_argument_date_range',
+            'name field' => 'period_end_date',
+            'numeric' => FALSE,
+        ),
+        'sort' => array(
+           'handler' => 'views_handler_sort_date',
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_date',
+        ),
+    );
 
     $data['absence_list']['absence_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
     $data['absence_list']['absence_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
@@ -71,7 +148,26 @@ function civihr_employee_portal_views_data_alter(&$data) {
     $data['absence_approval_list']['absence_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
     $data['absence_approval_list']['absence_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
 
-    $data['absence_activity']['absence_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
+//    $data['absence_activity']['absence_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
+        $data['absence_activity']['absence_date'] = array(
+        'title' => t('Absence date'),
+        'real field' => 'absence_date',
+        'field' => array(
+            'handler' => 'views_handler_field',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'civihr_employee_portal_argument_date_range',
+            'name field' => 'absence_date',
+            'numeric' => FALSE,
+        ),
+        'sort' => array(
+           'handler' => 'views_handler_sort_date',
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_date',
+        ),
+    );
 
     $data['json']['absence_entitlement'] = array(
         'title' => t('Absence entitlement value'),
@@ -412,42 +508,6 @@ function civihr_employee_portal_views_data_alter(&$data) {
         ),
         'sort' => array('handler' => 'views_json_query_handler_sort'),
     );
-/*    $data['hrjc_role']['role_start_date'] = array(
-        'title' => t('Role start date'),
-        'real field' => 'role_start_date',
-        'field' => array(
-            'handler' => 'civihr_employee_portal_handler_date_yyyy_mm_dd',
-            'click sortable' => TRUE,
-        ),
-        'argument' => array(
-            'handler' => 'views_json_query_argument_request_handler',
-            'name_field' => 'role_start_date',
-            'string' => TRUE
-        ),
-        'filter' => array(
-            'handler' => 'views_json_query_handler_filter',
-            'help' => t('Filter results to a particular result set'),
-        ),
-        'sort' => array('handler' => 'views_json_query_handler_sort'),
-    );
-    $data['hrjc_role']['role_end_date'] = array(
-        'title' => t('Role end date'),
-        'real field' => 'role_end_date',
-        'field' => array(
-            'handler' => 'civihr_employee_portal_handler_date_yyyy_mm_dd',
-            'click sortable' => TRUE,
-        ),
-        'argument' => array(
-            'handler' => 'views_json_query_argument_request_handler',
-            'name_field' => 'role_end_date',
-            'string' => TRUE
-        ),
-        'filter' => array(
-            'handler' => 'views_json_query_handler_filter',
-            'help' => t('Filter results to a particular result set'),
-        ),
-        'sort' => array('handler' => 'views_json_query_handler_sort'),
-    );*/
     $data['hrjc_role']['role_funder'] = array(
         'title' => t('Role funder'),
         'real field' => 'role_funder',
