@@ -132,6 +132,8 @@ function civihr_employee_portal_init() {
 
         catch (CiviCRM_API3_Exception $e) {
             $error = $e->getMessage();
+            echo 'Error in civihr_employee_portal_init()';
+            var_dump($error);
         }
 
         /**
