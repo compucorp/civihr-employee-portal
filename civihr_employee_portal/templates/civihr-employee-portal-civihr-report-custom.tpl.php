@@ -24,7 +24,9 @@
         <h4>Data</h4>
         <div id="reportTable"><?php print $table; ?></div>
 <?php if (!empty($exportUrl)): ?>
-        <a href="<?php print $exportUrl; ?>" id="export-report" class="btn btn-primary btn-default">Export</a>
+        <div class="export-button-wrap">
+            <a href="<?php print $exportUrl; ?>" id="export-report" class="btn btn-primary btn-default">Export</a>
+        </div>
 <?php endif; ?>
     </div>
 <?php endif; ?>
