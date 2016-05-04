@@ -6,19 +6,19 @@
 </div>
 <?php endif; ?>
 
-<ul class="nav nav-tabs nav-justified report-tabs">
+<ul class="nav nav-tabs nav-justified report-tabs panel chr_tabs__header">
 <?php if (!empty($tableUrl)): ?>
-    <li role="presentation" class="active"><a class="btn btn-default" data-tab="data">Data</a></li>
+    <li role="presentation" class="chr_tabs__header-item active"><a class="btn btn-default" data-tab="data">Data</a></li>
 <?php endif; ?>
 <?php if (!empty($jsonUrl)): ?>
-    <li role="presentation"><a class="btn btn-default" data-tab="pivot-table">Pivot Table</a></li>
+    <li role="presentation" class="chr_tabs__header-item"><a class="btn btn-default" data-tab="pivot-table">Pivot Table</a></li>
 <?php endif; ?>
 <?php if (!empty($jsonUrl)): ?>
-    <li role="presentation"><a class="btn btn-default" data-tab="orb-pivot-table">Orb Pivot Table</a></li>
+    <li role="presentation" class="chr_tabs__header-item"><a class="btn btn-default" data-tab="orb-pivot-table">Orb Pivot Table</a></li>
 <?php endif; ?>
 </ul>
 
-<div class="report-content">
+<div class="report-content panel">
 <?php if (!empty($tableUrl)): ?>
     <div class="report-block data">
         <h4>Data</h4>
