@@ -424,6 +424,12 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
             ),
             'template' => 'templates/civihr-employee-portal-civihr-report-custom',
         ),
+
+/*        'civihr_employee_portal_hrreports_data_table' => array(
+            'template' => 'templates/views-view-table-hrreports',
+//            'pattern' => 'views_exposed_form_hrreports',
+//            'render element' => 'form',
+        ),*/
     );
 }
 
@@ -5362,23 +5368,16 @@ function _civihr_employee_portal_add_report_scripts() {
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js', $jsOptions);
 }
 
-function civihr_employee_portal_hrreport_gettable($viewName, $dateFilterValue = 'all') {
+function civihr_employee_portal_hrreport_gettable($viewName) {
     $view = views_get_view('civihr_report_' . $viewName);
     if (empty($view)) {
         return null;
     }
-    $view->set_display('civihr_report_table_' . $viewName);
-    if ($dateFilterValue) {
-        $view->set_arguments(array($dateFilterValue, $dateFilterValue));
-    }
-    $view->execute();
-    $table = $view->preview();
-    
-    return $table;
+    return views_embed_view('civihr_report_' . $viewName, 'civihr_report_table_' . $viewName);
 }
 
-function civihr_employee_portal_hrreport_printtable($viewName, $dateFilterValue = null) {
-    print civihr_employee_portal_hrreport_gettable($viewName, $dateFilterValue);
+function civihr_employee_portal_hrreport_printtable($viewName) {
+    print civihr_employee_portal_hrreport_gettable($viewName);
 }
 
 /**
@@ -5392,7 +5391,7 @@ function civihr_employee_portal_hrreport_custom($reportName) {
     // TODO: validate $reportName against existing views
 
     _civihr_employee_portal_add_report_scripts();
-    $table = civihr_employee_portal_hrreport_gettable($reportName, null);
+    $table = civihr_employee_portal_hrreport_gettable($reportName);
     $data = @file_get_contents($base_url . '/civihr_report_json_' . $reportName);
     $view = views_get_view('civihr_report_' . $reportName);
     $view->set_display('default');
@@ -5415,7 +5414,6 @@ function civihr_employee_portal_hrreport_custom($reportName) {
             'tableUrl' => !empty($table) ? '/reports/' . $reportName . '/table' : null,
             'jsonUrl' => !empty($data) ? '/civihr_report_json_' . $reportName : null,
             'filters' => $filters,
-            
         )
     );
 }
@@ -5913,4 +5911,17 @@ function civihr_employee_portal_date_views_fields($field) {
     );
   }
   return $values;
+}
+
+/**
+ * Check if given $form contains exposed filters of HR Report View.
+ * 
+ * @param array $form
+ * @return boolean
+ */
+function _is_hrreports_exposed_filters_form($form) {
+    if (substr($form['#action'], 0, 20) === '/civihr_report_json_') {
+        return TRUE;
+    }
+    return FALSE;
 }
