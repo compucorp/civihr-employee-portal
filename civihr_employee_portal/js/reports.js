@@ -159,6 +159,7 @@
         if (!this.tableUrl) {
             return;
         }
+        var tableDomId = this.getReportTableDomID();
         CRM.$.ajax({
             url: that.tableUrl + filterValues,
             error: function () {
@@ -166,9 +167,33 @@
             },
             success: function (data) {
                 that.tableContainer.html(data);
+                that.refreshReportTableViewInstance(tableDomId);
             },
             type: 'GET'
         });
+    }
+
+    HRReport.prototype.getReportTableDomID = function() {
+        var reportTableDiv = CRM.$('#reportTable > div.view:first');
+        var reportTableClasses = reportTableDiv.attr('class').split(' ');
+        for (var i in reportTableClasses) {
+            if (reportTableClasses[i].substring(0, 12) === 'view-dom-id-') {
+                return reportTableClasses[i].substr(12);
+            }
+        }
+        return null;
+    }
+
+    HRReport.prototype.refreshReportTableViewInstance = function(viewReportDataTableId) {
+        var viewReportDataTableSettings = Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableId];
+        var viewReportDataTableNewId = this.getReportTableDomID();
+
+        delete Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableId];
+        delete Drupal.views.instances['views_dom_id:' + viewReportDataTableId];
+
+        viewReportDataTableSettings.view_dom_id = viewReportDataTableNewId;
+        Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableNewId] = viewReportDataTableSettings;
+        Drupal.views.instances['views_dom_id:' + viewReportDataTableNewId] = new Drupal.views.ajaxView(Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableNewId]);
     }
 
     HRReport.prototype.bindFilters = function() {
