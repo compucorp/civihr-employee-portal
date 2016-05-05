@@ -22,7 +22,6 @@
     };
 
     /**
-     * 
      * Init PivotTable.js library
      */
     HRReport.prototype.initPivotTable = function() {
@@ -42,6 +41,11 @@
         }, false);
     }
 
+    /**
+     * Converts some number fields into Float for Orb library
+     *
+     * @param {JSON} data
+     */
     HRReport.prototype.orbConvertData = function(data) {
         var orbData = [];
         for (var i in data) {
@@ -83,6 +87,9 @@
         }
     }
 
+    /**
+     * Initialize Orb library
+     */
     HRReport.prototype.initOrb = function() {
         var orbConfig = function(f, d) {
             return {
@@ -118,7 +125,6 @@
 
     /**
      * Shows the Report
-     *
      */
     HRReport.prototype.show = function () {
         this.initPivotTable();
@@ -126,6 +132,11 @@
         this.bindFilters();
     };
 
+    /**
+     * Refresh JSON data and Pivot Tables using provided filter values
+     *
+     * @param string filterValues
+     */
     HRReport.prototype.refreshJson = function(filterValues) {
         var that = this;
         if (!this.jsonUrl) {
@@ -154,11 +165,17 @@
         });
     }
 
+    /**
+     * Refresh data table using provided filter values
+     *
+     * @param string filterValues
+     */
     HRReport.prototype.refreshTable = function(filterValues) {
         var that = this;
         if (!this.tableUrl) {
             return;
         }
+        var tableDomId = this.getReportTableDomID();
         CRM.$.ajax({
             url: that.tableUrl + filterValues,
             error: function () {
@@ -166,11 +183,46 @@
             },
             success: function (data) {
                 that.tableContainer.html(data);
+                that.refreshReportTableViewInstance(tableDomId);
             },
             type: 'GET'
         });
     }
 
+    /**
+     * Return unique Drupal View's DOM ID of data table
+     */
+    HRReport.prototype.getReportTableDomID = function() {
+        var reportTableDiv = CRM.$('#reportTable > div.view:first');
+        var reportTableClasses = reportTableDiv.attr('class').split(' ');
+        for (var i in reportTableClasses) {
+            if (reportTableClasses[i].substring(0, 12) === 'view-dom-id-') {
+                return reportTableClasses[i].substr(12);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Reinitialize View instance of data table for given View's DOM ID
+     *
+     * @param string viewReportDataTableId
+     */
+    HRReport.prototype.refreshReportTableViewInstance = function(viewReportDataTableId) {
+        var viewReportDataTableSettings = Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableId];
+        var viewReportDataTableNewId = this.getReportTableDomID();
+
+        delete Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableId];
+        delete Drupal.views.instances['views_dom_id:' + viewReportDataTableId];
+
+        viewReportDataTableSettings.view_dom_id = viewReportDataTableNewId;
+        Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableNewId] = viewReportDataTableSettings;
+        Drupal.views.instances['views_dom_id:' + viewReportDataTableNewId] = new Drupal.views.ajaxView(Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableNewId]);
+    }
+
+    /**
+     * Bind filters UI events
+     */
     HRReport.prototype.bindFilters = function() {
         // Filters bindings
         var that = this;
@@ -201,6 +253,9 @@
         });
     }
 
+    /**
+     * Main Reports object instance
+     */
     Drupal.behaviors.civihr_employee_portal_reports = {
         instance: null,
         attach: function (context, settings) {
