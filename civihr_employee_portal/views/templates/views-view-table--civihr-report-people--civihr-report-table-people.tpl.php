@@ -26,7 +26,7 @@
   </div>
 </div>
 
-<div class="table-wrapper chr_search-result__content">
+<div class="table-wrapper chr_search-result__content chr_custom-scrollbar">
     <table <?php if ($classes) { print 'class="'. $classes . '" '; } ?><?php print $attributes; ?>>
        <?php if (!empty($title) || !empty($caption)) : ?>
          <caption><?php print $caption . $title; ?></caption>
