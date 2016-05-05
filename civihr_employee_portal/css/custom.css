@@ -126,36 +126,6 @@ span.appraisals-employee-legend {
     margin-right: 8px;
 }
 
-
-/* Report temporary styling. TODO: move to scss Theme files. */
-#reportTable .table-responsive {
-    overflow-x: scroll;
-}
-
-#reportTable table {
-    width: auto;
-}
-#reportTable table tr td{
-    white-space: nowrap;
-}
-
-#reportTable th, #reportTable td {
-    padding: 2px 6px;
-}
-
-#reportPivotTable {
-    background-color: #fff;
-}
-#reportPivotTable td:first-child {
-    width: 20%;
-}
-#reportPerDate {
-    background-color: #fff;
-}
-#reportPerDate th, #reportPerDate td {
-    text-align: center;
-}
-
 .orb-container table {
    width: auto;
 }
