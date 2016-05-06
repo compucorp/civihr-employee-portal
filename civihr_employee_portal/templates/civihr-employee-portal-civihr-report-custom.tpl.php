@@ -35,7 +35,7 @@
 <?php if (!empty($jsonUrl)): ?>
     <div class="report-block pivot-table pane-content hidden">
         <h4>Pivot Table</h4>
-        <div id="reportPivotTable"></div>
+        <div id="reportPivotTable" class="pvtTable-civi"></div>
     </div>
     <div class="report-block orb-pivot-table pane-content hidden">
         <h4>Orb Pivot Table (with subtotals)</h4>
