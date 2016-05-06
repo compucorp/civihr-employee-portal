@@ -33,8 +33,8 @@
                 jQuery.pivotUtilities.export_renderers
             ),
             vals: ["Total"],
-            rows: [],
-            cols: [],
+            rows: ["Employee gender"],
+            cols: ["Contract location"],
             aggregatorName: "Count",
             unusedAttrsVertical: false,
             derivedAttributes: this.derivedAttributes
