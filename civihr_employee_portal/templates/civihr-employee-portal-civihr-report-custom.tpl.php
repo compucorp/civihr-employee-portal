@@ -6,7 +6,7 @@
 </div>
 <?php endif; ?>
 
-<ul class="nav nav-tabs nav-justified report-tabs">
+<ul class="nav nav-tabs nav-justified nav-tabs-header report-tabs">
 <?php if (!empty($tableUrl)): ?>
     <li role="presentation" class="active"><a class="btn btn-default" data-tab="data">Data</a></li>
 <?php endif; ?>
@@ -18,22 +18,26 @@
 <?php endif; ?>
 </ul>
 
-<div class="report-content">
+<div class="report-content panel-pane pane-block chr_panel chr_panel--no-padding">
 <?php if (!empty($tableUrl)): ?>
-    <div class="report-block data">
+    <div class="report-block data pane-content">
         <h4>Data</h4>
         <div id="reportTable"><?php print $table; ?></div>
 <?php if (!empty($exportUrl)): ?>
-        <a href="<?php print $exportUrl; ?>" id="export-report" class="btn btn-primary btn-default">Export</a>
+        <div class="chr_panel__footer">
+            <div class="chr_actions-wrapper">
+                <a href="<?php print $exportUrl; ?>" id="export-report" class="btn btn-primary btn-default">Export</a>
+            </div>
+        </div>
 <?php endif; ?>
     </div>
 <?php endif; ?>
 <?php if (!empty($jsonUrl)): ?>
-    <div class="report-block pivot-table hidden">
+    <div class="report-block pivot-table pane-content hidden">
         <h4>Pivot Table</h4>
         <div id="reportPivotTable"></div>
     </div>
-    <div class="report-block orb-pivot-table hidden">
+    <div class="report-block orb-pivot-table pane-content hidden">
         <h4>Orb Pivot Table (with subtotals)</h4>
         <div id="reportOrbPivotTable"></div>
     </div>
