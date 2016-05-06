@@ -18,9 +18,9 @@
 <?php endif; ?>
 </ul>
 
-<div class="report-content panel">
+<div class="report-content panel-pane pane-block chr_panel chr_panel--no-padding">
 <?php if (!empty($tableUrl)): ?>
-    <div class="report-block data">
+    <div class="report-block data pane-content">
         <h4>Data</h4>
         <div id="reportTable"><?php print $table; ?></div>
 <?php if (!empty($exportUrl)): ?>
@@ -33,11 +33,11 @@
     </div>
 <?php endif; ?>
 <?php if (!empty($jsonUrl)): ?>
-    <div class="report-block pivot-table hidden">
+    <div class="report-block pivot-table pane-content hidden">
         <h4>Pivot Table</h4>
         <div id="reportPivotTable"></div>
     </div>
-    <div class="report-block orb-pivot-table hidden">
+    <div class="report-block orb-pivot-table pane-content hidden">
         <h4>Orb Pivot Table (with subtotals)</h4>
         <div id="reportOrbPivotTable"></div>
     </div>
