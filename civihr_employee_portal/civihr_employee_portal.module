@@ -424,12 +424,6 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
             ),
             'template' => 'templates/civihr-employee-portal-civihr-report-custom',
         ),
-
-/*        'civihr_employee_portal_hrreports_data_table' => array(
-            'template' => 'templates/views-view-table-hrreports',
-//            'pattern' => 'views_exposed_form_hrreports',
-//            'render element' => 'form',
-        ),*/
     );
 }
 
@@ -4273,7 +4267,7 @@ function civihr_employee_portal_schema() {
 
     // Installing Reports settings db tables.
     $schema['reports_settings_age_group'] = array(
-        'description' => 'some description',
+        'description' => 'HR Reports Age Group settings',
         'fields' => array(
             'id' => array(
                 'type' => 'serial',
@@ -4704,6 +4698,8 @@ function civihr_employee_portal_theme_registry_alter(&$theme_registry) {
     if ($theme_registry['views_exposed_form']['path'] == $views_path . '/theme') {
         $theme_registry['views_exposed_form']['path'] = $module_path . '/templates';
     }
+    $theme_registry['views_view_table']['path'] = $module_path . '/templates';
+    $theme_registry['page']['path'] = $module_path . '/templates';
 }
 
 /**
@@ -5914,6 +5910,18 @@ function civihr_employee_portal_date_views_fields($field) {
 }
 
 /**
+ * Check if we are displaying custom Report page.
+ * 
+ * @return boolean
+ */
+function _is_hrreports_current_path() {
+    if (substr(current_path(), 0, 8) === 'reports/') {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/**
  * Check if given $form contains exposed filters of HR Report View.
  * 
  * @param array $form
@@ -5921,6 +5929,19 @@ function civihr_employee_portal_date_views_fields($field) {
  */
 function _is_hrreports_exposed_filters_form($form) {
     if (substr($form['#action'], 0, 20) === '/civihr_report_json_') {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/**
+ * Check if given $viewName matches HR Report View Table.
+ *
+ * @param string $viewName
+ * @return boolean
+ */
+function _is_hrreports_data_table_view($viewName) {
+    if (substr($viewName, 0, 14) === 'civihr_report_') {
         return TRUE;
     }
     return FALSE;
