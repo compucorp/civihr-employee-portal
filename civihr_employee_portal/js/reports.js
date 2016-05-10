@@ -37,9 +37,72 @@
             cols: ["Contract location"],
             aggregatorName: "Count",
             unusedAttrsVertical: false,
-            derivedAttributes: this.derivedAttributes
+            derivedAttributes: this.derivedAttributes,
+
+            // It's necessary to make all the DOM changes here
+            // because the library doesn't have support to custom template
+            // https://github.com/nicolaskruchten/pivottable/issues/484
+            onRefresh: function () {
+                Drupal.behaviors.civihr_employee_portal_reports.instance.updateCustomTemplate();
+            }
         }, false);
     }
+
+    /**
+     * Update the pivot table dropdown and filter box
+     * 
+     */
+    HRReport.prototype.updateCustomTemplate = function() {
+        this.updateDropdown();
+        this.updateFilterbox();
+    };
+
+    /**
+     * Update the pivot table dropdown to look like CiviHR style
+     * 
+     */
+    HRReport.prototype.updateDropdown = function() {
+        $('.pvtUi select').each(function () {
+            var selectClass = 'chr_custom-select chr_custom-select--full';
+
+            if (!$(this).parent().hasClass('chr_custom-select')) {
+                if ($(this).hasClass('pvtAggregator')) {
+                    selectClass += ' chr_custom-select--transparent';
+                }
+
+                $(this).wrap('<div class="' + selectClass + '"></div>');
+            }
+        });
+
+        $('.pvtVals .chr_custom-select').each(function () {
+            if ($(this).find('select').length === 0) {
+                $(this).remove();
+            }
+        });
+    };
+
+    /**
+     * Update the filter box adding some classes to styling
+     * the checkboxes and add a new checkbox to check all options
+     * 
+     */
+    HRReport.prototype.updateFilterbox = function() {
+        $('.pvtFilterBox').each(function () {
+            $(this).find('.pvtSearch').removeClass('pvtSearch').addClass('form-text');
+            $(this).find('button').addClass('btn btn-primary btn-default btn-block');
+
+            if ($(this).find('.pvtFilterSelectAllWrap').length === 0) {
+                var filters = $(this).find(".pvtFilter");
+
+                $(this).find('.pvtFilterSelectAllWrap').remove();
+                $(this).find('.pvtCheckContainer').prepend(`<p class="pvtFilterSelectAllWrap"><label><input type="checkbox" class="pvtFilterSelectAll" checked="checked"><span>Select All</span></label></p>`);
+
+                $(this).find('.pvtFilterSelectAll').on('click', function () {
+                    filters.prop("checked", $(this).is(':checked'));
+                });
+            }
+        });
+    };
 
     /**
      * Converts some number fields into Float for Orb library
