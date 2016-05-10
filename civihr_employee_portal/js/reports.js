@@ -100,6 +100,8 @@
                 $(this).find('.pvtFilterSelectAll').on('click', function () {
                     filters.prop("checked", $(this).is(':checked'));
                 });
+
+                $(this).find('.pvtCheckContainer p').addClass('chr_custom-checkbox');
             }
         });
     };
