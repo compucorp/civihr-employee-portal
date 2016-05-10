@@ -10,6 +10,8 @@
         var orbContainer = null;
         var derivedAttributes = {};
         var orbInstance = null;
+
+        this.initScrollbarFallback();
     }
 
     /**
@@ -198,6 +200,15 @@
     };
 
     /**
+     * Init the scrollbar fallback
+     *
+     */
+    HRReport.prototype.initScrollbarFallback = function() {
+        var el = document.querySelector('.chr_custom-scrollbar');
+        Ps.initialize(el);
+    };
+
+    /**
      * Refresh JSON data and Pivot Tables using provided filter values
      *
      * @param string filterValues
@@ -249,6 +260,7 @@
             success: function (data) {
                 that.tableContainer.html(data);
                 that.refreshReportTableViewInstance(tableDomId);
+                that.initScrollbarFallback();
             },
             type: 'GET'
         });
