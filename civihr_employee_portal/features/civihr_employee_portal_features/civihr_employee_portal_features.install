@@ -96,6 +96,57 @@ function civihr_employee_portal_update_7000()
 }
 
 /**
+ * Enable HR Reports settings block.
+ */
+function civihr_employee_portal_update_7001() {
+    db_update('block')
+    ->fields(
+        array(
+            'region' => 'content',
+            'visibility' => 1,
+            'pages' => 'reports',
+            'status' => 1,
+            'weight' => 1,
+        )
+    )
+    ->condition('module', 'menu')
+    ->condition('delta', 'hr-reports-settings')
+    ->execute();
+    cache_clear_all();
+}
+
+/**
+ * Rearrange Report pages in Drupal menu.
+ */
+function civihr_employee_portal_update_7002() {
+    db_update('menu_links')
+    ->fields(
+        array(
+            'weight' => 99,
+        )
+    )
+    ->condition('link_path', 'reports')
+    ->execute();
+    db_update('menu_links')
+    ->fields(
+        array(
+            'weight' => 1,
+        )
+    )
+    ->condition('link_path', 'reports/people/')
+    ->execute();
+    db_update('menu_links')
+    ->fields(
+        array(
+            'weight' => 2,
+        )
+    )
+    ->condition('link_path', 'reports/leave_and_absence/')
+    ->execute();
+    cache_clear_all();
+}
+
+/**
  * Implements hook_uninstall().
  */
 function civihr_employee_portal_features_uninstall() {
