@@ -89,7 +89,7 @@
           <?php endif; ?>
         </div>
       </div>
-      <div id="content" class="container collapse">
+      <div id="content" class="container-fluid collapse">
         <div class="main-container">
           <?php print render($page['content']); ?>
         </div>
