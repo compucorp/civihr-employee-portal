@@ -1,8 +1,17 @@
 <?php if (!empty($filters)): ?>
-<a id="expose-filters-btn" class="btn btn-primary btn-default">Expose filters &raquo;</a>
-<a id="collapse-filters-btn" class="btn btn-primary btn-default hidden">Collapse filters &laquo;</a>
-<div id="report-filters" class="hidden">
-    <?php print render($filters); ?>
+<div class="panel-pane pane-block chr_panel chr_panel--no-padding">
+    <div class="pane-content">
+        <div class="chr_search-result__header">
+            <div id="js-filters-btn" class="chr_search-result__total">
+                <i class="chr_search-result__icon glyphicon glyphicon-chevron-down"></i>
+                Show Filters
+            </div>
+        </div>
+
+        <div id="report-filters" class="panel-body">
+            <?php print render($filters); ?>
+        </div>
+    </div></div>
 </div>
 <?php endif; ?>
 

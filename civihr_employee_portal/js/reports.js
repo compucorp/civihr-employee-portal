@@ -306,18 +306,11 @@
         if (!this.filters) {
             return;
         }
-        CRM.$('#expose-filters-btn').bind('click', function(e) {
+        CRM.$('#js-filters-btn').on('click', function (e) {
             e.preventDefault();
-            CRM.$(this).addClass('hidden');
-            CRM.$('#collapse-filters-btn').removeClass('hidden');
-            CRM.$('#report-filters').removeClass('hidden');
+            $('#report-filters').toggleClass('panel-body--sliding');
         });
-        CRM.$('#collapse-filters-btn').bind('click', function(e) {
-            e.preventDefault();
-            CRM.$(this).addClass('hidden');
-            CRM.$('#expose-filters-btn').removeClass('hidden');
-            CRM.$('#report-filters').addClass('hidden');
-        });
+
         CRM.$('#report-filters input[type="submit"]').bind('click', function(e) {
             e.preventDefault();
             var formSerialize = CRM.$('#report-filters form:first').formSerialize();
