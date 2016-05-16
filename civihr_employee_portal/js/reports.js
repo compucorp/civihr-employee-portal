@@ -324,12 +324,68 @@
     }
 
     /**
+     * Init angular in reports custom page,
+     * and add the calendar icon
+     *
+     */
+    HRReport.prototype.initAngular = function() {
+        $('#edit-between-date-filter-value .form-item').append('<span class="input-group-btn" ng-click="open()"><i class="fa fa-calendar"></i></span>');
+        $('.help-block').remove();
+
+        $('#edit-between-date-filter-value-datepicker-popup-1')
+            .attr('uib-datepicker-popup', "{{format}}")
+            .attr('ng-model', "dt")
+            .attr('is-open', "opened")
+            .attr('datepicker-options', "dateOptions")
+            .attr('close-text', "Close")
+            .attr('alt-input-formats', "altInputFormats")
+            .attr('date-input', '')
+            .attr('datepicker-popup', '');
+
+        require([
+            'common/angular',
+            'common/services/angular-date/date-format',
+            'common/directives/angular-date/date-input',
+            'common/moment',
+            'common/filters/angular-date/format-date'
+        ], function() {
+            angular.module('hrr', [
+                'ngAnimate',
+                'ui.bootstrap',
+                'common.angularDate'
+            ]).
+            controller('FiltersController', function($scope, $timeout) {
+                $scope.dt = new Date();
+                $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+                $scope.format = $scope.formats[0];
+                $scope.altInputFormats = ['M!/d!/yyyy'];
+
+                $scope.open = function() {
+                    if ($('.datepicker-wrapper').length === 0) {
+                        $('.datepicker-popup').wrap('<span class="datepicker-wrapper" />');
+                    }
+                    $timeout(function() {
+                        $scope.opened = true;
+                    });
+                };
+
+                $scope.opened = false;
+
+            });
+
+            angular.bootstrap(document.getElementById('hrr'), ['hrr']);
+        });
+    };
+
+    /**
      * Main Reports object instance
      */
     Drupal.behaviors.civihr_employee_portal_reports = {
         instance: null,
         attach: function (context, settings) {
             this.instance = new HRReport();
+
+            this.instance.initAngular();
 
             // Tabs bindings
             CRM.$('.report-tabs a').bind('click', function(e) {

@@ -85,6 +85,7 @@ function civihr_employee_portal_init() {
 
     // Add our additional css libraries
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/custom.css");
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/datepicker.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweet-alert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/documents.css");
@@ -5361,6 +5362,7 @@ function _civihr_employee_portal_add_report_scripts() {
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/data.js', $jsOptions);
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/main.js', $jsOptions);
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/prism.js', $jsOptions);
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reqangular.min.js', $jsOptions);
 
     // Base reports.js script
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js', $jsOptions);
