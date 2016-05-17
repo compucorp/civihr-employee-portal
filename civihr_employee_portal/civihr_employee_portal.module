@@ -5488,6 +5488,26 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
             }
         }
     }
+
+    if ($form['#id'] === 'views-exposed-form-civihr-report-people-default') {
+        foreach ($form as $key => $value) {
+            if (isset($form['#info']["filter-$key"])) {
+                $form[$key]['value'] = array(
+                    '#type' => 'textfield',
+                    '#theme_wrappers' => array(),
+                    '#attributes' => array(
+                        'uib-datepicker-popup' => '{{format}}',
+                        'datepicker-options' => '{{dateOptions}}',
+                        'close-text' => 'Close',
+                        'alt-input-formats' => '{{altInputFormats}}',
+                        'date-input' => '',
+                        'datepicker-popup' => '',
+                        'placeholder' => 'dd/MM/yyyy'
+                    )
+                );
+            }
+        }
+    }
 }
 
 function _absence_start_date_period_change_submit(&$form, &$form_state) {

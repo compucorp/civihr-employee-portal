@@ -329,18 +329,11 @@
      *
      */
     HRReport.prototype.initAngular = function() {
-        $('#edit-between-date-filter-value .form-item').append('<span class="input-group-btn" ng-click="open()"><i class="fa fa-calendar"></i></span>');
-        $('.help-block').remove();
+        var self = this;
 
-        $('#edit-between-date-filter-value-datepicker-popup-1')
-            .attr('uib-datepicker-popup', "{{format}}")
-            .attr('ng-model', "dt")
-            .attr('is-open', "opened")
-            .attr('datepicker-options', "dateOptions")
-            .attr('close-text', "Close")
-            .attr('alt-input-formats', "altInputFormats")
-            .attr('date-input', '')
-            .attr('datepicker-popup', '');
+        $('.views-exposed-form .form-text').each(function() {
+            self.setDatepicker($(this).parent());
+        });
 
         require([
             'common/angular',
@@ -355,26 +348,44 @@
                 'common.angularDate'
             ]).
             controller('FiltersController', function($scope, $timeout) {
-                $scope.dt = new Date();
                 $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
                 $scope.format = $scope.formats[0];
                 $scope.altInputFormats = ['M!/d!/yyyy'];
 
-                $scope.open = function() {
+                $('[ng-model]').each(function () {
+                    $scope[$(this).attr('is-open')] = false;
+                });
+
+                $scope.open = function(id) {
                     if ($('#bootstrap-theme').length === 0) {
                         $('.datepicker-popup').wrap('<span id="bootstrap-theme" />');
                     }
                     $timeout(function() {
-                        $scope.opened = true;
+                        $scope['opened' + id] = true;
                     });
                 };
-
-                $scope.opened = false;
 
             });
 
             angular.bootstrap(document.getElementById('hrr'), ['hrr']);
         });
+    };
+
+    /**
+     * Set the needed attributes to the input
+     * works with the datepicker.
+     *
+     * @param {jQuery} $element
+     */
+    HRReport.prototype.setDatepicker = function($element) {
+        var id = Date.now();
+
+        $element.find('.input-group-btn')
+            .attr('ng-click', 'open(' + id + ')');
+
+        $element.find('.form-text')
+            .attr('ng-model', 'dt' + id)
+            .attr('is-open', 'opened' + id);
     };
 
     /**

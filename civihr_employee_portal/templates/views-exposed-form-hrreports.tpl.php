@@ -30,18 +30,29 @@
     <div class="views-exposed-widgets clearfix">
         <?php foreach ($widgets as $id => $widget): ?>
             <div id="<?php print $widget->id; ?>-wrapper" class="views-exposed-widget views-widget-<?php print $id; ?>">
-                <?php if (!empty($widget->label)): ?>
-                    <label for="<?php print $widget->id; ?>">
-                        <?php print $widget->label; ?>
-                    </label>
-                <?php endif; ?>
                 <?php if (!empty($widget->operator)): ?>
                     <div class="views-operator">
                         <?php print $widget->operator; ?>
                     </div>
                 <?php endif; ?>
-                <div class="views-widget">
-                    <?php print $widget->widget; ?>
+                <div class="views-widget form-inline">
+                    <?php if (!empty($widget->label)): ?>
+                        <label for="<?php print $widget->id; ?>">
+                            <?php print $widget->label; ?>
+                        </label>
+                    <?php endif; ?>
+                    <div class="form-group">
+                        <div class="col-sm-4">
+                            <div class="input-group input-group-unstyled">
+                                <?php print $widget->widget; ?>
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <?php if (!empty($widget->description)): ?>
                     <div class="description">
