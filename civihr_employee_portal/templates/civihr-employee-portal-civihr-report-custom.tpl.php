@@ -12,8 +12,9 @@
           <div id="report-filters" class="panel-body">
               <?php print render($filters); ?>
           </div>
-      </div></div>
+      </div>
   </div>
+</div>
   <?php endif; ?>
 
   <ul class="nav nav-tabs nav-justified nav-tabs-header report-tabs">

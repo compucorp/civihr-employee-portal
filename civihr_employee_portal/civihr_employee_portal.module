@@ -85,7 +85,7 @@ function civihr_employee_portal_init() {
 
     // Add our additional css libraries
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/custom.css");
-    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/datepicker.css");
+    drupal_add_css("sites/all/modules/civicrm/tools/extensions/civihr/org.civicrm.bootstrapcivicrm/css/bootstrap-civicrm-style.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweet-alert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/documents.css");

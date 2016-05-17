@@ -361,8 +361,8 @@
                 $scope.altInputFormats = ['M!/d!/yyyy'];
 
                 $scope.open = function() {
-                    if ($('.datepicker-wrapper').length === 0) {
-                        $('.datepicker-popup').wrap('<span class="datepicker-wrapper" />');
+                    if ($('#bootstrap-theme').length === 0) {
+                        $('.datepicker-popup').wrap('<span id="bootstrap-theme" />');
                     }
                     $timeout(function() {
                         $scope.opened = true;
