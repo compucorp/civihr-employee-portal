@@ -16,7 +16,7 @@
 
     /**
      * Initialization function.
-     * 
+     *
      * @param {JSON} options - Settings for the object.
      */
     HRReport.prototype.init = function (options) {
@@ -30,7 +30,7 @@
         this.pivotTableContainer.pivotUI(this.data, {
             rendererName: "Table",
             renderers: CRM.$.extend(
-                jQuery.pivotUtilities.renderers, 
+                jQuery.pivotUtilities.renderers,
                 jQuery.pivotUtilities.c3_renderers,
                 jQuery.pivotUtilities.export_renderers
             ),
@@ -52,7 +52,7 @@
 
     /**
      * Update the pivot table dropdown and filter box
-     * 
+     *
      */
     HRReport.prototype.updateCustomTemplate = function() {
         this.updateDropdown();
@@ -61,7 +61,7 @@
 
     /**
      * Update the pivot table dropdown to look like CiviHR style
-     * 
+     *
      */
     HRReport.prototype.updateDropdown = function() {
         $('.pvtUi select').each(function () {
@@ -86,7 +86,7 @@
     /**
      * Update the filter box adding some classes to styling
      * the checkboxes and add a new checkbox to check all options
-     * 
+     *
      */
     HRReport.prototype.updateFilterbox = function() {
         $('.pvtFilterBox').each(function () {
@@ -228,7 +228,7 @@
                 that.pivotTableContainer.pivotUI(data, {
                     rendererName: "Table",
                     renderers: CRM.$.extend(
-                        jQuery.pivotUtilities.renderers, 
+                        jQuery.pivotUtilities.renderers,
                         jQuery.pivotUtilities.c3_renderers
                     ),
                     unusedAttrsVertical: false
@@ -331,10 +331,6 @@
     HRReport.prototype.initAngular = function() {
         var self = this;
 
-        $('.views-exposed-form .form-text').each(function() {
-            self.setDatepicker($(this).parent());
-        });
-
         require([
             'common/angular',
             'common/services/angular-date/date-format',
@@ -346,22 +342,22 @@
                 'ngAnimate',
                 'ui.bootstrap',
                 'common.angularDate'
-            ]).
-            controller('FiltersController', function($scope, $timeout) {
-                $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-                $scope.format = $scope.formats[0];
-                $scope.altInputFormats = ['M!/d!/yyyy'];
+            ]).controller('FiltersController', function($scope, $timeout) {
+                $scope.format = 'dd/MM/yyyy';
 
                 $('[ng-model]').each(function () {
                     $scope[$(this).attr('is-open')] = false;
                 });
 
-                $scope.open = function(id) {
+                $scope.open = function() {
+                    var property = self.getPropertyOpened(this);
+
                     if ($('#bootstrap-theme').length === 0) {
                         $('.datepicker-popup').wrap('<span id="bootstrap-theme" />');
                     }
+
                     $timeout(function() {
-                        $scope['opened' + id] = true;
+                        $scope[property] = true;
                     });
                 };
 
@@ -372,20 +368,19 @@
     };
 
     /**
-     * Set the needed attributes to the input
-     * works with the datepicker.
+     * Return the property 'opened{id}'
      *
-     * @param {jQuery} $element
+     * @param  {object} obj
+     * @return {string|null}
      */
-    HRReport.prototype.setDatepicker = function($element) {
-        var id = Date.now();
+    HRReport.prototype.getPropertyOpened = function (obj) {
+      for (var variable in obj) {
+        if (variable.indexOf('opened') > -1) {
+          return variable;
+        }
+      }
 
-        $element.find('.input-group-btn')
-            .attr('ng-click', 'open(' + id + ')');
-
-        $element.find('.form-text')
-            .attr('ng-model', 'dt' + id)
-            .attr('is-open', 'opened' + id);
+      return null;
     };
 
     /**

@@ -90,7 +90,7 @@ function civihr_employee_portal_init() {
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/documents.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/tasks.css");
-    
+
     // Check the variable and decide if we need to rebuild the absence_list mysql view
     $rebuild_absence_list_view = variable_get('rebuild_absence_list_view', 'TRUE');
 
@@ -197,7 +197,7 @@ function civihr_employee_portal_init() {
          */
         $result = db_query('DROP view if exists civicrm_value_length_of_service_11');
         $result = db_query("CREATE VIEW civicrm_value_length_of_service_11 AS
-                            SELECT id, entity_id, length_of_service 
+                            SELECT id, entity_id, length_of_service
                             FROM {$civi_db_name}.civicrm_value_length_of_service_11");
         // Set to false so it will not rebuild until not asked to rebuild
         variable_set('rebuild_length_of_service', 'FALSE');
@@ -853,7 +853,7 @@ function get_appraisal_manager_chart_data($managerId) {
 
 /*
  * Return Job Contract end reason label by given reason ID.
- * 
+ *
  * @param int $reasonId
  * @return string
  */
@@ -884,7 +884,7 @@ function get_jobcontract_end_reason($reasonId = NULL) {
 
 /*
  * Return Job Contract location and standard hours string by given hours location ID.
- * 
+ *
  * @param int $hoursLocationId
  * @return string
  */
@@ -922,7 +922,7 @@ function get_jobcontract_location_standard_hours($hoursLocationId = NULL) {
 
 /*
  * Return Job Contract pay scale label string by given pay scale ID.
- * 
+ *
  * @param int $payScaleId
  * @return string
  */
@@ -966,7 +966,7 @@ function get_jobcontract_pay_scale($payScaleId = NULL) {
 
 /*
  * Return Job Contract pension is_enrolled string by given is_enrolled ID.
- * 
+ *
  * @param int $isEnrolled
  * @return string
  */
@@ -1195,7 +1195,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     /**
      * Appraisals menu items.
      */
@@ -1205,7 +1205,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['hr-appraisals-manager/%ctools_js/upload/%'] = array(
         'title' => 'Appraisal Upload',
         'page callback' => 'civihr_employee_portal_appraisal_manager_upload',
@@ -1213,7 +1213,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['hr-appraisals-manager/%ctools_js/view/%'] = array(
         'title' => 'Appraisal View',
         'page callback' => 'civihr_employee_portal_appraisal_manager_view',
@@ -1221,7 +1221,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['hr-appraisals-employee/%ctools_js/upload/%'] = array(
         'title' => 'Appraisal Upload',
         'page callback' => 'civihr_employee_portal_appraisal_employee_upload',
@@ -1229,7 +1229,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
 
     /**
      * Not used currently
@@ -3252,7 +3252,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
     $form['section_close'] = array(
         '#markup' => '</div>'
     );
-    
+
     if (_task_can_be_edited($id)) {
         $form['save'] = array(
             '#type' => 'submit',
@@ -3611,7 +3611,7 @@ function civihr_employee_portal_appraisal_manager_form($form, &$form_state) {
         '#date_year_range' => '-10:+10',
         '#default_value' => isset($appraisal['meeting_date']) ? strip_tags($appraisal['meeting_date']) : '',
     );
-    
+
     $form['checkboxes'] = array(
         '#type' => 'checkboxes',
         '#prefix' => '<div class="row"><div class="col-md-12">',
@@ -3635,7 +3635,7 @@ function civihr_employee_portal_appraisal_manager_form($form, &$form_state) {
         '#cols' => 100,
         '#default_value' => isset($appraisal['notes']) ? strip_tags($appraisal['notes']) : '',
     );
-    
+
     $form['grade'] = array(
         '#type' => 'textfield',
         '#title' => t('Grade'),
@@ -3687,7 +3687,7 @@ function civihr_employee_portal_appraisal_manager_form_submit($form, &$form_stat
     $meetingApproved = (int)strip_tags($form_state['values']['checkboxes'][2]) ? 1 : 0;
     $notes = strip_tags($form_state['values']['notes']);
     $grade = (int)strip_tags($form_state['values']['grade']);
-    
+
     $params = array(
         'sequential' => 1,
         'id' => $id,
@@ -3699,7 +3699,7 @@ function civihr_employee_portal_appraisal_manager_form_submit($form, &$form_stat
     //TODO: if (has_appraisal_permissions to grade) {
     $params['grade'] = $grade;
     //}
-    
+
     // setting appraisal status to Awaiting Grade:
     $params['status_id'] = 3;
 
@@ -3726,7 +3726,7 @@ function civihr_employee_portal_appraisal_manager_form_submit($form, &$form_stat
 }
 
 function civihr_employee_portal_appraisal_manager_view($ajax, $id) {
-    
+
     $appraisal = civicrm_api3('Appraisal', 'getsingle', array(
         'sequential' => 1,
         'id' => (int)$id,
@@ -3740,7 +3740,7 @@ function civihr_employee_portal_appraisal_manager_view($ajax, $id) {
     $manager = get_civihr_contact_data($appraisal['manager_id']);
     $title = $contact['display_name'] . ' Appraisal';
     $documents = civihr_employee_portal_get_appraisal_documents($appraisal['id']);
-    
+
     $output = theme_render_template(
         drupal_get_path('module', 'civihr_employee_portal') .
         '/templates/civihr-employee-portal-appraisal-manager-view-modal.tpl.php',
@@ -3754,7 +3754,7 @@ function civihr_employee_portal_appraisal_manager_view($ajax, $id) {
             'documents' => $documents,
         )
     );
-    
+
     if ($ajax) {
         ctools_include('ajax');
         ctools_include('modal');
@@ -3924,12 +3924,12 @@ function civihr_employee_portal_appraisal_employee_form_submit($form, &$form_sta
     }
 
     $id = (int)strip_tags($form_state['values']['id']);
-    
+
     $params = array(
         'sequential' => 1,
         'id' => $id,
     );
-    
+
     // setting appraisal status to Awaiting Manager Appraisal:
     $params['status_id'] = 2;
 
@@ -3956,7 +3956,7 @@ function civihr_employee_portal_appraisal_employee_form_submit($form, &$form_sta
 }
 
 function civihr_employee_portal_get_appraisal_documents($appraisalId) {
-    
+
     $documents = array();
     $selfAppraisalFiles = CRM_Appraisals_Page_Files::fileList(array(
         'entityTable' => 'civicrm_appraisal-self',
@@ -3974,7 +3974,7 @@ function civihr_employee_portal_get_appraisal_documents($appraisalId) {
         $file['appraisalFileTypeLabel'] = 'Manager Appraisal';
         $documents['managerAppraisal'] = $file;
     }
-    
+
     return $documents;
 }
 
@@ -5038,7 +5038,7 @@ function civihr_employee_portal_hrreport_settings_age_group() {
 
 /**
  * Return an array containing Age Group settings rows.
- * 
+ *
  * @return array
  */
 function _get_reports_settings_age_group() {
@@ -5058,14 +5058,14 @@ function _get_reports_settings_age_group() {
 
 /**
  * Return Age Group label for given age.
- * 
+ *
  * @param int $age
  * @return string
  */
 function get_contact_age_group_label_by_age($age) {
     $label = '';
-    $query = "SELECT label FROM reports_settings_age_group 
-            WHERE (age_from <= :age AND age_to >= :age) 
+    $query = "SELECT label FROM reports_settings_age_group
+            WHERE (age_from <= :age AND age_to >= :age)
             OR (age_from <= :age AND age_to IS NULL)
             OR (age_from IS NULL and age_to >= NULL)
             LIMIT 1";
@@ -5382,7 +5382,7 @@ function civihr_employee_portal_hrreport_printtable($viewName) {
 
 /**
  * CiviHR Report - Custom Report page.
- * 
+ *
  * @param string $reportName
  * @return array
  */
@@ -5496,13 +5496,12 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
                     '#type' => 'textfield',
                     '#theme_wrappers' => array(),
                     '#attributes' => array(
-                        'uib-datepicker-popup' => '{{format}}',
-                        'datepicker-options' => '{{dateOptions}}',
+                        'placeholder' => '{{format}}',
+                        'datepicker-popup' => '{{format}}',
                         'close-text' => 'Close',
-                        'alt-input-formats' => '{{altInputFormats}}',
                         'date-input' => '',
-                        'datepicker-popup' => '',
-                        'placeholder' => 'dd/MM/yyyy'
+                        'ng-model' => 'dt' . time(),
+                        'is-open' => 'opened' . time()
                     )
                 );
             }
@@ -5804,7 +5803,7 @@ function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$obje
 
 /**
  * Get an array containing Drupal Menu items of given Menu name.
- * 
+ *
  * @param string $menuName
  * @param string $parentLink
  * @return array
@@ -5912,7 +5911,7 @@ function civihr_employee_portal_views_data() {
 
 /**
  * Implements hook_date_views_fields()
- * 
+ *
  * @param string $field
  * @return array
  */
@@ -5935,7 +5934,7 @@ function civihr_employee_portal_date_views_fields($field) {
 
 /**
  * Check if we are displaying custom Report page.
- * 
+ *
  * @return boolean
  */
 function _is_hrreports_current_path() {
@@ -5947,7 +5946,7 @@ function _is_hrreports_current_path() {
 
 /**
  * Check if given $form contains exposed filters of HR Report View.
- * 
+ *
  * @param array $form
  * @return boolean
  */

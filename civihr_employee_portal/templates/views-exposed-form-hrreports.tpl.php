@@ -45,7 +45,7 @@
                         <div class="col-sm-4">
                             <div class="input-group input-group-unstyled">
                                 <?php print $widget->widget; ?>
-                                <span class="input-group-btn">
+                                <span class="input-group-btn" ng-click="open()">
                                     <button type="button" class="btn btn-default">
                                         <i class="fa fa-calendar"></i>
                                     </button>
