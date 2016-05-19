@@ -5504,6 +5504,8 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
           }
         }
     }
+
+    $form['submit']['#value'] = 'Filter';
 }
 
 /**
