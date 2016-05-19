@@ -205,7 +205,10 @@
      */
     HRReport.prototype.initScrollbarFallback = function() {
         var el = document.querySelector('.chr_custom-scrollbar');
-        Ps.initialize(el);
+
+        if (el) {
+          Ps.initialize(el);
+        }
     };
 
     /**
