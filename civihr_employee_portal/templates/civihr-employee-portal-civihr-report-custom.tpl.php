@@ -1,6 +1,6 @@
 <div id="hrr">
   <?php if (!empty($filters)): ?>
-  <div class="panel-pane pane-block chr_panel chr_panel--no-padding">
+  <div id="js-filters-wrapper" class="panel panel-pane pane-block chr_panel chr_panel--no-padding">
       <div ng-controller="FiltersController" class="pane-content">
           <div class="chr_search-result__header">
               <div id="js-filters-btn" class="chr_search-result__total">
@@ -9,7 +9,7 @@
               </div>
           </div>
 
-          <div id="report-filters" class="panel-body">
+          <div id="report-filters" class="panel-body-wrap">
               <?php print render($filters); ?>
           </div>
       </div>

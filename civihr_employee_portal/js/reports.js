@@ -308,7 +308,7 @@
         }
         CRM.$('#js-filters-btn').on('click', function (e) {
             e.preventDefault();
-            $('#report-filters').toggleClass('panel-body--sliding');
+            $('#js-filters-wrapper').toggleClass('panel--sliding-body');
         });
 
         CRM.$('#report-filters input[type="submit"]').bind('click', function(e) {
