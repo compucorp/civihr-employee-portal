@@ -349,15 +349,13 @@
                     $scope[$(this).attr('is-open')] = false;
                 });
 
-                $scope.open = function() {
-                    var property = self.getPropertyOpened(this);
-
+                $scope.open = function(id) {
                     if ($('#bootstrap-theme').length === 0) {
                         $('.datepicker-popup').wrap('<span id="bootstrap-theme" />');
                     }
 
                     $timeout(function() {
-                        $scope[property] = true;
+                        $scope[id] = true;
                     });
                 };
 
@@ -365,22 +363,6 @@
 
             angular.bootstrap(document.getElementById('hrr'), ['hrr']);
         });
-    };
-
-    /**
-     * Return the property 'opened{id}'
-     *
-     * @param  {object} obj
-     * @return {string|null}
-     */
-    HRReport.prototype.getPropertyOpened = function (obj) {
-      for (var variable in obj) {
-        if (variable.indexOf('opened') > -1) {
-          return variable;
-        }
-      }
-
-      return null;
     };
 
     /**

@@ -5491,22 +5491,45 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
 
     if (substr($form['#id'], 0, 33) === 'views-exposed-form-civihr-report-') {
         foreach ($form as $key => $value) {
-            if (isset($form['#info']["filter-$key"])) {
-                $form[$key]['value'] = array(
-                    '#type' => 'textfield',
-                    '#theme_wrappers' => array(),
-                    '#attributes' => array(
-                        'placeholder' => '{{format}}',
-                        'datepicker-popup' => '{{format}}',
-                        'close-text' => 'Close',
-                        'date-input' => '',
-                        'ng-model' => 'dt' . time(),
-                        'is-open' => 'opened' . time()
-                    )
-                );
-            }
+          if (isset($form['#info']["filter-$key"])) {
+            $form[$key]['value'] = generateFilterInputStructure($form['#info']["filter-$key"]['label']);
+          }
+
+          if (isset($form[$key]['min'])) {
+            $form[$key]['min'] = generateFilterInputStructure($form[$key]['min']['#title']);
+          }
+
+          if (isset($form[$key]['max'])) {
+            $form[$key]['max'] = generateFilterInputStructure($form[$key]['max']['#title']);
+          }
         }
     }
+}
+
+/**
+ * Generate the necessary structure for the filter
+ *
+ * @param  [String] $title
+ * @return [array]
+ */
+function generateFilterInputStructure($title) {
+  $idxKey = 'id_' . uniqid();
+
+  return array(
+      '#title' => $title,
+      '#type' => 'textfield',
+      '#size' => '10',
+      '#description' => '<button type="button" class="btn btn-default" ng-click="open(\'' . $idxKey . '\')"><i class="fa fa-calendar"></i></button>',
+      '#date_label_position' => 'within',
+      '#attributes' => array(
+          'placeholder' => '{{format}}',
+          'datepicker-popup' => '{{format}}',
+          'close-text' => 'Close',
+          'date-input' => '',
+          'ng-model' => 'dt' . $idxKey,
+          'is-open' => $idxKey
+      ),
+  );
 }
 
 function _absence_start_date_period_change_submit(&$form, &$form_state) {

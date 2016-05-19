@@ -36,23 +36,7 @@
                     </div>
                 <?php endif; ?>
                 <div class="views-widget form-inline">
-                    <?php if (!empty($widget->label)): ?>
-                        <label for="<?php print $widget->id; ?>">
-                            <?php print $widget->label; ?>
-                        </label>
-                    <?php endif; ?>
-                    <div class="form-group">
-                        <div class="col-sm-4">
-                            <div class="input-group input-group-unstyled">
-                                <?php print $widget->widget; ?>
-                                <span class="input-group-btn" ng-click="open()">
-                                    <button type="button" class="btn btn-default">
-                                        <i class="fa fa-calendar"></i>
-                                    </button>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+                    <?php print $widget->widget; ?>
                 </div>
                 <?php if (!empty($widget->description)): ?>
                     <div class="description">
