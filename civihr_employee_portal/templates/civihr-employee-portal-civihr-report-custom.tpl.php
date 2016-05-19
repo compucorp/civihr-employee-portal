@@ -1,11 +1,12 @@
 <div id="hrr">
   <?php if (!empty($filters)): ?>
-  <div id="js-filters-wrapper" class="panel panel-pane pane-block chr_panel chr_panel--no-padding">
+  <div id="js-filters-wrapper" class="panel panel-pane pane-block chr_panel chr_panel--no-padding panel--sliding-body">
       <div ng-controller="FiltersController" class="pane-content">
-          <div class="chr_search-result__header">
-              <div id="js-filters-btn" class="chr_search-result__total">
+          <div id="js-filters-btn" class="chr_search-result__header">
+              <div class="chr_search-result__total">
                   <i class="chr_search-result__icon glyphicon glyphicon-chevron-down"></i>
-                  Show Filters
+                  <span id="js-filters-title-show">Show Filters</span>
+                  <span id="js-filters-title-hide" class="hide">Hide Filters</span>
               </div>
           </div>
 

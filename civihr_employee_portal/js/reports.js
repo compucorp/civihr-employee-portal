@@ -308,7 +308,10 @@
         }
         CRM.$('#js-filters-btn').on('click', function (e) {
             e.preventDefault();
+
             $('#js-filters-wrapper').toggleClass('panel--sliding-body');
+            $('.chr_search-result__icon').toggleClass('glyphicon-chevron-down glyphicon-chevron-up');
+            $('#js-filters-title-show, #js-filters-title-hide').toggleClass('hide');
         });
 
         CRM.$('#report-filters input[type="submit"]').bind('click', function(e) {
