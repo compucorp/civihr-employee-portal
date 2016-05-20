@@ -17,7 +17,9 @@
               </div>
           </div>
 
-          <div class="panel-body-wrap">
+          <div
+            class="panel-body-wrap panel-body-wrap--collapse"
+            ng-class="{ 'panel-body-wrap--collapse': filters.filtersCollapsed }">
               <?php print render($filters); ?>
           </div>
       </div>
