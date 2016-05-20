@@ -328,8 +328,6 @@
      *
      */
     HRReport.prototype.initAngular = function() {
-        var self = this;
-
         require([
             'common/angular',
             'common/services/angular-date/date-format',
