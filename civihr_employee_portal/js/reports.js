@@ -356,8 +356,8 @@
                     }
                 });
             })
-            .controller('FiltersController', function($scope, $timeout) {
-                $scope.format = 'dd/MM/yyyy';
+            .controller('FiltersController', function() {
+                this.format = 'dd/MM/yyyy';
             });
 
             angular.bootstrap(document.getElementById('hrr'), ['hrr']);

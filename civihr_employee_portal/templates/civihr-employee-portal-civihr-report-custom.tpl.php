@@ -1,7 +1,7 @@
 <div id="hrr">
   <?php if (!empty($filters)): ?>
   <div id="js-filters-wrapper" class="panel panel-pane pane-block chr_panel chr_panel--no-padding panel--sliding-body">
-      <div ng-controller="FiltersController" class="pane-content">
+      <div ng-controller="FiltersController as filters" class="pane-content">
           <div id="js-filters-btn" class="chr_search-result__header">
               <div class="chr_search-result__total">
                   <i class="chr_search-result__icon glyphicon glyphicon-chevron-down"></i>

@@ -5526,13 +5526,13 @@ function setInputDatepickerForm($title) {
       '#date_label_position' => 'within',
       '#attributes' => array(
           'ng-init' => "$idxKey = false",
-          'placeholder' => '{{format}}',
-          'datepicker-popup' => '{{format}}',
+          'placeholder' => '{{filters.format}}',
+          'datepicker-popup' => '{{filters.format}}',
           'close-text' => 'Close',
           'date-input' => '',
-          'ng-model' => "dt$idxKey",
-          'is-open' => $idxKey,
-          'ng-click' => "$idxKey = !$idxKey"
+          'ng-model' => "filters.dt$idxKey",
+          'is-open' => "filters.$idxKey",
+          'ng-click' => "filters.$idxKey = !filters.$idxKey"
       ),
   );
 }
