@@ -348,23 +348,16 @@
                 'ngAnimate',
                 'ui.bootstrap',
                 'common.angularDate'
-            ]).controller('FiltersController', function($scope, $timeout) {
-                $scope.format = 'dd/MM/yyyy';
-
-                $('[ng-model]').each(function () {
-                    $scope[$(this).attr('is-open')] = false;
-                });
-
-                $scope.open = function(id) {
-                    if ($('#bootstrap-theme').length === 0) {
-                        $('.datepicker-popup').wrap('<span id="bootstrap-theme" />');
+            ])
+            .directive('datepickerPopupWrap', function sectionDirective() {
+                return({
+                    link: function(scope, element, attributes) {
+                        return $(element[0]).wrap('<span id="bootstrap-theme" />');
                     }
-
-                    $timeout(function() {
-                        $scope[id] = true;
-                    });
-                };
-
+                });
+            })
+            .controller('FiltersController', function($scope, $timeout) {
+                $scope.format = 'dd/MM/yyyy';
             });
 
             angular.bootstrap(document.getElementById('hrr'), ['hrr']);

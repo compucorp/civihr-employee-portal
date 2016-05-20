@@ -5492,15 +5492,15 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
     if (substr($form['#id'], 0, 33) === 'views-exposed-form-civihr-report-') {
         foreach ($form as $key => $value) {
           if (isset($form['#info']["filter-$key"])) {
-            $form[$key]['value'] = generateFilterInputStructure($form['#info']["filter-$key"]['label']);
+            $form[$key]['value'] = setInputDatepickerForm($form['#info']["filter-$key"]['label']);
           }
 
           if (isset($form[$key]['min'])) {
-            $form[$key]['min'] = generateFilterInputStructure($form[$key]['min']['#title']);
+            $form[$key]['min'] = setInputDatepickerForm($form[$key]['min']['#title']);
           }
 
           if (isset($form[$key]['max'])) {
-            $form[$key]['max'] = generateFilterInputStructure($form[$key]['max']['#title']);
+            $form[$key]['max'] = setInputDatepickerForm($form[$key]['max']['#title']);
           }
         }
     }
@@ -5509,29 +5509,43 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
 }
 
 /**
- * Generate the necessary structure for the filter
+ * Set the necessary structure for the
+ * datepicker filter markup.
  *
- * @param  [String] $title
- * @return [array]
+ * @param  string $title <Label title>
+ * @return array
  */
-function generateFilterInputStructure($title) {
+function setInputDatepickerForm($title) {
   $idxKey = 'id_' . uniqid();
 
   return array(
       '#title' => $title,
       '#type' => 'textfield',
       '#size' => '10',
-      '#description' => '<button type="button" class="btn btn-default" ng-click="open(\'' . $idxKey . '\')"><i class="fa fa-calendar"></i></button>',
+      '#description' => getCalendarButtonMarkup(),
       '#date_label_position' => 'within',
       '#attributes' => array(
+          'ng-init' => "$idxKey = false",
           'placeholder' => '{{format}}',
           'datepicker-popup' => '{{format}}',
           'close-text' => 'Close',
           'date-input' => '',
-          'ng-model' => 'dt' . $idxKey,
-          'is-open' => $idxKey
+          'ng-model' => "dt$idxKey",
+          'is-open' => $idxKey,
+          'ng-click' => "$idxKey = !$idxKey"
       ),
   );
+}
+
+/**
+ * Return the calendar button HTML markup
+ *
+ */
+function getCalendarButtonMarkup() {
+  return '
+    <button type="button" class="btn btn-default">
+      <i class="fa fa-calendar"></i>
+    </button>';
 }
 
 function _absence_start_date_period_change_submit(&$form, &$form_state) {
