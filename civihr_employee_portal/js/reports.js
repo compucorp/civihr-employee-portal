@@ -16,7 +16,7 @@
 
     /**
      * Initialization function.
-     * 
+     *
      * @param {JSON} options - Settings for the object.
      */
     HRReport.prototype.init = function (options) {
@@ -30,7 +30,7 @@
         this.pivotTableContainer.pivotUI(this.data, {
             rendererName: "Table",
             renderers: CRM.$.extend(
-                jQuery.pivotUtilities.renderers, 
+                jQuery.pivotUtilities.renderers,
                 jQuery.pivotUtilities.c3_renderers,
                 jQuery.pivotUtilities.export_renderers
             ),
@@ -52,7 +52,7 @@
 
     /**
      * Update the pivot table dropdown and filter box
-     * 
+     *
      */
     HRReport.prototype.updateCustomTemplate = function() {
         this.updateDropdown();
@@ -61,7 +61,7 @@
 
     /**
      * Update the pivot table dropdown to look like CiviHR style
-     * 
+     *
      */
     HRReport.prototype.updateDropdown = function() {
         $('.pvtUi select').each(function () {
@@ -86,7 +86,7 @@
     /**
      * Update the filter box adding some classes to styling
      * the checkboxes and add a new checkbox to check all options
-     * 
+     *
      */
     HRReport.prototype.updateFilterbox = function() {
         $('.pvtFilterBox').each(function () {
@@ -205,7 +205,10 @@
      */
     HRReport.prototype.initScrollbarFallback = function() {
         var el = document.querySelector('.chr_custom-scrollbar');
-        Ps.initialize(el);
+
+        if (el) {
+          Ps.initialize(el);
+        }
     };
 
     /**
@@ -228,7 +231,7 @@
                 that.pivotTableContainer.pivotUI(data, {
                     rendererName: "Table",
                     renderers: CRM.$.extend(
-                        jQuery.pivotUtilities.renderers, 
+                        jQuery.pivotUtilities.renderers,
                         jQuery.pivotUtilities.c3_renderers
                     ),
                     unusedAttrsVertical: false
@@ -306,18 +309,7 @@
         if (!this.filters) {
             return;
         }
-        CRM.$('#expose-filters-btn').bind('click', function(e) {
-            e.preventDefault();
-            CRM.$(this).addClass('hidden');
-            CRM.$('#collapse-filters-btn').removeClass('hidden');
-            CRM.$('#report-filters').removeClass('hidden');
-        });
-        CRM.$('#collapse-filters-btn').bind('click', function(e) {
-            e.preventDefault();
-            CRM.$(this).addClass('hidden');
-            CRM.$('#expose-filters-btn').removeClass('hidden');
-            CRM.$('#report-filters').addClass('hidden');
-        });
+
         CRM.$('#report-filters input[type="submit"]').bind('click', function(e) {
             e.preventDefault();
             var formSerialize = CRM.$('#report-filters form:first').formSerialize();
@@ -331,12 +323,48 @@
     }
 
     /**
+     * Init angular in reports custom page,
+     * and add the calendar icon
+     *
+     */
+    HRReport.prototype.initAngular = function() {
+        require([
+            'common/angular',
+            'common/services/angular-date/date-format',
+            'common/directives/angular-date/date-input',
+            'common/moment',
+            'common/filters/angular-date/format-date'
+        ], function() {
+            angular.module('civihrReports', [
+                'ngAnimate',
+                'ui.bootstrap',
+                'common.angularDate'
+            ])
+            .directive('datepickerPopupWrap', function sectionDirective() {
+                return({
+                    link: function(scope, element, attributes) {
+                        return $(element[0]).wrap('<span id="bootstrap-theme" />');
+                    }
+                });
+            })
+            .controller('FiltersController', function() {
+                this.format = 'dd/MM/yyyy';
+                this.filtersCollapsed = true;
+            });
+
+            angular.bootstrap(document.getElementById('civihrReports'), ['civihrReports']);
+        });
+    };
+
+    /**
      * Main Reports object instance
      */
     Drupal.behaviors.civihr_employee_portal_reports = {
         instance: null,
         attach: function (context, settings) {
             this.instance = new HRReport();
+
+            this.instance.initAngular();
 
             // Tabs bindings
             CRM.$('.report-tabs a').bind('click', function(e) {
