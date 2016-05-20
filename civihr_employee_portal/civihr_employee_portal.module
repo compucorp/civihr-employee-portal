@@ -73,6 +73,26 @@ function _setup_modals() {
 }
 
 /**
+ * Get the module URL
+ *
+ * @param  string $moduleName <Module name>
+ * @return string             <Module url>
+ */
+function getModuleUrl($moduleName) {
+  $path = CRM_Core_Resources::singleton()->getUrl($moduleName);
+
+  // Need to do this to avoid some configurations issues
+  // Some environments return /sites/all/modules/civicrm
+  // And others return http://localhost:8900/sites/all/modules/civicrm
+  if (strstr($path, "$base_url/")) {
+    global $base_url;
+    $path = explode("$base_url/", $path)[1];
+  }
+
+  return $path;
+}
+
+/**
  * Implements hook_init().
  */
 function civihr_employee_portal_init() {
@@ -85,7 +105,7 @@ function civihr_employee_portal_init() {
 
     // Add our additional css libraries
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/custom.css");
-    drupal_add_css("sites/all/modules/civicrm/tools/extensions/civihr/org.civicrm.bootstrapcivicrm/css/bootstrap-civicrm-style.css");
+    drupal_add_css(getModuleUrl('org.civicrm.bootstrapcivicrm') . 'css/bootstrap-civicrm-style.css');
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweet-alert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/documents.css");
@@ -5362,7 +5382,10 @@ function _civihr_employee_portal_add_report_scripts() {
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/data.js', $jsOptions);
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/main.js', $jsOptions);
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/prism.js', $jsOptions);
-    drupal_add_js('sites/all/modules/civicrm/tools/extensions/civihr/org.civicrm.reqangular/dist/reqangular.min.js', $jsOptions);
+
+    if (CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Extension', 'org.civicrm.reqangular', 'is_active', 'full_name')) {
+      drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "dist/reqangular.min.js", $jsOptions);
+    }
 
     // Base reports.js script
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js', $jsOptions);
