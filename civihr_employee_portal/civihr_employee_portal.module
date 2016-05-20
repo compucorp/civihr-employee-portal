@@ -5491,7 +5491,7 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
 
     if (substr($form['#id'], 0, 33) === 'views-exposed-form-civihr-report-') {
         foreach ($form as $key => $value) {
-          if (isset($form['#info']["filter-$key"])) {
+          if (isset($form[$key]['value'])) {
             $form[$key]['value'] = setInputDatepickerForm($form['#info']["filter-$key"]['label']);
           }
 
