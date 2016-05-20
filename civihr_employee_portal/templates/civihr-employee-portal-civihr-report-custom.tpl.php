@@ -1,16 +1,23 @@
 <div id="hrr">
   <?php if (!empty($filters)): ?>
-  <div id="js-filters-wrapper" class="panel panel-pane pane-block chr_panel chr_panel--no-padding panel--sliding-body">
-      <div ng-controller="FiltersController as filters" class="pane-content">
-          <div id="js-filters-btn" class="chr_search-result__header">
+  <div
+    ng-controller="FiltersController as filters"
+    id="report-filters"
+    class="panel panel-pane pane-block chr_panel chr_panel--no-padding panel--sliding-body"
+    ng-class="{ 'panel--sliding-body': filters.filtersCollapsed }">
+      <div class="pane-content">
+          <div class="chr_search-result__header" ng-click="filters.filtersCollapsed = !filters.filtersCollapsed">
               <div class="chr_search-result__total">
-                  <i class="chr_search-result__icon glyphicon glyphicon-chevron-down"></i>
-                  <span id="js-filters-title-show">Show Filters</span>
-                  <span id="js-filters-title-hide" class="hide">Hide Filters</span>
+                  <i
+                    class="chr_search-result__icon glyphicon glyphicon-chevron-down"
+                    ng-class="{ 'glyphicon-chevron-down': filters.filtersCollapsed, 'glyphicon-chevron-up': !filters.filtersCollapsed }">
+                  </i>
+                  <span ng-class="{ 'hide': !filters.filtersCollapsed }">Show Filters</span>
+                  <span class="hide" ng-class="{ 'hide': filters.filtersCollapsed }">Hide Filters</span>
               </div>
           </div>
 
-          <div id="report-filters" class="panel-body-wrap">
+          <div class="panel-body-wrap">
               <?php print render($filters); ?>
           </div>
       </div>
