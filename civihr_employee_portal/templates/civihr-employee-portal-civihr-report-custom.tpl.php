@@ -1,4 +1,4 @@
-<div id="hrr">
+<div id="civihrReports">
   <?php if (!empty($filters)): ?>
   <div
     ng-controller="FiltersController as filters"

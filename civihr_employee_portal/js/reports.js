@@ -337,7 +337,7 @@
             'common/moment',
             'common/filters/angular-date/format-date'
         ], function() {
-            angular.module('hrr', [
+            angular.module('civihrReports', [
                 'ngAnimate',
                 'ui.bootstrap',
                 'common.angularDate'
@@ -354,7 +354,7 @@
                 this.filtersCollapsed = true;
             });
 
-            angular.bootstrap(document.getElementById('hrr'), ['hrr']);
+            angular.bootstrap(document.getElementById('civihrReports'), ['civihrReports']);
         });
     };
 
