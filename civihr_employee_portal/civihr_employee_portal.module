@@ -445,6 +445,15 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
             ),
             'template' => 'templates/civihr-employee-portal-civihr-report-custom',
         ),
+
+        'menu_tree__menu_reports_settings' => array(
+            'render element' => 'block',
+            'template' => 'templates/block--menu--reports-settings-menu-tree',
+        ),
+        'menu_link__menu_reports_settings' => array(
+            'render element' => 'block',
+            'template' => 'templates/block--menu--reports-settings-menu-link',
+        ),
     );
 }
 
