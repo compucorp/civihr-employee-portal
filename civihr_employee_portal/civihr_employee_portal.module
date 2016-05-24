@@ -79,13 +79,14 @@ function _setup_modals() {
  * @return string             <Module url>
  */
 function getModuleUrl($moduleName) {
+  global $base_url;
+
   $path = CRM_Core_Resources::singleton()->getUrl($moduleName);
 
   // Need to do this to avoid some configurations issues
   // Some environments return /sites/all/modules/civicrm
   // And others return http://localhost:8900/sites/all/modules/civicrm
   if (strstr($path, "$base_url/")) {
-    global $base_url;
     $path = explode("$base_url/", $path)[1];
   }
 
@@ -446,11 +447,11 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
             'template' => 'templates/civihr-employee-portal-civihr-report-custom',
         ),
 
-        'menu_tree__menu_reports_settings' => array(
+        'menu_tree__hr_reports_settings' => array(
             'render element' => 'block',
             'template' => 'templates/block--menu--reports-settings-menu-tree',
         ),
-        'menu_link__menu_reports_settings' => array(
+        'menu_link__hr_reports_settings' => array(
             'render element' => 'block',
             'template' => 'templates/block--menu--reports-settings-menu-link',
         ),
@@ -5035,6 +5036,15 @@ function civihr_employee_portal_my_details() {
  * CiviHR Report - Landing page
  */
 function civihr_employee_portal_hrreport_landing_page() {
+    $jsOptions = array('type' => 'file', 'scope' => 'footer');
+
+    if (CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Extension', 'org.civicrm.reqangular', 'is_active', 'full_name')) {
+      drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "dist/reqangular.min.js", $jsOptions);
+    }
+
+    // Base reports.js script
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js', $jsOptions);
+
     //$menu = civihr_employee_portal_get_drupal_menu_items('main-menu', 'reports');
     $menu = civihr_employee_portal_get_drupal_menu_items('hr-reports');
     return theme('civihr_employee_portal_civihr_report_landing_page',

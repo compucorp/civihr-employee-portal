@@ -350,6 +350,9 @@
             .controller('FiltersController', function() {
                 this.format = 'dd/MM/yyyy';
                 this.filtersCollapsed = true;
+            })
+            .controller('SettingsController', function() {
+                this.isCollapsed = true;
             });
 
             angular.bootstrap(document.getElementById('civihrReports'), ['civihrReports']);
