@@ -11,7 +11,7 @@
 function setTitleMarkup($originalTitle) {
   $position = strpos($originalTitle, ':') + 1;
   $title = substr($originalTitle, 0, $position);
-  $subtitle = '<span class="chr_panel__header__subtitle">' . substr($originalTitle, $position) . '</span>';
+  $subtitle = '<span class="chr_panel__header-subtitle">' . substr($originalTitle, $position) . '</span>';
 
   return $title . $subtitle;
 }
