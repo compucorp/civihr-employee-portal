@@ -100,6 +100,9 @@ class views_between_dates_filter_handler extends date_views_filter_handler_simpl
 
   /**
    * Get date value formatted according to date format set up by input field.
+   * If provided date contains slashes separated values (as in Reports exposed 
+   * data filter) then we assume 'd/m/Y' format and then convert it into
+   * standard MySQL date (Y-m-d). Otherwise original date is returned.
    * 
    * @param string $date
    * @return type
