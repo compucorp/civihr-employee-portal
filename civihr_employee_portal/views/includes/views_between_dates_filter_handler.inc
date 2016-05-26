@@ -7,17 +7,27 @@
 
 class views_between_dates_filter_handler extends date_views_filter_handler_simple {
   function init(&$view, &$options) {
-
     parent::init($view, $options);
   }
 
+  /**
+   * Return an array containing available options. 
+   * 
+   * @return array
+   */
   function option_definition() {
     $options = parent::option_definition();
     $options['start_date_field'] = array('default' => NULL);
     $options['end_date_field'] = array('default' => NULL);
+    $options['include_null_dates'] = array('default' => NULL);
     return $options;
   }
 
+  /**
+   * Return an array containing available operators.
+   * 
+   * @return array
+   */
   function operators() {
     $operators = array(
       // Re-using = and != operators to pass date_views_filter_handler_simple::value_validate tests
@@ -38,6 +48,12 @@ class views_between_dates_filter_handler extends date_views_filter_handler_simpl
     return $operators;
   }
 
+  /**
+   * Handle between dates operator.
+   * 
+   * @param string $field
+   * @return NULL
+   */
   function op_between_dates($field) {
     $this->get_query_fields();
     if (empty($this->query_fields)) {
@@ -60,9 +76,8 @@ class views_between_dates_filter_handler extends date_views_filter_handler_simpl
     // SQL: start date <= value AND end date >= value.
     // If data is correct.
     if (count($field_names) == 2) {
-      $value = $this->get_filter_value('value', $this->value['value']);
+      $value = $this->get_date_value_formatted($this->get_filter_value('value', $this->value['value']));
       $comp_date = new DateObject($value, date_default_timezone(), $this->format);
-
       $start_field = $this->date_handler->sql_field($field_names[0], NULL, $comp_date);
       $start_field = $this->date_handler->sql_format($this->format, $start_field);
       $end_field = $this->date_handler->sql_field($field_names[1], NULL, $comp_date);
@@ -70,16 +85,42 @@ class views_between_dates_filter_handler extends date_views_filter_handler_simpl
       $placeholder = $this->placeholder();
       $group = !empty($this->options['date_group']) ? $this->options['date_group'] : $this->options['group'];
       if ($this->operator == '=') {
-        $this->query->add_where_expression($group, "$start_field <= $placeholder AND $end_field >= $placeholder", array($placeholder => $value));
+        if ((int)$this->options['include_null_dates'] === 2) {
+          $this->query->add_where_expression($group, "($start_field <= $placeholder OR $start_field IS NULL) AND ($end_field >= $placeholder OR $end_field IS NULL)", array($placeholder => $value));
+        } else {
+          $this->query->add_where_expression($group, "$start_field <= $placeholder AND $end_field >= $placeholder", array($placeholder => $value));
+        }
       }
       // Else not between
       else {
         $this->query->add_where_expression($group, "$start_field > $placeholder OR $end_field < $placeholder", array($placeholder => $value));
       }
    }
-
   }
 
+  /**
+   * Get date value formatted according to date format set up by input field.
+   * If provided date contains slashes separated values (as in Reports exposed 
+   * data filter) then we assume 'd/m/Y' format and then convert it into
+   * standard MySQL date (Y-m-d). Otherwise original date is returned.
+   * 
+   * @param string $date
+   * @return type
+   */
+  function get_date_value_formatted($date) {
+    $parts = explode('/', $date);
+    if (count($parts) === 1) {
+        return $date;
+    }
+    return $parts[2] . '-' . $parts[1] . '-' . $parts[0];
+  }
+
+  /**
+   * Define admin options form.
+   * 
+   * @param array $form
+   * @param array $form_state
+   */
   function extra_options_form(&$form, &$form_state) {
     parent::extra_options_form($form, $form_state);
 
@@ -105,8 +146,25 @@ class views_between_dates_filter_handler extends date_views_filter_handler_simpl
       '#description' => t('Select end date field.'),
       '#required' => TRUE,
     );
+    $form['include_null_dates'] = array(
+      '#title' => t('Include NULL dates'),
+      '#type' => 'select',
+      '#options' => array(
+          1 => t('No'),
+          2 => t('Yes'),
+      ),
+      '#default_value' => $this->options['include_null_dates'],
+      '#description' => t('Determine if NULL dates should be included.'),
+      '#required' => TRUE,
+    );
   }
 
+  /**
+   * Handle admin options form validation.
+   * 
+   * @param array $form
+   * @param array $form_state
+   */
   function extra_options_validate($form, &$form_state) {
     if (empty($form_state['values']['options']['start_date_field'])) {
       form_error($form['start_date_field'], t('You must select a start date field for this filter.'));
@@ -114,13 +172,20 @@ class views_between_dates_filter_handler extends date_views_filter_handler_simpl
     if (empty($form_state['values']['options']['end_date_field'])) {
       form_error($form['end_date_field'], t('You must select an end date field for this filter.'));
     }
+    if (empty($form_state['values']['options']['include_null_dates'])) {
+      form_error($form['include_null_dates'], t('You must define whether to include NULL dates or not.'));
+    }
   }
 
-  // Update the summary values to provide
-  // meaningful information for each option.
+  /**
+   *  Update the summary values to provide meaningful information for each option.
+   */
   function admin_summary() {
     if (empty($this->options['start_date_field']) || empty($this->options['end_date_field'])) {
       return t('Missing date fields!');
+    }
+    if (empty($this->options['include_null_dates'])) {
+        return t('Include NULL dates condition not specified!');
     }
     $handler = $this->date_handler;
 
@@ -128,6 +193,7 @@ class views_between_dates_filter_handler extends date_views_filter_handler_simpl
 
     $start_field = $this->options['start_date_field'];
     $end_field = $this->options['end_date_field'];
+    $include_null_dates = $this->options['include_null_dates'];
     if (array_key_exists($start_field, $fields['name']) && array_key_exists($end_field, $fields['name'])) {
       $start = $fields['name'][$start_field]['label'];
       $end = $fields['name'][$end_field]['label'];
@@ -150,6 +216,9 @@ class views_between_dates_filter_handler extends date_views_filter_handler_simpl
     return;
   }
 
+  /**
+   * Prepare query fields array.
+   */
   function get_query_fields() {
     $fields = date_views_fields($this->base_table);
     $fields = $fields['name'];
