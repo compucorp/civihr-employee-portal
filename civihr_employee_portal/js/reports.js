@@ -27,6 +27,7 @@
      * Init PivotTable.js library
      */
     HRReport.prototype.initPivotTable = function() {
+        var that = this;
         this.pivotTableContainer.pivotUI(this.data, {
             rendererName: "Table",
             renderers: CRM.$.extend(
@@ -39,6 +40,7 @@
             cols: ["Contract location"],
             aggregatorName: "Count",
             unusedAttrsVertical: false,
+            aggregators: that.getAggregators(),
             derivedAttributes: this.derivedAttributes,
 
             // It's necessary to make all the DOM changes here
@@ -48,6 +50,43 @@
                 Drupal.behaviors.civihr_employee_portal_reports.instance.updateCustomTemplate();
             }
         }, false);
+    }
+
+    /**
+     * Return an object containing set of Pivot Table aggregators extended with
+     * our custom ones.
+     * 
+     * @returns {jQuery.pivotUtilities.aggregators|_$.pivotUtilities.aggregators|aggregators}
+     */
+    HRReport.prototype.getAggregators = function() {
+        var aggregators = $.pivotUtilities.aggregators;
+        var ordered = {};
+
+        // Create custom Aggregator behaving like 'Count Unique Values' but
+        // not counting NULL, 0 or empty strings.
+        aggregators["Count Unique Values (not empty)"] = function(attributeArray) {
+            var attribute = attributeArray[0];
+            return function(data, rowKey, colKey) {
+                return {
+                    uniq: [],
+                    push: function(record) {
+                        var _ref = record[attribute];
+                        if (!!+_ref && this.uniq.indexOf(_ref) < 0) {
+                            this.uniq.push(record[attribute]);
+                        }
+                    },
+                    value: function() { return this.uniq.length; },
+                    format: function(x) { return x; },
+                    numInputs: 1
+                };
+            };
+        };
+
+        // Sort aggregators by keys.
+        Object.keys(aggregators).sort().forEach(function(key) {
+            ordered[key] = aggregators[key];
+        });
+        return ordered;
     }
 
     /**
