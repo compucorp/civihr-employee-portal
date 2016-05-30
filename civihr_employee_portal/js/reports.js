@@ -64,7 +64,7 @@
 
         // Create custom Aggregator behaving like 'Count Unique Values' but
         // not counting NULL, 0 or empty strings.
-        aggregators["Count Unique Values (not empty)"] = function(attributeArray) {
+        aggregators["Count Unique Values excluding null, 0 or empty"] = function(attributeArray) {
             var attribute = attributeArray[0];
             return function(data, rowKey, colKey) {
                 return {
