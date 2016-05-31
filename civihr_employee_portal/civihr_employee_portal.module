@@ -5391,17 +5391,6 @@ function _civihr_employee_portal_add_report_scripts() {
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/jquery-ui-1.9.2.custom.min.js', $jsOptions);
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js', $jsOptions);
 
-    // Orb.js JavaScript library
-    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/orb/css/prism.css");
-    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/orb/css/main.css");
-    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/orb/css/orb.min.css");
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/lib/respond.min.js', $jsOptions);
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/lib/react-0.12.2.min.js', $jsOptions);
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/orb.min.js', $jsOptions);
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/data.js', $jsOptions);
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/main.js', $jsOptions);
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/orb/prism.js', $jsOptions);
-
     if (CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Extension', 'org.civicrm.reqangular', 'is_active', 'full_name')) {
       drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "dist/reqangular.min.js", $jsOptions);
     }

@@ -126,28 +126,6 @@ span.appraisals-employee-legend {
     margin-right: 8px;
 }
 
-.orb-container table {
-   width: auto;
-}
-
-.orb-container  tbody {
-   border-top: 0 none;
-}
-
-.orb-container th,
-.orb-container td {
-   padding: 0;
-}
-
-.orb .fld-btn .caption {
-    white-space: nowrap;
-}
-
-.orb-blue .orb .drp-trgt > table > tbody > tr > td {
-    display: inline-block;
-    margin-bottom: 5px;
-}
-
 .report-filters .btn-report-date-filter {
     float: none;
 }

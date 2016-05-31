@@ -336,12 +336,9 @@ $handler->display->display_options['arguments']['effective_date']['relationship'
 $handler->display->display_options['arguments']['effective_date']['default_action'] = 'default';
 $handler->display->display_options['arguments']['effective_date']['default_argument_type'] = 'php';
 $handler->display->display_options['arguments']['effective_date']['default_argument_options']['code'] = '$date_filter = $_REQUEST[\'between_date_filter\'];
-if (!empty($date_filter)) {
-    if (!empty($date_filter[\'value\'][\'date\'])) {
-        $expl = explode(\'/\', $date_filter[\'value\'][\'date\']);
-        return $expl[2] . \'-\' . $expl[0] . \'-\' . $expl[1];
-    }
-    return date(\'Y-m-d\', mktime(0, 0, 0, $date_filter[\'value\'][\'month\'], $date_filter[\'value\'][\'day\'], $date_filter[\'value\'][\'year\']));
+if (!empty($date_filter[\'value\'])) {
+    $expl = explode(\'/\', $date_filter[\'value\']);
+    return $expl[2] . \'-\' . $expl[1] . \'-\' . $expl[0];
 }
 return date(\'Y-m-d\');';
 $handler->display->display_options['arguments']['effective_date']['summary']['number_of_records'] = '0';
@@ -357,12 +354,9 @@ $handler->display->display_options['arguments']['effective_end_date']['relations
 $handler->display->display_options['arguments']['effective_end_date']['default_action'] = 'default';
 $handler->display->display_options['arguments']['effective_end_date']['default_argument_type'] = 'php';
 $handler->display->display_options['arguments']['effective_end_date']['default_argument_options']['code'] = '$date_filter = $_REQUEST[\'between_date_filter\'];
-if (!empty($date_filter)) {
-    if (!empty($date_filter[\'value\'][\'date\'])) {
-        $expl = explode(\'/\', $date_filter[\'value\'][\'date\']);
-        return $expl[2] . \'-\' . $expl[0] . \'-\' . $expl[1];
-    }
-    return date(\'Y-m-d\', mktime(0, 0, 0, $date_filter[\'value\'][\'month\'], $date_filter[\'value\'][\'day\'], $date_filter[\'value\'][\'year\']));
+if (!empty($date_filter[\'value\'])) {
+    $expl = explode(\'/\', $date_filter[\'value\']);
+    return $expl[2] . \'-\' . $expl[1] . \'-\' . $expl[0];
 }
 return date(\'Y-m-d\');';
 $handler->display->display_options['arguments']['effective_end_date']['summary']['number_of_records'] = '0';
@@ -416,11 +410,11 @@ $handler->display->display_options['filters']['between_date_filter']['expose']['
   17087012 => 0,
   57573969 => 0,
 );
-$handler->display->display_options['filters']['between_date_filter']['form_type'] = 'date_popup';
 $handler->display->display_options['filters']['between_date_filter']['default_date'] = 'now';
 $handler->display->display_options['filters']['between_date_filter']['year_range'] = '-10:+10';
 $handler->display->display_options['filters']['between_date_filter']['start_date_field'] = 'hrjc_details.period_start_date';
 $handler->display->display_options['filters']['between_date_filter']['end_date_field'] = 'hrjc_details.period_end_date';
+$handler->display->display_options['filters']['between_date_filter']['include_null_dates'] = '2';
 
 /* Display: Page */
 $handler = $view->new_display('page', 'Page', 'page');
