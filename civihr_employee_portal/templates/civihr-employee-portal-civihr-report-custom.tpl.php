@@ -34,9 +34,6 @@
   <?php if (!empty($jsonUrl)): ?>
       <li role="presentation"><a class="btn btn-default" data-tab="pivot-table">Pivot Table</a></li>
   <?php endif; ?>
-  <?php if (!empty($jsonUrl)): ?>
-      <li role="presentation"><a class="btn btn-default" data-tab="orb-pivot-table">Orb Pivot Table</a></li>
-  <?php endif; ?>
   </ul>
 
   <div class="report-content panel-pane pane-block chr_panel chr_panel--no-padding">
@@ -60,14 +57,6 @@
               </div>
           </div>
           <div id="reportPivotTable" class="pvtTable-civi"></div>
-      </div>
-      <div class="report-block orb-pivot-table pane-content hidden">
-          <div class="chr_search-result__header">
-              <div class="chr_search-result__total">
-                  Orb Pivot Table (with subtotals)
-              </div>
-          </div>
-          <div id="reportOrbPivotTable"></div>
       </div>
   <?php endif; ?>
   </div>
@@ -107,7 +96,6 @@
               data: data,
               tableContainer: jQuery('#reportTable'),
               pivotTableContainer: jQuery('#reportPivotTable'),
-              orbContainer: document.getElementById('reportOrbPivotTable'),
               derivedAttributes: initialDerivedAttributes,
               tableUrl: '<?php print $tableUrl; ?>',
               jsonUrl: '<?php print $jsonUrl; ?>',

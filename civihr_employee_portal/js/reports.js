@@ -7,9 +7,7 @@
     function HRReport() {
         var data = [];
         var pivotTableContainer = jQuery("#reportPivotTable");
-        var orbContainer = null;
         var derivedAttributes = {};
-        var orbInstance = null;
 
         this.initScrollbarFallback();
     }
@@ -148,93 +146,10 @@
     };
 
     /**
-     * Converts some number fields into Float for Orb library
-     *
-     * @param {JSON} data
-     */
-    HRReport.prototype.orbConvertData = function(data) {
-        var orbData = [];
-        for (var i in data) {
-            var orbRow = [];
-            for (var j in data[i]) {
-                if (
-                    j === 'Employee ID'
-                ) {
-                    data[i][j] = parseFloat(data[i][j]);
-                }
-                orbRow.push(data[i][j]);
-            }
-            orbData.push(orbRow);
-        }
-        var orbFields = [];
-        var j = 0;
-        for (var i in data[0]) {
-            orbFields.push({
-                name: j++,
-                caption: i
-            });
-        }
-        orbFields.push(
-            {
-                name: j++,
-                caption: 'Duration',
-                dataSettings: {
-                    aggregateFunc: 'avg',
-                    formatFunc: function(value) {
-                        return Number(value).toFixed(0);
-                    }
-                }
-            }
-        );
-
-        return {
-            'data': orbData,
-            'fields': orbFields
-        }
-    }
-
-    /**
-     * Initialize Orb library
-     */
-    HRReport.prototype.initOrb = function() {
-        var orbConfig = function(f, d) {
-            return {
-                width: 1110,
-                height: 645,
-                dataSource: d,
-                dataHeadersLocation: 'columns',
-                theme: 'blue',
-                toolbar: {
-                    visible: true
-                },
-                grandTotal: {
-                        rowsvisible: true,
-                        columnsvisible: true
-                },
-                subTotal: {
-                        visible: true,
-                    collapsed: true
-                },
-                fields: f,
-                rows    : [],
-                columns : [],
-                data    : [],
-                preFilters : {
-                }
-            };
-        };
-        var orbElem = this.orbContainer;
-        var orbConvertedData = this.orbConvertData(this.data);
-        this.orbInstance = new orb.pgridwidget(orbConfig(orbConvertedData.fields, orbConvertedData.data));
-        this.orbInstance.render(orbElem);
-    }
-
-    /**
      * Shows the Report
      */
     HRReport.prototype.show = function () {
         this.initPivotTable();
-        this.initOrb();
         this.bindFilters();
     };
 
@@ -275,9 +190,6 @@
                     ),
                     unusedAttrsVertical: false
                 }, false);
-                // Refreshing Orb Pivot Table:
-                var orbConvertedData = that.orbConvertData(data);
-                that.orbInstance.refreshData(orbConvertedData.data);
             },
             type: 'GET'
         });
