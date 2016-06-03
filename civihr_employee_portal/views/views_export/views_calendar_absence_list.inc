@@ -184,7 +184,13 @@ $handler->display->display_options['filters']['absence_status']['id'] = 'absence
 $handler->display->display_options['filters']['absence_status']['table'] = 'absence_list';
 $handler->display->display_options['filters']['absence_status']['field'] = 'absence_status';
 $handler->display->display_options['filters']['absence_status']['operator'] = '!=';
-$handler->display->display_options['filters']['absence_status']['value'] = '3';
+$handler->display->display_options['filters']['absence_status']['value'] = '3'; // Cancelled status
+$handler->display->display_options['filters']['absence_status_1']['id'] = 'absence_status_1';
+$handler->display->display_options['filters']['absence_status_1']['table'] = 'absence_list';
+$handler->display->display_options['filters']['absence_status_1']['field'] = 'absence_status';
+$handler->display->display_options['filters']['absence_status_1']['operator'] = '!=';
+$handler->display->display_options['filters']['absence_status_1']['value'] = '9'; // Rejected status
+
 $handler->display->display_options['path'] = 'calendar-absence-list';
 $handler->display->display_options['menu']['type'] = 'default tab';
 $handler->display->display_options['menu']['title'] = 'Month';
