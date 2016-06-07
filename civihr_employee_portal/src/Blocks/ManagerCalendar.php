@@ -22,8 +22,23 @@ class ManagerCalendar {
         $managerData = get_civihr_uf_match_data($uid);
         $managerId = $managerData['contact_id'];
 
-        $result = db_query('SELECT aal.employee_id, aal.id, aal.activity_type_id, aal.absence_title, aal.duration, aal.absence_start_date_timestamp, aal.absence_end_date_timestamp, absence_status,
-        manager_id FROM {absence_approval_list} aal WHERE absence_status != :cancelled AND YEAR(absence_end_date) = YEAR(CURDATE())', array('cancelled' => 3));
+        $absencesQuery = '
+          SELECT
+            aal.employee_id,
+            aal.id,
+            aal.activity_type_id,
+            aal.absence_title,
+            aal.duration,
+            aal.absence_start_date_timestamp,
+            aal.absence_end_date_timestamp,
+            absence_status,
+            manager_id
+          FROM {absence_approval_list} aal
+          WHERE absence_status != :cancelled AND
+            absence_status != :rejected AND
+            YEAR(absence_end_date) = YEAR(CURDATE())';
+
+        $result = db_query($absencesQuery, array('cancelled' => 3, 'rejected' => 9));
 
         // Result is returned as a iterable object that returns a stdClass object on each iteration
         foreach ($result as $record) {

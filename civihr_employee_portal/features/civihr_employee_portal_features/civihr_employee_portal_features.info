@@ -114,6 +114,7 @@ features[user_permission][] = view all manual batches
 features[user_permission][] = view all notes
 features[user_permission][] = view my contact
 features[user_permission][] = view own manual batches
+features[user_permission][] = administer roles and teams
 features[user_role][] = civihr_admin
 features[user_role][] = civihr_manager
 features[user_role][] = civihr_staff
