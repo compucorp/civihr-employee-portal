@@ -1284,6 +1284,27 @@ function _get_civicrm_contact_id_by_drupal_uid($uid) {
 }
 
 /**
+ * Get node ID (nid) by its title and type. If no node is found, return null.
+ * 
+ * @param string $title
+ * @param string $type
+ * @return int|NULL
+ */
+function _node_get_id_by_title($title, $type) {
+    $query = new EntityFieldQuery();
+    $entities = $query->entityCondition('entity_type', 'node')
+        ->propertyCondition('type', $type)
+        ->propertyCondition('title', $title)
+        ->propertyCondition('status', 1)
+        ->range(0, 1)
+        ->execute();
+    if (!empty($entities['node'])) {
+        return array_shift(array_keys($entities['node']));
+    }
+    return null;
+}
+
+/**
  * Helper function to make a link.
  *
  * The links that are known to be a .chr_action element, have their text wrapper in a <span>
@@ -1472,8 +1493,12 @@ function civihr_employee_portal_my_details_callback($ajax) {
         ctools_add_js('ajax-responder');
 
         // Load the my details node
-        $node = node_load(variable_get('my_details_webform_nid', 2));
-        $contents = render(node_view($node, 'full', NULL));
+        $contents = t('An error occured while loading Webform.');
+        $my_details_webform_id = _node_get_id_by_title('My details - edit', 'webform');
+        if ($my_details_webform_id) {
+            $node = node_load($my_details_webform_id);
+            $contents = render(node_view($node, 'full', NULL));
+        }
 
         $output = array();
         $output[] = ctools_modal_command_display(t('My Details'), render($contents));
@@ -1501,8 +1526,12 @@ function civihr_employee_portal_emergency_contacts_callback($ajax) {
         ctools_add_js('ajax-responder');
 
         // Load the emergency contacts node
-        $node = node_load(variable_get('emergency_contact_webform_nid', 3));
-        $contents = render(node_view($node, 'full', NULL));
+        $contents = t('An error occured while loading Webform.');
+        $emergency_contact_webform_id = _node_get_id_by_title('Emergency contact - edit', 'webform');
+        if ($emergency_contact_webform_id) {
+            $node = node_load($emergency_contact_webform_id);
+            $contents = render(node_view($node, 'full', NULL));
+        }
 
         $output = array();
         $output[] = ctools_modal_command_display('Emergency contacts', render($contents));
