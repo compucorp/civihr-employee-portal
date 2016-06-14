@@ -1494,7 +1494,7 @@ function civihr_employee_portal_my_details_callback($ajax) {
 
         // Load the my details node
         $contents = t('An error occured while loading Webform.');
-        $my_details_webform_id = _node_get_id_by_title('My details - edit', 'webform');
+        $my_details_webform_id = variable_get('my_details_webform_nid');
         if ($my_details_webform_id) {
             $node = node_load($my_details_webform_id);
             $contents = render(node_view($node, 'full', NULL));
@@ -1527,7 +1527,7 @@ function civihr_employee_portal_emergency_contacts_callback($ajax) {
 
         // Load the emergency contacts node
         $contents = t('An error occured while loading Webform.');
-        $emergency_contact_webform_id = _node_get_id_by_title('Emergency contact - edit', 'webform');
+        $emergency_contact_webform_id = variable_get('emergency_contact_webform_nid');
         if ($emergency_contact_webform_id) {
             $node = node_load($emergency_contact_webform_id);
             $contents = render(node_view($node, 'full', NULL));
@@ -4753,6 +4753,28 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
     )));
 }
 
+/**
+ * Implement hook_node_view().
+ * 
+ * @param object $node
+ * @param string $view_mode
+ * @param string $langcode
+ */
+function civihr_employee_portal_node_view($node, $view_mode, $langcode) {
+    // Set up default State/Province values for Emergency Contact webform.
+    if ($node->nid === variable_get('emergency_contact_webform_nid')) {
+        $fieldset = _get_emergency_contact_fieldset_list();
+        for ($contact = 1; $contact < 3; $contact++) {
+            $country_id = null;
+            if (isset($node->content['webform']['#form']['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100008']['#default_value'])) {
+                $country_id = $node->content['webform']['#form']['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100008']['#default_value'];
+            }
+            $state_province_options = _get_state_province_list_by_country_id($country_id);
+            $node->content['webform']['#form']['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100009']['#options'] = $state_province_options;
+        }
+    }
+}
+
 // Note: Under "Redirection location" NO redirect option should be select to get the confirmation message with ajax.
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
@@ -4830,7 +4852,7 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
         // Check whether the form id have nid at the end like _nid
         preg_match('/[\d]+$/', $form_id, $matches);
-        $nid_match = $matches[0];
+        $nid_match = !empty($matches[0]) ? $matches[0] : null;
 
         if(strpos($form_id, 'webform_client_form_') !== false && !empty($nid_match)) {
 
@@ -4844,9 +4866,99 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
                 '#value' => t('Submit'),
             );
         }
-
     }
- }
+
+    // Set up Emergency Contact webform ajax fields and callbacks.
+    if (!empty($form['#node']) && $form['#node']->nid === variable_get('emergency_contact_webform_nid')) {
+        $fieldset = _get_emergency_contact_fieldset_list();
+        for ($contact = 1; $contact < 3; $contact++) {
+            $form['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100008']['#ajax'] = array(
+                'event' => 'change',
+                'wrapper' => 'emergency-contact' . $contact . '-state-province',
+                'callback' => 'civihr_employee_portal_state_province_contact' . $contact . '_callback',
+                'method' => 'replace',
+            );
+            $form['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100009']['#prefix'] = '<div id="emergency-contact' . $contact . '-state-province">';
+            $form['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100009']['#suffix'] = '</div>';
+        }
+    }
+}
+
+/**
+ * Get a recalculated State/Province form field for Emergency Contact 1.
+ * 
+ * @param array $form
+ * @param array $form_state
+ * @return array
+ */
+function civihr_employee_portal_state_province_contact1_callback($form, $form_state) {
+    return _get_emergency_contact_state_province_webform_field($form, 1);
+}
+
+/**
+ * Get a recalculated State/Province form field for Emergency Contact 2.
+ * 
+ * @param array $form
+ * @param array $form_state
+ * @return array
+ */
+function civihr_employee_portal_state_province_contact2_callback($form, $form_state) {
+    return _get_emergency_contact_state_province_webform_field($form, 2);
+}
+
+/**
+ * Get a form select field for given emergency contact containing
+ * State/Province list of selected Country.
+ * 
+ * @param array $form
+ * @param int $emergency_contact
+ * @return array
+ */
+function _get_emergency_contact_state_province_webform_field($form, $emergency_contact) {
+    $fieldset = _get_emergency_contact_fieldset_list();
+    $country_id = $form['submitted'][$fieldset[$emergency_contact]]['civicrm_1_contact_' . $emergency_contact . '_cg99999_custom_100008']['#value'];
+    $form['submitted'][$fieldset[$emergency_contact]]['civicrm_1_contact_' . $emergency_contact . '_cg99999_custom_100009']['#options'] = _get_state_province_list_by_country_id($country_id);
+
+    $bootstrap_form = civihr_default_theme_form_apply_bootstrap($form['submitted']);
+    return $bootstrap_form[$fieldset[$emergency_contact]]['civicrm_1_contact_' . $emergency_contact . '_cg99999_custom_100009'];
+}
+
+/**
+ * Return an array containing fieldset list of Emergency Contact webform.
+ * 
+ * @return array
+ */
+function _get_emergency_contact_fieldset_list() {
+    return array(
+        1 => 'civicrm_1_contact_1_fieldset_fieldset',
+        2 => 'secondary_emergency_contact',
+    );
+}
+
+/**
+ * Get an assotiative array containing IDs of State/Province as keys
+ * and labels of State/Province as values.
+ * 
+ * @param int $country_id
+ * @return array
+ */
+function _get_state_province_list_by_country_id($country_id) {
+    if (!$country_id) {
+        return array();
+    }
+    civicrm_initialize();
+    $civi_settings = parse_url(CIVICRM_DSN);
+    $civi_db_name = trim($civi_settings['path'], '/');
+    $state_province_list = array();
+    $result = db_select($civi_db_name . '.civicrm_state_province', 'sp')
+        ->fields('sp', array('id', 'name'))
+        ->condition('country_id', $country_id, '=')
+        ->execute();
+    while ($row = $result->fetchAssoc()) {
+        $state_province_list[$row['id']] = $row['name'];
+    }
+    return $state_province_list;
+}
 
 function civihr_employee_portal_preprocess_user_login(&$vars) {
 
