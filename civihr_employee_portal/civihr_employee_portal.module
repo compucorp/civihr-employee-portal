@@ -1494,7 +1494,7 @@ function civihr_employee_portal_my_details_callback($ajax) {
 
         // Load the my details node
         $contents = t('An error occured while loading Webform.');
-        $my_details_webform_id = _node_get_id_by_title('My details - edit', 'webform');
+        $my_details_webform_id = variable_get('my_details_webform_nid');
         if ($my_details_webform_id) {
             $node = node_load($my_details_webform_id);
             $contents = render(node_view($node, 'full', NULL));
@@ -1527,7 +1527,7 @@ function civihr_employee_portal_emergency_contacts_callback($ajax) {
 
         // Load the emergency contacts node
         $contents = t('An error occured while loading Webform.');
-        $emergency_contact_webform_id = _node_get_id_by_title('Emergency contact - edit', 'webform');
+        $emergency_contact_webform_id = variable_get('emergency_contact_webform_nid');
         if ($emergency_contact_webform_id) {
             $node = node_load($emergency_contact_webform_id);
             $contents = render(node_view($node, 'full', NULL));
@@ -4762,7 +4762,7 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
  */
 function civihr_employee_portal_node_view($node, $view_mode, $langcode) {
     // Set up default State/Province values for Emergency Contact webform.
-    if ($node->title === 'Emergency contact - edit' && $node->type === 'webform') {
+    if ($node->nid === variable_get('emergency_contact_webform_nid')) {
         $fieldset = _get_emergency_contact_fieldset_list();
         for ($contact = 1; $contact < 3; $contact++) {
             $country_id = null;
@@ -4869,7 +4869,7 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
     }
 
     // Set up Emergency Contact webform ajax fields and callbacks.
-    if (!empty($form['#node']) && $form['#node']->title === 'Emergency contact - edit' && $form['#node']->type === 'webform') {
+    if (!empty($form['#node']) && $form['#node']->nid === variable_get('emergency_contact_webform_nid')) {
         $fieldset = _get_emergency_contact_fieldset_list();
         for ($contact = 1; $contact < 3; $contact++) {
             $form['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100008']['#ajax'] = array(
