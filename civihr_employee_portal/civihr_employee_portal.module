@@ -277,6 +277,38 @@ function civihr_employee_portal_permission() {
       'title' => t('Manage CiviHR Leave and Absences'),
       'description' => t('Availability for the Manager to access leave block and calendar and manage leave requests')
     ),
+    'view my details' => array(
+      'title' => t('View My Details'),
+      'description' => t('Availability for the user to view my details block and page')
+    ),
+    'view my tasks block' => array(
+      'title' => t('View My Tasks Block'),
+      'description' => t('Availability for the user to view my tasks block')
+    ),
+    'view appraisals' => array(
+      'title' => t('View Appraisals'),
+      'description' => t('Availability for the user to view appraisals block and page')
+    ),
+    'view my leave block' => array(
+      'title' => t('View My Leave Block'),
+      'description' => t('Availability for the user to view my leave block')
+    ),
+    'view my sickness report block' => array(
+      'title' => t('View My Sickness Report Block'),
+      'description' => t('Availability for the user to view my sickness report block')
+    ),
+    'view staff directory' => array(
+      'title' => t('View Staff Directory'),
+      'description' => t('Availability for the user to view staff directory block and page')
+    ),
+    'view hr resources' => array(
+      'title' => t('View HR Resources'),
+      'description' => t('Availability for the user to view hr resources block and page')
+    ),
+    'view vacancies' => array(
+      'title' => t('View Vacancies'),
+      'description' => t('Availability for the user to view vacancies block and page')
+    ),
   );
 }
 
@@ -988,7 +1020,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     /**
      * Appraisals menu items.
      */
@@ -998,7 +1030,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['hr-appraisals-manager/%ctools_js/upload/%'] = array(
         'title' => 'Appraisal Upload',
         'page callback' => 'civihr_employee_portal_appraisal_manager_upload',
@@ -1006,7 +1038,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['hr-appraisals-manager/%ctools_js/view/%'] = array(
         'title' => 'Appraisal View',
         'page callback' => 'civihr_employee_portal_appraisal_manager_view',
@@ -1014,7 +1046,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['hr-appraisals-employee/%ctools_js/upload/%'] = array(
         'title' => 'Appraisal Upload',
         'page callback' => 'civihr_employee_portal_appraisal_employee_upload',
@@ -1022,7 +1054,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
 
     /**
      * Not used currently
@@ -3073,7 +3105,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
     $form['section_close'] = array(
         '#markup' => '</div>'
     );
-    
+
     if (_task_can_be_edited($id)) {
         $form['save'] = array(
             '#type' => 'submit',
@@ -3432,7 +3464,7 @@ function civihr_employee_portal_appraisal_manager_form($form, &$form_state) {
         '#date_year_range' => '-10:+10',
         '#default_value' => isset($appraisal['meeting_date']) ? strip_tags($appraisal['meeting_date']) : '',
     );
-    
+
     $form['checkboxes'] = array(
         '#type' => 'checkboxes',
         '#prefix' => '<div class="row"><div class="col-md-12">',
@@ -3456,7 +3488,7 @@ function civihr_employee_portal_appraisal_manager_form($form, &$form_state) {
         '#cols' => 100,
         '#default_value' => isset($appraisal['notes']) ? strip_tags($appraisal['notes']) : '',
     );
-    
+
     $form['grade'] = array(
         '#type' => 'textfield',
         '#title' => t('Grade'),
@@ -3508,7 +3540,7 @@ function civihr_employee_portal_appraisal_manager_form_submit($form, &$form_stat
     $meetingApproved = (int)strip_tags($form_state['values']['checkboxes'][2]) ? 1 : 0;
     $notes = strip_tags($form_state['values']['notes']);
     $grade = (int)strip_tags($form_state['values']['grade']);
-    
+
     $params = array(
         'sequential' => 1,
         'id' => $id,
@@ -3520,7 +3552,7 @@ function civihr_employee_portal_appraisal_manager_form_submit($form, &$form_stat
     //TODO: if (has_appraisal_permissions to grade) {
     $params['grade'] = $grade;
     //}
-    
+
     // setting appraisal status to Awaiting Grade:
     $params['status_id'] = 3;
 
@@ -3547,7 +3579,7 @@ function civihr_employee_portal_appraisal_manager_form_submit($form, &$form_stat
 }
 
 function civihr_employee_portal_appraisal_manager_view($ajax, $id) {
-    
+
     $appraisal = civicrm_api3('Appraisal', 'getsingle', array(
         'sequential' => 1,
         'id' => (int)$id,
@@ -3561,7 +3593,7 @@ function civihr_employee_portal_appraisal_manager_view($ajax, $id) {
     $manager = get_civihr_contact_data($appraisal['manager_id']);
     $title = $contact['display_name'] . ' Appraisal';
     $documents = civihr_employee_portal_get_appraisal_documents($appraisal['id']);
-    
+
     $output = theme_render_template(
         drupal_get_path('module', 'civihr_employee_portal') .
         '/templates/civihr-employee-portal-appraisal-manager-view-modal.tpl.php',
@@ -3575,7 +3607,7 @@ function civihr_employee_portal_appraisal_manager_view($ajax, $id) {
             'documents' => $documents,
         )
     );
-    
+
     if ($ajax) {
         ctools_include('ajax');
         ctools_include('modal');
@@ -3745,12 +3777,12 @@ function civihr_employee_portal_appraisal_employee_form_submit($form, &$form_sta
     }
 
     $id = (int)strip_tags($form_state['values']['id']);
-    
+
     $params = array(
         'sequential' => 1,
         'id' => $id,
     );
-    
+
     // setting appraisal status to Awaiting Manager Appraisal:
     $params['status_id'] = 2;
 
@@ -3777,7 +3809,7 @@ function civihr_employee_portal_appraisal_employee_form_submit($form, &$form_sta
 }
 
 function civihr_employee_portal_get_appraisal_documents($appraisalId) {
-    
+
     $documents = array();
     $selfAppraisalFiles = CRM_Appraisals_Page_Files::fileList(array(
         'entityTable' => 'civicrm_appraisal-self',
@@ -3795,7 +3827,7 @@ function civihr_employee_portal_get_appraisal_documents($appraisalId) {
         $file['appraisalFileTypeLabel'] = 'Manager Appraisal';
         $documents['managerAppraisal'] = $file;
     }
-    
+
     return $documents;
 }
 

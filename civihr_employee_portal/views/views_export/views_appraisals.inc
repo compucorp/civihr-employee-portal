@@ -117,11 +117,8 @@ $handler = $view->new_display('page', 'Page', 'appraisals_manager');
 $handler->display->display_options['defaults']['title'] = FALSE;
 $handler->display->display_options['title'] = 'Appraisals';
 $handler->display->display_options['defaults']['access'] = FALSE;
-$handler->display->display_options['access']['type'] = 'role';
-$handler->display->display_options['access']['role'] = array(
-  3 => '3',
-  57573969 => '57573969',
-);
+$handler->display->display_options['access']['type'] = 'perm';
+$handler->display->display_options['access']['perm'] = 'view appraisals';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Json: Appraisal Employee */
 $handler->display->display_options['fields']['appraisal_employee']['id'] = 'appraisal_employee';
