@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * Install file for civicrm_error module
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function civicrm_error_install() {
+  // nothing to do
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function civicrm_error_uninstall() {
+  //variable_del('civicrm_error_to');
+}
+
