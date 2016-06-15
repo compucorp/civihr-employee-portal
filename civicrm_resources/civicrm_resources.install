@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Install file for civicrm_error module
+ * Install file for civicrm_resources module
  */
 
 /**
  * Implementation of hook_install().
  */
-function civicrm_error_install() {
+function civicrm_resources_install() {
   // nothing to do
 }
 
 /**
  * Implementation of hook_uninstall().
  */
-function civicrm_error_uninstall() {
-  //variable_del('civicrm_error_to');
+function civicrm_resources_uninstall() {
+  // @TODO : Unset all variables set by drupal module
 }
 
