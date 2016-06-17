@@ -5,24 +5,14 @@
  * Module to load css and js resources from a directory
  */
 
-/**
- * Implements hook_init().
- */
-function civicrm_resources_init() {
-
-   civicrm_initialize();
-
-   // Hardcoding extention name for now. 
-   $machine_name = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Extension', 'Job Contract (CiviHR)', 'full_name', 'name');
-   $ext_path = CRM_Extension_System::singleton()->getMapper()->keyToBasePath($machine_name);
-
-
-   //civicrm_resources_add_resources($ext_path, array('gulpfile.js', 'hrjc.css', 'contact.js'));
-   civicrm_resources_add_resources($ext_path);
+function string_to_slug($string) {
+  $string = str_replace(array('/', ' '), '-', $string);
+  $accents = '/&([A-Za-z]{1,2})(tilde|grave|acute|circ|cedil|uml|lig);/';
+  return urlencode(strtolower(preg_replace($accents, '$1', htmlentities(utf8_decode($string)))));
 }
 
 /**
- *
+ * 
  */
 function civicrm_resources_add_resources($extention_path, $req_files = array()) {
 
@@ -32,24 +22,34 @@ function civicrm_resources_add_resources($extention_path, $req_files = array()) 
    
    $js_list = array();
    $css_list = array();
-   
-//@TODO: Logic to handle files of same name in different directories. 
-
+    
    foreach ($files as $key => $file) {
    	    if(!empty($req_files)) {
-   	      if (in_array($file->filename, $req_files) && preg_match('/\.js$/',$file->filename)) {
+
+          if (in_array('*.js', $req_files)) {
             $js_list[] = $file->uri;
-   	      }
-   	      if (in_array($file->filename, $req_files) && preg_match('/\.css$/',$file->filename)) {
+          } 
+          else {
+            if (in_array($file->filename, $req_files) && preg_match('/\.js$/', $file->filename)) {
+              $js_list[] = $file->uri;
+            }
+          }
+
+          if (in_array('*.css', $req_files)) {
             $css_list[] = $file->uri;
-   	      }
+          } 
+          else {
+            if (in_array($file->filename, $req_files) && preg_match('/\.css$/', $file->filename)) {
+              $css_list[] = $file->uri;
+            }
+          }
    	    } 
    	    else {
-   	      if (preg_match('/\.css$/',$file->filename)) {
+   	      if (preg_match('/\.css$/', $file->filename)) {
             $css_list[] = $file->uri;
-    	  } 
-          elseif (preg_match('/\.js$/',$file->filename)) {
-    	    $js_list[] = $file->uri;
+    	    } 
+          elseif (preg_match('/\.js$/', $file->filename)) {
+    	      $js_list[] = $file->uri;
           }
    	    }
     } 
@@ -63,7 +63,7 @@ function civicrm_resources_add_resources($extention_path, $req_files = array()) 
 }
 
 /**
- *
+ *  Scans a directory for filename patterns
  */
 function civicrm_resources_file_scan_directory($dir, $mask, $options = array(), $depth = 0) {
   // Merge in defaults.
@@ -98,111 +98,35 @@ function civicrm_resources_file_scan_directory($dir, $mask, $options = array(), 
         }
       }
     }
-
     closedir($handle);
   }
-
   return $files;
 }
 
 /**
- * Menu callback: displays the module settings page.
+ *
  */
-function civicrm_resources_settings($form) {
-
-  $form['refresh'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Refresh'),
-  );
-
-  $form['refresh']['refresh_paths'] = array(
-    '#type' => 'submit',
-    '#value' => t('Refresh all paths'),
-    '#submit' => array('civicrm_resources_settings_refresh_submit'),
-  );
-
-  $form['registered_paths'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Refresh'),
-  );
-
-/*
-  foreach ($all_settings as $settings) {
-
-    // Prompt for the default pattern for this module
-    $variable = 'pathauto_' . $module . '_pattern';
-    $form['registered_paths'][$variable] = array(
-      '#type' => 'textfield',
-      '#title' => $patterndescr,
-      '#default_value' => variable_get($variable, $patterndefault),
-      '#size' => 65,
-      '#maxlength' => 1280,
-      '#element_validate' => array('token_element_validate'),
-      '#after_build' => array('token_element_validate'),
-      '#token_types' => array($settings->token_type),
-      '#min_tokens' => 1,
-      '#parents' => array($variable),
-    );
-
-    // If the module supports a set of specialized patterns, set
-    // them up here
-    if (isset($settings->patternitems)) {
-      foreach ($settings->patternitems as $itemname => $itemlabel) {
-        $variable = 'pathauto_' . $module . '_' . $itemname . '_pattern';
-        $form[$module][$variable] = array(
-          '#type' => 'textfield',
-          '#title' => $itemlabel,
-          '#default_value' => variable_get($variable, ''),
-          '#size' => 65,
-          '#maxlength' => 1280,
-          '#element_validate' => array('token_element_validate'),
-          '#after_build' => array('token_element_validate'),
-          '#token_types' => array($settings->token_type),
-          '#min_tokens' => 1,
-          '#parents' => array($variable),
-        );
-      }
-    }
-
-    // Display the user documentation of placeholders supported by
-    // this module, as a description on the last pattern
-    $form[$module]['token_help'] = array(
-      '#title' => t('Replacement patterns'),
-      '#type' => 'fieldset',
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-    );
-    $form[$module]['token_help']['help'] = array(
-      '#theme' => 'token_tree',
-      '#token_types' => array($settings->token_type),
-    );
-  }
-*/
-  $form['path_to_civicrm'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Path to civicrm'),
-    '#default_value' => variable_get('path_to_civicrm', ''),
-    '#description' => t('The path to core civicrm module.'),
-    '#element_validate' => array('validate_path_to_civicrm')
-  );
-  return system_settings_form($form);
-}
-
-
-function validate_path_to_civicrm($element, $form_state) {
-   return drupal_valid_path($form_state['path_to_civicrm']['values']['und'][0]);
-}
-
-function civicrm_resources_settings_submit($form, &$form_state) {
-   
-}
-
-function civicrm_resources_settings_refresh_submit($form, &$form_state) {
-   // @Todo : unset all path variables, and re-register after bootstraping civicrm
-}
-
 function civicrm_resources_load($extention_name, $files = array()) {
+  //$name = 'Job Contract (CiviHR)';
+  $ext_slug = string_to_slug($extention_name);
 
-    //@TODO : Validate and throw a warning if same filename exsists in two subdirectories. 
+  if (cache_get($ext_slug)) {
+    $ext_path_cache = cache_get($ext_slug, 'cache_civicrm_resources');
+    $ext_path = $ext_path_cache->data;
+  }
+  else {
+    civicrm_initialize();
+    $machine_name = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Extension', $extention_name, 'full_name', 'name');
+    $ext_path = CRM_Extension_System::singleton()->getMapper()->keyToBasePath($machine_name);
+    cache_set($ext_slug, $ext_path, 'cache_civicrm_resources');
+  }
+   //civicrm_resources_add_resources($ext_path, array('gulpfile.js', 'hrjc.css', 'contact.js'));
+   civicrm_resources_add_resources($ext_path, $files); 
+}
 
+/**
+* Implements hook_flush_caches().
+*/
+function civicrm_resources_flush_caches() {
+  return array('cache_civicrm_resources');
 }
