@@ -654,5 +654,101 @@ function civihr_employee_portal_features_user_default_permissions() {
     'module' => 'civicrm',
   );
 
+  // Exported permission: 'view my details'.
+  $permissions['view my details'] = array(
+    'name' => 'view my details',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
+    ),
+    'module' => 'civihr_employee_portal',
+  );
+
+  // Exported permission: 'view my tasks block'.
+  $permissions['view my tasks block'] = array(
+    'name' => 'view my tasks block',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
+    ),
+    'module' => 'civihr_employee_portal',
+  );
+
+  // Exported permission: 'view appraisals'.
+  $permissions['view appraisals'] = array(
+    'name' => 'view appraisals',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
+    ),
+    'module' => 'civihr_employee_portal',
+  );
+
+  // Exported permission: 'view my leave block'.
+  $permissions['view my leave block'] = array(
+    'name' => 'view my leave block',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
+    ),
+    'module' => 'civihr_employee_portal',
+  );
+
+  // Exported permission: 'view my sickness report block'.
+  $permissions['view my sickness report block'] = array(
+    'name' => 'view my sickness report block',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
+    ),
+    'module' => 'civihr_employee_portal',
+  );
+
+  // Exported permission: 'view staff directory'.
+  $permissions['view staff directory'] = array(
+    'name' => 'view staff directory',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
+    ),
+    'module' => 'civihr_employee_portal',
+  );
+
+  // Exported permission: 'view hr resources'.
+  $permissions['view hr resources'] = array(
+    'name' => 'view hr resources',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
+    ),
+    'module' => 'civihr_employee_portal',
+  );
+
+  // Exported permission: 'view vacancies'.
+  $permissions['view vacancies'] = array(
+    'name' => 'view vacancies',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
+    ),
+    'module' => 'civihr_employee_portal',
+  );
+
   return $permissions;
 }
