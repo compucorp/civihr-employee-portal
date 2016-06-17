@@ -1,0 +1,165 @@
+<?php
+
+/**
+ * @file
+ * Module to load css and js resources from a directory
+ */
+
+/**
+ * Internal function to handle the logic of files to be filtered and included.
+ *
+ * @param string $extention_path
+ *   Machine path of civicrm extention.
+ * @param array $req_files
+ *   An array of file list to be included
+ * @return NULL
+ */
+function civicrm_resources_add_resources($extention_path, $req_files = array()) {
+
+   global $base_url;
+
+   $files = civicrm_resources_file_scan_directory($extention_path, '/\.(css|js)$/i');
+   
+   $js_list = array();
+   $css_list = array();
+    
+   foreach ($files as $key => $file) {
+   	    if(!empty($req_files)) {
+
+          if (in_array('*.js', $req_files)) {
+            $js_list[] = $file->uri;
+          } 
+          else {
+            if (in_array($file->filename, $req_files) && preg_match('/\.js$/', $file->filename)) {
+              $js_list[] = $file->uri;
+            }
+          }
+
+          if (in_array('*.css', $req_files)) {
+            $css_list[] = $file->uri;
+          } 
+          else {
+            if (in_array($file->filename, $req_files) && preg_match('/\.css$/', $file->filename)) {
+              $css_list[] = $file->uri;
+            }
+          }
+   	    } 
+   	    else {
+   	      if (preg_match('/\.css$/', $file->filename)) {
+            $css_list[] = $file->uri;
+    	    } 
+          elseif (preg_match('/\.js$/', $file->filename)) {
+    	      $js_list[] = $file->uri;
+          }
+   	    }
+    } 
+   
+   foreach ($css_list as $key => $css_file) {
+     drupal_add_css(str_replace(DRUPAL_ROOT, $base_url, $css_file));
+   } 
+   foreach ($js_list as $key => $js_file) {
+     drupal_add_js(str_replace(DRUPAL_ROOT, $base_url, $js_file));
+   } 
+}
+
+/**
+ * Finds all files that match a given mask in a given directory.
+ *
+ * Directories and files beginning with a period are excluded; this
+ * prevents hidden files and directories (such as SVN working directories)
+ * from being scanned.
+ *
+ * @param $dir
+ *   The base directory or URI to scan, without trailing slash.
+ * @param $mask
+ *   The preg_match() regular expression of the files to find.
+ * @param $options
+ *   An associative array of additional options, with the following elements:
+ *   - 'nomask': The preg_match() regular expression of the files to ignore.
+ *     Defaults to '/(\.\.?|CVS)$/'.
+ *   - 'callback': The callback function to call for each match. There is no
+ *     default callback.
+ *   - 'recurse': When TRUE, the directory scan will recurse the entire tree
+ *     starting at the provided directory. Defaults to TRUE.
+ *   - 'key': The key to be used for the returned associative array of files.
+ *     Possible values are 'uri', for the file's URI; 'filename', for the
+ *     basename of the file; and 'name' for the name of the file without the
+ *     extension. Defaults to 'uri'.
+ *   - 'min_depth': Minimum depth of directories to return files from. Defaults
+ *     to 0.
+ * @param $depth
+ *   Current depth of recursion. This parameter is only used internally and
+ *   should not be passed in.
+ *
+ * @return
+ *   An associative array (keyed on the chosen key) of objects with 'uri',
+ *   'filename', and 'name' members corresponding to the matching files.
+ */
+function civicrm_resources_file_scan_directory($dir, $mask, $options = array(), $depth = 0) {
+  // Merge in defaults.
+  $options += array(
+    'nomask' => '/(\.\.?|CVS)$/',
+    'callback' => 0,
+    'recurse' => TRUE,
+    'key' => 'uri',
+    'min_depth' => 0,
+  );
+
+  $options['key'] = in_array($options['key'], array('uri', 'filename', 'name')) ? $options['key'] : 'uri';
+  $files = array();
+  if (is_dir($dir) && $handle = opendir($dir)) {
+    while (FALSE !== ($filename = readdir($handle))) {
+      if (!preg_match($options['nomask'], $filename) && $filename[0] != '.') {
+        $uri = "$dir/$filename";
+        $uri = file_stream_wrapper_uri_normalize($uri);
+        if (is_dir($uri) && $options['recurse']) {
+          $files = array_merge(civicrm_resources_file_scan_directory($uri, $mask, $options, $depth + 1), $files);
+        }
+        elseif ($depth >= $options['min_depth'] && preg_match($mask, $filename)) {
+          $file = new stdClass();
+          $file->uri = $uri;
+          $file->filename = $filename;
+          $file->name = pathinfo($filename, PATHINFO_FILENAME);
+          $key = $options['key'];
+          $files[$file->$key] = $file;
+          if ($options['callback']) {
+            $options['callback']($uri);
+          }
+        }
+      }
+    }
+    closedir($handle);
+  }
+  return $files;
+}
+
+/**
+ * API function to be used across drupal site to load resources.
+ *
+ * @param string $extention_full_name
+ *   Machine name of civicrm extention.
+ * @param array $files
+ *   An array of file list to be included
+ * @return NULL
+ */
+function civicrm_resources_load($extention_full_name, $files = array()) {
+
+  if (cache_get($extention_full_name, 'cache_civicrm_resources')) {
+    $ext_path_cache = cache_get($extention_full_name, 'cache_civicrm_resources');
+    $ext_path = $ext_path_cache->data;
+  }
+  else {
+    civicrm_initialize();
+    $ext_path = CRM_Extension_System::singleton()->getMapper()->keyToBasePath($extention_full_name);
+    cache_set($extention_full_name, $ext_path, 'cache_civicrm_resources');
+  }
+   //civicrm_resources_add_resources($ext_path, array('gulpfile.js', 'hrjc.css', 'contact.js'));
+   civicrm_resources_add_resources($ext_path, $files); 
+}
+
+/**
+* Implements hook_flush_caches().
+*/
+function civicrm_resources_flush_caches() {
+  return array('cache_civicrm_resources');
+}
