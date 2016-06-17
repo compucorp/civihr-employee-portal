@@ -18,12 +18,34 @@ class ManagerCalendar {
         $months_data = array();
 
         $uid = $user->uid;
-        $result = db_query('SELECT aal.employee_id, aal.id, aal.activity_type_id, aal.absence_title, aal.duration, aal.absence_start_date_timestamp, aal.absence_end_date_timestamp, absence_status
-        FROM {absence_approval_list} aal WHERE absence_status != :cancelled', array('cancelled' => 3));
+
+        $managerData = get_civihr_uf_match_data($uid);
+        $managerId = $managerData['contact_id'];
+
+        $absencesQuery = '
+          SELECT
+            aal.employee_id,
+            aal.id,
+            aal.activity_type_id,
+            aal.absence_title,
+            aal.duration,
+            aal.absence_start_date_timestamp,
+            aal.absence_end_date_timestamp,
+            absence_status,
+            manager_id
+          FROM {absence_approval_list} aal
+          WHERE absence_status != :cancelled AND
+            absence_status != :rejected AND
+            YEAR(absence_end_date) = YEAR(CURDATE())';
+
+        $result = db_query($absencesQuery, array('cancelled' => 3, 'rejected' => 9));
 
         // Result is returned as a iterable object that returns a stdClass object on each iteration
         foreach ($result as $record) {
-
+            $managers = _getManagerContacts($record->employee_id);
+            if(!in_array($managerId, $managers)){
+              continue;
+            }
             $check_start_month = intval(date('n', $record->absence_start_date_timestamp + 3600)); // 1-12
             $check_end_month = intval(date('n', $record->absence_end_date_timestamp + 3600)); // 1-12
             $check_start_day = intval(date('d', $record->absence_start_date_timestamp + 3600));

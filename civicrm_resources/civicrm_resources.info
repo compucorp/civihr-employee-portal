@@ -1,0 +1,6 @@
+name = CiviCRM Resources
+description = Loading Civicrm js and css files in drupal.
+package = "CiviCRM"
+core = "7.x"
+dependencies[] = civicrm
+

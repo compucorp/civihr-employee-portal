@@ -1,0 +1,132 @@
+<?php
+
+/**
+ * @file
+ * Module to load css and js resources from a directory
+ */
+
+function string_to_slug($string) {
+  $string = str_replace(array('/', ' '), '-', $string);
+  $accents = '/&([A-Za-z]{1,2})(tilde|grave|acute|circ|cedil|uml|lig);/';
+  return urlencode(strtolower(preg_replace($accents, '$1', htmlentities(utf8_decode($string)))));
+}
+
+/**
+ * 
+ */
+function civicrm_resources_add_resources($extention_path, $req_files = array()) {
+
+   global $base_url;
+
+   $files = civicrm_resources_file_scan_directory($extention_path, '/\.(css|js)$/i');
+   
+   $js_list = array();
+   $css_list = array();
+    
+   foreach ($files as $key => $file) {
+   	    if(!empty($req_files)) {
+
+          if (in_array('*.js', $req_files)) {
+            $js_list[] = $file->uri;
+          } 
+          else {
+            if (in_array($file->filename, $req_files) && preg_match('/\.js$/', $file->filename)) {
+              $js_list[] = $file->uri;
+            }
+          }
+
+          if (in_array('*.css', $req_files)) {
+            $css_list[] = $file->uri;
+          } 
+          else {
+            if (in_array($file->filename, $req_files) && preg_match('/\.css$/', $file->filename)) {
+              $css_list[] = $file->uri;
+            }
+          }
+   	    } 
+   	    else {
+   	      if (preg_match('/\.css$/', $file->filename)) {
+            $css_list[] = $file->uri;
+    	    } 
+          elseif (preg_match('/\.js$/', $file->filename)) {
+    	      $js_list[] = $file->uri;
+          }
+   	    }
+    } 
+   
+   foreach ($css_list as $key => $css_file) {
+     drupal_add_css(str_replace(DRUPAL_ROOT, $base_url, $css_file));
+   } 
+   foreach ($js_list as $key => $js_file) {
+     drupal_add_js(str_replace(DRUPAL_ROOT, $base_url, $js_file));
+   } 
+}
+
+/**
+ *  Scans a directory for filename patterns
+ */
+function civicrm_resources_file_scan_directory($dir, $mask, $options = array(), $depth = 0) {
+  // Merge in defaults.
+  $options += array(
+    'nomask' => '/(\.\.?|CVS)$/',
+    'callback' => 0,
+    'recurse' => TRUE,
+    'key' => 'uri',
+    'min_depth' => 0,
+  );
+
+  $options['key'] = in_array($options['key'], array('uri', 'filename', 'name')) ? $options['key'] : 'uri';
+  $files = array();
+  if (is_dir($dir) && $handle = opendir($dir)) {
+    while (FALSE !== ($filename = readdir($handle))) {
+      if (!preg_match($options['nomask'], $filename) && $filename[0] != '.') {
+        $uri = "$dir/$filename";
+        $uri = file_stream_wrapper_uri_normalize($uri);
+        if (is_dir($uri) && $options['recurse']) {
+          $files = array_merge(civicrm_resources_file_scan_directory($uri, $mask, $options, $depth + 1), $files);
+        }
+        elseif ($depth >= $options['min_depth'] && preg_match($mask, $filename)) {
+          $file = new stdClass();
+          $file->uri = $uri;
+          $file->filename = $filename;
+          $file->name = pathinfo($filename, PATHINFO_FILENAME);
+          $key = $options['key'];
+          $files[$file->$key] = $file;
+          if ($options['callback']) {
+            $options['callback']($uri);
+          }
+        }
+      }
+    }
+    closedir($handle);
+  }
+  return $files;
+}
+
+/**
+ *
+ */
+function civicrm_resources_load($extention_name, $files = array()) {
+  //$name = 'Job Contract (CiviHR)';
+  $ext_slug = string_to_slug($extention_name);
+
+  if (cache_get($ext_slug)) {
+    $ext_path_cache = cache_get($ext_slug, 'cache_civicrm_resources');
+    $ext_path = $ext_path_cache->data;
+  }
+  else {
+    civicrm_initialize();
+    $machine_name = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Extension', $extention_name, 'full_name', 'name');
+    $ext_path = CRM_Extension_System::singleton()->getMapper()->keyToBasePath($machine_name);
+    cache_set($ext_slug, $ext_path, 'cache_civicrm_resources');
+  }
+   //civicrm_resources_add_resources($ext_path, array('gulpfile.js', 'hrjc.css', 'contact.js'));
+   civicrm_resources_add_resources($ext_path, $files); 
+}
+
+/**
+* Implements hook_flush_caches().
+*/
+function civicrm_resources_flush_caches() {
+  return array('cache_civicrm_resources');
+}
