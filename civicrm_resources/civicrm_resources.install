@@ -1,21 +1,10 @@
 <?php
 
 /**
- * @file
- * Install file for civicrm_resources module
+ * Implementation of hook_schema().
  */
-
-/**
- * Implementation of hook_install().
- */
-function civicrm_resources_install() {
-  // nothing to do
+function civicrm_resources_schema() {
+    $schema = array();
+    $schema['cache_civicrm_resources'] = drupal_get_schema_unprocessed('system', 'cache');
+    return $schema;
 }
-
-/**
- * Implementation of hook_uninstall().
- */
-function civicrm_resources_uninstall() {
-  // @TODO : Unset all variables set by drupal module
-}
-
