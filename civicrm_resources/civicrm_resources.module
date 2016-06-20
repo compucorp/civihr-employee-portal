@@ -24,7 +24,6 @@ function civicrm_resources_add_resources($extention_path, $req_files = array()) 
     
    foreach ($files as $key => $file) {
         if(!empty($req_files)) {
-
           if (in_array('*.js', $req_files)  && preg_match('/\.js$/', $file->filename)) {
             $js_list[] = $file->uri;
           } 
@@ -33,7 +32,6 @@ function civicrm_resources_add_resources($extention_path, $req_files = array()) 
               $js_list[] = $file->uri;
             }
           }
-
           if (in_array('*.css', $req_files) && preg_match('/\.css$/', $file->filename)) {
             $css_list[] = $file->uri;
           } 
@@ -52,12 +50,9 @@ function civicrm_resources_add_resources($extention_path, $req_files = array()) 
           }
         }
     } 
-    print_r($css_list);
    foreach ($css_list as $key => $css_file) {
      drupal_add_css(str_replace(DRUPAL_ROOT, $base_url, $css_file));
    } 
-
-   print_r($js_list); die();
    foreach ($js_list as $key => $js_file) {
      drupal_add_js(str_replace(DRUPAL_ROOT, $base_url, $js_file));
    } 
