@@ -1317,7 +1317,7 @@ function _get_civicrm_contact_id_by_drupal_uid($uid) {
 
 /**
  * Get node ID (nid) by its title and type. If no node is found, return null.
- * 
+ *
  * @param string $title
  * @param string $type
  * @return int|NULL
@@ -4787,7 +4787,7 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
 
 /**
  * Implement hook_node_view().
- * 
+ *
  * @param object $node
  * @param string $view_mode
  * @param string $langcode
@@ -4918,7 +4918,7 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
 /**
  * Get a recalculated State/Province form field for Emergency Contact 1.
- * 
+ *
  * @param array $form
  * @param array $form_state
  * @return array
@@ -4929,7 +4929,7 @@ function civihr_employee_portal_state_province_contact1_callback($form, $form_st
 
 /**
  * Get a recalculated State/Province form field for Emergency Contact 2.
- * 
+ *
  * @param array $form
  * @param array $form_state
  * @return array
@@ -4941,7 +4941,7 @@ function civihr_employee_portal_state_province_contact2_callback($form, $form_st
 /**
  * Get a form select field for given emergency contact containing
  * State/Province list of selected Country.
- * 
+ *
  * @param array $form
  * @param int $emergency_contact
  * @return array
@@ -4957,7 +4957,7 @@ function _get_emergency_contact_state_province_webform_field($form, $emergency_c
 
 /**
  * Return an array containing fieldset list of Emergency Contact webform.
- * 
+ *
  * @return array
  */
 function _get_emergency_contact_fieldset_list() {
@@ -4970,7 +4970,7 @@ function _get_emergency_contact_fieldset_list() {
 /**
  * Get an assotiative array containing IDs of State/Province as keys
  * and labels of State/Province as values.
- * 
+ *
  * @param int $country_id
  * @return array
  */
@@ -5473,6 +5473,20 @@ function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$obje
             _clear_json_cache();
         }
     }
+}
+
+/**
+ * Checks if the given absence is of the "Sick" type
+ *
+ * There is no other way currently to check if an absence type is of the
+ * "Sick" type other than checking its title, so we have to resort to a
+ * simple regex match on the title string, looking for the "sick" word
+ *
+ * @param  string $absenceName
+ * @return boolean
+ */
+function civihr_employee_portal_is_sick_absence($absenceName) {
+  return preg_match('/^sick/i', $absenceName);
 }
 
 /**
