@@ -4,15 +4,15 @@
  */
 class civihr_employee_portal_handler_area_totals extends views_handler_area {
   function render($empty = FALSE) {
-           
+
     // Get the absence types
     $absenceTypes = get_civihr_absence_types();
-    
+
     $results = array();
-    
+
     $header = array();
     $rows = array();
-    
+
     /**
      * Date filters
      */
@@ -23,36 +23,36 @@ class civihr_employee_portal_handler_area_totals extends views_handler_area {
         // Set default period
         $request_date = variable_get('default_date_period_id', '1');
     }
-    
+
     // Build the query
     $query = db_select('civicrm_hrabsence_entitlement', 'che')
         ->fields('che', array('contact_id', 'period_id'))
         ->orderBy('che.contact_id');
-    
+
     // Add the where query
     $query->where('(che.contact_id = :c_id)', array(':c_id' => $_SESSION['CiviCRM']['userID']));
     $query->where('(che.period_id = :period_id)', array(':period_id' => $request_date));
-    
+
     // Add the concat
     $query->addExpression("CONCAT_WS('||', GROUP_CONCAT(amount SEPARATOR '@@'), GROUP_CONCAT(type_id SEPARATOR '@@'))", "entitlement_type");
-    
+
     // Add the group by
     $query->groupBy('che.contact_id, che.period_id');
-     
+
     $result = $query->execute();
-    
+
     $result_output = array();
-    
+
     // Loop and prepare the array
     while($record = $result->fetchAssoc()) {
         $result_output['data'][] = $record;
     }
-    
+
     $header[] = t('Balance: ');
     $header[] = t('');
 
     if (isset($result_output['data'])) {
-        
+
         // Get the entitlement for the employee, add it to the basic / totals count
         $value_explode = explode("||", $result_output['data'][0]['entitlement_type']);
 
@@ -63,7 +63,7 @@ class civihr_employee_portal_handler_area_totals extends views_handler_area {
 
             $results[$absenceType['id']] = 0;
 
-            if (isset($absenceType['is_active']) && $absenceType['is_active'] == '1' && $absenceType['title'] != 'Sick') {
+            if (isset($absenceType['is_active']) && $absenceType['is_active'] == '1' && !civihr_employee_portal_is_sick_absence($absenceType['title'])) {
 
                 foreach ($absence_ids as $absence_array_key => $absence_id) {
 
@@ -99,12 +99,12 @@ class civihr_employee_portal_handler_area_totals extends views_handler_area {
                  * Populate the table
                  */
                 $header[] = $results[$absenceType['id']];
-                
+
             }
         }
     }
-    
+
     return theme('table', array('header' => $header));
-    
+
   }
 }

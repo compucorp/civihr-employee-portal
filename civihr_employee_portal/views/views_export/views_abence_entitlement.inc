@@ -96,7 +96,7 @@ foreach ($absenceTypes as $absenceType) {
     if (isset($absenceType['id']) && $absenceType['is_active'] == 1) {
 
         // Should have a settings somewhere that the Sick type is our special case, which we need to display in different block
-        if ($absenceType['name'] != 'Sick') {
+        if (!civihr_employee_portal_is_sick_absence($absenceType['name'])) {
             /* Field: entitlement_type: Absence entitlement value */
             $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['id'] = 'absence_entitlement_' . $absenceType['id'];
             $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['table'] = 'json';
