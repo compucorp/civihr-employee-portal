@@ -299,7 +299,8 @@
                 });
             })
             .controller('FiltersController', function() {
-                this.format = 'dd/MM/yyyy';
+                //this.format = 'dd/MM/yyyy';
+		this.format = 'yyyy-MM-dd';
                 this.filtersCollapsed = true;
             })
             .controller('SettingsController', function() {

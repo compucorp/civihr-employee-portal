@@ -141,3 +141,6 @@ span.appraisals-employee-legend {
 #reportTable form {
     display: none;
 }
+
+.datepicker-popup td,
+.datepicker-popup th { padding: 0; }
