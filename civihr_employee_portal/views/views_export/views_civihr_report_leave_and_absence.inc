@@ -12,7 +12,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 
 /* Display: Master */
 $handler = $view->new_display('default', 'Master', 'default');
-$handler->display->display_options['title'] = 'CiviHR Report - People';
+$handler->display->display_options['title'] = 'CiviHR Report - Leave and Absence';
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'none';
 $handler->display->display_options['cache']['type'] = 'none';
@@ -474,7 +474,7 @@ $handler->display->display_options['filters']['date_filter']['expose']['remember
   57573969 => 0,
 );
 $handler->display->display_options['filters']['date_filter']['form_type'] = 'date_popup';
-$handler->display->display_options['filters']['date_filter']['default_date'] = 'now -1 month';
+$handler->display->display_options['filters']['date_filter']['default_date'] = 'now -12 month';
 $handler->display->display_options['filters']['date_filter']['default_to_date'] = 'now +1 month';
 $handler->display->display_options['filters']['date_filter']['year_range'] = '-10:+10';
 $handler->display->display_options['filters']['date_filter']['date_fields'] = array(
@@ -875,7 +875,7 @@ $handler->display->display_options['style_plugin'] = 'views_data_export_csv';
 $handler->display->display_options['path'] = 'civihr_report_export_leave_and_absence';
 $translatables['civihr_report_leave_and_absence'] = array(
   t('Master'),
-  t('CiviHR Report - People'),
+  t('CiviHR Report - Leave and Absence'),
   t('more'),
   t('Apply'),
   t('Reset'),

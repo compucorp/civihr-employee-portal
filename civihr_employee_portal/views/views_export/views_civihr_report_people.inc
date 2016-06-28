@@ -338,6 +338,7 @@ $handler->display->display_options['arguments']['effective_date']['default_argum
 $handler->display->display_options['arguments']['effective_date']['default_argument_options']['code'] = '$date_filter = $_REQUEST[\'between_date_filter\'];
 if (!empty($date_filter[\'value\'])) {
     $expl = explode(\'/\', $date_filter[\'value\']);
+if (count($expl) === 1) { return $date_filter[\'value\']; }
     return $expl[2] . \'-\' . $expl[1] . \'-\' . $expl[0];
 }
 return date(\'Y-m-d\');';
@@ -356,6 +357,7 @@ $handler->display->display_options['arguments']['effective_end_date']['default_a
 $handler->display->display_options['arguments']['effective_end_date']['default_argument_options']['code'] = '$date_filter = $_REQUEST[\'between_date_filter\'];
 if (!empty($date_filter[\'value\'])) {
     $expl = explode(\'/\', $date_filter[\'value\']);
+if (count($expl) === 1) { return $date_filter[\'value\']; }
     return $expl[2] . \'-\' . $expl[1] . \'-\' . $expl[0];
 }
 return date(\'Y-m-d\');';
