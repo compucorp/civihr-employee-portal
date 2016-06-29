@@ -5150,7 +5150,17 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
             'effect' => 'fade',
             'progress' => array('type' => 'none')
         );
-
+        
+        // Autosubmit the form on page load as views autosubmit doesn't pass values of contextual filters to inserted view in Global : View Area
+        drupal_add_js(
+            'jQuery(document).ready(function () { jQuery("#edit-submit-absence-list").click() });',
+            array(
+                'type' => 'inline',
+                'scope' => 'footer',
+                'group' => JS_THEME,
+                'weight' => 5,
+            )
+        ); 
         // Autosubmit the form after date_period select change
         $form['absence_start_date_period_filter']['#attributes'] = array('onchange' => "jQuery('#edit-submit-absence-list').click()");
     }
