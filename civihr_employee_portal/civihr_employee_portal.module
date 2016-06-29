@@ -5208,33 +5208,33 @@ function _absence_start_date_period_change_submit(&$form, &$form_state) {
  * @param $vars
  */
 function civihr_employee_portal_preprocess_page(&$vars) {
-
     global $user;
     global $base_url;
 
-    $contact_data['display_name'] = t('Anonymus');
+    $display_name = t('Anonymus');
+    $edit_account_link = '';
+    $logout_link = '';
+    $image_url = $base_url . '/' . drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
 
-    // Set empty image URL
-    $vars['image_url'] = $base_url . '/' . drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
-
-    if (isset($_SESSION['CiviCRM'])) {
+    if (isset($_SESSION['CiviCRM']) && $user->uid) {
+        $edit_account_link = l('<i class="fa fa-edit"></i>' . t('Edit Account'), 'user/' . $user->uid . '/edit', array('html' => true));
+        $logout_link = l('<i class="fa fa-sign-out"></i>' . t('Log Out'), 'user/logout', array('html' => true));
 
         // Get the contact data
         $contact_data = get_civihr_contact_data($_SESSION['CiviCRM']['userID']);
-
-        if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) {
-
-            // Set the profile image URL
-            $vars['image_url'] = $contact_data['image_URL'];
-
+        if (!empty($contact_data['display_name'])) {
+            $display_name = $contact_data['display_name'];
         }
-
+        if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) {
+            $image_url = $contact_data['image_URL'];
+        }
     }
 
     // This values will be used in the template by Drupal
-    $vars['user_name'] = $contact_data['display_name'];
-    $vars['edit_account'] = l('<i class="fa fa-edit"></i>' . t('Edit Account'), 'user/' . $user->uid . '/edit', array('html' => true));
-    $vars['logout_link'] = l('<i class="fa fa-sign-out"></i>' . t('Log Out'), 'user/logout', array('html' => true));
+    $vars['user_name'] = $display_name;
+    $vars['image_url'] = $image_url;
+    $vars['edit_account'] = $edit_account_link;
+    $vars['logout_link'] = $logout_link;
 
 }
 
