@@ -348,7 +348,7 @@ array(
             'extra' => array(
               'width' => 7,
               'private' => 0,
-              'maxlength' => '',
+              'maxlength' => '12',
               'field_prefix' => '',
               'field_suffix' => '',
               'disabled' => 0,
