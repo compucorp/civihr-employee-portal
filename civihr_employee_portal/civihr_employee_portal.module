@@ -277,6 +277,38 @@ function civihr_employee_portal_permission() {
       'title' => t('Manage CiviHR Leave and Absences'),
       'description' => t('Availability for the Manager to access leave block and calendar and manage leave requests')
     ),
+    'view my details' => array(
+      'title' => t('View My Details'),
+      'description' => t('Availability for the user to view my details block and page')
+    ),
+    'view my tasks block' => array(
+      'title' => t('View My Tasks Block'),
+      'description' => t('Availability for the user to view my tasks block')
+    ),
+    'view appraisals' => array(
+      'title' => t('View Appraisals'),
+      'description' => t('Availability for the user to view appraisals block and page')
+    ),
+    'view my leave block' => array(
+      'title' => t('View My Leave Block'),
+      'description' => t('Availability for the user to view my leave block')
+    ),
+    'view my sickness report block' => array(
+      'title' => t('View My Sickness Report Block'),
+      'description' => t('Availability for the user to view my sickness report block')
+    ),
+    'view staff directory' => array(
+      'title' => t('View Staff Directory'),
+      'description' => t('Availability for the user to view staff directory block and page')
+    ),
+    'view hr resources' => array(
+      'title' => t('View HR Resources'),
+      'description' => t('Availability for the user to view hr resources block and page')
+    ),
+    'view vacancies' => array(
+      'title' => t('View Vacancies'),
+      'description' => t('Availability for the user to view vacancies block and page')
+    ),
   );
 }
 
@@ -988,7 +1020,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     /**
      * Appraisals menu items.
      */
@@ -998,7 +1030,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['hr-appraisals-manager/%ctools_js/upload/%'] = array(
         'title' => 'Appraisal Upload',
         'page callback' => 'civihr_employee_portal_appraisal_manager_upload',
@@ -1006,7 +1038,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['hr-appraisals-manager/%ctools_js/view/%'] = array(
         'title' => 'Appraisal View',
         'page callback' => 'civihr_employee_portal_appraisal_manager_view',
@@ -1014,7 +1046,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
     $items['hr-appraisals-employee/%ctools_js/upload/%'] = array(
         'title' => 'Appraisal Upload',
         'page callback' => 'civihr_employee_portal_appraisal_employee_upload',
@@ -1022,7 +1054,7 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-    
+
 
     /**
      * Not used currently
@@ -1284,6 +1316,27 @@ function _get_civicrm_contact_id_by_drupal_uid($uid) {
 }
 
 /**
+ * Get node ID (nid) by its title and type. If no node is found, return null.
+ *
+ * @param string $title
+ * @param string $type
+ * @return int|NULL
+ */
+function _node_get_id_by_title($title, $type) {
+    $query = new EntityFieldQuery();
+    $entities = $query->entityCondition('entity_type', 'node')
+        ->propertyCondition('type', $type)
+        ->propertyCondition('title', $title)
+        ->propertyCondition('status', 1)
+        ->range(0, 1)
+        ->execute();
+    if (!empty($entities['node'])) {
+        return array_shift(array_keys($entities['node']));
+    }
+    return null;
+}
+
+/**
  * Helper function to make a link.
  *
  * The links that are known to be a .chr_action element, have their text wrapper in a <span>
@@ -1472,8 +1525,13 @@ function civihr_employee_portal_my_details_callback($ajax) {
         ctools_add_js('ajax-responder');
 
         // Load the my details node
-        $node = node_load(variable_get('my_details_webform_nid', 2));
-        $contents = render(node_view($node, 'full', NULL));
+        $contents = t('An error occured while loading Webform.');
+        $my_details_webform_id = variable_get('my_details_webform_nid');
+        if ($my_details_webform_id) {
+            $node = node_load($my_details_webform_id);
+            $node_render = node_view($node, 'full', NULL);
+            $contents = render($node_render);
+        }
 
         $output = array();
         $output[] = ctools_modal_command_display(t('My Details'), render($contents));
@@ -1501,8 +1559,12 @@ function civihr_employee_portal_emergency_contacts_callback($ajax) {
         ctools_add_js('ajax-responder');
 
         // Load the emergency contacts node
-        $node = node_load(variable_get('emergency_contact_webform_nid', 3));
-        $contents = render(node_view($node, 'full', NULL));
+        $contents = t('An error occured while loading Webform.');
+        $emergency_contact_webform_id = variable_get('emergency_contact_webform_nid');
+        if ($emergency_contact_webform_id) {
+            $node = node_load($emergency_contact_webform_id);
+            $contents = render(node_view($node, 'full', NULL));
+        }
 
         $output = array();
         $output[] = ctools_modal_command_display('Emergency contacts', render($contents));
@@ -3044,7 +3106,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
     $form['section_close'] = array(
         '#markup' => '</div>'
     );
-    
+
     if (_task_can_be_edited($id)) {
         $form['save'] = array(
             '#type' => 'submit',
@@ -3403,7 +3465,7 @@ function civihr_employee_portal_appraisal_manager_form($form, &$form_state) {
         '#date_year_range' => '-10:+10',
         '#default_value' => isset($appraisal['meeting_date']) ? strip_tags($appraisal['meeting_date']) : '',
     );
-    
+
     $form['checkboxes'] = array(
         '#type' => 'checkboxes',
         '#prefix' => '<div class="row"><div class="col-md-12">',
@@ -3427,7 +3489,7 @@ function civihr_employee_portal_appraisal_manager_form($form, &$form_state) {
         '#cols' => 100,
         '#default_value' => isset($appraisal['notes']) ? strip_tags($appraisal['notes']) : '',
     );
-    
+
     $form['grade'] = array(
         '#type' => 'textfield',
         '#title' => t('Grade'),
@@ -3479,7 +3541,7 @@ function civihr_employee_portal_appraisal_manager_form_submit($form, &$form_stat
     $meetingApproved = (int)strip_tags($form_state['values']['checkboxes'][2]) ? 1 : 0;
     $notes = strip_tags($form_state['values']['notes']);
     $grade = (int)strip_tags($form_state['values']['grade']);
-    
+
     $params = array(
         'sequential' => 1,
         'id' => $id,
@@ -3491,7 +3553,7 @@ function civihr_employee_portal_appraisal_manager_form_submit($form, &$form_stat
     //TODO: if (has_appraisal_permissions to grade) {
     $params['grade'] = $grade;
     //}
-    
+
     // setting appraisal status to Awaiting Grade:
     $params['status_id'] = 3;
 
@@ -3518,7 +3580,7 @@ function civihr_employee_portal_appraisal_manager_form_submit($form, &$form_stat
 }
 
 function civihr_employee_portal_appraisal_manager_view($ajax, $id) {
-    
+
     $appraisal = civicrm_api3('Appraisal', 'getsingle', array(
         'sequential' => 1,
         'id' => (int)$id,
@@ -3532,7 +3594,7 @@ function civihr_employee_portal_appraisal_manager_view($ajax, $id) {
     $manager = get_civihr_contact_data($appraisal['manager_id']);
     $title = $contact['display_name'] . ' Appraisal';
     $documents = civihr_employee_portal_get_appraisal_documents($appraisal['id']);
-    
+
     $output = theme_render_template(
         drupal_get_path('module', 'civihr_employee_portal') .
         '/templates/civihr-employee-portal-appraisal-manager-view-modal.tpl.php',
@@ -3546,7 +3608,7 @@ function civihr_employee_portal_appraisal_manager_view($ajax, $id) {
             'documents' => $documents,
         )
     );
-    
+
     if ($ajax) {
         ctools_include('ajax');
         ctools_include('modal');
@@ -3716,12 +3778,12 @@ function civihr_employee_portal_appraisal_employee_form_submit($form, &$form_sta
     }
 
     $id = (int)strip_tags($form_state['values']['id']);
-    
+
     $params = array(
         'sequential' => 1,
         'id' => $id,
     );
-    
+
     // setting appraisal status to Awaiting Manager Appraisal:
     $params['status_id'] = 2;
 
@@ -3748,7 +3810,7 @@ function civihr_employee_portal_appraisal_employee_form_submit($form, &$form_sta
 }
 
 function civihr_employee_portal_get_appraisal_documents($appraisalId) {
-    
+
     $documents = array();
     $selfAppraisalFiles = CRM_Appraisals_Page_Files::fileList(array(
         'entityTable' => 'civicrm_appraisal-self',
@@ -3766,7 +3828,7 @@ function civihr_employee_portal_get_appraisal_documents($appraisalId) {
         $file['appraisalFileTypeLabel'] = 'Manager Appraisal';
         $documents['managerAppraisal'] = $file;
     }
-    
+
     return $documents;
 }
 
@@ -4724,6 +4786,28 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
     )));
 }
 
+/**
+ * Implement hook_node_view().
+ *
+ * @param object $node
+ * @param string $view_mode
+ * @param string $langcode
+ */
+function civihr_employee_portal_node_view($node, $view_mode, $langcode) {
+    // Set up default State/Province values for Emergency Contact webform.
+    if ($node->nid === variable_get('emergency_contact_webform_nid')) {
+        $fieldset = _get_emergency_contact_fieldset_list();
+        for ($contact = 1; $contact < 3; $contact++) {
+            $country_id = null;
+            if (isset($node->content['webform']['#form']['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100008']['#default_value'])) {
+                $country_id = $node->content['webform']['#form']['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100008']['#default_value'];
+            }
+            $state_province_options = _get_state_province_list_by_country_id($country_id);
+            $node->content['webform']['#form']['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100009']['#options'] = $state_province_options;
+        }
+    }
+}
+
 // Note: Under "Redirection location" NO redirect option should be select to get the confirmation message with ajax.
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
@@ -4801,7 +4885,7 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
         // Check whether the form id have nid at the end like _nid
         preg_match('/[\d]+$/', $form_id, $matches);
-        $nid_match = $matches[0];
+        $nid_match = !empty($matches[0]) ? $matches[0] : null;
 
         if(strpos($form_id, 'webform_client_form_') !== false && !empty($nid_match)) {
 
@@ -4815,9 +4899,99 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
                 '#value' => t('Submit'),
             );
         }
-
     }
- }
+
+    // Set up Emergency Contact webform ajax fields and callbacks.
+    if (!empty($form['#node']) && $form['#node']->nid === variable_get('emergency_contact_webform_nid')) {
+        $fieldset = _get_emergency_contact_fieldset_list();
+        for ($contact = 1; $contact < 3; $contact++) {
+            $form['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100008']['#ajax'] = array(
+                'event' => 'change',
+                'wrapper' => 'emergency-contact' . $contact . '-state-province',
+                'callback' => 'civihr_employee_portal_state_province_contact' . $contact . '_callback',
+                'method' => 'replace',
+            );
+            $form['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100009']['#prefix'] = '<div id="emergency-contact' . $contact . '-state-province">';
+            $form['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100009']['#suffix'] = '</div>';
+        }
+    }
+}
+
+/**
+ * Get a recalculated State/Province form field for Emergency Contact 1.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @return array
+ */
+function civihr_employee_portal_state_province_contact1_callback($form, $form_state) {
+    return _get_emergency_contact_state_province_webform_field($form, 1);
+}
+
+/**
+ * Get a recalculated State/Province form field for Emergency Contact 2.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @return array
+ */
+function civihr_employee_portal_state_province_contact2_callback($form, $form_state) {
+    return _get_emergency_contact_state_province_webform_field($form, 2);
+}
+
+/**
+ * Get a form select field for given emergency contact containing
+ * State/Province list of selected Country.
+ *
+ * @param array $form
+ * @param int $emergency_contact
+ * @return array
+ */
+function _get_emergency_contact_state_province_webform_field($form, $emergency_contact) {
+    $fieldset = _get_emergency_contact_fieldset_list();
+    $country_id = $form['submitted'][$fieldset[$emergency_contact]]['civicrm_1_contact_' . $emergency_contact . '_cg99999_custom_100008']['#value'];
+    $form['submitted'][$fieldset[$emergency_contact]]['civicrm_1_contact_' . $emergency_contact . '_cg99999_custom_100009']['#options'] = _get_state_province_list_by_country_id($country_id);
+
+    $bootstrap_form = civihr_default_theme_form_apply_bootstrap($form['submitted']);
+    return $bootstrap_form[$fieldset[$emergency_contact]]['civicrm_1_contact_' . $emergency_contact . '_cg99999_custom_100009'];
+}
+
+/**
+ * Return an array containing fieldset list of Emergency Contact webform.
+ *
+ * @return array
+ */
+function _get_emergency_contact_fieldset_list() {
+    return array(
+        1 => 'civicrm_1_contact_1_fieldset_fieldset',
+        2 => 'secondary_emergency_contact',
+    );
+}
+
+/**
+ * Get an assotiative array containing IDs of State/Province as keys
+ * and labels of State/Province as values.
+ *
+ * @param int $country_id
+ * @return array
+ */
+function _get_state_province_list_by_country_id($country_id) {
+    if (!$country_id) {
+        return array();
+    }
+    civicrm_initialize();
+    $civi_settings = parse_url(CIVICRM_DSN);
+    $civi_db_name = trim($civi_settings['path'], '/');
+    $state_province_list = array();
+    $result = db_select($civi_db_name . '.civicrm_state_province', 'sp')
+        ->fields('sp', array('id', 'name'))
+        ->condition('country_id', $country_id, '=')
+        ->execute();
+    while ($row = $result->fetchAssoc()) {
+        $state_province_list[$row['id']] = $row['name'];
+    }
+    return $state_province_list;
+}
 
 function civihr_employee_portal_preprocess_user_login(&$vars) {
 
@@ -4978,6 +5152,16 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
             'progress' => array('type' => 'none')
         );
 
+        // Autosubmit the form on page load as views autosubmit doesn't pass values of contextual filters to inserted view in Global : View Area
+        drupal_add_js(
+            'jQuery(document).ready(function () { jQuery("#edit-submit-absence-list").click() });',
+            array(
+                'type' => 'inline',
+                'scope' => 'footer',
+                'group' => JS_THEME,
+                'weight' => 5,
+            )
+        );
         // Autosubmit the form after date_period select change
         $form['absence_start_date_period_filter']['#attributes'] = array('onchange' => "jQuery('#edit-submit-absence-list').click()");
     }
@@ -5035,33 +5219,33 @@ function _absence_start_date_period_change_submit(&$form, &$form_state) {
  * @param $vars
  */
 function civihr_employee_portal_preprocess_page(&$vars) {
-
     global $user;
     global $base_url;
 
-    $contact_data['display_name'] = t('Anonymus');
+    $display_name = t('Anonymus');
+    $edit_account_link = '';
+    $logout_link = '';
+    $image_url = $base_url . '/' . drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
 
-    // Set empty image URL
-    $vars['image_url'] = $base_url . '/' . drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
-
-    if (isset($_SESSION['CiviCRM'])) {
+    if (isset($_SESSION['CiviCRM']) && $user->uid) {
+        $edit_account_link = l('<i class="fa fa-edit"></i>' . t('Edit Account'), 'user/' . $user->uid . '/edit', array('html' => true));
+        $logout_link = l('<i class="fa fa-sign-out"></i>' . t('Log Out'), 'user/logout', array('html' => true));
 
         // Get the contact data
         $contact_data = get_civihr_contact_data($_SESSION['CiviCRM']['userID']);
-
-        if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) {
-
-            // Set the profile image URL
-            $vars['image_url'] = $contact_data['image_URL'];
-
+        if (!empty($contact_data['display_name'])) {
+            $display_name = $contact_data['display_name'];
         }
-
+        if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) {
+            $image_url = $contact_data['image_URL'];
+        }
     }
 
     // This values will be used in the template by Drupal
-    $vars['user_name'] = $contact_data['display_name'];
-    $vars['edit_account'] = l('<i class="fa fa-edit"></i>' . t('Edit Account'), 'user/' . $user->uid . '/edit', array('html' => true));
-    $vars['logout_link'] = l('<i class="fa fa-sign-out"></i>' . t('Log Out'), 'user/logout', array('html' => true));
+    $vars['user_name'] = $display_name;
+    $vars['image_url'] = $image_url;
+    $vars['edit_account'] = $edit_account_link;
+    $vars['logout_link'] = $logout_link;
 
 }
 
@@ -5300,6 +5484,20 @@ function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$obje
             _clear_json_cache();
         }
     }
+}
+
+/**
+ * Checks if the given absence is of the "Sick" type
+ *
+ * There is no other way currently to check if an absence type is of the
+ * "Sick" type other than checking its title, so we have to resort to a
+ * simple regex match on the title string, looking for the "sick" word
+ *
+ * @param  string $absenceName
+ * @return boolean
+ */
+function civihr_employee_portal_is_sick_absence($absenceName) {
+  return preg_match('/^sick/i', $absenceName);
 }
 
 /**

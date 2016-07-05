@@ -20,9 +20,10 @@ class civihr_employee_portal_handler_task_contacts extends views_json_query_hand
 
       // Get the contact data based on the contact ID
       $contact_data = get_civihr_contact_data($id);
+      $fieldValue = !empty($contact_data['id']) ? $contact_data['id'] : '';
 
       // Pass the display name to the render_field
-      return $this->render_field($contact_data['id']);
+      return $this->render_field($fieldValue);
 
   }
 
