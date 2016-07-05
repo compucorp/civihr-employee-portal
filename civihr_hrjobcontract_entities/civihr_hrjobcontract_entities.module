@@ -13,7 +13,7 @@ function civihr_hrjobcontract_entities_init() {
                     SELECT
                     c.contact_id,
                     r.jobcontract_id,
-                    t.id,
+                    r.jobcontract_id AS id,
                     t.position,
                     t.title,
                     t.funding_notes,
@@ -351,6 +351,7 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'not null' => FALSE,
         'description' => 'Is primary?',
     );
+    $schema['hrjc_details']['primary key'] = array('jobcontract_id');
     
     
     // Health:
@@ -472,6 +473,7 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'not null' => FALSE,
         'description' => 'FTE denom.',
     );
+    $schema['hrjc_hour']['primary key'] = array('jobcontract_id');
     
     
     // Leave:
@@ -632,6 +634,7 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'not null' => FALSE,
         'description' => 'EE evidence note.',
     );
+    $schema['hrjc_pension']['primary key'] = array('jobcontract_id');
     
     
     // Role:
@@ -888,12 +891,19 @@ function civihr_hrjobcontract_entities_entity_info() {
  */
 function civihr_hrjobcontract_entities_entity_property_info_alter(&$info) {
     $info['hrjobcontract_details']['properties']['contact_id']['type'] = 'civicrm_contact';
+    $info['hrjobcontract_details']['properties']['jobcontract_id']['type'] = 'hrjobcontract_details';
     $info['hrjobcontract_health']['properties']['contact_id']['type'] = 'civicrm_contact';
+    $info['hrjobcontract_health']['properties']['jobcontract_id']['type'] = 'hrjobcontract_details';
     $info['hrjobcontract_hour']['properties']['contact_id']['type'] = 'civicrm_contact';
+    $info['hrjobcontract_hour']['properties']['jobcontract_id']['type'] = 'hrjobcontract_details';
     $info['hrjobcontract_leave']['properties']['contact_id']['type'] = 'civicrm_contact';
+    $info['hrjobcontract_leave']['properties']['jobcontract_id']['type'] = 'hrjobcontract_details';
     $info['hrjobcontract_pay']['properties']['contact_id']['type'] = 'civicrm_contact';
+    $info['hrjobcontract_pay']['properties']['jobcontract_id']['type'] = 'hrjobcontract_details';
     $info['hrjobcontract_pension']['properties']['contact_id']['type'] = 'civicrm_contact';
+    $info['hrjobcontract_pension']['properties']['jobcontract_id']['type'] = 'hrjobcontract_details';
     $info['hrjobcontract_role']['properties']['contact_id']['type'] = 'civicrm_contact';
+    $info['hrjobcontract_role']['properties']['jobcontract_id']['type'] = 'hrjobcontract_details';
 
     // Add relationship to CiviCRM contact for the Absence Entity
     $info['civihr_absences']['properties']['contact_id']['type'] = 'civicrm_contact';
