@@ -53,7 +53,7 @@
     /**
      * Return an object containing set of Pivot Table aggregators extended with
      * our custom ones.
-     * 
+     *
      * @returns {jQuery.pivotUtilities.aggregators|_$.pivotUtilities.aggregators|aggregators}
      */
     HRReport.prototype.getAggregators = function() {
@@ -291,7 +291,7 @@
                 'ui.bootstrap',
                 'common.angularDate'
             ])
-            .directive('datepickerPopupWrap', function sectionDirective() {
+            .directive('uibDatepickerPopupWrap', function sectionDirective() {
                 return({
                     link: function(scope, element, attributes) {
                         return $(element[0]).wrap('<span id="bootstrap-theme" />');
