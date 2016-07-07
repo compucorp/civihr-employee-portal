@@ -300,6 +300,7 @@
       })
       .controller('FiltersController', function() {
         this.format = 'yyyy-MM-dd';
+        this.placeholderFormat = 'yyyy-mm-dd';
         this.filtersCollapsed = true;
       })
       .controller('SettingsController', function() {

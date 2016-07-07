@@ -5557,7 +5557,7 @@ function setInputDatepickerForm($title) {
       '#date_label_position' => 'within',
       '#attributes' => array(
           'ng-init' => "$idxKey = false",
-          'placeholder' => '{{filters.format}}',
+          'placeholder' => '{{filters.placeholderFormat}}',
           'uib-datepicker-popup' => '{{filters.format}}',
           'close-text' => 'Close',
           'date-input' => '',
