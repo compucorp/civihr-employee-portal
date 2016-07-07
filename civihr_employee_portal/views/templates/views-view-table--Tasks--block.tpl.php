@@ -42,7 +42,6 @@ $taskFilters = array(
     4 => 'Later',
 );
 $taskFiltersCount = array_combine(array_keys($taskFilters), array_fill(0, count($taskFilters), 0));
-$contactsIds = array();
 $contacts = array();
 $taskIds = array();
 
@@ -57,68 +56,13 @@ foreach ($rows as $row):
     if (!$rowType):
         continue;
     endif;
-    $contactsIds[strip_tags($row['task_contacts'])] = 1;
     $taskFiltersCount[_get_task_filter_by_date($row['activity_date_time'])]++;
     $taskFiltersCount[0]++;
     $taskIds[] = $row['id'];
 endforeach;
 
-$contactsResult = civicrm_api3('Contact', 'get', array(
-  'id' => array('IN' => array_keys($contactsIds)),
-  'return' => "sort_name",
-));
-
 // Create an associative array, mapping each task id to its target
-$taskTargets = array_reduce(civicrm_api3('Task', 'get', array(
-    'sequential' => 1,
-    'id' => array('IN' => $taskIds),
-    'return' => "target_contact_id",
-  ))['values'], function ($result, $item) use ($contactsResult, $user) {
-    if(_user_has_role(array('civihr_manager'))) {
-      $currentContactId = get_civihr_uf_match_data($user->uid)['contact_id'];
-      $contactIdsRelatedToCurrentManager = array_map(function($item) {
-        return $item['contact_id_a'];
-      }, civicrm_api3('Relationship', 'get', array(
-        'sequential' => 1,
-        'relationship_type_id' => 16, // "Line Manager is"
-        'contact_id_b' => $currentContactId,
-      ))['values']);
-
-      // Consider the manager's id as well
-      $contactIdsRelatedToCurrentManager[] = $currentContactId;
-
-      $item['target_contact_id'] = array_intersect($item['target_contact_id'], $contactIdsRelatedToCurrentManager);
-    }
-    $targetNames = array_map(function($targetId) use ($contactsResult) {
-      return $contactsResult['values'][$targetId]['sort_name'];
-    }, $item['target_contact_id']);
-    $result[$item['id']] = implode('; ', $targetNames);
-    return $result;
-  }, array());
-
-function _get_task_filter_by_date($date) {
-    $today = date('Y-m-d');
-    $tomorrow = new DateTime('tomorrow');
-    $nbDay = date('N', strtotime($today));
-    $sunday = new DateTime($today);
-    $sunday->modify('+' . (7 - $nbDay) . ' days');
-    $weekEnd = $sunday->format('Y-m-d');
-    $taskDate = date('Y-m-d', strtotime(strip_tags($date)));
-
-    if ($taskDate < $today) {
-        return PAST_DAY;
-    }
-    if ($taskDate == $today) {
-        return TODAY;
-    }
-    if ($taskDate > $weekEnd) {
-        return DAY_AFTER_WEEKEND;
-    }
-    if ($taskDate == $tomorrow->format('Y-m-d')){
-        return TOMORROW;
-    }
-    return ANY_OTHER_DAY;
-}
+$taskTargets = getTaskTargets($taskIds, $user);
 
 function isFieldName($field){
    return $field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2';
@@ -376,14 +320,13 @@ function isFieldName($field){
         function buildTaskContactFilter() {
             $tableDocStaffRows.addClass('selected-by-contact');
             $('#task-filter-contact').on("keyup", function() {
-                var value = $(this).val();
+                var value = $(this).val().toLowerCase();
 
                 $tableDocStaffRows.removeClass('selected-by-contact');
                 $("#tasks-dashboard-table-staff > tbody > tr.task-row").each(function(index) {
                     var $row = $(this);
                     var text = $row.data('rowContacts');
-                    // Case insensitive search
-                    var matchedIndex = text.toLowerCase().indexOf(value.toLowerCase());
+                    var matchedIndex = text.indexOf(value);
 
                     if (value.length === 0 || matchedIndex === 0) {
                       $row.addClass('selected-by-contact');
