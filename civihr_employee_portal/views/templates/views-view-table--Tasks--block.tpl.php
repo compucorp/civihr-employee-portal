@@ -73,7 +73,22 @@ $taskTargets = array_reduce(civicrm_api3('Task', 'get', array(
     'sequential' => 1,
     'id' => array('IN' => $taskIds),
     'return' => "target_contact_id",
-  ))['values'], function ($result, $item) use ($contactsResult) {
+  ))['values'], function ($result, $item) use ($contactsResult, $user) {
+    if(_user_has_role(array('civihr_manager'))) {
+      $currentContactId = get_civihr_uf_match_data($user->uid)['contact_id'];
+      $contactIdsRelatedToCurrentManager = array_map(function($item) {
+        return $item['contact_id_a'];
+      }, civicrm_api3('Relationship', 'get', array(
+        'sequential' => 1,
+        'relationship_type_id' => 16, // "Line Manager is"
+        'contact_id_b' => $currentContactId,
+      ))['values']);
+
+      // Consider the manager's id as well
+      $contactIdsRelatedToCurrentManager[] = $currentContactId;
+
+      $item['target_contact_id'] = array_intersect($item['target_contact_id'], $contactIdsRelatedToCurrentManager);
+    }
     $targetNames = array_map(function($targetId) use ($contactsResult) {
       return $contactsResult['values'][$targetId]['sort_name'];
     }, $item['target_contact_id']);
