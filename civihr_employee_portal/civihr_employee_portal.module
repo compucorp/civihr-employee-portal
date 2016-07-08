@@ -5553,7 +5553,7 @@ function setInputDatepickerForm($title) {
       '#title' => $title,
       '#type' => 'textfield',
       '#size' => '10',
-      '#description' => getCalendarButtonMarkup(),
+      '#description' => getCalendarButtonMarkup($idxKey),
       '#date_label_position' => 'within',
       '#attributes' => array(
           'ng-init' => "$idxKey = false",
@@ -5571,12 +5571,13 @@ function setInputDatepickerForm($title) {
 /**
  * Return the calendar button HTML markup
  *
+ * @param $idKey id generated on setInputDatepickerForm to set the ng-click
  */
-function getCalendarButtonMarkup() {
-  return '
-    <button type="button" class="btn btn-default">
-      <i class="fa fa-calendar"></i>
-    </button>';
+function getCalendarButtonMarkup($idxKey) {
+  return "
+    <button type=\"button\" class=\"btn btn-default\" ng-click=\"filters.$idxKey = !filters.$idxKey\">
+      <i class=\"fa fa-calendar\"></i>
+    </button>";
 }
 
 function _absence_start_date_period_change_submit(&$form, &$form_state) {
