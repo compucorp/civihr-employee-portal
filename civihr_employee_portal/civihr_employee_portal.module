@@ -5105,8 +5105,8 @@ function get_contact_age_group_label_by_age($age) {
     $label = '';
     $query = "SELECT label FROM reports_settings_age_group
             WHERE (age_from <= :age AND age_to >= :age)
-            OR (age_from <= :age AND age_to IS NULL)
-            OR (age_from IS NULL and age_to >= NULL)
+            OR (age_from <= :age AND age_to = 0)
+            OR (age_from = 0 and age_to >= NULL)
             LIMIT 1";
     $params = array(':age' => $age);
     $result = db_query($query, $params);
