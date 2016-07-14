@@ -19,6 +19,7 @@
    */
   HRReport.prototype.init = function (options) {
     $.extend(this, options);
+    this.processData(this.data);
   };
 
   /**
@@ -35,7 +36,7 @@
       ),
       vals: ["Total"],
       rows: ["Employee gender"],
-      cols: ["Contract location"],
+      cols: ["Contract Normal Place of Work"],
       aggregatorName: "Count",
       unusedAttrsVertical: false,
       aggregators: that.getAggregators(),
@@ -85,6 +86,24 @@
       ordered[key] = aggregators[key];
     });
     return ordered;
+  }
+
+  /**
+   * Do additional required operations on data returned from backend.
+   * 
+   * @param array data
+   * @returns array
+   */
+  HRReport.prototype.processData = function(data) {
+    // Set 'null' for all empty values.
+    for (var i in data) {
+      for (var j in data[i]) {
+        if (data[i][j] === "") {
+          data[i][j] = "null";
+        }
+      }
+    }
+    return data;
   }
 
   /**
@@ -182,6 +201,7 @@
       },
       success: function (data) {
         // Refreshing Pivot Table:
+        data = that.processData(data);
         that.pivotTableContainer.pivotUI(data, {
           rendererName: "Table",
           renderers: CRM.$.extend(
