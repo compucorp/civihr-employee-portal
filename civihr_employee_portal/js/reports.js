@@ -80,6 +80,29 @@
         };
       };
     };
+    aggregators["Sum by Contracts"] = function(attributeArray) {
+      var attribute = attributeArray[0];
+      return function(data, rowKey, colKey) {
+        return {
+          sum: 0,
+          contractIDs: [],
+          push: function(record) {
+            if (!isNaN(parseFloat(record[attribute]))) {
+              if (record['Contract ID'] in this.contractIDs) {
+                return this.sum;
+              }
+              this.contractIDs[record['Contract ID']] = 1;
+              return this.sum += parseFloat(record[attribute]);
+            }
+          },
+          value: function() {
+            return this.sum;
+          },
+          format: function(x) { return x.toFixed(2); },
+          numInputs: attribute != null ? 0 : 1
+        };
+      };
+    };
 
     // Sort aggregators by keys.
     Object.keys(aggregators).sort().forEach(function(key) {
