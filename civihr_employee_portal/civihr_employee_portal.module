@@ -1369,9 +1369,7 @@ function civihr_employee_portal_menu() {
     $items['reports'] = array(
         'title' => 'Reports',
         'page callback' => 'civihr_employee_portal_hrreport_landing_page',
-        'access callback' => TRUE,
-        'access callback' => '_user_has_role',
-        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin', 'administrator')),
+        'access arguments' => array('access hrreports'),
         'type' => MENU_NORMAL_ITEM,
         'menu_name' => 'main-menu',
         'weight' => 5,
@@ -1380,43 +1378,41 @@ function civihr_employee_portal_menu() {
         'title' => 'CiviHR Custom Report',
         'page callback' => 'civihr_employee_portal_hrreport_custom',
         'page arguments' => array(1),
-        'access callback' => TRUE,
+        'access arguments' => array('access hrreports'),
         'type' => MENU_CALLBACK,
     );
     $items['reports/%/table'] = array(
         'title' => 'CiviHR Custom Report',
         'page callback' => 'civihr_employee_portal_hrreport_custom_printtable',
         'page arguments' => array(1),
-        'access callback' => TRUE,
+        'access arguments' => array('access hrreports'),
         'type' => MENU_CALLBACK,
     );
     $items['reports/settings/age_group'] = array(
         'title' => 'Reports settings - Age group',
         'page callback' => 'civihr_employee_portal_hrreport_settings_age_group',
-        'access callback' => TRUE,
-        'access callback' => '_user_has_role',
-        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin', 'administrator')),
+        'access arguments' => array('manage hrreports settings'),
         'type' => MENU_CALLBACK,
     );
     $items['reports/settings/age_group/%ctools_js/create'] = array(
         'title' => 'Create Age Group',
         'page callback' => 'civihr_employee_portal_hrreport_settings_age_group_create',
         'page arguments' => array(3),
-        'access callback' => TRUE,
+        'access arguments' => array('manage hrreports settings'),
         'type' => MENU_CALLBACK,
     );
     $items['reports/settings/age_group/%ctools_js/edit/%'] = array(
         'title' => 'Edit Age Group',
         'page callback' => 'civihr_employee_portal_hrreport_settings_age_group_create',
         'page arguments' => array(3, 5),
-        'access callback' => TRUE,
+        'access arguments' => array('manage hrreports settings'),
         'type' => MENU_CALLBACK,
     );
     $items['reports/settings/age_group/%ctools_js/delete/%'] = array(
         'title' => 'Delete Age Group',
         'page callback' => 'civihr_employee_portal_hrreport_settings_age_group_delete',
         'page arguments' => array(3, 5),
-        'access callback' => TRUE,
+        'access arguments' => array('manage hrreports settings'),
         'type' => MENU_CALLBACK,
     );
 
