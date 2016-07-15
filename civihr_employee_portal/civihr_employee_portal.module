@@ -5425,6 +5425,7 @@ function civihr_employee_portal_hrreport_custom($reportName) {
     $table = civihr_employee_portal_hrreport_gettable($reportName);
     $data = @file_get_contents($base_url . '/civihr_report_json_' . $reportName);
     $view = views_get_view('civihr_report_' . $reportName);
+    $exportPaths = _civihr_employee_portal_get_view_csv_export_paths($view);
     $view->set_display('default');
     $view->init_handlers();
     $form_state = array(
@@ -5444,6 +5445,7 @@ function civihr_employee_portal_hrreport_custom($reportName) {
             'data' => $data,
             'tableUrl' => !empty($table) ? '/reports/' . $reportName . '/table' : null,
             'jsonUrl' => !empty($data) ? '/civihr_report_json_' . $reportName : null,
+            'exportUrl' => '/' . array_shift($exportPaths),
             'filters' => $filters,
         )
     );
@@ -5537,6 +5539,24 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
     }
 
     $form['submit']['#value'] = 'Filter';
+}
+
+/**
+ * Return an array containing a set of paths to any CSV export display of given View.
+ * 
+ * @param object $view
+ * @return array
+ */
+function _civihr_employee_portal_get_view_csv_export_paths($view) {
+    $result = array();
+    foreach ($view->display as $display) {
+        if (!empty($display->display_options['style_plugin']) &&
+            $display->display_options['style_plugin'] === 'views_data_export_csv' &&
+            !empty($display->display_options['path'])) {
+            $result[] = $display->display_options['path'];
+        }
+    }
+    return $result;
 }
 
 /**
