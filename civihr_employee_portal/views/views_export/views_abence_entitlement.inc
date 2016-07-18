@@ -101,7 +101,7 @@ foreach ($absenceTypes as $absenceType) {
             $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['id'] = 'absence_entitlement_' . $absenceType['id'];
             $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['table'] = 'json';
             $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['field'] = 'absence_entitlement';
-            $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['label'] = $absenceType['name'];
+            $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['label'] = $absenceType['title'];
             $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['key'] = 'entitlement_type';
             $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['duration_type'] = $absenceType['id'];
         }
