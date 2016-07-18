@@ -153,7 +153,7 @@ $handler->display->display_options['fields']['location']['id'] = 'location';
 $handler->display->display_options['fields']['location']['table'] = 'hrjc_details';
 $handler->display->display_options['fields']['location']['field'] = 'location';
 $handler->display->display_options['fields']['location']['relationship'] = 'details_revision_id';
-$handler->display->display_options['fields']['location']['label'] = 'Contract location';
+$handler->display->display_options['fields']['location']['label'] = 'Contract Normal Place of Work';
 /* Field: HRJobContract Hour entity: Contract location standard hours */
 $handler->display->display_options['fields']['location_standard_hours']['id'] = 'location_standard_hours';
 $handler->display->display_options['fields']['location_standard_hours']['table'] = 'hrjc_hour';
@@ -906,7 +906,7 @@ $translatables['civihr_report_leave_and_absence'] = array(
   t('Contract start date (grouped by month)'),
   t('Contract end date (grouped by month)'),
   t('Contract end reason'),
-  t('Contract location'),
+  t('Contract Normal Place of Work'),
   t('Contract location standard hours'),
   t('Contract hours type'),
   t('Contract is paid'),
