@@ -4545,6 +4545,26 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'not null' => FALSE,
         'description' => 'Absence is credit.',
     );
+
+    $schema['civicrm_value_length_of_service_11']['description'] = 'Views data associated with Contact Length of Service';
+    $schema['civicrm_value_length_of_service_11']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'Length of Service ID.',
+    );
+    $schema['civicrm_value_length_of_service_11']['fields']['entity_id'] = array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'Contact ID.',
+    );
+    $schema['civicrm_value_length_of_service_11']['fields']['length_of_service'] = array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'Length of Service.',
+    );
 }
 
 /**
@@ -4609,6 +4629,27 @@ function civihr_employee_portal_entity_info() {
         'entity keys' => array(
             'id' => 'absence_activity_id',
             'label' => 'Activity ID'
+        ),
+        'bundles' => array(),
+        // Use the default label() and uri() functions
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        // Entity API needs to know about your module for the views integration to work
+        'module' => 'civihr_employee_portal',
+    );
+
+    $info['civihr_length_of_service'] = array(
+        'label' => t('Length of service entity'),
+        'plural label' => t('Length of service entity'),
+        'description' => t('Length of service.'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'civicrm_value_length_of_service_11',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'entity_id',
+            'label' => 'Employee ID'
         ),
         'bundles' => array(),
         // Use the default label() and uri() functions
