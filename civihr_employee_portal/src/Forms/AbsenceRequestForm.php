@@ -146,12 +146,12 @@ class AbsenceRequestForm {
                 if ($mk_time_start_timestamp > strtotime('today') && $this->form_state['values']['absence_type'] == "sick") {
                     form_set_error('absence_request_date_from', t('You are not allowed to report Sickness in advance!'));
                 }
-                
+
                 // If we requested leave with dates that have already been requested before (duplicate dates)
                 if($this->duplicate_dates_exist($mk_time_start_timestamp, $mk_time_end_timestamp)){
                     form_set_error('form', t('You have already requested leave for this date.'));
                 }
-                
+
                 // Check if we have enough leave left to request this leave (only if leave type is DEBIT or CREDIT_USE) -> deducting days
                 if (isset($this->form_state['values']['absence_type']) && ($this->form_state['values']['absence_type'] == 'debit' || $this->form_state['values']['absence_type'] == 'credit_use')) {
                     $leave = $this->leave_data();
@@ -221,19 +221,19 @@ class AbsenceRequestForm {
                 }
 
                 // If debit type is allowed show debit types (only if the employee clicked -> Request Leave)
-                if ($absence_type['allow_debits'] == '1' && $this->absence_type() == 'debit' && $absence_type['allow_credits'] !== '1' && $absence_type['title'] != 'Sick') {
+                if ($absence_type['allow_debits'] == '1' && $this->absence_type() == 'debit' && $absence_type['allow_credits'] !== '1' && !civihr_employee_portal_is_sick_absence($absence_type['title'])) {
                   // Default debit types
                     $options[$absence_type['debit_activity_type_id']] = $absence_type['title'];
                 }
 
                 // If Use TOIL is clicked show only debit types, which has credit type allowed too
-                if ($absence_type['allow_debits'] == '1' && $absence_type['allow_credits'] == '1' && $this->absence_type() == 'credit_use' && $absence_type['title'] != 'Sick') {
+                if ($absence_type['allow_debits'] == '1' && $absence_type['allow_credits'] == '1' && $this->absence_type() == 'credit_use' && !civihr_employee_portal_is_sick_absence($absence_type['title'])) {
                     // Default debit types which has credit type too
                     $options[$absence_type['debit_activity_type_id']] = $absence_type['title'];
                 }
 
                 // If Report New Sickness is clicked, show the debit types which are selected as the Sickness Absence Type @TODO -> currently hardcoded based on absence title
-                if ($absence_type['allow_debits'] == '1' && $this->absence_type() == 'sick' && $absence_type['title'] == 'Sick') {
+                if ($absence_type['allow_debits'] == '1' && $this->absence_type() == 'sick' && civihr_employee_portal_is_sick_absence($absence_type['title'])) {
                     // Default debit types which has credit type too
                     $options[$absence_type['debit_activity_type_id']] = $absence_type['title'];
                 }
@@ -402,7 +402,7 @@ class AbsenceRequestForm {
 
         return $q->execute()->fetchField();
     }
-    
+
     /**
      * Check if the dates requested for leaves are already requested for other leaves before
      *
@@ -438,12 +438,12 @@ class AbsenceRequestForm {
             else if($startTimestamp >= $requestedStartTimestamp && $endTimestamp <= $requestedEndTimestamp) {
                 $dateExists = true;
             }
-            
+
             if($dateExists == true) {
                 break;
             }
         }
-        
+
         return $dateExists;
     }
 
