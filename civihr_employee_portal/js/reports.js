@@ -113,7 +113,7 @@
 
   /**
    * Do additional required operations on data returned from backend.
-   * 
+   *
    * @param array data
    * @returns array
    */
@@ -306,7 +306,14 @@
 
     CRM.$('#report-filters input[type="submit"]').bind('click', function(e) {
       e.preventDefault();
-      var formSerialize = CRM.$('#report-filters form:first').formSerialize();
+      var formSerialize = CRM.$('#report-filters form:first').serializeArray();
+
+      formSerialize.map(function(input) {
+        input.value = that.formatDate(input.value, 'DD/MM/YYYY', 'YYYY-MM-DD');
+      });
+
+      formSerialize = CRM.$.param(formSerialize);
+
       if (that.jsonUrl) {
         that.refreshJson('?' + formSerialize);
       }
@@ -315,6 +322,25 @@
       }
     });
   }
+
+  /**
+   * Format a date passing the old format and
+   * the new date format
+   *
+   * @param  {String} date
+   * @param  {String} oldFormat
+   * @param  {String} newFormat
+   * @return {String} formated date
+   */
+  HRReport.prototype.formatDate = function(date, oldFormat, newFormat) {
+    var mDate = moment(date, oldFormat);
+
+    if (mDate.isValid()) {
+      date = mDate.format(newFormat);
+    }
+
+    return date;
+  };
 
   /**
    * Init angular in reports custom page,
@@ -342,8 +368,8 @@
         });
       })
       .controller('FiltersController', function() {
-        this.format = 'yyyy-MM-dd';
-        this.placeholderFormat = 'yyyy-mm-dd';
+        this.format = 'dd/MM/yyyy';
+        this.placeholderFormat = 'dd/MM/yyyy';
         this.filtersCollapsed = true;
       })
       .controller('SettingsController', function() {
