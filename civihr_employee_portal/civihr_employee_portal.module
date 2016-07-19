@@ -90,7 +90,7 @@ function getModuleUrl($moduleName) {
     $path = explode("$base_url/", $path)[1];
   }
 
-  return $path;
+  return ltrim($path, '/');
 }
 
 /**
@@ -5579,7 +5579,7 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
 
 /**
  * Return an array containing a set of paths to any CSV export display of given View.
- * 
+ *
  * @param object $view
  * @return array
  */
