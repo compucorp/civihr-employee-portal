@@ -9,8 +9,8 @@
           <div class="chr_search-result__header" ng-click="filters.filtersCollapsed = !filters.filtersCollapsed">
               <div class="chr_search-result__total">
                   <i
-                    class="chr_search-result__icon glyphicon glyphicon-chevron-down"
-                    ng-class="{ 'glyphicon-chevron-down': filters.filtersCollapsed, 'glyphicon-chevron-up': !filters.filtersCollapsed }">
+                    class="chr_search-result__icon glyphicon glyphicon-chevron-right"
+                    ng-class="{ 'glyphicon-chevron-right': filters.filtersCollapsed, 'glyphicon-chevron-down': !filters.filtersCollapsed }">
                   </i>
                   <span ng-class="{ 'hide': !filters.filtersCollapsed }">Show Filters</span>
                   <span class="hide" ng-class="{ 'hide': filters.filtersCollapsed }">Hide Filters</span>
