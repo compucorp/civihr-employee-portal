@@ -32,7 +32,9 @@ function civihr_hrjobcontract_entities_init() {
                     r.deleted,
                     r.overrided
                     FROM {$civi_db_name}.civicrm_hrjobcontract_revision AS r
-                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id");
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
+
+                    WHERE c.deleted = 0");
 
         db_query('DROP VIEW IF EXISTS hrjc_details');
         // ov_location.label AS location, => t.location
@@ -238,7 +240,8 @@ function civihr_hrjobcontract_entities_init() {
                     
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_location ON og_location.name = 'hrjc_location'
                     LEFT JOIN {$civi_db_name}.civicrm_option_value ov_location ON og_location.id = ov_location.option_group_id AND ov_location.id = t.location
-                    
+
+                    WHERE c.deleted = 0
                     ORDER BY t.job_contract_id");
                     
         variable_set('rebuild_hrjobcontract_entities_view', 'FALSE');
