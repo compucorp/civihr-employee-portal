@@ -334,6 +334,30 @@ $handler->display->display_options['fields']['absence_month']['table'] = 'absenc
 $handler->display->display_options['fields']['absence_month']['field'] = 'absence_month';
 $handler->display->display_options['fields']['absence_month']['relationship'] = 'absence_activity';
 $handler->display->display_options['fields']['absence_month']['label'] = 'Group by month';
+/* Field: Absence Activity entity: Absence_start_date */
+$handler->display->display_options['fields']['absence_start_date']['id'] = 'absence_start_date';
+$handler->display->display_options['fields']['absence_start_date']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_start_date']['field'] = 'absence_start_date';
+$handler->display->display_options['fields']['absence_start_date']['relationship'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_start_date']['label'] = 'Absence start date';
+/* Field: Absence Activity entity: Absence_start_date_month */
+$handler->display->display_options['fields']['absence_start_date_month']['id'] = 'absence_start_date_month';
+$handler->display->display_options['fields']['absence_start_date_month']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_start_date_month']['field'] = 'absence_start_date_month';
+$handler->display->display_options['fields']['absence_start_date_month']['relationship'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_start_date_month']['label'] = 'Absence start month';
+/* Field: Absence Activity entity: Absence_end_date */
+$handler->display->display_options['fields']['absence_end_date']['id'] = 'absence_end_date';
+$handler->display->display_options['fields']['absence_end_date']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_end_date']['field'] = 'absence_end_date';
+$handler->display->display_options['fields']['absence_end_date']['relationship'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_end_date']['label'] = 'Absence end date';
+/* Field: Absence Activity entity: Absence_end_date_month */
+$handler->display->display_options['fields']['absence_end_date_month']['id'] = 'absence_end_date_month';
+$handler->display->display_options['fields']['absence_end_date_month']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_end_date_month']['field'] = 'absence_end_date_month';
+$handler->display->display_options['fields']['absence_end_date_month']['relationship'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_end_date_month']['label'] = 'Absence end month';
 /* Field: Absence Activity entity: Absence duration in days */
 $handler->display->display_options['fields']['absence_duration']['id'] = 'absence_duration';
 $handler->display->display_options['fields']['absence_duration']['table'] = 'absence_activity';
@@ -945,6 +969,10 @@ $translatables['civihr_report_leave_and_absence'] = array(
   t('Absence ID'),
   t('Absence date'),
   t('Group by month'),
+  t('Absence start date'),
+  t('Absence start month'),
+  t('Absence end date'),
+  t('Absence end month'),
   t('Absence duration in days'),
   t('Absence type'),
   t('Absence status'),

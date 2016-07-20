@@ -247,6 +247,10 @@ function civihr_employee_portal_init() {
                         ov.label AS absence_type,
                         DATE(a2.activity_date_time) AS absence_date,
                         DATE_FORMAT(DATE(a2.activity_date_time), '%Y-%m') AS absence_month,
+                        (SELECT MIN(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id) AS absence_start_date,
+                        DATE_FORMAT((SELECT MIN(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id), '%Y-%m') AS absence_start_date_month,
+                        (SELECT MAX(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id) AS absence_end_date,
+                        DATE_FORMAT((SELECT MAX(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id), '%Y-%m') AS absence_end_date_month,
                         CONCAT(IF (DATE_FORMAT(a2.activity_date_time, '%w') = 0, 7, DATE_FORMAT(a2.activity_date_time, '%w')), '. ', DATE_FORMAT(a2.activity_date_time, '%W')) AS absence_day_of_week,
                         a2.duration AS absence_duration,
                         IF (ov.label <> 'TOIL (Credit)', a2.duration, NULL) AS absence_amount_taken,
@@ -262,7 +266,8 @@ function civihr_employee_portal_init() {
                       LEFT JOIN {$civi_db_name}.civicrm_option_value ov ON ov.value = a.activity_type_id AND ov.option_group_id = og.id
                       LEFT JOIN {$civi_db_name}.civicrm_option_group og2 ON og2.name = 'activity_status'
                       LEFT JOIN {$civi_db_name}.civicrm_option_value ov2 ON ov2.value = a.status_id AND ov2.option_group_id = og2.id
-                      LEFT JOIN {$civi_db_name}.civicrm_activity_contact ac ON ac.activity_id = abc.entity_id AND ac.record_type_id = 3");
+                      LEFT JOIN {$civi_db_name}.civicrm_activity_contact ac ON ac.activity_id = abc.entity_id AND ac.record_type_id = 3
+                      WHERE (a2.duration IS NOT NULL AND a2.duration > 0)");
             // Set to false so it will not rebuild until not asked to rebuild
             variable_set('rebuild_absence_activity', 'FALSE');
         }
@@ -295,6 +300,8 @@ function _run_civihr_tasks() {
 
     // Set variable to TRUE so the mysql database views will be refreshed
     variable_set('rebuild_absence_list_view', 'TRUE');
+    variable_set('rebuild_length_of_service', 'TRUE');
+    variable_set('rebuild_absence_activity', 'TRUE');
     variable_set('rebuild_hrjobcontract_entities_view', 'TRUE');
 
     watchdog('Rebuild view REQUEST', 'ABSENCE LIST MYSQL VIEW');
@@ -4492,6 +4499,34 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'mysql_type' => 'DATE',
         'not null' => FALSE,
         'description' => 'Absence Month.',
+    );
+    $schema['absence_activity']['fields']['absence_start_date'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => FALSE,
+        'description' => 'Absence Start Date.',
+    );
+    $schema['absence_activity']['fields']['absence_start_date_month'] = array(
+        'type' => 'varchar',
+        'length' => 7,
+        'mysql_type' => 'DATE',
+        'not null' => FALSE,
+        'description' => 'Absence Start Date Month.',
+    );
+    $schema['absence_activity']['fields']['absence_end_date'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => FALSE,
+        'description' => 'Absence End Date.',
+    );
+    $schema['absence_activity']['fields']['absence_end_date_month'] = array(
+        'type' => 'varchar',
+        'length' => 7,
+        'mysql_type' => 'DATE',
+        'not null' => FALSE,
+        'description' => 'Absence End Date Month.',
     );
     $schema['absence_activity']['fields']['absence_day_of_week'] = array(
         'type' => 'varchar',
