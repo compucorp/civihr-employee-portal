@@ -90,7 +90,7 @@ function getModuleUrl($moduleName) {
     $path = explode("$base_url/", $path)[1];
   }
 
-  return $path;
+  return ltrim($path, '/');
 }
 
 /**
@@ -5426,6 +5426,7 @@ function _civihr_employee_portal_add_report_scripts() {
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/export_renderers.js', $jsOptions);
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/jquery-ui-1.9.2.custom.min.js', $jsOptions);
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js', $jsOptions);
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/moment/moment.min.js', $jsOptions);
 
     if (CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Extension', 'org.civicrm.reqangular', 'is_active', 'full_name')) {
       drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "dist/reqangular.min.js", $jsOptions);
@@ -5579,7 +5580,7 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
 
 /**
  * Return an array containing a set of paths to any CSV export display of given View.
- * 
+ *
  * @param object $view
  * @return array
  */
