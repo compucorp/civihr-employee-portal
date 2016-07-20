@@ -80,26 +80,27 @@
         };
       };
     };
-    aggregators["Sum by Contracts"] = function(attributeArray) {
-      var attribute = attributeArray[0];
+    aggregators["Sum field 1 by unique values of field 2"] = function(attributeArray) {
+      var attribute1 = attributeArray[0];
+      var attribute2 = attributeArray[1];
       return function(data, rowKey, colKey) {
         return {
           sum: 0,
-          contractIDs: [],
+          byFieldValues: [],
           push: function(record) {
-            if (!isNaN(parseFloat(record[attribute]))) {
-              if (record['Contract ID'] in this.contractIDs) {
+            if (!isNaN(parseFloat(record[attribute1]))) {
+              if (record[attribute2] in this.byFieldValues) {
                 return this.sum;
               }
-              this.contractIDs[record['Contract ID']] = 1;
-              return this.sum += parseFloat(record[attribute]);
+              this.byFieldValues[record[attribute2]] = 1;
+              return this.sum += parseFloat(record[attribute1]);
             }
           },
           value: function() {
             return this.sum;
           },
           format: function(x) { return x.toFixed(2); },
-          numInputs: attribute != null ? 0 : 1
+          numInputs: attribute1 != null ? 0 : 2
         };
       };
     };

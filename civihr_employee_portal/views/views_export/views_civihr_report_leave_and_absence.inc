@@ -316,6 +316,13 @@ $handler->display->display_options['fields']['role_region']['table'] = 'hrjc_rol
 $handler->display->display_options['fields']['role_region']['field'] = 'role_region';
 $handler->display->display_options['fields']['role_region']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['fields']['role_region']['label'] = 'Role region';
+/* Field: Absence Activity entity: Absence activity entity ID */
+$handler->display->display_options['fields']['absence_activity_id']['id'] = 'absence_activity_id';
+$handler->display->display_options['fields']['absence_activity_id']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_activity_id']['field'] = 'absence_activity_id';
+$handler->display->display_options['fields']['absence_activity_id']['relationship'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_activity_id']['label'] = 'Absence ID';
+$handler->display->display_options['fields']['absence_activity_id']['separator'] = '';
 /* Field: Absence Activity entity: Absence date */
 $handler->display->display_options['fields']['absence_date']['id'] = 'absence_date';
 $handler->display->display_options['fields']['absence_date']['table'] = 'absence_activity';
@@ -935,6 +942,7 @@ $translatables['civihr_report_leave_and_absence'] = array(
   t('Role level type'),
   t('Role organization'),
   t('Role region'),
+  t('Absence ID'),
   t('Absence date'),
   t('Group by month'),
   t('Absence duration in days'),
