@@ -62,7 +62,8 @@ foreach ($rows as $row):
 endforeach;
 
 // Create an associative array, mapping each task id to its target
-$taskTargets = getTaskTargets($taskIds, $user);
+$taskTargets = getTaskTargets($taskIds);
+$taskRelatedToManager = getTaskRelatedToManager($taskIds, $user);
 
 function isFieldName($field){
    return $field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2';
@@ -135,7 +136,7 @@ function isFieldName($field){
                     $rowContacts = strip_tags($row['task_contacts']) . ',' . strip_tags($row['task_contacts_1']) . ',' . strip_tags($row['task_contacts_2']);
                     ?>
                     <?php $class = 'task-row task-filter-id-' . _get_task_filter_by_date($row['activity_date_time']) . ' ' . $rowType; ?>
-                    <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $taskTargets[strip_tags($row['id'])]; ?>">
+                    <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $taskTargets[strip_tags($row['id'])]; ?>" data-row-manager-contacts="<?php print $taskRelatedToManager[strip_tags($row['id'])]; ?>" >
                         <?php
                           foreach ($row as $field => $content):
                             if (isFieldName($field)) {
@@ -318,24 +319,27 @@ function isFieldName($field){
         }
 
         function buildTaskContactFilter() {
-            $tableDocStaffRows.addClass('selected-by-contact');
-            $('#task-filter-contact').on("keyup", function() {
-                var value = $(this).val().toLowerCase();
+          $tableDocStaffRows.addClass('selected-by-contact');
+          $('#task-filter-contact').on("keyup", function() {
+              var value = $(this).val().toLowerCase();
 
-                $tableDocStaffRows.removeClass('selected-by-contact');
-                $("#tasks-dashboard-table-staff > tbody > tr.task-row").each(function(index) {
-                    var $row = $(this);
-                    var text = $row.data('rowContacts');
-                    var matchedIndex = text.indexOf(value);
+              $tableDocStaffRows.removeClass('selected-by-contact');
+              $("#tasks-dashboard-table-staff > tbody > tr.task-row").each(function(index) {
+                var $row = $(this);
+                var matchedIndex = $row.data('rowContacts').indexOf(value);
+                var managerRelatedMatchedIndex = $row.data('rowManagerContacts').indexOf(value);
+                $row.removeClass('selected-by-contact has-manager-relationship');
 
-                    if (value.length === 0 || matchedIndex === 0) {
-                      $row.addClass('selected-by-contact');
-                    } else {
-                      $row.removeClass('selected-by-contact');
-                    }
-                });
-                showFilteredTaskRows();
-            });
+                if (value.length > 0 && managerRelatedMatchedIndex !== -1) {
+                  $row.addClass('selected-by-contact has-manager-relationship');
+                } else if (value.length === 0 || matchedIndex !== -1) {
+                  $row.addClass('selected-by-contact').removeClass('has-manager-relationship');
+                } else {
+                  $row.removeClass('selected-by-contact has-manager-relationship');
+                }
+              });
+              showFilteredTaskRows();
+          });
         }
     }(CRM.$));
 </script>
