@@ -102,6 +102,46 @@ function civihr_employee_portal_views_data_alter(&$data) {
         ),
     );
 
+    $data['hrjc_role']['role_start_date'] = array(
+        'title' => t('Role start date'),
+        'real field' => 'role_start_date',
+        'field' => array(
+            'handler' => 'views_handler_field',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'civihr_employee_portal_argument_date_range',
+            'name field' => 'role_start_date',
+            'numeric' => FALSE,
+        ),
+        'sort' => array(
+           'handler' => 'views_handler_sort_date',
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_date',
+        ),
+    );
+
+    $data['hrjc_role']['role_end_date'] = array(
+        'title' => t('Role end date'),
+        'real field' => 'role_end_date',
+        'field' => array(
+            'handler' => 'views_handler_field',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'civihr_employee_portal_argument_date_range',
+            'name field' => 'role_end_date',
+            'numeric' => FALSE,
+        ),
+        'sort' => array(
+           'handler' => 'views_handler_sort_date',
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_date',
+        ),
+    );
+
     $data['hrjc_details_hrjc_revision']['period_start_date'] = array(
         'title' => t('Period start date'),
         'real field' => 'period_start_date',
