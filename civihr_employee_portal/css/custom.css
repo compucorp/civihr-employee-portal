@@ -125,3 +125,11 @@ span.appraisals-employee-legend {
     display: inline-block;
     margin-right: 8px;
 }
+
+.tasks-dashboard-table tr.has-manager-relationship {
+  background: #42afcb;
+}
+
+.tasks-dashboard-table tr.has-manager-relationship td a {
+  color: #ffffff;
+}
