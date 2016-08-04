@@ -42,8 +42,9 @@ $taskFilters = array(
     4 => 'Later',
 );
 $taskFiltersCount = array_combine(array_keys($taskFilters), array_fill(0, count($taskFilters), 0));
+$contactsIds = array();
 $contacts = array();
-$taskIds = array();
+$contactsFilterValues = array();
 
 foreach ($rows as $row):
     $rowType = null;
@@ -56,13 +57,42 @@ foreach ($rows as $row):
     if (!$rowType):
         continue;
     endif;
+    $contactsIds[strip_tags($row['task_contacts'])] = 1;
     $taskFiltersCount[_get_task_filter_by_date($row['activity_date_time'])]++;
     $taskFiltersCount[0]++;
-    $taskIds[] = $row['id'];
 endforeach;
 
-// Create an associative array, mapping each task id to its target
-$taskTargets = getTaskTargets($taskIds, $user);
+$contactsResult = civicrm_api3('Contact', 'get', array(
+  'id' => array('IN' => array_keys($contactsIds)),
+  'return' => "sort_name",
+));
+foreach ($contactsResult['values'] as $key => $value) {
+    $contactsFilterValues[$key] = $value['sort_name'];
+}
+
+function _get_task_filter_by_date($date) {
+    $today = date('Y-m-d');
+    $tomorrow = new DateTime('tomorrow');
+    $nbDay = date('N', strtotime($today));
+    $sunday = new DateTime($today);
+    $sunday->modify('+' . (7 - $nbDay) . ' days');
+    $weekEnd = $sunday->format('Y-m-d');
+    $taskDate = date('Y-m-d', strtotime(strip_tags($date)));
+
+    if ($taskDate < $today) {
+        return PAST_DAY;
+    }
+    if ($taskDate == $today) {
+        return TODAY;
+    }
+    if ($taskDate > $weekEnd) {
+        return DAY_AFTER_WEEKEND;
+    }
+    if ($taskDate == $tomorrow->format('Y-m-d')){
+        return TOMORROW;
+    }
+    return ANY_OTHER_DAY;
+}
 
 function isFieldName($field){
    return $field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2';
@@ -135,7 +165,7 @@ function isFieldName($field){
                     $rowContacts = strip_tags($row['task_contacts']) . ',' . strip_tags($row['task_contacts_1']) . ',' . strip_tags($row['task_contacts_2']);
                     ?>
                     <?php $class = 'task-row task-filter-id-' . _get_task_filter_by_date($row['activity_date_time']) . ' ' . $rowType; ?>
-                    <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $taskTargets[strip_tags($row['id'])]; ?>">
+                    <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $contactsFilterValues[strip_tags($row['task_contacts'])]; ?>">
                         <?php
                           foreach ($row as $field => $content):
                             if (isFieldName($field)) {
@@ -299,9 +329,9 @@ function isFieldName($field){
 
         function showFilteredTaskRows() {
             $tableDocStaffRows
+              .hide()
               .removeClass('selected-by-type')
-              .removeClass('selected-by-filter')
-              .hide();
+              .removeClass('selected-by-filter');
             $selectedRowType.addClass('selected-by-type');
             $selectedRowFilter.addClass('selected-by-filter');
             $('.selected-by-type.selected-by-filter.selected-by-contact', $tableDocStaff).show();
@@ -321,14 +351,12 @@ function isFieldName($field){
             $tableDocStaffRows.addClass('selected-by-contact');
             $('#task-filter-contact').on("keyup", function() {
                 var value = $(this).val().toLowerCase();
-
                 $tableDocStaffRows.removeClass('selected-by-contact');
                 $("#tasks-dashboard-table-staff > tbody > tr.task-row").each(function(index) {
                     var $row = $(this);
-                    var text = $row.data('rowContacts');
-                    var matchedIndex = text.indexOf(value);
-
-                    if (value.length === 0 || matchedIndex === 0) {
+                    var text = $row.data('rowContacts') || '';
+                    var matchedIndex = text.toLowerCase().indexOf(value);
+                    if (value.length === 0 || matchedIndex !== -1) {
                       $row.addClass('selected-by-contact');
                     } else {
                       $row.removeClass('selected-by-contact');
