@@ -20,12 +20,7 @@ $handler->display->display_options['title'] = 'Absence List';
 $handler->display->display_options['css_class'] = 'view--w-table';
 $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['use_more_always'] = FALSE;
-$handler->display->display_options['access']['type'] = 'role';
-$handler->display->display_options['access']['role'] = array(
-  55120974 => '55120974',
-  57573969 => '57573969',
-  17087012 => '17087012',
-);
+$handler->display->display_options['access']['type'] = 'perm';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
 $handler->display->display_options['exposed_form']['type'] = 'basic';
@@ -185,6 +180,9 @@ $handler->display->display_options['filters']['absence_start_date_timestamp']['g
 
 /* Display: Leave report */
 $handler = $view->new_display('page', 'Leave report', 'page');
+$handler->display->display_options['defaults']['access'] = FALSE;
+$handler->display->display_options['access']['type'] = 'perm';
+$handler->display->display_options['access']['perm'] = 'view my leave block';
 $handler->display->display_options['defaults']['style_plugin'] = FALSE;
 $handler->display->display_options['style_plugin'] = 'table';
 $handler->display->display_options['style_options']['columns'] = array(
@@ -205,13 +203,13 @@ $handler->display->display_options['style_options']['columns'] = array(
 foreach ($absenceTypes as $absenceType) {
 
     if (isset($absenceType['id']) && $absenceType['is_active'] == 1) {
-        
+
         // Should have a settings somewhere that the Sick type is our special case, which we need to display in different block
-        if ($absenceType['name'] != 'Sick') {
+        if (!civihr_employee_portal_is_sick_absence($absenceType['name'])) {
             $handler->display->display_options['style_options']['columns']['duration_' . $absenceType['id']] = 'duration_' . $absenceType['id'];
         }
     }
-    
+
 }
 
 /**
@@ -273,7 +271,7 @@ $handler->display->display_options['style_options']['info'] = array(
     'align' => '',
     'separator' => '',
     'empty_column' => 0,
-  ) 
+  )
 );
 
 
@@ -284,9 +282,9 @@ $handler->display->display_options['style_options']['info'] = array(
 foreach ($absenceTypes as $absenceType) {
 
     if (isset($absenceType['id']) && $absenceType['is_active'] == 1) {
-        
+
         // Should have a settings somewhere that the Sick type is our special case, which we need to display in different block
-        if ($absenceType['name'] != 'Sick') {
+        if (!civihr_employee_portal_is_sick_absence($absenceType['name'])) {
             $handler->display->display_options['style_options']['info']['duration_' . $absenceType['id']] = array(
                 'sortable' => 0,
                 'default_sort_order' => 'asc',
@@ -296,7 +294,7 @@ foreach ($absenceTypes as $absenceType) {
             );
         }
     }
-    
+
 }
 
 /**
@@ -394,8 +392,8 @@ $handler->display->display_options['fields']['absence_status']['element_label_co
 foreach ($absenceTypes as $absenceType) {
 
     if (isset($absenceType['id']) && $absenceType['is_active'] == 1) {
-        
-        
+
+
         // Store the debit / credit activity type IDs as well
         $suffix = '';
 
@@ -406,10 +404,10 @@ foreach ($absenceTypes as $absenceType) {
         if (isset($absenceType['allow_credits']) && $absenceType['allow_credits'] == '1') {
             $suffix .= '_' . $absenceType['credit_activity_type_id'];
         }
-            
+
 
         // Should have a settings somewhere that the Sick type is our special case, which we need to display in different block
-        if ($absenceType['name'] != 'Sick') {
+        if (!civihr_employee_portal_is_sick_absence($absenceType['name'])) {
             /* Field: Absence entity: Absence type row value (Duration) */
             $handler->display->display_options['fields']['duration_' . $absenceType['id']]['id'] = 'duration_' . $absenceType['id'];
             $handler->display->display_options['fields']['duration_' . $absenceType['id']]['table'] = 'absence_list';
@@ -460,8 +458,8 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
       'min' => $current_year . '-01-01 00:00:00',
       'max' => $current_year . '-12-31 23:59:59',
     ),
-  )   
-    
+  )
+
 );
 
 /**
@@ -473,13 +471,16 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
 $handler->display->display_options['filters']['absence_title']['id'] = 'absence_title';
 $handler->display->display_options['filters']['absence_title']['table'] = 'absence_list';
 $handler->display->display_options['filters']['absence_title']['field'] = 'absence_title';
-$handler->display->display_options['filters']['absence_title']['operator'] = '!=';
+$handler->display->display_options['filters']['absence_title']['operator'] = 'not';
 $handler->display->display_options['filters']['absence_title']['value'] = 'Sick';
 $handler->display->display_options['filters']['absence_title']['group'] = 1;
 $handler->display->display_options['path'] = 'absence-list';
 
 /* Display: Sickness report */
 $handler = $view->new_display('page', 'Sickness report', 'page_1');
+$handler->display->display_options['defaults']['access'] = FALSE;
+$handler->display->display_options['access']['type'] = 'perm';
+$handler->display->display_options['access']['perm'] = 'view my sickness report block';
 $handler->display->display_options['exposed_block'] = TRUE;
 $handler->display->display_options['defaults']['footer'] = FALSE;
 $handler->display->display_options['defaults']['fields'] = FALSE;
@@ -578,8 +579,8 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
       'min' => $current_year . '-01-01 00:00:00',
       'max' => $current_year . '-12-31 23:59:59',
     ),
-  )   
-    
+  )
+
 );
 
 /**
@@ -590,6 +591,7 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
 $handler->display->display_options['filters']['absence_title']['id'] = 'absence_title';
 $handler->display->display_options['filters']['absence_title']['table'] = 'absence_list';
 $handler->display->display_options['filters']['absence_title']['field'] = 'absence_title';
+$handler->display->display_options['filters']['absence_title']['operator'] = 'contains';
 $handler->display->display_options['filters']['absence_title']['value'] = 'Sick';
 $handler->display->display_options['filters']['absence_title']['group'] = 1;
 $handler->display->display_options['path'] = 'sickness-report';
@@ -600,6 +602,9 @@ $handler->display->display_options['defaults']['title'] = FALSE;
 $handler->display->display_options['title'] = 'Print Leave Report';
 $handler->display->display_options['defaults']['css_class'] = FALSE;
 $handler->display->display_options['css_class'] = 'print-leave-report-view';
+$handler->display->display_options['defaults']['access'] = FALSE;
+$handler->display->display_options['access']['type'] = 'perm';
+$handler->display->display_options['access']['perm'] = 'view my leave block';
 $handler->display->display_options['defaults']['pager'] = FALSE;
 $handler->display->display_options['pager']['type'] = 'none';
 $handler->display->display_options['pager']['options']['offset'] = '0';
@@ -625,7 +630,7 @@ foreach ($absenceTypes as $absenceType) {
     if (isset($absenceType['id']) && $absenceType['is_active'] == 1) {
 
         // Should have a settings somewhere that the Sick type is our special case, which we need to display in different block
-        if ($absenceType['name'] != 'Sick') {
+        if (!civihr_employee_portal_is_sick_absence($absenceType['name'])) {
             $handler->display->display_options['style_options']['columns']['duration_' . $absenceType['id']] = 'duration_' . $absenceType['id'];
         }
     }
@@ -703,7 +708,7 @@ foreach ($absenceTypes as $absenceType) {
     if (isset($absenceType['id']) && $absenceType['is_active'] == 1) {
 
         // Should have a settings somewhere that the Sick type is our special case, which we need to display in different block
-        if ($absenceType['name'] != 'Sick') {
+        if (!civihr_employee_portal_is_sick_absence($absenceType['name'])) {
             $handler->display->display_options['style_options']['info']['duration_' . $absenceType['id']] = array(
                 'sortable' => 0,
                 'default_sort_order' => 'asc',
@@ -823,7 +828,7 @@ foreach ($absenceTypes as $absenceType) {
 
 
         // Should have a settings somewhere that the Sick type is our special case, which we need to display in different block
-        if ($absenceType['name'] != 'Sick') {
+        if (!civihr_employee_portal_is_sick_absence($absenceType['name'])) {
             /* Field: Absence entity: Absence type row value (Duration) */
             $handler->display->display_options['fields']['duration_' . $absenceType['id']]['id'] = 'duration_' . $absenceType['id'];
             $handler->display->display_options['fields']['duration_' . $absenceType['id']]['table'] = 'absence_list';
@@ -887,7 +892,7 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
 $handler->display->display_options['filters']['absence_title']['id'] = 'absence_title';
 $handler->display->display_options['filters']['absence_title']['table'] = 'absence_list';
 $handler->display->display_options['filters']['absence_title']['field'] = 'absence_title';
-$handler->display->display_options['filters']['absence_title']['operator'] = '!=';
+$handler->display->display_options['filters']['absence_title']['operator'] = 'not';
 $handler->display->display_options['filters']['absence_title']['value'] = 'Sick';
 $handler->display->display_options['filters']['absence_title']['group'] = 1;
 $handler->display->display_options['path'] = 'print-leave-report';

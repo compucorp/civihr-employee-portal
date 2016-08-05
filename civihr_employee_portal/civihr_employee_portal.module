@@ -116,28 +116,20 @@ function civihr_employee_portal_init() {
     $rebuild_absence_list_view = variable_get('rebuild_absence_list_view', 'TRUE');
 
     if (isset($rebuild_absence_list_view) && $rebuild_absence_list_view == 'TRUE') {
-
         try {
             $res = civicrm_api3('HRAbsenceType', 'get', array());
             $absenceTypes = $res['values'];
-
             // Build the option values based on Absence types
             $options = '';
 
             foreach ($absenceTypes as $absenceType) {
-
                 if ($absenceType['allow_credits'] == '1') {
-
                     // Default credit types
                     $options .= $absenceType['credit_activity_type_id'] . ',';
-
                 }
-
                 if ($absenceType['allow_debits'] == '1') {
-
                     // Default debit types
                     $options .= $absenceType['debit_activity_type_id']. ',';
-
                 }
             }
 
@@ -150,65 +142,61 @@ function civihr_employee_portal_init() {
             $activityTypes = CRM_Core_OptionGroup::values('activity_type', FALSE, FALSE, FALSE, NULL, 'name');
             $activityTypeId = CRM_Utils_Array::key('Absence', $activityTypes);
             watchdog('Rebuild view TRUE', 'ABSENCE LIST MYSQL VIEW');
+
+            /**
+             * Leave / sickness list view
+             */
+            $result = db_query('DROP view if exists absence_list');
+            $result = db_query("CREATE VIEW absence_list AS
+                                SELECT request.id, request.details, request.activity_type_id, absence_type_debit.title as debit_title, absence_type_credit.title as credit_title,
+                                        IF(absence_type_debit.title IS NOT NULL, absence_type_debit.title, absence_type_credit.title) as absence_title,
+                                    CASE absence_type_credit.credit_activity_type_id
+                                        WHEN request.activity_type_id THEN 1
+                                        ELSE 0 END AS is_credit, tgt.contact_id, tgt.record_type_id, min(absence.activity_date_time) as absence_start_date, max(absence.activity_date_time) as absence_end_date, drupal_contact.uf_id as drupal_uid,
+                                        SUM(CASE WHEN absence.status_id = 9 THEN 0 WHEN absence.status_id = 3 THEN 0 ELSE absence.duration END) as duration, request.status_id as absence_status,
+                                UNIX_TIMESTAMP(STR_TO_DATE(min(absence.activity_date_time), '%Y-%m-%d')) as absence_start_date_timestamp,
+                                UNIX_TIMESTAMP(STR_TO_DATE(max(absence.activity_date_time), '%Y-%m-%d')) as absence_end_date_timestamp
+                                FROM " . $civi_db_name . ".civicrm_activity request
+                                INNER JOIN " . $civi_db_name . ".civicrm_activity absence ON (absence.source_record_id = request.id AND absence.activity_type_id = " . $activityTypeId . ")
+                                INNER JOIN " . $civi_db_name . ".civicrm_activity_contact tgt ON tgt.activity_id = request.id AND tgt.record_type_id = " . $targetID . "
+                                LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_debit
+                                ON request.activity_type_id = absence_type_debit.debit_activity_type_id
+                                LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_credit
+                                ON request.activity_type_id = absence_type_credit.credit_activity_type_id
+                                INNER JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
+                                ON tgt.contact_id = drupal_contact.contact_id
+                                WHERE (request.activity_type_id IN (" . rtrim($options, ',') . "))
+                                GROUP BY request.id");
+            /**
+             * Manager approval view
+             */
+            $result = db_query('DROP view if exists absence_approval_list');
+            $result = db_query("CREATE VIEW absence_approval_list AS
+                                SELECT request.id, request.activity_type_id, absence_type_debit.title as debit_title, absence_type_credit.title as credit_title,
+                                        IF(absence_type_debit.title IS NOT NULL, absence_type_debit.title, absence_type_credit.title) as absence_title,
+                                    CASE absence_type_credit.credit_activity_type_id
+                                        WHEN request.activity_type_id THEN 1
+                                        ELSE 0 END AS is_credit, tgt.contact_id AS manager_id, tgt_contact.contact_id AS employee_id, tgt.record_type_id, min(absence.activity_date_time) as absence_start_date, max(absence.activity_date_time) as absence_end_date, drupal_contact.uf_id as drupal_uid,
+                                        SUM(CASE WHEN absence.status_id = 9 THEN 0 WHEN absence.status_id = 3 THEN 0 ELSE absence.duration END) as duration, request.status_id as absence_status,
+                                UNIX_TIMESTAMP(STR_TO_DATE(min(absence.activity_date_time), '%Y-%m-%d')) as absence_start_date_timestamp,
+                                UNIX_TIMESTAMP(STR_TO_DATE(max(absence.activity_date_time), '%Y-%m-%d')) as absence_end_date_timestamp
+                                FROM " . $civi_db_name . ".civicrm_activity request
+                                INNER JOIN " . $civi_db_name . ".civicrm_activity absence ON (absence.source_record_id = request.id AND absence.activity_type_id = " . $activityTypeId . ")
+                                INNER JOIN " . $civi_db_name . ".civicrm_activity_contact tgt ON tgt.activity_id = request.id AND tgt.record_type_id = " . $assigneeID . "
+                                INNER JOIN " . $civi_db_name . ".civicrm_activity_contact tgt_contact ON tgt_contact.activity_id = request.id AND tgt_contact.record_type_id = " . $targetID . "
+                                LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_debit
+                                ON request.activity_type_id = absence_type_debit.debit_activity_type_id
+                                LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_credit
+                                ON request.activity_type_id = absence_type_credit.credit_activity_type_id
+                                INNER JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
+                                ON tgt.contact_id = drupal_contact.contact_id
+                                WHERE (request.activity_type_id IN (" . rtrim($options, ',') . "))
+                                GROUP BY request.id");
+            // Set to false so it will not rebuild until not asked to rebuild
+            variable_set('rebuild_absence_list_view', 'FALSE');
+        } catch (Exception $e) {
+            drupal_set_message('Cannot create database views: ' . $e->getMessage(), 'error');
         }
-        catch (CiviCRM_API3_Exception $e) {
-            throw $e;
-        }
-
-        /**
-         * Leave / sickness list view
-         */
-        $result = db_query('DROP view if exists absence_list');
-        $result = db_query("CREATE VIEW absence_list AS
-                            SELECT request.id, request.details, request.activity_type_id, absence_type_debit.title as debit_title, absence_type_credit.title as credit_title,
-                                    IF(absence_type_debit.title IS NOT NULL, absence_type_debit.title, absence_type_credit.title) as absence_title,
-                                CASE absence_type_credit.credit_activity_type_id
-                                    WHEN request.activity_type_id THEN 1
-                                    ELSE 0 END AS is_credit, tgt.contact_id, tgt.record_type_id, min(absence.activity_date_time) as absence_start_date, max(absence.activity_date_time) as absence_end_date, drupal_contact.uf_id as drupal_uid,
-                                    SUM(CASE WHEN absence.status_id = 9 THEN 0 WHEN absence.status_id = 3 THEN 0 ELSE absence.duration END) as duration, request.status_id as absence_status,
-                            UNIX_TIMESTAMP(STR_TO_DATE(min(absence.activity_date_time), '%Y-%m-%d')) as absence_start_date_timestamp,
-                            UNIX_TIMESTAMP(STR_TO_DATE(max(absence.activity_date_time), '%Y-%m-%d')) as absence_end_date_timestamp
-                            FROM " . $civi_db_name . ".civicrm_activity request
-                            INNER JOIN " . $civi_db_name . ".civicrm_activity absence ON (absence.source_record_id = request.id AND absence.activity_type_id = " . $activityTypeId . ")
-                            INNER JOIN " . $civi_db_name . ".civicrm_activity_contact tgt ON tgt.activity_id = request.id AND tgt.record_type_id = " . $targetID . "
-                            LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_debit
-                            ON request.activity_type_id = absence_type_debit.debit_activity_type_id
-                            LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_credit
-                            ON request.activity_type_id = absence_type_credit.credit_activity_type_id
-                            INNER JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
-                            ON tgt.contact_id = drupal_contact.contact_id
-                            WHERE (request.activity_type_id IN (" . rtrim($options, ',') . "))
-                            GROUP BY request.id");
-
-        /**
-         * Manager approval view
-         */
-        $result = db_query('DROP view if exists absence_approval_list');
-        $result = db_query("CREATE VIEW absence_approval_list AS
-                            SELECT request.id, request.activity_type_id, absence_type_debit.title as debit_title, absence_type_credit.title as credit_title,
-                                    IF(absence_type_debit.title IS NOT NULL, absence_type_debit.title, absence_type_credit.title) as absence_title,
-                                CASE absence_type_credit.credit_activity_type_id
-                                    WHEN request.activity_type_id THEN 1
-                                    ELSE 0 END AS is_credit, tgt.contact_id AS manager_id, tgt_contact.contact_id AS employee_id, tgt.record_type_id, min(absence.activity_date_time) as absence_start_date, max(absence.activity_date_time) as absence_end_date, drupal_contact.uf_id as drupal_uid,
-                                    SUM(CASE WHEN absence.status_id = 9 THEN 0 WHEN absence.status_id = 3 THEN 0 ELSE absence.duration END) as duration, request.status_id as absence_status,
-                            UNIX_TIMESTAMP(STR_TO_DATE(min(absence.activity_date_time), '%Y-%m-%d')) as absence_start_date_timestamp,
-                            UNIX_TIMESTAMP(STR_TO_DATE(max(absence.activity_date_time), '%Y-%m-%d')) as absence_end_date_timestamp
-                            FROM " . $civi_db_name . ".civicrm_activity request
-                            INNER JOIN " . $civi_db_name . ".civicrm_activity absence ON (absence.source_record_id = request.id AND absence.activity_type_id = " . $activityTypeId . ")
-                            INNER JOIN " . $civi_db_name . ".civicrm_activity_contact tgt ON tgt.activity_id = request.id AND tgt.record_type_id = " . $assigneeID . "
-                            INNER JOIN " . $civi_db_name . ".civicrm_activity_contact tgt_contact ON tgt_contact.activity_id = request.id AND tgt_contact.record_type_id = " . $targetID . "
-                            LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_debit
-                            ON request.activity_type_id = absence_type_debit.debit_activity_type_id
-                            LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_credit
-                            ON request.activity_type_id = absence_type_credit.credit_activity_type_id
-                            INNER JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
-                            ON tgt.contact_id = drupal_contact.contact_id
-                            WHERE (request.activity_type_id IN (" . rtrim($options, ',') . "))
-                            GROUP BY request.id");
-
-
-        // Set to false so it will not rebuild until not asked to rebuild
-        variable_set('rebuild_absence_list_view', 'FALSE');
     }
 
     $rebuild_length_of_service = variable_get('rebuild_length_of_service', 'TRUE');
@@ -300,8 +288,6 @@ function _run_civihr_tasks() {
 
     // Set variable to TRUE so the mysql database views will be refreshed
     variable_set('rebuild_absence_list_view', 'TRUE');
-    variable_set('rebuild_length_of_service', 'TRUE');
-    variable_set('rebuild_absence_activity', 'TRUE');
     variable_set('rebuild_hrjobcontract_entities_view', 'TRUE');
 
     watchdog('Rebuild view REQUEST', 'ABSENCE LIST MYSQL VIEW');
@@ -368,6 +354,38 @@ function civihr_employee_portal_permission() {
     'manage leave and absences in ssp' => array(
       'title' => t('Manage CiviHR Leave and Absences'),
       'description' => t('Availability for the Manager to access leave block and calendar and manage leave requests')
+    ),
+    'view my details' => array(
+      'title' => t('View My Details'),
+      'description' => t('Availability for the user to view my details block and page')
+    ),
+    'view my tasks block' => array(
+      'title' => t('View My Tasks Block'),
+      'description' => t('Availability for the user to view my tasks block')
+    ),
+    'view appraisals' => array(
+      'title' => t('View Appraisals'),
+      'description' => t('Availability for the user to view appraisals block and page')
+    ),
+    'view my leave block' => array(
+      'title' => t('View My Leave Block'),
+      'description' => t('Availability for the user to view my leave block')
+    ),
+    'view my sickness report block' => array(
+      'title' => t('View My Sickness Report Block'),
+      'description' => t('Availability for the user to view my sickness report block')
+    ),
+    'view staff directory' => array(
+      'title' => t('View Staff Directory'),
+      'description' => t('Availability for the user to view staff directory block and page')
+    ),
+    'view hr resources' => array(
+      'title' => t('View HR Resources'),
+      'description' => t('Availability for the user to view hr resources block and page')
+    ),
+    'view vacancies' => array(
+      'title' => t('View Vacancies'),
+      'description' => t('Availability for the user to view vacancies block and page')
     ),
     'access hrreports' => array(
       'title' => t('Access HR Reports'),
@@ -471,7 +489,7 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
  */
 function civihr_employee_portal_custom_theme() {
 
-    // Set the pages to use the custom civihr admin theme and not the self service theme
+    // Set the civihr_reports related pages to use the custom civihr admin theme and not the self service theme
     $whitelist_urls = [];
 
     // Check if the URL is whitelisted, if yes apply the civihr_admin_theme
@@ -1132,6 +1150,12 @@ function get_civihr_contact_data($contact_id = NULL, $user_id = '') {
  * Implementation of hook_menu()
  */
 function civihr_employee_portal_menu() {
+    //get all drupal roles except the default ones (anonymous user) and (authenticated user)
+    $all_roles = user_roles();
+    unset($all_roles[array_search('anonymous user', $all_roles)]);
+    unset($all_roles[array_search('authenticated user', $all_roles)]);
+    $all_roles = array_values($all_roles);
+
     $items = array();
     $items['request_new_account/%ctools_js'] = array(
         'title' => 'Edit Document',
@@ -1266,7 +1290,6 @@ function civihr_employee_portal_menu() {
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
-
 
     /**
      * Not used currently
@@ -1713,8 +1736,13 @@ function civihr_employee_portal_my_details_callback($ajax) {
         ctools_add_js('ajax-responder');
 
         // Load the my details node
-        $node = node_load(variable_get('my_details_webform_nid', 2));
-        $contents = render(node_view($node, 'full', NULL));
+        $contents = t('An error occured while loading Webform.');
+        $my_details_webform_id = variable_get('my_details_webform_nid');
+        if ($my_details_webform_id) {
+            $node = node_load($my_details_webform_id);
+            $node_render = node_view($node, 'full', NULL);
+            $contents = render($node_render);
+        }
 
         $output = array();
         $output[] = ctools_modal_command_display(t('My Details'), render($contents));
@@ -1742,8 +1770,12 @@ function civihr_employee_portal_emergency_contacts_callback($ajax) {
         ctools_add_js('ajax-responder');
 
         // Load the emergency contacts node
-        $node = node_load(variable_get('emergency_contact_webform_nid', 3));
-        $contents = render(node_view($node, 'full', NULL));
+        $contents = t('An error occured while loading Webform.');
+        $emergency_contact_webform_id = variable_get('emergency_contact_webform_nid');
+        if ($emergency_contact_webform_id) {
+            $node = node_load($emergency_contact_webform_id);
+            $contents = render(node_view($node, 'full', NULL));
+        }
 
         $output = array();
         $output[] = ctools_modal_command_display('Emergency contacts', render($contents));
@@ -4885,6 +4917,28 @@ function civihr_employee_portal_directory_block_form_submit($form, &$form_state)
     )));
 }
 
+/**
+ * Implement hook_node_view().
+ *
+ * @param object $node
+ * @param string $view_mode
+ * @param string $langcode
+ */
+function civihr_employee_portal_node_view($node, $view_mode, $langcode) {
+    // Set up default State/Province values for Emergency Contact webform.
+    if ($node->nid === variable_get('emergency_contact_webform_nid')) {
+        $fieldset = _get_emergency_contact_fieldset_list();
+        for ($contact = 1; $contact < 3; $contact++) {
+            $country_id = null;
+            if (isset($node->content['webform']['#form']['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100008']['#default_value'])) {
+                $country_id = $node->content['webform']['#form']['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100008']['#default_value'];
+            }
+            $state_province_options = _get_state_province_list_by_country_id($country_id);
+            $node->content['webform']['#form']['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100009']['#options'] = $state_province_options;
+        }
+    }
+}
+
 // Note: Under "Redirection location" NO redirect option should be select to get the confirmation message with ajax.
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
@@ -4962,7 +5016,7 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
         // Check whether the form id have nid at the end like _nid
         preg_match('/[\d]+$/', $form_id, $matches);
-        $nid_match = $matches[0];
+        $nid_match = !empty($matches[0]) ? $matches[0] : null;
 
         if(strpos($form_id, 'webform_client_form_') !== false && !empty($nid_match)) {
 
@@ -4976,9 +5030,99 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
                 '#value' => t('Submit'),
             );
         }
-
     }
- }
+
+    // Set up Emergency Contact webform ajax fields and callbacks.
+    if (!empty($form['#node']) && $form['#node']->nid === variable_get('emergency_contact_webform_nid')) {
+        $fieldset = _get_emergency_contact_fieldset_list();
+        for ($contact = 1; $contact < 3; $contact++) {
+            $form['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100008']['#ajax'] = array(
+                'event' => 'change',
+                'wrapper' => 'emergency-contact' . $contact . '-state-province',
+                'callback' => 'civihr_employee_portal_state_province_contact' . $contact . '_callback',
+                'method' => 'replace',
+            );
+            $form['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100009']['#prefix'] = '<div id="emergency-contact' . $contact . '-state-province">';
+            $form['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100009']['#suffix'] = '</div>';
+        }
+    }
+}
+
+/**
+ * Get a recalculated State/Province form field for Emergency Contact 1.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @return array
+ */
+function civihr_employee_portal_state_province_contact1_callback($form, $form_state) {
+    return _get_emergency_contact_state_province_webform_field($form, 1);
+}
+
+/**
+ * Get a recalculated State/Province form field for Emergency Contact 2.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @return array
+ */
+function civihr_employee_portal_state_province_contact2_callback($form, $form_state) {
+    return _get_emergency_contact_state_province_webform_field($form, 2);
+}
+
+/**
+ * Get a form select field for given emergency contact containing
+ * State/Province list of selected Country.
+ *
+ * @param array $form
+ * @param int $emergency_contact
+ * @return array
+ */
+function _get_emergency_contact_state_province_webform_field($form, $emergency_contact) {
+    $fieldset = _get_emergency_contact_fieldset_list();
+    $country_id = $form['submitted'][$fieldset[$emergency_contact]]['civicrm_1_contact_' . $emergency_contact . '_cg99999_custom_100008']['#value'];
+    $form['submitted'][$fieldset[$emergency_contact]]['civicrm_1_contact_' . $emergency_contact . '_cg99999_custom_100009']['#options'] = _get_state_province_list_by_country_id($country_id);
+
+    $bootstrap_form = civihr_default_theme_form_apply_bootstrap($form['submitted']);
+    return $bootstrap_form[$fieldset[$emergency_contact]]['civicrm_1_contact_' . $emergency_contact . '_cg99999_custom_100009'];
+}
+
+/**
+ * Return an array containing fieldset list of Emergency Contact webform.
+ *
+ * @return array
+ */
+function _get_emergency_contact_fieldset_list() {
+    return array(
+        1 => 'civicrm_1_contact_1_fieldset_fieldset',
+        2 => 'secondary_emergency_contact',
+    );
+}
+
+/**
+ * Get an assotiative array containing IDs of State/Province as keys
+ * and labels of State/Province as values.
+ *
+ * @param int $country_id
+ * @return array
+ */
+function _get_state_province_list_by_country_id($country_id) {
+    if (!$country_id) {
+        return array();
+    }
+    civicrm_initialize();
+    $civi_settings = parse_url(CIVICRM_DSN);
+    $civi_db_name = trim($civi_settings['path'], '/');
+    $state_province_list = array();
+    $result = db_select($civi_db_name . '.civicrm_state_province', 'sp')
+        ->fields('sp', array('id', 'name'))
+        ->condition('country_id', $country_id, '=')
+        ->execute();
+    while ($row = $result->fetchAssoc()) {
+        $state_province_list[$row['id']] = $row['name'];
+    }
+    return $state_province_list;
+}
 
 function civihr_employee_portal_preprocess_user_login(&$vars) {
 
@@ -5563,6 +5707,16 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
             'progress' => array('type' => 'none')
         );
 
+        // Autosubmit the form on page load as views autosubmit doesn't pass values of contextual filters to inserted view in Global : View Area
+        drupal_add_js(
+            'jQuery(document).ready(function () { jQuery("#edit-submit-absence-list").click() });',
+            array(
+                'type' => 'inline',
+                'scope' => 'footer',
+                'group' => JS_THEME,
+                'weight' => 5,
+            )
+        );
         // Autosubmit the form after date_period select change
         $form['absence_start_date_period_filter']['#attributes'] = array('onchange' => "jQuery('#edit-submit-absence-list').click()");
     }
@@ -5697,33 +5851,33 @@ function _absence_start_date_period_change_submit(&$form, &$form_state) {
  * @param $vars
  */
 function civihr_employee_portal_preprocess_page(&$vars) {
-
     global $user;
     global $base_url;
 
-    $contact_data['display_name'] = t('Anonymus');
+    $display_name = t('Anonymus');
+    $edit_account_link = '';
+    $logout_link = '';
+    $image_url = $base_url . '/' . drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
 
-    // Set empty image URL
-    $vars['image_url'] = $base_url . '/' . drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
-
-    if (isset($_SESSION['CiviCRM'])) {
+    if (isset($_SESSION['CiviCRM']) && $user->uid) {
+        $edit_account_link = l('<i class="fa fa-edit"></i>' . t('Edit Account'), 'user/' . $user->uid . '/edit', array('html' => true));
+        $logout_link = l('<i class="fa fa-sign-out"></i>' . t('Log Out'), 'user/logout', array('html' => true));
 
         // Get the contact data
         $contact_data = get_civihr_contact_data($_SESSION['CiviCRM']['userID']);
-
-        if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) {
-
-            // Set the profile image URL
-            $vars['image_url'] = $contact_data['image_URL'];
-
+        if (!empty($contact_data['display_name'])) {
+            $display_name = $contact_data['display_name'];
         }
-
+        if (isset($contact_data['image_URL']) && !empty($contact_data['image_URL'])) {
+            $image_url = $contact_data['image_URL'];
+        }
     }
 
     // This values will be used in the template by Drupal
-    $vars['user_name'] = $contact_data['display_name'];
-    $vars['edit_account'] = l('<i class="fa fa-edit"></i>' . t('Edit Account'), 'user/' . $user->uid . '/edit', array('html' => true));
-    $vars['logout_link'] = l('<i class="fa fa-sign-out"></i>' . t('Log Out'), 'user/logout', array('html' => true));
+    $vars['user_name'] = $display_name;
+    $vars['image_url'] = $image_url;
+    $vars['edit_account'] = $edit_account_link;
+    $vars['logout_link'] = $logout_link;
 
 }
 
@@ -5962,6 +6116,20 @@ function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$obje
             _clear_json_cache();
         }
     }
+}
+
+/**
+ * Checks if the given absence is of the "Sick" type
+ *
+ * There is no other way currently to check if an absence type is of the
+ * "Sick" type other than checking its title, so we have to resort to a
+ * simple regex match on the title string, looking for the "sick" word
+ *
+ * @param  string $absenceName
+ * @return boolean
+ */
+function civihr_employee_portal_is_sick_absence($absenceName) {
+  return preg_match('/^sick/i', $absenceName);
 }
 
 /**

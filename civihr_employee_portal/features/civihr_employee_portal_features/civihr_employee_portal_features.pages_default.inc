@@ -203,13 +203,9 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->access = array(
       'plugins' => array(
         0 => array(
-          'name' => 'role',
+          'name' => 'perm',
           'settings' => array(
-            'rids' => array(
-              0 => 55120974,
-              1 => 17087012,
-              2 => 57573969,
-            ),
+            'perm' => 'view my details',
           ),
           'context' => 'logged-in-user',
           'not' => FALSE,
@@ -339,7 +335,18 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->type = 'block';
     $pane->subtype = 'civihr_employee_portal-leave';
     $pane->shown = TRUE;
-    $pane->access = array();
+    $pane->access = array(
+      'plugins' => array(
+        0 => array(
+          'name' => 'perm',
+          'settings' => array(
+            'perm' => 'view my leave block',
+          ),
+          'context' => 'logged-in-user',
+          'not' => FALSE,
+        ),
+      ),
+    );
     $pane->configuration = array(
       'override_title' => 1,
       'override_title_text' => '<none>',
@@ -386,7 +393,18 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->type = 'block';
     $pane->subtype = 'civihr_employee_portal-sick';
     $pane->shown = TRUE;
-    $pane->access = array();
+    $pane->access = array(
+      'plugins' => array(
+        0 => array(
+          'name' => 'perm',
+          'settings' => array(
+            'perm' => 'view my sickness report block',
+          ),
+          'context' => 'logged-in-user',
+          'not' => FALSE,
+        ),
+      ),
+    );
     $pane->configuration = array(
       'override_title' => 1,
       'override_title_text' => '<none>',
@@ -411,13 +429,9 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->access = array(
       'plugins' => array(
         0 => array(
-          'name' => 'role',
+          'name' => 'perm',
           'settings' => array(
-            'rids' => array(
-              0 => 55120974,
-              1 => 17087012,
-              2 => 57573969,
-            ),
+            'perm' => 'view staff directory',
           ),
           'context' => 'logged-in-user',
           'not' => FALSE,
