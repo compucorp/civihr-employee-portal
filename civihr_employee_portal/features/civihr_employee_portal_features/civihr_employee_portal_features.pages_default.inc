@@ -160,7 +160,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
       'settings' => NULL,
     );
     $pane->css = array(
-      'css_id' => 'documents',
+      'css_id' => '',
       'css_class' => 'chr_panel chr_panel--no-padding',
     );
     $pane->extras = array();
@@ -230,55 +230,55 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->uuid = '48897dc2-d49e-4e72-b86a-7ec70b28da04';
     $display->content['new-48897dc2-d49e-4e72-b86a-7ec70b28da04'] = $pane;
     $display->panels['header'][0] = 'new-48897dc2-d49e-4e72-b86a-7ec70b28da04';
-  $pane = new stdClass();
-  $pane->pid = 'new-0f962e7d-947f-4064-b545-efdf7262a50f';
-  $pane->panel = 'header';
-  $pane->type = 'block';
-  $pane->subtype = 'views-Tasks-block';
-  $pane->shown = TRUE;
-  $pane->access = array();
-  $pane->configuration = array(
-    'override_title' => 0,
-    'override_title_text' => '',
-    'override_title_heading' => 'h2',
-  );
-  $pane->cache = array();
-  $pane->style = array(
-    'settings' => NULL,
-  );
-  $pane->css = array(
-      'css_id' => 'tasks',
-    'css_class' => 'chr_panel chr_panel--no-padding chr_panel--tasks',
-  );
-  $pane->extras = array();
-  $pane->position = 1;
-  $pane->locks = array();
-  $pane->uuid = '0f962e7d-947f-4064-b545-efdf7262a50f';
-  $display->content['new-0f962e7d-947f-4064-b545-efdf7262a50f'] = $pane;
-  $display->panels['header'][1] = 'new-0f962e7d-947f-4064-b545-efdf7262a50f';
-  $pane = new stdClass();
-  $pane->pid = 'new-80f12630-09c3-4ce3-8d65-f766db9a08a9';
-  $pane->panel = 'header';
-  $pane->type = 'block';
-  $pane->subtype = 'views-appraisals-appraisals_employee';
-  $pane->shown = TRUE;
-  $pane->access = array();
-  $pane->configuration = array(
-    'override_title' => 0,
-    'override_title_text' => '',
-    'override_title_heading' => 'h2',
-  );
-  $pane->cache = array();
-  $pane->style = array(
-    'settings' => NULL,
-  );
-  $pane->css = array();
-  $pane->extras = array();
-  $pane->position = 2;
-  $pane->locks = array();
-  $pane->uuid = '80f12630-09c3-4ce3-8d65-f766db9a08a9';
-  $display->content['new-80f12630-09c3-4ce3-8d65-f766db9a08a9'] = $pane;
-  $display->panels['header'][2] = 'new-80f12630-09c3-4ce3-8d65-f766db9a08a9';
+    $pane = new stdClass();
+    $pane->pid = 'new-0f962e7d-947f-4064-b545-efdf7262a50f';
+    $pane->panel = 'header';
+    $pane->type = 'block';
+    $pane->subtype = 'views-Tasks-block';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array(
+      'override_title' => 0,
+      'override_title_text' => '',
+      'override_title_heading' => 'h2',
+    );
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array(
+      'css_id' => '',
+      'css_class' => 'chr_panel chr_panel--no-padding chr_panel--tasks',
+    );
+    $pane->extras = array();
+    $pane->position = 1;
+    $pane->locks = array();
+    $pane->uuid = '0f962e7d-947f-4064-b545-efdf7262a50f';
+    $display->content['new-0f962e7d-947f-4064-b545-efdf7262a50f'] = $pane;
+    $display->panels['header'][1] = 'new-0f962e7d-947f-4064-b545-efdf7262a50f';
+    $pane = new stdClass();
+    $pane->pid = 'new-80f12630-09c3-4ce3-8d65-f766db9a08a9';
+    $pane->panel = 'header';
+    $pane->type = 'block';
+    $pane->subtype = 'views-appraisals-appraisals_employee';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array(
+      'override_title' => 0,
+      'override_title_text' => '',
+      'override_title_heading' => 'h2',
+    );
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array();
+    $pane->extras = array();
+    $pane->position = 2;
+    $pane->locks = array();
+    $pane->uuid = '80f12630-09c3-4ce3-8d65-f766db9a08a9';
+    $display->content['new-80f12630-09c3-4ce3-8d65-f766db9a08a9'] = $pane;
+    $display->panels['header'][2] = 'new-80f12630-09c3-4ce3-8d65-f766db9a08a9';
     $pane = new stdClass();
     $pane->pid = 'new-492d39db-c7b8-4397-92db-ef4745f2ac5d';
     $pane->panel = 'middle';
@@ -313,7 +313,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->access = array();
     $pane->configuration = array(
       'override_title' => 1,
-      'override_title_text' => t('My Leave'),
+      'override_title_text' => 'My Leave',
     );
     $pane->cache = array();
     $pane->style = array(
@@ -371,7 +371,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->access = array();
     $pane->configuration = array(
       'override_title' => 1,
-      'override_title_text' => t('My Sickness Report'),
+      'override_title_text' => 'My Sickness Report',
     );
     $pane->cache = array();
     $pane->style = array(
@@ -458,206 +458,6 @@ function civihr_employee_portal_features_default_page_manager_pages() {
   $handler->conf['display'] = $display;
   $page->default_handlers[$handler->name] = $handler;
   $pages['dashboard'] = $page;
-
-  $page = new stdClass();
-  $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
-  $page->api_version = 1;
-  $page->name = 'welcome_page';
-  $page->task = 'page';
-  $page->admin_title = 'Welcome page';
-  $page->admin_description = '';
-  $page->path = 'welcome-page';
-  $page->access = array(
-    'plugins' => array(
-      0 => array(
-        'name' => 'role',
-        'settings' => array(
-          'rids' => array(
-            0 => 1,
-          ),
-        ),
-        'context' => 'logged-in-user',
-        'not' => FALSE,
-      ),
-    ),
-    'logic' => 'and',
-  );
-  $page->menu = array();
-  $page->arguments = array();
-  $page->conf = array(
-    'admin_paths' => FALSE,
-  );
-  $page->default_handlers = array();
-  $handler = new stdClass();
-  $handler->disabled = FALSE; /* Edit this to true to make a default handler disabled initially */
-  $handler->api_version = 1;
-  $handler->name = 'page_welcome_page_panel_context';
-  $handler->task = 'page';
-  $handler->subtask = 'welcome_page';
-  $handler->handler = 'panel_context';
-  $handler->weight = 0;
-  $handler->conf = array(
-    'title' => 'Welcome Page (Anonymous users)',
-    'no_blocks' => 0,
-    'pipeline' => 'standard',
-    'body_classes_to_remove' => '',
-    'body_classes_to_add' => '',
-    'css_id' => '',
-    'css' => '',
-    'contexts' => array(),
-    'relationships' => array(),
-  );
-  $display = new panels_display();
-  $display->layout = 'radix_geary';
-  $display->layout_settings = array();
-  $display->panel_settings = array(
-    'style_settings' => array(
-      'default' => NULL,
-      'header' => NULL,
-      'column1' => NULL,
-      'column2' => NULL,
-      'middle' => NULL,
-      'secondcolumn1' => NULL,
-      'secondcolumn2' => NULL,
-      'footer' => NULL,
-      'column3' => NULL,
-    ),
-  );
-  $display->cache = array();
-  $display->title = '<none>';
-  $display->uuid = '65fa22bb-05c5-4318-b3eb-20181449dc7a';
-  $display->content = array();
-  $display->panels = array();
-    $pane = new stdClass();
-    $pane->pid = 'new-3f0db58e-4030-419c-add3-07e0e6e8c7e0';
-    $pane->panel = 'column2';
-    $pane->type = 'custom';
-    $pane->subtype = 'custom';
-    $pane->shown = TRUE;
-    $pane->access = array();
-    $pane->configuration = array(
-      'admin_title' => '',
-      'title' => '',
-      'body' => '<div id="block-header-welcome">
-    <div class="row">
-        <div class="col-xs-12 text-center">
-            <div class="logo-rect-wrapper">
-                <img src="sites/default/files/logo.jpg">
-            </div>
-            <h1>CiviHR DEMO</h1>
-            <h2>Self Service Portal</h2>
-        </div>
-    </div>
-</div>',
-      'format' => 'full_html',
-      'substitute' => TRUE,
-    );
-    $pane->cache = array();
-    $pane->style = array(
-      'settings' => NULL,
-    );
-    $pane->css = array();
-    $pane->extras = array();
-    $pane->position = 0;
-    $pane->locks = array();
-    $pane->uuid = '3f0db58e-4030-419c-add3-07e0e6e8c7e0';
-    $display->content['new-3f0db58e-4030-419c-add3-07e0e6e8c7e0'] = $pane;
-    $display->panels['column2'][0] = 'new-3f0db58e-4030-419c-add3-07e0e6e8c7e0';
-    $pane = new stdClass();
-    $pane->pid = 'new-f122256d-6524-48e1-a630-60a24dfb412e';
-    $pane->panel = 'column2';
-    $pane->type = 'block';
-    $pane->subtype = 'user-login';
-    $pane->shown = TRUE;
-    $pane->access = array();
-    $pane->configuration = array(
-      'override_title' => 1,
-      'override_title_text' => 'Login:',
-      'override_title_heading' => 'h2',
-    );
-    $pane->cache = array();
-    $pane->style = array(
-      'settings' => NULL,
-    );
-    $pane->css = array();
-    $pane->extras = array();
-    $pane->position = 1;
-    $pane->locks = array();
-    $pane->uuid = 'f122256d-6524-48e1-a630-60a24dfb412e';
-    $display->content['new-f122256d-6524-48e1-a630-60a24dfb412e'] = $pane;
-    $display->panels['column2'][1] = 'new-f122256d-6524-48e1-a630-60a24dfb412e';
-    $pane = new stdClass();
-    $pane->pid = 'new-c1e74a5e-1513-4ae2-bd55-e097b00d3575';
-    $pane->panel = 'column2';
-    $pane->type = 'custom';
-    $pane->subtype = 'custom';
-    $pane->shown = TRUE;
-    $pane->access = array();
-    $pane->configuration = array(
-      'admin_title' => '',
-      'title' => '',
-      'body' => '<p class="text-center">Don\'t have a login?
-        <a href="/request_new_account/nojs" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed" title="Request new account">Click here to request one from your HR administrator</a></p>',
-      'format' => 'full_html',
-      'substitute' => TRUE,
-    );
-    $pane->cache = array();
-    $pane->style = array(
-      'settings' => NULL,
-    );
-    $pane->css = array();
-    $pane->extras = array();
-    $pane->position = 2;
-    $pane->locks = array();
-    $pane->uuid = 'c1e74a5e-1513-4ae2-bd55-e097b00d3575';
-    $display->content['new-c1e74a5e-1513-4ae2-bd55-e097b00d3575'] = $pane;
-    $display->panels['column2'][2] = 'new-c1e74a5e-1513-4ae2-bd55-e097b00d3575';
-    $pane = new stdClass();
-    $pane->pid = 'new-34a8c3b9-acb5-4419-ba57-7ebfc1f3e8f2';
-    $pane->panel = 'header';
-    $pane->type = 'node';
-    $pane->subtype = 'node';
-    $pane->shown = TRUE;
-    $pane->access = array(
-      'plugins' => array(
-        0 => array(
-          'name' => 'role',
-          'settings' => array(
-            'rids' => array(
-              0 => 30037204,
-            ),
-          ),
-          'context' => 'logged-in-user',
-          'not' => FALSE,
-        ),
-      ),
-    );
-    $pane->configuration = array(
-      'nid' => '1',
-      'links' => 1,
-      'leave_node_title' => 0,
-      'identifier' => '',
-      'build_mode' => 'full',
-      'link_node_title' => 0,
-      'override_title' => 1,
-      'override_title_text' => '<none>',
-    );
-    $pane->cache = array();
-    $pane->style = array(
-      'settings' => NULL,
-    );
-    $pane->css = array();
-    $pane->extras = array();
-    $pane->position = 0;
-    $pane->locks = array();
-    $pane->uuid = '34a8c3b9-acb5-4419-ba57-7ebfc1f3e8f2';
-    $display->content['new-34a8c3b9-acb5-4419-ba57-7ebfc1f3e8f2'] = $pane;
-    $display->panels['header'][0] = 'new-34a8c3b9-acb5-4419-ba57-7ebfc1f3e8f2';
-  $display->hide_title = PANELS_TITLE_FIXED;
-  $display->title_pane = '0';
-  $handler->conf['display'] = $display;
-  $page->default_handlers[$handler->name] = $handler;
-  $pages['welcome_page'] = $page;
 
   return $pages;
 

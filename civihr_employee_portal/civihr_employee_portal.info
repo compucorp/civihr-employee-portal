@@ -11,6 +11,7 @@ dependencies[] = xautoload
 dependencies[] = ctools
 dependencies[] = date
 dependencies[] = date_popup
+dependencies[] = date_views
 dependencies[] = calendar
 dependencies[] = panels
 dependencies[] = rules
@@ -64,6 +65,20 @@ files[] = views/includes/views_json_query_argument_document_contacts_request_han
 files[] = views/includes/views_json_query_argument_task_contacts_request_handler.inc
 files[] = views/includes/views_json_query_argument_appraisal_contact_id_request_handler.inc
 files[] = views/includes/civihr_employee_portal_handler_manager_id.inc
+files[] = views/includes/views_between_dates_filter_handler.inc
+
+; Reports Views handlers
+
+files[] = views/includes/civihr_employee_portal_handler_date_yyyy_mm_dd.inc
+files[] = views/includes/civihr_employee_portal_handler_jobcontract_end_reason.inc
+files[] = views/includes/civihr_employee_portal_handler_jobcontract_location_standard_hours.inc
+files[] = views/includes/civihr_employee_portal_handler_jobcontract_pay_scale.inc
+files[] = views/includes/civihr_employee_portal_handler_jobcontract_pension_is_enrolled.inc
+files[] = views/includes/civihr_employee_portal_handler_contact_age_group.inc
+files[] = views/includes/civihr_employee_portal_handler_absence_day_of_week.inc
+files[] = views/includes/civihr_employee_portal_handler_absence_duration_in_days.inc
+files[] = views/includes/civihr_employee_portal_handler_yes_no.inc
+files[] = views/includes/civihr_employee_portal_handler_pipe.inc
 
 ; Custom js
 scripts[] = js/scripts.js
