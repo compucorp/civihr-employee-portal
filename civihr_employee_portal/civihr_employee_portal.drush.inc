@@ -50,7 +50,7 @@ function civihr_employee_portal_drush_command() {
         ),
         'aliases' => array('drush-ueids'),
     );
-    
+
      $items['update-email-type'] = array(
         'description' => dt('Sets primary email type to "Work" for existing users'),
         'arguments'   => array(),
@@ -73,12 +73,12 @@ function drush_civihr_employee_portal_refresh_node_export_files() {
     // Check for all node export files
     $files = file_scan_directory(drupal_get_path('module', 'civihr_employee_portal') . '/features/node_export_files', '/.*\.export$/');
 
-    // Loop the export files and import them
+    // Loop the export files, import them, and set the config variable
     foreach ($files as $filepath => $file) {
-
         $info = node_export_import(file_get_contents($filepath));
-        drush_log(print_r($info), 'ok');
 
+        variable_set($file->name . '_webform_nid', $info['nids'][0]);
+        drush_log($file->name . ' webform imported and nid set as variable', 'ok');
     }
 
     // Log to the command line with an OK status
@@ -166,8 +166,8 @@ function drush_civihr_employee_portal_update_email_type() {
             ));
 
             $email_values = reset($email_data['values']);
-            
-            if ((isset($email_values['id']) && isset($email_values['email'])) 
+
+            if ((isset($email_values['id']) && isset($email_values['email']))
                 && $email_values['location_type_id'] !== $work_type_id) {
                 $result = civicrm_api3('Email', 'create', array(
                     'sequential' => 1,

@@ -328,8 +328,10 @@ function isFieldName($field){
         buildTaskContactFilter();
 
         function showFilteredTaskRows() {
-            $tableDocStaffRows.hide();
-            $tableDocStaffRows.removeClass('selected-by-type').removeClass('selected-by-filter');
+            $tableDocStaffRows
+              .hide()
+              .removeClass('selected-by-type')
+              .removeClass('selected-by-filter');
             $selectedRowType.addClass('selected-by-type');
             $selectedRowFilter.addClass('selected-by-filter');
             $('.selected-by-type.selected-by-filter.selected-by-contact', $tableDocStaff).show();
@@ -344,24 +346,20 @@ function isFieldName($field){
             }
             $('#nav-tasks-filter .task-counter-filter-0').text(sum);
         }
-        
+
         function buildTaskContactFilter() {
             $tableDocStaffRows.addClass('selected-by-contact');
             $('#task-filter-contact').on("keyup", function() {
-                var value = $(this).val();
-                
+                var value = $(this).val().toLowerCase();
                 $tableDocStaffRows.removeClass('selected-by-contact');
                 $("#tasks-dashboard-table-staff > tbody > tr.task-row").each(function(index) {
                     var $row = $(this);
-                    var text = $row.data('rowContacts');
-                    
-                    if (!text) {
-                        $tableDocStaffRows.addClass('selected-by-contact');
+                    var text = $row.data('rowContacts') || '';
+                    var matchedIndex = text.toLowerCase().indexOf(value);
+                    if (value.length === 0 || matchedIndex !== -1) {
+                      $row.addClass('selected-by-contact');
                     } else {
-                        var matchedIndex = text.indexOf(value);
-                        if (matchedIndex === 0) {
-                            $(this).addClass('selected-by-contact');
-                        }
+                      $row.removeClass('selected-by-contact');
                     }
                 });
                 showFilteredTaskRows();
