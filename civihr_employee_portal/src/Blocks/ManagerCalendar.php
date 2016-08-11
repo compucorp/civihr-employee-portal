@@ -168,7 +168,7 @@ class ManagerCalendar {
                 $calendar_tables[]['data'] = theme('table', array(
                     'header' => $header,
                     'rows' => $rows,
-                    'attributes' => array('class' => 'chr_calendar--manager')
+                    'attributes' => array('class' => array('chr_calendar--manager'))
                 ));
             }
         }

@@ -155,6 +155,10 @@ $handler->display->display_options['fields']['nothing_1']['alter']['text'] = '<d
 $handler->display->display_options['sorts']['absence_start_date_timestamp']['id'] = 'absence_start_date_timestamp';
 $handler->display->display_options['sorts']['absence_start_date_timestamp']['table'] = 'absence_approval_list';
 $handler->display->display_options['sorts']['absence_start_date_timestamp']['field'] = 'absence_start_date_timestamp';
+/* Filter criterion: Absence approval entity: Absence status */
+$handler->display->display_options['filters']['absence_status']['id'] = 'absence_status';
+$handler->display->display_options['filters']['absence_status']['table'] = 'absence_approval_list';
+$handler->display->display_options['filters']['absence_status']['field'] = 'absence_status';
 
 /* Display: Approved / Rejected */
 $handler = $view->new_display('page', 'Approved / Rejected', 'page');
@@ -278,7 +282,7 @@ $handler->display->display_options['header']['area']['id'] = 'area';
 $handler->display->display_options['header']['area']['table'] = 'views';
 $handler->display->display_options['header']['area']['field'] = 'area';
 $handler->display->display_options['header']['area']['empty'] = TRUE;
-$handler->display->display_options['header']['area']['content'] = '<a href="absence_all/nojs/view" class="chr_action--icon--list chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-custom-large-style"><span>Show all Absences</span></a><a href="manager_approval/nojs/calendar/show" class="chr_action--icon--calendar chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-default-style"><span>Open Calendar</span></a>';
+$handler->display->display_options['header']['area']['content'] = '<a href="absence_all/nojs/view" class="chr_action--icon--list chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-custom-large-style"><span>Show all Absences</span></a>';
 $handler->display->display_options['header']['area']['format'] = 'full_html';
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
@@ -329,5 +333,5 @@ $translatables['approvals'] = array(
   t('Manager ID'),
   t('Awaiting Approvals'),
   t('Awaiting Approvals dashboard block'),
-  t('<a href="absence_all/nojs/view" class="chr_action--icon--list chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-custom-large-style"><span>Show all Absences</span></a><a href="manager_approval/nojs/calendar/show" class="chr_action--icon--calendar chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-default-style"><span>Open Calendar</span></a>'),
+  t('<a href="absence_all/nojs/view" class="chr_action--icon--list chr_action--transparent chr_action--icon--responsive ctools-use-modal ctools-modal-civihr-custom-large-style"><span>Show all Absences</span></a>'),
 );
