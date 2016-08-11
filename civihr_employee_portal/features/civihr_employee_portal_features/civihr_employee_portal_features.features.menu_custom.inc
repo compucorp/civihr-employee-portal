@@ -10,16 +10,24 @@
 function civihr_employee_portal_features_menu_default_menu_custom() {
   $menus = array();
 
-  // Exported menu: main-menu.
-  $menus['main-menu'] = array(
-    'menu_name' => 'main-menu',
-    'title' => 'Main menu',
-    'description' => 'The <em>Main</em> menu is used on many sites to show the major sections of the site, often in a top navigation bar.',
+  // Exported menu: hr-reports.
+  $menus['hr-reports'] = array(
+    'menu_name' => 'hr-reports',
+    'title' => 'Reports',
+    'description' => 'CiviHR Reports',
+  );
+  // Exported menu: hr-reports-settings.
+  $menus['hr-reports-settings'] = array(
+    'menu_name' => 'hr-reports-settings',
+    'title' => 'Reports settings',
+    'description' => 'CiviHR Reports settings',
   );
   // Translatables
   // Included for use with string extractors like potx.
-  t('Main menu');
-  t('The <em>Main</em> menu is used on many sites to show the major sections of the site, often in a top navigation bar.');
+  t('CiviHR Reports');
+  t('CiviHR Reports settings');
+  t('Reports');
+  t('Reports settings');
 
 
   return $menus;

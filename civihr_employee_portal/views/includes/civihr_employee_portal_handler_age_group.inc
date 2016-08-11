@@ -19,7 +19,8 @@ class civihr_employee_portal_handler_age_group extends views_handler_field {
         if (isset($value)) {
 
             // Birth date based on the timestamp
-            $birthDate = date('Y-m-d', $value);
+            //$birthDate = date('Y-m-d', $value);
+            $birthDate = $value;
 
             if ($birthDate < date('Ymd')) {
                 $age_array = CRM_Utils_Date::calculateAge($birthDate);
