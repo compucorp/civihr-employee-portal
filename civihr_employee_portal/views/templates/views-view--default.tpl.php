@@ -62,7 +62,11 @@
   <?php endif; ?>
 
   <?php if ($pager): ?>
-    <?php print $pager; ?>
+    <div class="chr_search-result__footer">
+        <div class="chr_search-result__pager chr_search-result__pager--full">
+            <?php print $pager; ?>
+        </div>
+    </div>
   <?php endif; ?>
 
   <?php if ($attachment_after): ?>
