@@ -5,6 +5,12 @@ use Drupal\civihr_employee_portal\Blocks\Leave;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 
+define('TASK_PAST_DAY', 1);
+define('TASK_TODAY', 2);
+define('TASK_DAY_AFTER_WEEKEND', 4);
+define('TASK_TOMORROW', 5);
+define('TASK_ANY_OTHER_DAY', 3);
+
 /**
  * Implements hook_css_alter().
  */
@@ -6270,4 +6276,70 @@ function _is_hrreports_data_table_view($viewName) {
         return TRUE;
     }
     return FALSE;
+}
+
+/**
+ * Return an array containing string values for given Contacts IDs.
+ * Used in Tasks block template for create Contact javascript filter.
+ * 
+ * @param array $contactsIds
+ * @return array
+ */
+function _get_contacts_filter_values(array $contactsIds) {
+    $result = array();
+    if (!empty($contactsIds)) {
+        $contactsResult = civicrm_api3('Contact', 'get', array(
+          'id' => array('IN' => array_keys($contactsIds)),
+          'return' => "sort_name",
+        ));
+        foreach ($contactsResult['values'] as $key => $value) {
+            $result[$key] = $value['sort_name'];
+        }
+    }
+    return $result;
+}
+
+/**
+ * Return an integer value of task filter by given date.
+ * 1 - PAST_DAY
+ * 2 - TODAY
+ * 4 - DAY_AFTER_WEEKEND
+ * 5 - TOMORROW
+ * 3 - ANY_OTHER_DAY
+ * Used in Tasks block template.
+ * 
+ * @param string $date
+ * @return int
+ */
+function _get_task_filter_by_date($date) {
+    $today = (new DateTime())->format('Y-m-d');
+    $tomorrow = (new DateTime('tomorrow'))->format('Y-m-d');
+    $nbDay = (new DateTime())->format('N');
+    $weekEnd = (new DateTime())->modify('+' . (7 - $nbDay) . ' days')->format('Y-m-d');
+    $taskDate = (new DateTime())->setTimestamp(strtotime(strip_tags($date)))->format('Y-m-d');
+
+    if ($taskDate < $today) {
+        return TASK_PAST_DAY;
+    }
+    if ($taskDate == $today) {
+        return TASK_TODAY;
+    }
+    if ($taskDate > $weekEnd) {
+        return TASK_DAY_AFTER_WEEKEND;
+    }
+    if ($taskDate == $tomorrow){
+        return TASK_TOMORROW;
+    }
+    return TASK_ANY_OTHER_DAY;
+}
+
+/**
+ * Check if given field is one of Task contacts fields.
+ * Used in Tasks block template.
+ * 
+ * @param string $field
+ * @return bool
+ */
+function _is_field_task_contact($field) {
+   return $field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2';
 }
