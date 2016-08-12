@@ -5,6 +5,12 @@ use Drupal\civihr_employee_portal\Blocks\Leave;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 
+define('TASK_PAST_DAY', 1);
+define('TASK_TODAY', 2);
+define('TASK_DAY_AFTER_WEEKEND', 4);
+define('TASK_TOMORROW', 5);
+define('TASK_ANY_OTHER_DAY', 3);
+
 /**
  * Implements hook_css_alter().
  */
@@ -6308,27 +6314,25 @@ function _get_contacts_filter_values(array $contactsIds) {
  * @return int
  */
 function _get_task_filter_by_date($date) {
-    $today = date('Y-m-d');
-    $tomorrow = new DateTime('tomorrow');
-    $nbDay = date('N', strtotime($today));
-    $sunday = new DateTime($today);
-    $sunday->modify('+' . (7 - $nbDay) . ' days');
-    $weekEnd = $sunday->format('Y-m-d');
-    $taskDate = date('Y-m-d', strtotime(strip_tags($date)));
+    $today = (new DateTime())->format('Y-m-d');
+    $tomorrow = (new DateTime('tomorrow'))->format('Y-m-d');
+    $nbDay = (new DateTime())->format('N');
+    $weekEnd = (new DateTime())->modify('+' . (7 - $nbDay) . ' days')->format('Y-m-d');
+    $taskDate = (new DateTime())->setTimestamp(strtotime(strip_tags($date)))->format('Y-m-d');
 
     if ($taskDate < $today) {
-        return 1;
+        return TASK_PAST_DAY;
     }
     if ($taskDate == $today) {
-        return 2;
+        return TASK_TODAY;
     }
     if ($taskDate > $weekEnd) {
-        return 4;
+        return TASK_DAY_AFTER_WEEKEND;
     }
-    if ($taskDate == $tomorrow->format('Y-m-d')){
-        return 5;
+    if ($taskDate == $tomorrow){
+        return TASK_TOMORROW;
     }
-    return 3;
+    return TASK_ANY_OTHER_DAY;
 }
 
 /**

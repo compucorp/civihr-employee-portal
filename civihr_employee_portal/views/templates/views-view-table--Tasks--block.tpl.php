@@ -21,12 +21,6 @@
 
 global $user;
 
-define('PAST_DAY', 1);
-define('TODAY', 2);
-define('DAY_AFTER_WEEKEND', 4);
-define('TOMORROW', 5);
-define('ANY_OTHER_DAY', 3);
-
 $civiUser = get_civihr_uf_match_data($user->uid);
 
 $typeResult = civicrm_api3('Activity', 'getoptions', array(
@@ -143,11 +137,11 @@ $contactsFilterValues = _get_contacts_filter_values($contactsIds);
                               $taskDate = strtotime(strip_tags($content));
                               $dateFilter = _get_task_filter_by_date(date('Y-m-d', $taskDate));
 
-                              if($dateFilter == TOMORROW){
+                              if ($dateFilter == TASK_TOMORROW) {
                                 $content = 'Tomorrow';
-                              }else if($dateFilter == TODAY){
+                              } else if ($dateFilter == TASK_TODAY) {
                                 $content = 'Today';
-                              }else{
+                              } else {
                                 $content = date('m/d/Y', $taskDate);
                               }
                             }
