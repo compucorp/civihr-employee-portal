@@ -62,12 +62,14 @@ foreach ($rows as $row):
     $taskFiltersCount[0]++;
 endforeach;
 
-$contactsResult = civicrm_api3('Contact', 'get', array(
-  'id' => array('IN' => array_keys($contactsIds)),
-  'return' => "sort_name",
-));
-foreach ($contactsResult['values'] as $key => $value) {
-    $contactsFilterValues[$key] = $value['sort_name'];
+if (!empty($contactsIds)) {
+    $contactsResult = civicrm_api3('Contact', 'get', array(
+      'id' => array('IN' => array_keys($contactsIds)),
+      'return' => "sort_name",
+    ));
+    foreach ($contactsResult['values'] as $key => $value) {
+        $contactsFilterValues[$key] = $value['sort_name'];
+    }
 }
 
 function _get_task_filter_by_date($date) {
@@ -162,10 +164,12 @@ function isFieldName($field){
                     if (!$rowType):
                         continue;
                     endif;
-                    $rowContacts = strip_tags($row['task_contacts']) . ',' . strip_tags($row['task_contacts_1']) . ',' . strip_tags($row['task_contacts_2']);
+
+                    $class = 'task-row task-filter-id-' . _get_task_filter_by_date($row['activity_date_time']) . ' ' . $rowType;
+                    $targetKey = strip_tags($row['task_contacts']);
+                    $contactsFilterValue = !empty($contactsFilterValues[$targetKey]) ? $contactsFilterValues[$targetKey] : '';
                     ?>
-                    <?php $class = 'task-row task-filter-id-' . _get_task_filter_by_date($row['activity_date_time']) . ' ' . $rowType; ?>
-                    <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $contactsFilterValues[strip_tags($row['task_contacts'])]; ?>">
+                    <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $contactsFilterValue; ?>">
                         <?php
                           foreach ($row as $field => $content):
                             if (isFieldName($field)) {
