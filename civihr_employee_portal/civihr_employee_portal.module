@@ -6273,3 +6273,71 @@ function _is_hrreports_data_table_view($viewName) {
     }
     return FALSE;
 }
+
+/**
+ * Return an array containing string values for given Contacts IDs.
+ * Used in Tasks block template for create Contact javascript filter.
+ * 
+ * @param array $contactsIds
+ * @return array
+ */
+function _get_contacts_filter_values(array $contactsIds) {
+    $result = array();
+    if (!empty($contactsIds)) {
+        $contactsResult = civicrm_api3('Contact', 'get', array(
+          'id' => array('IN' => array_keys($contactsIds)),
+          'return' => "sort_name",
+        ));
+        foreach ($contactsResult['values'] as $key => $value) {
+            $result[$key] = $value['sort_name'];
+        }
+    }
+    return $result;
+}
+
+/**
+ * Return an integer value of task filter by given date.
+ * 1 - PAST_DAY
+ * 2 - TODAY
+ * 4 - DAY_AFTER_WEEKEND
+ * 5 - TOMORROW
+ * 3 - ANY_OTHER_DAY
+ * Used in Tasks block template.
+ * 
+ * @param string $date
+ * @return int
+ */
+function _get_task_filter_by_date($date) {
+    $today = date('Y-m-d');
+    $tomorrow = new DateTime('tomorrow');
+    $nbDay = date('N', strtotime($today));
+    $sunday = new DateTime($today);
+    $sunday->modify('+' . (7 - $nbDay) . ' days');
+    $weekEnd = $sunday->format('Y-m-d');
+    $taskDate = date('Y-m-d', strtotime(strip_tags($date)));
+
+    if ($taskDate < $today) {
+        return 1;
+    }
+    if ($taskDate == $today) {
+        return 2;
+    }
+    if ($taskDate > $weekEnd) {
+        return 4;
+    }
+    if ($taskDate == $tomorrow->format('Y-m-d')){
+        return 5;
+    }
+    return 3;
+}
+
+/**
+ * Check if given field is one of Task contacts fields.
+ * Used in Tasks block template.
+ * 
+ * @param string $field
+ * @return bool
+ */
+function _is_field_task_contact($field) {
+   return $field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2';
+}

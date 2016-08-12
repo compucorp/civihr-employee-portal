@@ -44,7 +44,6 @@ $taskFilters = array(
 $taskFiltersCount = array_combine(array_keys($taskFilters), array_fill(0, count($taskFilters), 0));
 $contactsIds = array();
 $contacts = array();
-$contactsFilterValues = array();
 
 foreach ($rows as $row):
     $rowType = null;
@@ -62,43 +61,7 @@ foreach ($rows as $row):
     $taskFiltersCount[0]++;
 endforeach;
 
-if (!empty($contactsIds)) {
-    $contactsResult = civicrm_api3('Contact', 'get', array(
-      'id' => array('IN' => array_keys($contactsIds)),
-      'return' => "sort_name",
-    ));
-    foreach ($contactsResult['values'] as $key => $value) {
-        $contactsFilterValues[$key] = $value['sort_name'];
-    }
-}
-
-function _get_task_filter_by_date($date) {
-    $today = date('Y-m-d');
-    $tomorrow = new DateTime('tomorrow');
-    $nbDay = date('N', strtotime($today));
-    $sunday = new DateTime($today);
-    $sunday->modify('+' . (7 - $nbDay) . ' days');
-    $weekEnd = $sunday->format('Y-m-d');
-    $taskDate = date('Y-m-d', strtotime(strip_tags($date)));
-
-    if ($taskDate < $today) {
-        return PAST_DAY;
-    }
-    if ($taskDate == $today) {
-        return TODAY;
-    }
-    if ($taskDate > $weekEnd) {
-        return DAY_AFTER_WEEKEND;
-    }
-    if ($taskDate == $tomorrow->format('Y-m-d')){
-        return TOMORROW;
-    }
-    return ANY_OTHER_DAY;
-}
-
-function isFieldName($field){
-   return $field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2';
-}
+$contactsFilterValues = _get_contacts_filter_values($contactsIds);
 
 ?>
 
@@ -140,7 +103,7 @@ function isFieldName($field){
                         <tr>
                         <?php
                           foreach ($header as $field => $label):
-                            if (isFieldName($field)) {
+                            if (_is_field_task_contact($field)) {
                               continue;
                             }
                         ?>
@@ -172,7 +135,7 @@ function isFieldName($field){
                     <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $contactsFilterValue; ?>">
                         <?php
                           foreach ($row as $field => $content):
-                            if (isFieldName($field)) {
+                            if (_is_field_task_contact($field)) {
                               continue;
                             }
 
