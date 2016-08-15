@@ -146,7 +146,7 @@ class ManagerCalendar {
                                 
                                 if ($activity['start_month'] == $activity['end_month']) {
                                     if ($s >= $activity['start_day'] && $s <= $activity['end_day']) {
-                                        $colour_code = !empty($colour_codes[$activity['type']]) ? $colour_codes[$activity['type']] : '#ffffff';
+                                        $colour_code = !empty($colour_codes[$activity['type']]) ? $colour_codes[$activity['type']] : '#999999';
                                         $rows[$employeeId][$s]['class'] = 'chr_calendar--manager__date chr_calendar--manager__date--filled';
                                         $rows[$employeeId][$s]['style'] = 'background-color: ' . $colour_code . ';';
                                         $rows[$employeeId][$s]['data'] = '<div style="color: #ffffff;" class="views-tooltip stripe" tooltip-content="' . $activity['title'] . ': ' . $activity['duration'] . '">'  . date('D', strtotime($current_year . '/' . $activity['start_month'] . '/' . $s)) . '</div></div>';
