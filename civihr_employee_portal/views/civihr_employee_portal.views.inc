@@ -928,29 +928,20 @@ function civihr_employee_portal_views_data_alter(&$data) {
  * Adding required js for the modal window
  */
 function civihr_employee_portal_views_pre_render(&$view) {
-
     if ($view->name == 'hr_documents') {
-
         if ($view->current_display == 'hr_resources') {
-
             ctools_include('modal');
             ctools_modal_add_js();
-
         }
     }
-    
-    if ($view->name == 'appraisals') {
-
+    if (in_array($view->name, array('appraisals', 'approvals'))) {
         ctools_include('modal');
         ctools_modal_add_js();
-
     }
-    
     if($view->name == "civihr_staff_directory"){
       $view->result = removeInactiveManagers($view->result);
       $view->result = removeInactiveDepartments($view->result);
     }
-
     if($view->name == "approvals"){
       $view->result = removeAbsencesForOtherManagers($view->result);
     }
