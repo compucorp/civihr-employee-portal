@@ -1585,6 +1585,16 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
         ) . '';
     }
 
+    if ($link_type == 'leave_report') {
+        return '' . l("<span>$link_text</span>", 'print-leave-report/',
+            array(
+                'query' => array('absence_start_date_period_filter' => $nid),
+                'attributes' => array('class' => "chr_action--icon--print $class", 'target'=>'_blank'),
+                'html' => true
+            )
+        ) . '';
+    }
+
     if ($link_type == 'hr-resource') {
         return '' . l($link_text, 'hr_resources/nojs/resource/' . $nid,
             array('attributes' => array('class' => "ctools-use-modal ctools-modal-civihr-custom-style $class"))
