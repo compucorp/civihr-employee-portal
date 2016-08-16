@@ -982,8 +982,8 @@ function removeAdditionalCommas($view){
   $fieldsToClean = array();
 
   foreach($view->style_plugin->rendered_fields as $renderedField){
-    $managerFieldValues = $renderedField['last_name_1'];
-    $departmentFieldValues = $renderedField['department'];
+    $managerFieldValues = !empty($renderedField['last_name_1']) ? $renderedField['last_name_1'] : NULL;
+    $departmentFieldValues = !empty($renderedField['department']) ? $renderedField['department'] : NULL;
 
     if($managerFieldValues != NULL && trim($managerFieldValues) != "")
     {
@@ -1004,12 +1004,12 @@ function removeAdditionalCommas($view){
 
 function removeInactiveDepartments($results = array()){
   foreach($results as $key => $value){
-    $startDate = $value->hrjc_role_civicrm_contact_start_date;
-    $endDate = $value->hrjc_role_civicrm_contact_end_date;
+    $startDate = !empty($value->hrjc_role_civicrm_contact_start_date) ? $value->hrjc_role_civicrm_contact_start_date : NULL;
+    $endDate = !empty($value->hrjc_role_civicrm_contact_end_date) ? $value->hrjc_role_civicrm_contact_end_date : NULL;
 
-    if(($endDate < date('Y-m-d h:i:s') && $endDate != "0000-00-00 00:00:00")
+    if(($endDate && $endDate < date('Y-m-d h:i:s') && $endDate != "0000-00-00 00:00:00")
        ||
-       ($startDate > date('Y-m-d h:i:s'))
+       ($startDate && $startDate > date('Y-m-d h:i:s'))
       )
     {
       $value->hrjc_role_civicrm_contact_department = NULL;
