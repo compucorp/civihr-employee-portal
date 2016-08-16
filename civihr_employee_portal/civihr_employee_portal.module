@@ -79,6 +79,18 @@ function _setup_modals() {
 }
 
 /**
+ * Adds a script to a specific page
+ *
+ * @param string $scriptFile the name of the script file (extension included)
+ * @param string $page
+ */
+function _add_script_to_page($scriptFile, $page) {
+  if (arg()[0] == $page) {
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . "/js/$scriptFile");
+  }
+}
+
+/**
  * Get the module URL
  *
  * @param  string $moduleName <Module name>
@@ -117,6 +129,8 @@ function civihr_employee_portal_init() {
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/documents.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/tasks.css");
+
+    _add_script_to_page('tasks.js', 'dashboard');
 
     // Check the variable and decide if we need to rebuild the absence_list mysql view
     $rebuild_absence_list_view = variable_get('rebuild_absence_list_view', 'TRUE');
@@ -6283,7 +6297,7 @@ function _is_hrreports_data_table_view($viewName) {
 /**
  * Return an array containing string values for given Contacts IDs.
  * Used in Tasks block template for create Contact javascript filter.
- * 
+ *
  * @param array $contactsIds
  * @return array
  */
@@ -6309,7 +6323,7 @@ function _get_contacts_filter_values(array $contactsIds) {
  * 5 - TOMORROW
  * 3 - ANY_OTHER_DAY
  * Used in Tasks block template.
- * 
+ *
  * @param string $date
  * @return int
  */
@@ -6338,7 +6352,7 @@ function _get_task_filter_by_date($date) {
 /**
  * Check if given field is one of Task contacts fields.
  * Used in Tasks block template.
- * 
+ *
  * @param string $field
  * @return bool
  */
