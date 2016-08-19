@@ -29,10 +29,10 @@
 
   <ul class="nav nav-tabs nav-justified nav-tabs-header report-tabs">
   <?php if (!empty($tableUrl)): ?>
-      <li role="presentation" class="active"><a class="btn btn-default" data-tab="data">Data</a></li>
+      <li role="presentation" class="active"><a data-tab="data">Data</a></li>
   <?php endif; ?>
   <?php if (!empty($jsonUrl)): ?>
-      <li role="presentation"><a class="btn btn-default" data-tab="pivot-table">Pivot Table</a></li>
+      <li role="presentation"><a data-tab="pivot-table">Pivot Table</a></li>
   <?php endif; ?>
   </ul>
 
