@@ -45,11 +45,11 @@ $taskFilters = array(
     3 => 'Due This Week',
     4 => 'Later',
 );
-$taskFiltersCount = array_combine(array_keys($taskFilters), array_fill(0, count($taskFilters), 0));
+$taskFiltersCount = array_fill(0, count($taskFilters), 0);
 $contactsIds = array();
 $contacts = array();
 
-foreach ($rows as $row):
+foreach ($rows as $row) {
   if (taskAssignedToUser($row, $civiUser['contact_id'])) {
     continue;
   }
@@ -57,10 +57,9 @@ foreach ($rows as $row):
   $contactsIds[strip_tags($row['task_contacts'])] = 1;
   $taskFiltersCount[_get_task_filter_by_date($row['activity_date_time'])]++;
   $taskFiltersCount[0]++;
-endforeach;
+}
 
 $contactsFilterValues = _get_contacts_filter_values($contactsIds);
-
 ?>
 
 <div class="chr_table-w-filters row">
