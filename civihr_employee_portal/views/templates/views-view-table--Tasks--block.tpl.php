@@ -75,32 +75,32 @@ $contactsFilterValues = _get_contacts_filter_values($contactsIds);
 
 <div class="chr_table-w-filters row">
     <div class="chr_table-w-filters__filters col-md-3">
-        <div class="chr_table-w-filters__filters__dropdown-wrapper">
-            <div class="chr_custom-select chr_custom-select--full">
-                <select id="select-tasks-filter" class="chr_table-w-filters__filters__dropdown skip-js-custom-select">
-                    <?php foreach ($taskFilters as $key => $filter): ?>
-                        <option value="<?php print $key; ?>"><?php print $filter['label']; ?>
-                          (<?php print $filter['count']; ?>)
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-        </div>
-        <ul id="nav-tasks-filter" class="chr_table-w-filters__filters__nav">
-            <?php $classActive = ' class="active"'; ?>
+      <div class="chr_table-w-filters__filters__dropdown-wrapper">
+        <div class="chr_custom-select chr_custom-select--full">
+          <select id="select-tasks-filter" class="chr_table-w-filters__filters__dropdown skip-js-custom-select">
             <?php foreach ($taskFilters as $key => $filter): ?>
-                <?php $badgeType = $key == 'overdue' ? 'danger' : 'primary'; ?>
-                <li<?php print $classActive; ?>>
-                    <a href data-task-filter="<?php print $key; ?>">
-                        <?php print $filter['label']; ?>
-                        <span class="badge badge-<?php print $badgeType; ?> pull-right task-counter-filter">
-                            <?php print $filter['count']; ?>
-                        </span>
-                    </a>
-                </li>
-                <?php $classActive = ''; ?>
+              <option value="<?php print $key; ?>"><?php print $filter['label']; ?>
+                (<?php print $filter['count']; ?>)
+              </option>
             <?php endforeach; ?>
-        </ul>
+          </select>
+        </div>
+      </div>
+      <ul id="nav-tasks-filter" class="chr_table-w-filters__filters__nav">
+        <?php $classActive = ' class="active"'; ?>
+        <?php foreach ($taskFilters as $key => $filter): ?>
+          <?php $badgeType = $key == 'overdue' ? 'danger' : 'primary'; ?>
+          <li<?php print $classActive; ?>>
+            <a href data-task-filter="<?php print $key; ?>">
+              <?php print $filter['label']; ?>
+              <span class="badge badge-<?php print $badgeType; ?> pull-right task-counter-filter">
+                <?php print $filter['count']; ?>
+              </span>
+            </a>
+          </li>
+          <?php $classActive = ''; ?>
+        <?php endforeach; ?>
+      </ul>
     </div>
     <div class="chr_table-w-filters__table-wrapper col-md-9">
         <div class="chr_table-w-filters__table">
@@ -128,52 +128,52 @@ $contactsFilterValues = _get_contacts_filter_values($contactsIds);
                 <tbody>
                 <?php foreach ($rows as $row_count => $row): ?>
                     <?php
-                    if (taskAssignedToUser($row, $civiUser['contact_id'])) {
-                      continue;
-                    }
+                      if (taskAssignedToUser($row, $civiUser['contact_id'])) {
+                        continue;
+                      }
 
-                    $class = 'task-row task-filter-id-' . taskFilterByDate($row['activity_date_time'], true);
-                    $targetKey = strip_tags($row['task_contacts']);
-                    $contactsFilterValue = !empty($contactsFilterValues[$targetKey]) ? $contactsFilterValues[$targetKey] : '';
+                      $class = 'task-row task-filter-id-' . taskFilterByDate($row['activity_date_time'], true);
+                      $targetKey = strip_tags($row['task_contacts']);
+                      $contactsFilterValue = !empty($contactsFilterValues[$targetKey]) ? $contactsFilterValues[$targetKey] : '';
                     ?>
                     <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $contactsFilterValue; ?>">
+                      <?php
+                        foreach ($row as $field => $content):
+                          if (_is_field_task_contact($field)) {
+                            continue;
+                          }
+
+                          if($field == 'activity_date_time') {
+                            $taskDate = strtotime(strip_tags($content));
+                            $dateFilter = taskFilterByDate(date('Y-m-d', $taskDate));
+
+                            if ($dateFilter == 'tomorrow') {
+                              $content = 'Tomorrow';
+                            } else if ($dateFilter == 'today') {
+                              $content = 'Today';
+                            } else {
+                              $content = date('m/d/Y', $taskDate);
+                            }
+                          }
+                      ?>
+                      <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
+                        <a
+                          href="/civi_tasks/nojs/edit/<?php print strip_tags($row['id']); ?>"
+                          class="ctools-use-modal ctools-modal-civihr-custom-style ctools-use-modal-processed">
+                          <?php print strip_tags(html_entity_decode($content)); ?>
+                        </a>
+                      </td>
+                      <?php endforeach; ?>
+                      <td>
                         <?php
-                          foreach ($row as $field => $content):
-                            if (_is_field_task_contact($field)) {
-                              continue;
-                            }
-
-                            if($field == 'activity_date_time') {
-                              $taskDate = strtotime(strip_tags($content));
-                              $dateFilter = taskFilterByDate(date('Y-m-d', $taskDate));
-
-                              if ($dateFilter == 'tomorrow') {
-                                $content = 'Tomorrow';
-                              } else if ($dateFilter == 'today') {
-                                $content = 'Today';
-                              } else {
-                                $content = date('m/d/Y', $taskDate);
-                              }
-                            }
+                          $checked = '';
+                          $disabled = '';
+                          if (!_task_can_be_marked_as_complete($row['id'])):
+                            $disabled = ' disabled="disabled" ';
+                          endif;
                         ?>
-                          <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
-                            <a
-                              href="/civi_tasks/nojs/edit/<?php print strip_tags($row['id']); ?>"
-                              class="ctools-use-modal ctools-modal-civihr-custom-style ctools-use-modal-processed">
-                              <?php print strip_tags(html_entity_decode($content)); ?>
-                            </a>
-                          </td>
-                        <?php endforeach; ?>
-                            <td>
-                                <?php
-                                $checked = '';
-                                $disabled = '';
-                                if (!_task_can_be_marked_as_complete($row['id'])):
-                                    $disabled = ' disabled="disabled" ';
-                                endif;
-                                ?>
-                                <input type="checkbox" id="task-completed[<?php print strip_tags($row['id']); ?>" class="checkbox-task-completed" value="<?php print strip_tags($row['id']); ?>"<?php print $checked . $disabled; ?> />
-                            </td>
+                        <input type="checkbox" id="task-completed[<?php print strip_tags($row['id']); ?>" class="checkbox-task-completed" value="<?php print strip_tags($row['id']); ?>"<?php print $checked . $disabled; ?> />
+                      </td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
