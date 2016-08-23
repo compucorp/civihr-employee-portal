@@ -5,12 +5,6 @@ use Drupal\civihr_employee_portal\Blocks\Leave;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 
-define('TASK_PAST_DAY', 1);
-define('TASK_TODAY', 2);
-define('TASK_THIS_WEEK', 3);
-define('TASK_TOMORROW', 3);
-define('TASK_LATER', 4);
-
 /**
  * Implements hook_css_alter().
  */
@@ -6353,16 +6347,11 @@ function _get_contacts_filter_values(array $contactsIds) {
 }
 
 /**
- * Return an integer value of task filter by given date.
- * 1 - PAST_DAY
- * 2 - TODAY
- * 4 - DAY_AFTER_WEEKEND
- * 5 - TOMORROW
- * 3 - ANY_OTHER_DAY
+ * Return a key of the task filter by given date.
  * Used in Tasks block template.
  *
  * @param string $date
- * @return int
+ * @return string
  */
 function _get_task_filter_by_date($date) {
   $today = (new DateTime())->format('Y-m-d');
@@ -6372,22 +6361,22 @@ function _get_task_filter_by_date($date) {
   $taskDate = (new DateTime())->setTimestamp(strtotime(strip_tags($date)))->format('Y-m-d');
 
   if ($taskDate < $today) {
-    return TASK_PAST_DAY;
+    return 'overdue';
   }
 
   if ($taskDate == $today) {
-    return TASK_TODAY;
+    return 'today';
   }
 
   if ($taskDate > $weekEnd) {
-    return TASK_LATER;
+    return 'later';
   }
 
   if ($taskDate == $tomorrow){
-    return TASK_TOMORROW;
+    return 'tomorrow';
   }
 
-  return TASK_THIS_WEEK;
+  return 'week';
 }
 
 /**

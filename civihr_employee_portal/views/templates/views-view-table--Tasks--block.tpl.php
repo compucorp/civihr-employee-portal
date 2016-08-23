@@ -31,23 +31,33 @@ function taskAssignedToUser($task, $user_id) {
   return strip_tags($task['task_contacts_1']) != $user_id;
 }
 
-$civiUser = get_civihr_uf_match_data($user->uid);
+/**
+ * Wraps the original function that fetches the filter type by task date so that
+ * the resulting filter, if necessary, can be normalized to match the list of filters
+ * offered in the UI ('tomorrow' and 'week' are grouped together)
+ *
+ * @param  [type] $filter [description]
+ * @return [type]         [description]
+ */
+function taskFilterByDate($taskDate, $normalize = false) {
+  $filter = _get_task_filter_by_date($taskDate);
 
-$typeResult = civicrm_api3('Activity', 'getoptions', array(
-    'field' => "activity_type_id",
-));
-$types = $typeResult['values'];
+  return $normalize ? ($filter == 'tomorrow' ? 'week' : $filter) : $filter;
+}
+
+$contacts = array();
+$contactsIds = array();
+
+$civiUser = get_civihr_uf_match_data($user->uid);
+$types = civicrm_api3('Activity', 'getoptions', array('field' => "activity_type_id"))['values'];
 
 $taskFilters = array(
-    0 => 'All',
-    1 => 'Overdue',
-    2 => 'Due Today',
-    3 => 'Due This Week',
-    4 => 'Later',
+  'all'       => array('label' => 'All', 'count' => 0),
+  'overdue'   => array('label' => 'Overdue', 'count' => 0),
+  'today'     => array('label' => 'Due Today', 'count' => 0),
+  'week'      => array('label' => 'Due This Week', 'count' => 0),
+  'later'     => array('label' => 'Later', 'count' => 0)
 );
-$taskFiltersCount = array_fill(0, count($taskFilters), 0);
-$contactsIds = array();
-$contacts = array();
 
 foreach ($rows as $row) {
   if (taskAssignedToUser($row, $civiUser['contact_id'])) {
@@ -55,8 +65,9 @@ foreach ($rows as $row) {
   }
 
   $contactsIds[strip_tags($row['task_contacts'])] = 1;
-  $taskFiltersCount[_get_task_filter_by_date($row['activity_date_time'])]++;
-  $taskFiltersCount[0]++;
+
+  $taskFilters['all']['count']++;
+  $taskFilters[taskFilterByDate($row['activity_date_time'], true)]['count']++;
 }
 
 $contactsFilterValues = _get_contacts_filter_values($contactsIds);
@@ -67,21 +78,23 @@ $contactsFilterValues = _get_contacts_filter_values($contactsIds);
         <div class="chr_table-w-filters__filters__dropdown-wrapper">
             <div class="chr_custom-select chr_custom-select--full">
                 <select id="select-tasks-filter" class="chr_table-w-filters__filters__dropdown skip-js-custom-select">
-                    <?php foreach ($taskFilters as $key => $value): ?>
-                        <option value="<?php print $key; ?>"><?php print $value; ?> (<?php print $taskFiltersCount[$key]; ?>)</option>
+                    <?php foreach ($taskFilters as $key => $filter): ?>
+                        <option value="<?php print $key; ?>"><?php print $filter['label']; ?>
+                          (<?php print $filter['count']; ?>)
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </div>
         </div>
         <ul id="nav-tasks-filter" class="chr_table-w-filters__filters__nav">
             <?php $classActive = ' class="active"'; ?>
-            <?php foreach ($taskFilters as $key => $value): ?>
-                <?php $badgeType = $key == 1 ? 'danger' : 'primary'; ?>
+            <?php foreach ($taskFilters as $key => $filter): ?>
+                <?php $badgeType = $key == 'overdue' ? 'danger' : 'primary'; ?>
                 <li<?php print $classActive; ?>>
                     <a href data-task-filter="<?php print $key; ?>">
-                        <?php print $value; ?>
-                        <span class="badge badge-<?php print $badgeType; ?> pull-right task-counter-filter-<?php print $key; ?>">
-                            <?php print $taskFiltersCount[$key]; ?>
+                        <?php print $filter['label']; ?>
+                        <span class="badge badge-<?php print $badgeType; ?> pull-right task-counter-filter">
+                            <?php print $filter['count']; ?>
                         </span>
                     </a>
                 </li>
@@ -119,7 +132,7 @@ $contactsFilterValues = _get_contacts_filter_values($contactsIds);
                       continue;
                     }
 
-                    $class = 'task-row task-filter-id-' . _get_task_filter_by_date($row['activity_date_time']);
+                    $class = 'task-row task-filter-id-' . taskFilterByDate($row['activity_date_time'], true);
                     $targetKey = strip_tags($row['task_contacts']);
                     $contactsFilterValue = !empty($contactsFilterValues[$targetKey]) ? $contactsFilterValues[$targetKey] : '';
                     ?>
@@ -132,11 +145,11 @@ $contactsFilterValues = _get_contacts_filter_values($contactsIds);
 
                             if($field == 'activity_date_time') {
                               $taskDate = strtotime(strip_tags($content));
-                              $dateFilter = _get_task_filter_by_date(date('Y-m-d', $taskDate));
+                              $dateFilter = taskFilterByDate(date('Y-m-d', $taskDate));
 
-                              if ($dateFilter == TASK_TOMORROW) {
+                              if ($dateFilter == 'tomorrow') {
                                 $content = 'Tomorrow';
-                              } else if ($dateFilter == TASK_TODAY) {
+                              } else if ($dateFilter == 'today') {
                                 $content = 'Today';
                               } else {
                                 $content = date('m/d/Y', $taskDate);
