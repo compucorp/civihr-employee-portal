@@ -31,20 +31,6 @@ function taskAssignedToUser($task, $user_id) {
   return strip_tags($task['task_contacts_1']) != $user_id;
 }
 
-/**
- * Wraps the original function that fetches the filter type by task date so that
- * the resulting filter, if necessary, can be normalized to match the list of filters
- * offered in the UI ('tomorrow' and 'week' are grouped together)
- *
- * @param  [type] $filter [description]
- * @return [type]         [description]
- */
-function taskFilterByDate($taskDate, $normalize = false) {
-  $filter = _get_task_filter_by_date($taskDate);
-
-  return $normalize ? ($filter == 'tomorrow' ? 'week' : $filter) : $filter;
-}
-
 $contacts = array();
 $contactsIds = array();
 
@@ -67,7 +53,7 @@ foreach ($rows as $row) {
   $contactsIds[strip_tags($row['task_contacts'])] = 1;
 
   $taskFilters['all']['count']++;
-  $taskFilters[taskFilterByDate($row['activity_date_time'], true)]['count']++;
+  $taskFilters[_get_task_filter_by_date($row['activity_date_time'], true)]['count']++;
 }
 
 $contactsFilterValues = _get_contacts_filter_values($contactsIds);
@@ -132,7 +118,7 @@ $contactsFilterValues = _get_contacts_filter_values($contactsIds);
                         continue;
                       }
 
-                      $class = 'task-row task-filter-id-' . taskFilterByDate($row['activity_date_time'], true);
+                      $class = 'task-row task-filter-id-' . _get_task_filter_by_date($row['activity_date_time'], true);
                       $targetKey = strip_tags($row['task_contacts']);
                       $contactsFilterValue = !empty($contactsFilterValues[$targetKey]) ? $contactsFilterValues[$targetKey] : '';
                     ?>
@@ -145,7 +131,7 @@ $contactsFilterValues = _get_contacts_filter_values($contactsIds);
 
                           if($field == 'activity_date_time') {
                             $taskDate = strtotime(strip_tags($content));
-                            $dateFilter = taskFilterByDate(date('Y-m-d', $taskDate));
+                            $dateFilter = _get_task_filter_by_date(date('Y-m-d', $taskDate));
 
                             if ($dateFilter == 'tomorrow') {
                               $content = 'Tomorrow';

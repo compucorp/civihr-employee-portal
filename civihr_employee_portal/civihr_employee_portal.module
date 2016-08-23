@@ -6351,32 +6351,37 @@ function _get_contacts_filter_values(array $contactsIds) {
  * Used in Tasks block template.
  *
  * @param string $date
+ * @param boolean $normalize
+ *   normalize the filter to match the list of filters offered
+ *   in the UI ('tomorrow' and 'week' are grouped together)
  * @return string
  */
-function _get_task_filter_by_date($date) {
+function _get_task_filter_by_date($date, $normalize = false) {
   $today = (new DateTime())->format('Y-m-d');
   $tomorrow = (new DateTime('tomorrow'))->format('Y-m-d');
   $nbDay = (new DateTime())->format('N');
   $weekEnd = (new DateTime())->modify('+' . (7 - $nbDay) . ' days')->format('Y-m-d');
   $taskDate = (new DateTime())->setTimestamp(strtotime(strip_tags($date)))->format('Y-m-d');
 
+  $filter = 'week';
+
   if ($taskDate < $today) {
-    return 'overdue';
+    $filter = 'overdue';
   }
 
   if ($taskDate == $today) {
-    return 'today';
+    $filter = 'today';
   }
 
   if ($taskDate > $weekEnd) {
-    return 'later';
+    $filter = 'later';
   }
 
   if ($taskDate == $tomorrow){
-    return 'tomorrow';
+    $filter = 'tomorrow';
   }
 
-  return 'week';
+  return $normalize ? ($filter == 'tomorrow' ? 'week' : $filter) : $filter;
 }
 
 /**
