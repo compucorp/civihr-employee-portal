@@ -14,7 +14,8 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 $handler = $view->new_display('default', 'Master', 'default');
 $handler->display->display_options['title'] = 'CiviHR Report - Leave and Absence';
 $handler->display->display_options['use_more_always'] = FALSE;
-$handler->display->display_options['access']['type'] = 'none';
+$handler->display->display_options['access']['type'] = 'perm';
+$handler->display->display_options['access']['perm'] = 'access hrreports';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
 $handler->display->display_options['query']['options']['distinct'] = TRUE;
@@ -212,13 +213,13 @@ $handler->display->display_options['fields']['role_id']['field'] = 'role_id';
 $handler->display->display_options['fields']['role_id']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['fields']['role_id']['label'] = 'Role ID';
 $handler->display->display_options['fields']['role_id']['separator'] = '';
-/* Field: HRJobContract Role entity: Role_start_date */
+/* Field: HRJobContract Role entity: Role start date */
 $handler->display->display_options['fields']['role_start_date']['id'] = 'role_start_date';
 $handler->display->display_options['fields']['role_start_date']['table'] = 'hrjc_role';
 $handler->display->display_options['fields']['role_start_date']['field'] = 'role_start_date';
 $handler->display->display_options['fields']['role_start_date']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['fields']['role_start_date']['label'] = 'Role start date';
-/* Field: HRJobContract Role entity: Role_end_date */
+/* Field: HRJobContract Role entity: Role end date */
 $handler->display->display_options['fields']['role_end_date']['id'] = 'role_end_date';
 $handler->display->display_options['fields']['role_end_date']['table'] = 'hrjc_role';
 $handler->display->display_options['fields']['role_end_date']['field'] = 'role_end_date';
