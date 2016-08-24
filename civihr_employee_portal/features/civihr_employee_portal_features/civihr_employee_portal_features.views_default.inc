@@ -225,11 +225,13 @@ function civihr_employee_portal_features_views_default_views() {
   $handler->display->display_options['fields']['role_start_date']['table'] = 'hrjc_role';
   $handler->display->display_options['fields']['role_start_date']['field'] = 'role_start_date';
   $handler->display->display_options['fields']['role_start_date']['relationship'] = 'role_jobcontract_id';
+  $handler->display->display_options['fields']['role_start_date']['label'] = 'Role start date';
   /* Field: HRJobContract Role entity: Role end date */
   $handler->display->display_options['fields']['role_end_date']['id'] = 'role_end_date';
   $handler->display->display_options['fields']['role_end_date']['table'] = 'hrjc_role';
   $handler->display->display_options['fields']['role_end_date']['field'] = 'role_end_date';
   $handler->display->display_options['fields']['role_end_date']['relationship'] = 'role_jobcontract_id';
+  $handler->display->display_options['fields']['role_end_date']['label'] = 'Role end date';
   /* Field: HRJobContract Role entity: Role_start_month */
   $handler->display->display_options['fields']['role_start_month']['id'] = 'role_start_month';
   $handler->display->display_options['fields']['role_start_month']['table'] = 'hrjc_role';
