@@ -5,12 +5,6 @@ use Drupal\civihr_employee_portal\Blocks\Leave;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 
-define('TASK_PAST_DAY', 1);
-define('TASK_TODAY', 2);
-define('TASK_DAY_AFTER_WEEKEND', 4);
-define('TASK_TOMORROW', 5);
-define('TASK_ANY_OTHER_DAY', 3);
-
 /**
  * Implements hook_css_alter().
  */
@@ -6353,37 +6347,41 @@ function _get_contacts_filter_values(array $contactsIds) {
 }
 
 /**
- * Return an integer value of task filter by given date.
- * 1 - PAST_DAY
- * 2 - TODAY
- * 4 - DAY_AFTER_WEEKEND
- * 5 - TOMORROW
- * 3 - ANY_OTHER_DAY
+ * Return a key of the task filter by given date.
  * Used in Tasks block template.
  *
  * @param string $date
- * @return int
+ * @param boolean $normalize
+ *   normalize the filter to match the list of filters offered
+ *   in the UI ('tomorrow' and 'week' are grouped together)
+ * @return string
  */
-function _get_task_filter_by_date($date) {
-    $today = (new DateTime())->format('Y-m-d');
-    $tomorrow = (new DateTime('tomorrow'))->format('Y-m-d');
-    $nbDay = (new DateTime())->format('N');
-    $weekEnd = (new DateTime())->modify('+' . (7 - $nbDay) . ' days')->format('Y-m-d');
-    $taskDate = (new DateTime())->setTimestamp(strtotime(strip_tags($date)))->format('Y-m-d');
+function _get_task_filter_by_date($date, $normalize = false) {
+  $today = (new DateTime())->format('Y-m-d');
+  $tomorrow = (new DateTime('tomorrow'))->format('Y-m-d');
+  $nbDay = (new DateTime())->format('N');
+  $weekEnd = (new DateTime())->modify('+' . (7 - $nbDay) . ' days')->format('Y-m-d');
+  $taskDate = (new DateTime())->setTimestamp(strtotime(strip_tags($date)))->format('Y-m-d');
 
-    if ($taskDate < $today) {
-        return TASK_PAST_DAY;
-    }
-    if ($taskDate == $today) {
-        return TASK_TODAY;
-    }
-    if ($taskDate > $weekEnd) {
-        return TASK_DAY_AFTER_WEEKEND;
-    }
-    if ($taskDate == $tomorrow){
-        return TASK_TOMORROW;
-    }
-    return TASK_ANY_OTHER_DAY;
+  $filter = 'week';
+
+  if ($taskDate < $today) {
+    $filter = 'overdue';
+  }
+
+  if ($taskDate == $today) {
+    $filter = 'today';
+  }
+
+  if ($taskDate > $weekEnd) {
+    $filter = 'later';
+  }
+
+  if ($taskDate == $tomorrow){
+    $filter = 'tomorrow';
+  }
+
+  return $normalize ? ($filter == 'tomorrow' ? 'week' : $filter) : $filter;
 }
 
 /**
