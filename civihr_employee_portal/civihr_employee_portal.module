@@ -6394,3 +6394,58 @@ function _get_task_filter_by_date($date, $normalize = false) {
 function _is_field_task_contact($field) {
    return $field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2';
 }
+
+/**
+ * Implements hook_boot()
+ */
+function civihr_employee_portal_boot() {
+  _block_anonymous_access();
+}
+
+/**
+ * This method redirect any request made by an anonymous
+ * user to the welcome-page.
+ *
+ * The redirection is made by manually setting the Location header,
+ * and it checks the current_path using the request_path() function,
+ * meaning that the function can be used inside hook_boot() (When hook_boot()
+ * is called, only a limited set of functions is available, and things like
+ * drupal_goto() and current_path() cannot be used).
+ */
+function _block_anonymous_access() {
+  global $user, $base_url;
+
+  // This function should only be executed in a
+  // non-cli environment. It calls the exit()
+  // function, which causes errors when running
+  // drush commands
+  if (drupal_is_cli()) {
+    return;
+  }
+
+  $current_path = request_path();
+  $user_is_anonymous = $user->uid == 0;
+
+  $allowed_paths = [
+    'welcome-page',
+    // If the logo file is missing, the request might hit index.php
+    // and this will avoid one useless redirect
+    'sites/default/files/logo.jpg',
+    // This is the URL for the modal that is displayed when the user
+    // clicks on "Click here to request one from your HR administrator"
+    'request_new_account/ajax',
+    // The paths below are all JSON files for views
+    // Since the views module can't log in to the SSP, they need to
+    // be public
+    'absence_entitlement_json',
+    'appraisals_list',
+    'civi_documents',
+    'civihr_vacancies',
+    'civi_tasks'
+  ];
+
+  if ($user_is_anonymous && !in_array($current_path, $allowed_paths)) {
+    drupal_add_http_header('Location', "$base_url/welcome-page");
+    exit();
+  }
+}
