@@ -1427,8 +1427,7 @@ function civihr_employee_portal_menu() {
         'title' => 'Quick Approve Leave',
         'page callback' => '_ajax_quick_email_notify',
         'page arguments' => array(2, 3),
-        'access callback' => '_user_has_role',
-        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin', 'administrator')),
+        'access arguments' => array('access manager approval screen'),
     );
 
     $items['reports'] = array(
