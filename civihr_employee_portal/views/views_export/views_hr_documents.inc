@@ -292,7 +292,7 @@ $handler->display->display_options['filters']['combine']['expose']['remember_rol
 );
 $handler->display->display_options['filters']['combine']['fields'] = array(
     'title' => 'title',
-    'body' => 'body',
+    'field_short_description' => 'field_short_description',
 );
 /* Filter criterion: Content: Resource type (field_resource_type) */
 $handler->display->display_options['filters']['field_resource_type_tid']['id'] = 'field_resource_type_tid';
