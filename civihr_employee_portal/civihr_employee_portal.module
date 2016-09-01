@@ -6433,7 +6433,15 @@ function _block_anonymous_access() {
     'sites/default/files/logo.jpg',
     // This is the URL for the modal that is displayed when the user
     // clicks on "Click here to request one from your HR administrator"
-    'request_new_account/ajax'
+    'request_new_account/ajax',
+    // The paths below are all JSON files for views
+    // Since the views module can't log in to the SSP, they need to
+    // be public
+    'absence_entitlement_json',
+    'appraisals_list',
+    'civi_documents',
+    'civihr_vacancies',
+    'civi_tasks'
   ];
 
   if ($user_is_anonymous && !in_array($current_path, $allowed_paths)) {
