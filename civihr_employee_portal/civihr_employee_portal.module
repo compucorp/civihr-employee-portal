@@ -1417,8 +1417,7 @@ function civihr_employee_portal_menu() {
     $items['hr-details'] = array(
         'title' => 'My Details',
         'page callback' => 'civihr_employee_portal_my_details',
-        'access callback' => '_user_has_role',
-        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin', 'administrator')),
+        'access arguments' => array('view my details'),
         'type' => MENU_NORMAL_ITEM,
         'menu_name' => 'main-menu',
         'weight' => 4
