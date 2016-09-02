@@ -63,7 +63,6 @@
 
   <script type="text/javascript">
       CRM.$(function () {
-  <?php if (!empty($data)): ?>
           var data = <?php print $data; ?>;
           var initialDerivedAttributes = {};
   <?php if ($report_name === 'people'): ?>
@@ -102,7 +101,6 @@
               filters: <?php print !empty($filters) ? 1 : 0; ?>
           });
           Drupal.behaviors.civihr_employee_portal_reports.instance.show();
-  <?php endif; ?>
       });
   </script>
 </div>
