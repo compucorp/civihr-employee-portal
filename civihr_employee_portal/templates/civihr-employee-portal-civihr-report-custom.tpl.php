@@ -63,7 +63,7 @@
 
   <script type="text/javascript">
       CRM.$(function () {
-          var data = <?php print $data; ?>;
+          var data = [];
           var initialDerivedAttributes = {};
   <?php if ($report_name === 'people'): ?>
           initialDerivedAttributes = {

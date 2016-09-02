@@ -5699,7 +5699,6 @@ function civihr_employee_portal_hrreport_custom($reportName) {
     array(
       'report_name' => $reportName,
       'table' => $table,
-      'data' => array(),
       'tableUrl' => !empty($table) ? '/reports/' . $reportName . '/table' : null,
       'jsonUrl' => '/reports/' . $reportName . '/json',
       'exportUrl' => '/' . array_shift($exportPaths),
