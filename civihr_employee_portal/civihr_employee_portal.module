@@ -434,6 +434,10 @@ function civihr_employee_portal_permission() {
       'title' => t('View HR Resources'),
       'description' => t('Availability for the user to view hr resources block and page')
     ),
+    'change document status' => array(
+      'title' => t('Change Document Status'),
+      'description' => t('Availability for the user to change document status')
+    ),
     'view vacancies' => array(
       'title' => t('View Vacancies'),
       'description' => t('Availability for the user to view vacancies block and page')
@@ -1225,9 +1229,8 @@ function civihr_employee_portal_menu() {
     $items['civi_documents/ajax/change_document_status/%/%'] = array(
         'title' => 'Change Document Status',
         'page callback' => 'civihr_employee_portal_change_document_status',
-		'access arguments' => array(array('civihr_manager', 'civihr_admin', 'administrator')),
+		    'access arguments' => array('change document status'),
         'page arguments' => array(3, 4),
-        'access callback' => '_user_has_role',
         'type' => MENU_CALLBACK,
     );
 
@@ -1417,8 +1420,7 @@ function civihr_employee_portal_menu() {
     $items['hr-details'] = array(
         'title' => 'My Details',
         'page callback' => 'civihr_employee_portal_my_details',
-        'access callback' => '_user_has_role',
-        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin', 'administrator')),
+        'access arguments' => array('view my details'),
         'type' => MENU_NORMAL_ITEM,
         'menu_name' => 'main-menu',
         'weight' => 4
@@ -1428,8 +1430,7 @@ function civihr_employee_portal_menu() {
         'title' => 'Quick Approve Leave',
         'page callback' => '_ajax_quick_email_notify',
         'page arguments' => array(2, 3),
-        'access callback' => '_user_has_role',
-        'access arguments' => array(array('civihr_staff', 'civihr_manager', 'civihr_admin', 'administrator')),
+        'access arguments' => array('access manager approval screen'),
     );
 
     $items['reports'] = array(
@@ -2510,10 +2511,7 @@ function _document_can_be_modified($document_id, $user_id = NULL) {
         $user = user_load($user_id);
     }
 
-    //TODO: change permission check to new permission for document modification after Kacper implements it
-    if (in_array('civihr_admin', $user->roles) || in_array('administrator', $user->roles)) {
-        $res = TRUE;
-    } else if (in_array('civihr_manager', $user->roles)) {
+    if (user_access('change document status')) {
         try {
             $result = civicrm_api3('Document', 'get', array(
                 'sequential' => 1,

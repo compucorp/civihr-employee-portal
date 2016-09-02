@@ -752,6 +752,17 @@ function civihr_employee_portal_features_user_default_permissions() {
     'module' => 'civihr_employee_portal',
   );
 
+  // Exported permission: 'change document status'.
+  $permissions['change document status'] = array(
+    'name' => 'change document status',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+    ),
+    'module' => 'civihr_employee_portal',
+  );
+
   // Exported permission: 'view vacancies'.
   $permissions['view vacancies'] = array(
     'name' => 'view vacancies',
