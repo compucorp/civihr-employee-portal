@@ -34,24 +34,6 @@
 
     <?php if ($header): ?>
         <div class="chr_panel__toolbar">
-            <?php if ($rows): ?>
-                <div class="chr_panel__toolbar__filter hidden-xs">
-                    <div id="nav-tasks-types" class="btn-group btn-group-sm">
-                        <button class="btn btn-default" data-task-type="my">My Tasks</button>
-                        <button class="btn btn-default" data-task-type="delegated">Delegated Tasks</button>
-                        <button class="btn btn-default active" data-task-type="all">All</button>
-                    </div>
-                </div>
-                <div class="chr_panel__toolbar__filter visible-xs-block">
-                    <div class="chr_custom-select chr_custom-select--full">
-                        <select id="select-tasks-types" class="skip-js-custom-select">
-                            <option value="my">My Tasks</option>
-                            <option value="delegated">Delegated Tasks</option>
-                            <option value="all" selected>All</option>
-                        </select>
-                    </div>
-                </div>
-            <?php endif; ?>
             <div class="chr_panel__toolbar__actions">
                 <?php print $header; ?>
             </div>

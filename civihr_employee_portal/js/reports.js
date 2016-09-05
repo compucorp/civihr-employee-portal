@@ -194,6 +194,7 @@
   HRReport.prototype.show = function () {
     this.initPivotTable();
     this.bindFilters();
+    this.applyFilters();
   };
 
   /**
@@ -307,21 +308,26 @@
 
     CRM.$('#report-filters input[type="submit"]').bind('click', function(e) {
       e.preventDefault();
-      var formSerialize = CRM.$('#report-filters form:first').serializeArray();
-
-      formSerialize.map(function(input) {
-        input.value = that.formatDate(input.value, 'DD/MM/YYYY', 'YYYY-MM-DD');
-      });
-
-      formSerialize = CRM.$.param(formSerialize);
-
-      if (that.jsonUrl) {
-        that.refreshJson('?' + formSerialize);
-      }
-      if (that.tableUrl) {
-        that.refreshTable('?' + formSerialize);
-      }
+      that.applyFilters();
     });
+  }
+
+  HRReport.prototype.applyFilters = function() {
+    var that = this;
+    var formSerialize = CRM.$('#report-filters form:first').serializeArray();
+
+    formSerialize.map(function(input) {
+      input.value = that.formatDate(input.value, 'DD/MM/YYYY', 'YYYY-MM-DD');
+    });
+
+    formSerialize = CRM.$.param(formSerialize);
+
+    if (that.jsonUrl) {
+      that.refreshJson('?' + formSerialize);
+    }
+    if (that.tableUrl) {
+      that.refreshTable('?' + formSerialize);
+    }
   }
 
   /**

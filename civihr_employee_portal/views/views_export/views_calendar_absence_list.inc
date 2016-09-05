@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Exported calendar_absence_list view
- */
-
 $view = new view();
 $view->name = 'calendar_absence_list';
 $view->description = '';
@@ -20,6 +16,7 @@ $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['link_display'] = 'page_1';
 $handler->display->display_options['access']['type'] = 'perm';
+$handler->display->display_options['access']['perm'] = 'access hrreports';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
 $handler->display->display_options['query']['options']['query_comment'] = FALSE;
@@ -184,13 +181,13 @@ $handler->display->display_options['filters']['absence_status']['id'] = 'absence
 $handler->display->display_options['filters']['absence_status']['table'] = 'absence_list';
 $handler->display->display_options['filters']['absence_status']['field'] = 'absence_status';
 $handler->display->display_options['filters']['absence_status']['operator'] = '!=';
-$handler->display->display_options['filters']['absence_status']['value'] = '3'; // Cancelled status
+$handler->display->display_options['filters']['absence_status']['value'] = '3';
+/* Filter criterion: Absence entity: Absence status */
 $handler->display->display_options['filters']['absence_status_1']['id'] = 'absence_status_1';
 $handler->display->display_options['filters']['absence_status_1']['table'] = 'absence_list';
 $handler->display->display_options['filters']['absence_status_1']['field'] = 'absence_status';
 $handler->display->display_options['filters']['absence_status_1']['operator'] = '!=';
-$handler->display->display_options['filters']['absence_status_1']['value'] = '9'; // Rejected status
-
+$handler->display->display_options['filters']['absence_status_1']['value'] = '9';
 $handler->display->display_options['path'] = 'calendar-absence-list';
 $handler->display->display_options['menu']['type'] = 'default tab';
 $handler->display->display_options['menu']['title'] = 'Month';

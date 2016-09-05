@@ -21,111 +21,72 @@
 
 global $user;
 
-define('PAST_DAY', 1);
-define('TODAY', 2);
-define('DAY_AFTER_WEEKEND', 4);
-define('TOMORROW', 5);
-define('ANY_OTHER_DAY', 3);
+/**
+ * Checks if a task is assigned to the given user
+ * @param  object $task
+ * @param  int $user_id
+ * @return boolean
+ */
+function taskAssignedToUser($task, $user_id) {
+  return strip_tags($task['task_contacts_1']) != $user_id;
+}
+
+$contacts = array();
+$contactsIds = array();
 
 $civiUser = get_civihr_uf_match_data($user->uid);
-
-$typeResult = civicrm_api3('Activity', 'getoptions', array(
-    'field' => "activity_type_id",
-));
-$types = $typeResult['values'];
+$types = civicrm_api3('Activity', 'getoptions', array('field' => "activity_type_id"))['values'];
 
 $taskFilters = array(
-    0 => 'All',
-    1 => 'Overdue',
-    2 => 'Due Today',
-    3 => 'Due This Week',
-    4 => 'Later',
+  'all'       => array('label' => 'All', 'count' => 0),
+  'overdue'   => array('label' => 'Overdue', 'count' => 0),
+  'today'     => array('label' => 'Due Today', 'count' => 0),
+  'week'      => array('label' => 'Due This Week', 'count' => 0),
+  'later'     => array('label' => 'Later', 'count' => 0)
 );
-$taskFiltersCount = array_combine(array_keys($taskFilters), array_fill(0, count($taskFilters), 0));
-$contactsIds = array();
-$contacts = array();
-$contactsFilterValues = array();
 
-foreach ($rows as $row):
-    $rowType = null;
-    if (strip_tags($row['task_contacts_1']) == $civiUser['contact_id']):
-        $rowType = 'task-my';
-    endif;
-    if (strip_tags($row['task_contacts_2']) == $civiUser['contact_id'] && strip_tags($row['task_contacts_1']) != $civiUser['contact_id']):
-        $rowType = 'task-delegated';
-    endif;
-    if (!$rowType):
-        continue;
-    endif;
-    $contactsIds[strip_tags($row['task_contacts'])] = 1;
-    $taskFiltersCount[_get_task_filter_by_date($row['activity_date_time'])]++;
-    $taskFiltersCount[0]++;
-endforeach;
+foreach ($rows as $row) {
+  if (taskAssignedToUser($row, $civiUser['contact_id'])) {
+    continue;
+  }
 
-$contactsResult = civicrm_api3('Contact', 'get', array(
-  'id' => array('IN' => array_keys($contactsIds)),
-  'return' => "sort_name",
-));
-foreach ($contactsResult['values'] as $key => $value) {
-    $contactsFilterValues[$key] = $value['sort_name'];
+  $contactsIds[strip_tags($row['task_contacts'])] = 1;
+
+  $taskFilters['all']['count']++;
+  $taskFilters[_get_task_filter_by_date($row['activity_date_time'], true)]['count']++;
 }
 
-function _get_task_filter_by_date($date) {
-    $today = date('Y-m-d');
-    $tomorrow = new DateTime('tomorrow');
-    $nbDay = date('N', strtotime($today));
-    $sunday = new DateTime($today);
-    $sunday->modify('+' . (7 - $nbDay) . ' days');
-    $weekEnd = $sunday->format('Y-m-d');
-    $taskDate = date('Y-m-d', strtotime(strip_tags($date)));
-
-    if ($taskDate < $today) {
-        return PAST_DAY;
-    }
-    if ($taskDate == $today) {
-        return TODAY;
-    }
-    if ($taskDate > $weekEnd) {
-        return DAY_AFTER_WEEKEND;
-    }
-    if ($taskDate == $tomorrow->format('Y-m-d')){
-        return TOMORROW;
-    }
-    return ANY_OTHER_DAY;
-}
-
-function isFieldName($field){
-   return $field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2';
-}
-
+$contactsFilterValues = _get_contacts_filter_values($contactsIds);
 ?>
 
 <div class="chr_table-w-filters row">
     <div class="chr_table-w-filters__filters col-md-3">
-        <div class="chr_table-w-filters__filters__dropdown-wrapper">
-            <div class="chr_custom-select chr_custom-select--full">
-                <select id="select-tasks-filter" class="chr_table-w-filters__filters__dropdown skip-js-custom-select">
-                    <?php foreach ($taskFilters as $key => $value): ?>
-                        <option value="<?php print $key; ?>"><?php print $value; ?> (<?php print $taskFiltersCount[$key]; ?>)</option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-        </div>
-        <ul id="nav-tasks-filter" class="chr_table-w-filters__filters__nav">
-            <?php $classActive = ' class="active"'; ?>
-            <?php foreach ($taskFilters as $key => $value): ?>
-                <?php $badgeType = $key == 1 ? 'danger' : 'primary'; ?>
-                <li<?php print $classActive; ?>>
-                    <a href data-task-filter="<?php print $key; ?>">
-                        <?php print $value; ?>
-                        <span class="badge badge-<?php print $badgeType; ?> pull-right task-counter-filter-<?php print $key; ?>">
-                            <?php print $taskFiltersCount[$key]; ?>
-                        </span>
-                    </a>
-                </li>
-                <?php $classActive = ''; ?>
+      <div class="chr_table-w-filters__filters__dropdown-wrapper">
+        <div class="chr_custom-select chr_custom-select--full">
+          <select id="select-tasks-filter" class="chr_table-w-filters__filters__dropdown skip-js-custom-select">
+            <?php foreach ($taskFilters as $key => $filter): ?>
+              <option value="<?php print $key; ?>"><?php print $filter['label']; ?>
+                (<?php print $filter['count']; ?>)
+              </option>
             <?php endforeach; ?>
-        </ul>
+          </select>
+        </div>
+      </div>
+      <ul id="nav-tasks-filter" class="chr_table-w-filters__filters__nav">
+        <?php $classActive = ' class="active"'; ?>
+        <?php foreach ($taskFilters as $key => $filter): ?>
+          <?php $badgeType = $key == 'overdue' ? 'danger' : 'primary'; ?>
+          <li<?php print $classActive; ?>>
+            <a href data-task-filter="<?php print $key; ?>">
+              <?php print $filter['label']; ?>
+              <span class="badge badge-<?php print $badgeType; ?> pull-right task-counter-filter">
+                <?php print $filter['count']; ?>
+              </span>
+            </a>
+          </li>
+          <?php $classActive = ''; ?>
+        <?php endforeach; ?>
+      </ul>
     </div>
     <div class="chr_table-w-filters__table-wrapper col-md-9">
         <div class="chr_table-w-filters__table">
@@ -138,7 +99,7 @@ function isFieldName($field){
                         <tr>
                         <?php
                           foreach ($header as $field => $label):
-                            if (isFieldName($field)) {
+                            if (_is_field_task_contact($field)) {
                               continue;
                             }
                         ?>
@@ -152,61 +113,53 @@ function isFieldName($field){
                 <?php endif; ?>
                 <tbody>
                 <?php foreach ($rows as $row_count => $row): ?>
-                    <?php $rowType = null;
-                    if (strip_tags($row['task_contacts_1']) == $civiUser['contact_id']):
-                        $rowType = 'task-my';
-                    endif;
-                    if (strip_tags($row['task_contacts_2']) == $civiUser['contact_id'] && strip_tags($row['task_contacts_1']) != $civiUser['contact_id']):
-                        $rowType = 'task-delegated';
-                    endif;
-                    if (!$rowType):
+                    <?php
+                      if (taskAssignedToUser($row, $civiUser['contact_id'])) {
                         continue;
-                    endif;
-                    $rowContacts = strip_tags($row['task_contacts']) . ',' . strip_tags($row['task_contacts_1']) . ',' . strip_tags($row['task_contacts_2']);
+                      }
+
+                      $class = 'task-row task-filter-id-' . _get_task_filter_by_date($row['activity_date_time'], true);
+                      $targetKey = strip_tags($row['task_contacts']);
+                      $contactsFilterValue = !empty($contactsFilterValues[$targetKey]) ? $contactsFilterValues[$targetKey] : '';
                     ?>
-                    <?php $class = 'task-row task-filter-id-' . _get_task_filter_by_date($row['activity_date_time']) . ' ' . $rowType; ?>
-                    <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $contactsFilterValues[strip_tags($row['task_contacts'])]; ?>">
+                    <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $contactsFilterValue; ?>">
+                      <?php
+                        foreach ($row as $field => $content):
+                          if (_is_field_task_contact($field)) {
+                            continue;
+                          }
+
+                          if($field == 'activity_date_time') {
+                            $taskDate = strtotime(strip_tags($content));
+                            $dateFilter = _get_task_filter_by_date(date('Y-m-d', $taskDate));
+
+                            if ($dateFilter == 'tomorrow') {
+                              $content = 'Tomorrow';
+                            } else if ($dateFilter == 'today') {
+                              $content = 'Today';
+                            } else {
+                              $content = date('m/d/Y', $taskDate);
+                            }
+                          }
+                      ?>
+                      <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
+                        <a
+                          href="/civi_tasks/nojs/edit/<?php print strip_tags($row['id']); ?>"
+                          class="ctools-use-modal ctools-modal-civihr-custom-style ctools-use-modal-processed">
+                          <?php print strip_tags(html_entity_decode($content)); ?>
+                        </a>
+                      </td>
+                      <?php endforeach; ?>
+                      <td>
                         <?php
-                          foreach ($row as $field => $content):
-                            if (isFieldName($field)) {
-                              continue;
-                            }
-
-                            if($field == 'activity_date_time') {
-                              $taskDate = strtotime(strip_tags($content));
-                              $dateFilter = _get_task_filter_by_date(date('Y-m-d', $taskDate));
-
-                              if($dateFilter == TOMORROW){
-                                $content = 'Tomorrow';
-                              }else if($dateFilter == TODAY){
-                                $content = 'Today';
-                              }else{
-                                $content = date('m/d/Y', $taskDate);
-                              }
-                            }
+                          $checked = '';
+                          $disabled = '';
+                          if (!_task_can_be_marked_as_complete($row['id'])):
+                            $disabled = ' disabled="disabled" ';
+                          endif;
                         ?>
-                            <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
-								<?php //if (_task_can_be_edited($row['id'])): ?>
-                                <a
-                                    href="/civi_tasks/nojs/edit/<?php print strip_tags($row['id']); ?>"
-                                    class="ctools-use-modal ctools-modal-civihr-custom-style ctools-use-modal-processed">
-								<?php //endif; ?>
-                                    <?php print strip_tags(html_entity_decode($content)); ?>
-								<?php //if (_task_can_be_edited($row['id'])): ?>
-                                </a>
-								<?php //endif; ?>
-                            </td>
-                        <?php endforeach; ?>
-                            <td>
-                                <?php
-                                $checked = '';
-                                $disabled = '';
-                                if (!_task_can_be_marked_as_complete($row['id'])):
-                                    $disabled = ' disabled="disabled" ';
-                                endif;
-                                ?>
-                                <input type="checkbox" id="task-completed[<?php print strip_tags($row['id']); ?>" class="checkbox-task-completed" value="<?php print strip_tags($row['id']); ?>"<?php print $checked . $disabled; ?> />
-                            </td>
+                        <input type="checkbox" id="task-completed[<?php print strip_tags($row['id']); ?>" class="checkbox-task-completed" value="<?php print strip_tags($row['id']); ?>"<?php print $checked . $disabled; ?> />
+                      </td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -222,148 +175,7 @@ function isFieldName($field){
     </div>
 <?php endif; ?>
 <script>
-    (function($){
-        var $navDocFilter = $('#nav-tasks-filter'),
-            $dropdownFilter = $('#select-tasks-filter'),
-            $navDocTypes = $('#nav-tasks-types'),
-            $dropdownTypes = $('#select-tasks-types'),
-            $tableDocStaff = $('#tasks-dashboard-table-staff'),
-            $tableDocStaffRows = $tableDocStaff.find('.task-row');
-
-        var $selectedRowFilter =  $tableDocStaff.find('.task-row'),
-            $selectedRowType = $tableDocStaff.find('.task-row'),
-            selectedRowFilterSelector = null;
-
-        var currentTaskTypeClass = '';
-
-        $navDocFilter.find('a').bind('click', function(e) {
-            e.preventDefault();
-
-            var $this = $(this),
-                taskFilter = $this.data('taskFilter');
-
-            $navDocFilter.find('> li').removeClass('active');
-            $this.parent().addClass('active');
-
-            if (!taskFilter) {
-                $selectedRowFilter = $tableDocStaff.find('.task-row');
-                selectedRowFilterSelector = '.task-row';
-            } else {
-                $selectedRowFilter = $tableDocStaff.find('.task-filter-id-' + taskFilter);
-                selectedRowFilterSelector = '.task-filter-id-' + taskFilter;
-            }
-
-            showFilteredTaskRows();
-        });
-
-        $dropdownFilter.on('change', function (e) {
-            var taskFilter = $(this).val();
-
-            if (parseInt(taskFilter, 10) === 0) {
-                $selectedRowFilter = $tableDocStaff.find('.task-row');
-                selectedRowFilterSelector = '.task-row';
-            } else {
-                $selectedRowFilter = $tableDocStaff.find('.task-filter-id-' + taskFilter);
-                selectedRowFilterSelector = '.task-filter-id-' + taskFilter;
-            }
-
-            showFilteredTaskRows();
-        });
-
-        $navDocTypes.find('button').bind('click', function(e) {
-            e.preventDefault();
-
-            var $this = $(this),
-                taskType = $this.data('taskType');
-
-            $navDocTypes.children().removeClass('active');
-            $this.addClass('active');
-            if (taskType === 'all') {
-                $selectedRowType = $tableDocStaff.find('.task-row');
-                currentTaskTypeClass = '';
-                refreshTasksCounter(currentTaskTypeClass);
-            } else {
-                currentTaskTypeClass = '.task-' + taskType;
-                $selectedRowType = $tableDocStaff.find(currentTaskTypeClass);
-                refreshTasksCounter(currentTaskTypeClass);
-            }
-
-            showFilteredTaskRows();
-        });
-
-        $dropdownTypes.on('change', function (e) {
-            var taskType = $(this).val();
-
-            if (taskType === 'all') {
-                $selectedRowType = $tableDocStaff.find('.task-row');
-                currentTaskTypeClass = '';
-                refreshTasksCounter(currentTaskTypeClass);
-            } else {
-                currentTaskTypeClass = '.task-' + taskType;
-                $selectedRowType = $tableDocStaff.find(currentTaskTypeClass);
-                refreshTasksCounter(currentTaskTypeClass);
-            }
-
-            showFilteredTaskRows();
-        });
-
-        var chk = CRM.$('.checkbox-task-completed');
-        chk.unbind('change').bind('change', function(e) {
-            var checkedTaskId = $(this).val();
-            $.ajax({
-                url: '/civi_tasks/ajax/complete/' + checkedTaskId,
-                success: function(result) {
-                    if (!result.success) {
-                        CRM.alert(result.message, 'Error', 'error');
-                        return;
-                    }
-                    $('#row-task-id-' + checkedTaskId).fadeOut(500, function() {
-                        $(this).remove();
-                        refreshTasksCounter(currentTaskTypeClass);
-                    });
-                }
-            });
-        });
-
-        buildTaskContactFilter();
-
-        function showFilteredTaskRows() {
-            $tableDocStaffRows
-              .hide()
-              .removeClass('selected-by-type')
-              .removeClass('selected-by-filter');
-            $selectedRowType.addClass('selected-by-type');
-            $selectedRowFilter.addClass('selected-by-filter');
-            $('.selected-by-type.selected-by-filter.selected-by-contact', $tableDocStaff).show();
-        }
-
-        function refreshTasksCounter(taskTypeClass) {
-            var sum = 0;
-            for (var i = 1; i < <?php print count($taskFilters); ?>; i++) {
-                var counter = $(taskTypeClass + '.task-filter-id-' + i, $tableDocStaff).length;
-                sum += counter;
-                $('#nav-tasks-filter .task-counter-filter-' + i).text(counter);
-            }
-            $('#nav-tasks-filter .task-counter-filter-0').text(sum);
-        }
-
-        function buildTaskContactFilter() {
-            $tableDocStaffRows.addClass('selected-by-contact');
-            $('#task-filter-contact').on("keyup", function() {
-                var value = $(this).val().toLowerCase();
-                $tableDocStaffRows.removeClass('selected-by-contact');
-                $("#tasks-dashboard-table-staff > tbody > tr.task-row").each(function(index) {
-                    var $row = $(this);
-                    var text = $row.data('rowContacts') || '';
-                    var matchedIndex = text.toLowerCase().indexOf(value);
-                    if (value.length === 0 || matchedIndex !== -1) {
-                      $row.addClass('selected-by-contact');
-                    } else {
-                      $row.removeClass('selected-by-contact');
-                    }
-                });
-                showFilteredTaskRows();
-            });
-        }
-    }(CRM.$));
+  (function ($) {
+    Drupal.behaviors.civihr_employee_portal_tasks.initTasksFilters();
+  }(CRM.$));
 </script>
