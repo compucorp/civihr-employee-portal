@@ -1448,6 +1448,12 @@ function civihr_employee_portal_menu() {
         'access arguments' => array('access hrreports'),
         'type' => MENU_CALLBACK,
     );
+    $items['reports/%/json'] = array(
+        'page callback' => 'civihr_employee_portal_hrreport_get_json',
+        'page arguments' => array(1),
+        'access arguments' => array('access hrreports'),
+        'type' => MENU_CALLBACK,
+    );
     $items['reports/%/table'] = array(
         'title' => 'CiviHR Custom Report',
         'page callback' => 'civihr_employee_portal_hrreport_custom_printtable',
@@ -5668,37 +5674,43 @@ function civihr_employee_portal_hrreport_printtable($viewName) {
  * @return array
  */
 function civihr_employee_portal_hrreport_custom($reportName) {
-    global $base_url;
-    // TODO: validate $reportName against existing views
+  $view = views_get_view('civihr_report_' . $reportName);
+  if (!$view) {
+    return drupal_not_found();
+  }
+  _civihr_employee_portal_add_report_scripts();
+  $table = civihr_employee_portal_hrreport_gettable($reportName);
+  $exportPaths = _civihr_employee_portal_get_view_csv_export_paths($view);
+  $view->set_display('default');
+  $view->init_handlers();
+  $form_state = array(
+    'view' => $view,
+    'display' => $view->display_handler->display,
+    'exposed_form_plugin' => $view->display_handler->get_plugin('exposed_form'),
+    'method' => 'get',
+    'rerender' => TRUE,
+    'no_redirect' => TRUE,
+  );
+  $filters = drupal_build_form('views_exposed_form', $form_state);
 
-    _civihr_employee_portal_add_report_scripts();
-    $table = civihr_employee_portal_hrreport_gettable($reportName);
-    $data = @file_get_contents($base_url . '/civihr_report_json_' . $reportName);
-    $view = views_get_view('civihr_report_' . $reportName);
-    $exportPaths = _civihr_employee_portal_get_view_csv_export_paths($view);
-    $view->set_display('default');
-    $view->init_handlers();
-    $form_state = array(
-        'view' => $view,
-        'display' => $view->display_handler->display,
-        'exposed_form_plugin' => $view->display_handler->get_plugin('exposed_form'),
-        'method' => 'get',
-        'rerender' => TRUE,
-        'no_redirect' => TRUE,
-    );
-    $filters = drupal_build_form('views_exposed_form', $form_state);
+  return theme('civihr_employee_portal_civihr_report_custom',
+    array(
+      'report_name' => $reportName,
+      'table' => $table,
+      'tableUrl' => !empty($table) ? '/reports/' . $reportName . '/table' : null,
+      'jsonUrl' => '/reports/' . $reportName . '/json',
+      'exportUrl' => '/' . array_shift($exportPaths),
+      'filters' => $filters,
+    )
+  );
+}
 
-    return theme('civihr_employee_portal_civihr_report_custom',
-        array(
-            'report_name' => $reportName,
-            'table' => $table,
-            'data' => $data,
-            'tableUrl' => !empty($table) ? '/reports/' . $reportName . '/table' : null,
-            'jsonUrl' => !empty($data) ? '/civihr_report_json_' . $reportName : null,
-            'exportUrl' => '/' . array_shift($exportPaths),
-            'filters' => $filters,
-        )
-    );
+function civihr_employee_portal_hrreport_get_json($reportName) {
+  $view = views_get_view('civihr_report_' . $reportName);
+  $view->set_display('page');
+  $view->execute();
+  $view->style_plugin->options['using_views_api_mode'] = FALSE;
+  return $view->render('page');
 }
 
 function civihr_employee_portal_hrreport_custom_printtable($reportName, $dateFilterValue = null) {
