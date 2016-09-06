@@ -48,7 +48,6 @@ features[menu_custom][] = hr-reports-settings
 features[menu_links][] = hr-reports-settings_age-groups:reports/settings/age_group/
 features[menu_links][] = hr-reports_report-1-people:reports/people/
 features[menu_links][] = hr-reports_report-2-leave-and-absence:reports/leave_and_absence/
-features[menu_links][] = main-menu_home:dashboard
 features[menu_links][] = main-menu_reports:reports
 features[node][] = hr_documents
 features[page_manager_pages][] = dashboard

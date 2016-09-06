@@ -70,26 +70,6 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 0,
     'customized' => 1,
   );
-  // Exported menu link: main-menu_home:dashboard
-  $menu_links['main-menu_home:dashboard'] = array(
-    'menu_name' => 'main-menu',
-    'link_path' => 'dashboard',
-    'router_path' => 'dashboard',
-    'link_title' => 'Home',
-    'options' => array(
-      'attributes' => array(
-        'title' => '',
-      ),
-      'identifier' => 'main-menu_home:dashboard',
-    ),
-    'module' => 'menu',
-    'hidden' => 0,
-    'external' => 0,
-    'has_children' => 0,
-    'expanded' => 0,
-    'weight' => 0,
-    'customized' => 1,
-  );
   // Exported menu link: main-menu_reports:reports
   $menu_links['main-menu_reports:reports'] = array(
     'menu_name' => 'main-menu',
@@ -113,7 +93,6 @@ function civihr_employee_portal_features_menu_default_menu_links() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Age groups');
-  t('Home');
   t('Report 1: People');
   t('Report 2: Leave and Absence');
   t('Reports');
