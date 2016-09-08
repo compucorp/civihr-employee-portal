@@ -2422,6 +2422,12 @@ function civihr_employee_portal_get_vacancy_list() {
         'return' => "id,start_date,end_date,status_id,description,position,salary,location",
     ));
 
+    $result_output['values'] = civihr_employee_portal_convert_array_option_value(
+      'hrjc_location',
+      'location',
+      $result_output['values']
+    );
+
     // Output json
     drupal_json_output($result_output);
     drupal_exit();
@@ -6458,4 +6464,41 @@ function _block_anonymous_access() {
     drupal_add_http_header('Location', "$base_url/welcome-page");
     exit();
   }
+}
+
+/**
+ * Convert array option values in an array to labels
+ *
+ * @param string $optionGroup The option group name to check against for converting data
+ * @param string $fieldName The option field name ( key ) in data array to be converted
+ * @param array $data The data which contain an option field to be converted
+ *
+ * @return array The data list with converted option values
+ */
+function civihr_employee_portal_convert_array_option_value($optionGroup, $fieldName, $data) {
+  // get location option values list
+  $locationOptions = civicrm_api3('OptionValue', 'get', array(
+    'sequential' => 1,
+    'return' => array("value", "label"),
+    'option_group_id' => $optionGroup,
+    'options' => array('limit' => 0),
+  ));
+
+  // create a value => label array from option values
+  $locationList = [];
+  foreach($locationOptions['values'] as $location) {
+    $locationList[$location['value']] = $location['label'];
+  }
+
+  // change location value to location label
+  for($i=0; $i < count($data); $i++) {
+    if (!empty($data[$i][$fieldName])) {
+      $data[$i][$fieldName] = $locationList[$data[$i][$fieldName]];
+    }
+    else {
+      $data[$i][$fieldName] = '';
+    }
+  }
+
+  return $data;
 }
