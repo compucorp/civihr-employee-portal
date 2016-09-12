@@ -215,7 +215,7 @@ function civihr_employee_portal_features_uninstall() {
 }
 
 
-function civihr_employee_portal_features_update_7005() {
+function civihr_employee_portal_features_update_7010() {
     $path = '<front>';
     menu_link_delete(NULL, $path);
 }
