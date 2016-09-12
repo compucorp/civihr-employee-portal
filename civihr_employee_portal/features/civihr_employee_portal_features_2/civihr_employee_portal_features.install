@@ -66,17 +66,17 @@ function civihr_employee_portal_features_install() {
             'data' => 'dashboard',
             'filter_format' => '',
             'weight' => 0
-        )
+        )      
     );
 
     $query = db_insert('front_page')->fields(array('rid', 'mode', 'data', 'filter_format', 'weight'));
-
+    
     foreach ($values as $record) {
         $query->values($record);
     }
 
     $query->execute();
-
+    
 }
 
 function civihr_employee_portal_update_7000()
@@ -212,12 +212,4 @@ function civihr_employee_portal_features_uninstall() {
     // Remove and truncate the old records
     $result = db_truncate('front_page')->execute();
 
-}
-
-
-function civihr_employee_portal_features_update_7005() {
-    $path = '<front>';
-    if($path) {
-        menu_link_delete(NULL, $path);
-    }
 }
