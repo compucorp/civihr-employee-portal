@@ -77,6 +77,9 @@ function civihr_employee_portal_features_install() {
 
     $query->execute();
 
+    /** Delete Home Menu */
+    $path = '<front>';
+    menu_link_delete(NULL, $path);
 }
 
 function civihr_employee_portal_update_7000()
@@ -212,10 +215,4 @@ function civihr_employee_portal_features_uninstall() {
     // Remove and truncate the old records
     $result = db_truncate('front_page')->execute();
 
-}
-
-
-function civihr_employee_portal_features_update_7010() {
-    $path = '<front>';
-    menu_link_delete(NULL, $path);
 }
