@@ -66,17 +66,20 @@ function civihr_employee_portal_features_install() {
             'data' => 'dashboard',
             'filter_format' => '',
             'weight' => 0
-        )      
+        )
     );
 
     $query = db_insert('front_page')->fields(array('rid', 'mode', 'data', 'filter_format', 'weight'));
-    
+
     foreach ($values as $record) {
         $query->values($record);
     }
 
     $query->execute();
-    
+
+    /** Delete Home Menu */
+    $path = '<front>';
+    menu_link_delete(NULL, $path);
 }
 
 function civihr_employee_portal_update_7000()
