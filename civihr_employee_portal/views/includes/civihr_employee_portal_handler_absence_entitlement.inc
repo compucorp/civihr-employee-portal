@@ -1,45 +1,44 @@
 <?php
+
 /**
  * @file
- * Base field handler for views_json_query.
+ * Base field handler for absence_entitlement value.
  */
-
 class civihr_employee_portal_handler_absence_entitlement extends views_handler_field {
+
   /**
-   * Render.
+   * {@inheritdoc}
    */
   function render($values) {
     $key = $this->field_alias;
 
     if (!isset($values->$key)) {
-        return '';
+      return '';
     }
 
     $values = $values->$key;
-    
+
     // Get the absence types
     $absenceTypes = get_civihr_absence_types();
-    
+
     foreach ($absenceTypes as $absenceType) {
-        
-        if (isset($absenceType['id']) && $absenceType['id'] == $this->options['duration_type']) {
-            
-            $value_explode = explode("||", $values);
-            
-            $absence_ids = explode("@@", $value_explode[1]);
-            $absence_values = explode("@@", $value_explode[0]);
-            
-            foreach ($absence_ids as $absence_array_key => $absence_id) {
-                if ($absence_id == $absenceType['id']) {
-                    
-                    return '+ '. $absence_values[$absence_array_key];
-                    
-                }
-            }
-            
+
+      if (isset($absenceType['id']) && $absenceType['id'] == $this->options['duration_type']) {
+
+        $value_explode = explode("||", $values);
+
+        $absence_ids = explode("@@", $value_explode[1]);
+        $absence_values = explode("@@", $value_explode[0]);
+
+        foreach ($absence_ids as $absence_array_key => $absence_id) {
+          if ($absence_id == $absenceType['id']) {
+
+            return '+ ' . $absence_values[$absence_array_key];
+          }
         }
+      }
     }
-    
+
     return '';
   }
 
@@ -57,7 +56,7 @@ class civihr_employee_portal_handler_absence_entitlement extends views_handler_f
     $options = parent::option_definition();
     $options['key'] = array('default' => '');
     $options['duration_type'] = array('default' => '');
-    
+
     return $options;
   }
 
@@ -73,38 +72,35 @@ class civihr_employee_portal_handler_absence_entitlement extends views_handler_f
       '#default_value' => $this->options['key'],
       '#required' => TRUE,
     );
-    
+
     // Get the absence types
     $absenceTypes = get_civihr_absence_types();
 
     foreach ($absenceTypes as $absenceType) {
 
-        /**
-         * Check if the absence type is active, if active populate in the options list
-         */
-        if (isset($absenceType['is_active']) && $absenceType['is_active'] == '1') {
-            
-            $options[$absenceType['id']] = $absenceType['title'];
-        }
-        
+      /**
+       * Check if the absence type is active, if active populate in the options list
+       */
+      if (isset($absenceType['is_active']) && $absenceType['is_active'] == '1') {
+
+        $options[$absenceType['id']] = $absenceType['title'];
+      }
     }
 
     $form['duration_type'] = array(
-        '#type' => 'select',
-        '#title' => t('Absence type'),
-        '#options' => $options,
-        '#default_value' => isset($this->options['duration_type']) ? $this->options['duration_type'] : '',
-        '#required' => TRUE
+      '#type' => 'select',
+      '#title' => t('Absence type'),
+      '#options' => $options,
+      '#default_value' => isset($this->options['duration_type']) ? $this->options['duration_type'] : '',
+      '#required' => TRUE
     );
-    
   }
-  
+
   function options_submit(&$form, &$form_state) {
     parent::options_submit($form, $form_state);
-        
+
     // Update our custom values
     $this->options['duration_type'] = $form_state['values']['options']['duration_type'];
-        
   }
 
   /**
@@ -112,13 +108,10 @@ class civihr_employee_portal_handler_absence_entitlement extends views_handler_f
    */
   function query() {
     // Add the field.
-    $this->table_alias = 'json';
+    $this->table_alias = 'absence_entitlement';
 
     $this->field_alias = $this->query->add_field(
-      $this->table_alias,
-      $this->options['key'],
-      '',
-      $this->options
+            $this->table_alias, $this->options['key'], '', $this->options
     );
   }
 
@@ -150,4 +143,5 @@ class civihr_employee_portal_handler_absence_entitlement extends views_handler_f
       $this->query->add_orderby(NULL, $this->field_alias, $order);
     }
   }
+
 }
