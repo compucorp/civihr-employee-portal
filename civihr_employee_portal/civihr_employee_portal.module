@@ -10,8 +10,8 @@ use Drupal\civihr_employee_portal\Helpers\HelperClass;
  */
 function civihr_employee_portal_css_alter(&$css) {
 
-    // Remove defaults system messages css file.
-    unset($css[drupal_get_path('module', 'system') . '/system.messages.css']);
+  // Remove defaults system messages css file.
+  unset($css[drupal_get_path('module', 'system') . '/system.messages.css']);
 
   // Removing unwanted css files from civicrm pages.
   if (civicrm_invoke()) {
@@ -38,24 +38,22 @@ function civihr_employee_portal_css_alter(&$css) {
  */
 function civihr_employee_portal_js_alter(&$javascript) {
 
-    // Unset jcarousel on panel admin pages as it's causes infinite loops
-    // "admin/structure/pages"
-    if (strpos(current_path(), 'admin/structure/pages') !== false) {
-        foreach ($javascript['settings']['data'] as $key => $value) {
-            if (isset($value['jcarousel'])) {
-
-                unset($javascript['settings']['data'][$key]);
-            }
-        }
-
+  // Unset jcarousel on panel admin pages as it's causes infinite loops
+  // "admin/structure/pages"
+  if (strpos(current_path(), 'admin/structure/pages') !== FALSE) {
+    foreach ($javascript['settings']['data'] as $key => $value) {
+      if (isset($value['jcarousel'])) {
+        unset($javascript['settings']['data'][$key]);
+      }
     }
+  }
 
-    global $user;
-    $uf = get_civihr_uf_match_data($user->uid);
-    drupal_add_js(array('currentDrupalUserId' => $user->uid), 'setting');
-    drupal_add_js(array('currentCiviCRMUserId' => $uf['contact_id']), 'setting');
+  global $user;
+  $uf = get_civihr_uf_match_data($user->uid);
+  drupal_add_js(['currentDrupalUserId' => $user->uid], 'setting');
+  drupal_add_js(['currentCiviCRMUserId' => $uf['contact_id']], 'setting');
 
-    _setup_modals();
+  _setup_modals();
 
   // Removing unwanted js files from civicrm pages.
   if (civicrm_invoke()) {
@@ -355,8 +353,8 @@ function getModuleUrl($moduleName) {
  * Implements hook_init().
  */
 function civihr_employee_portal_init() {
-    // @TODO -> init civi only on pages where we need to (e.g. Dashboard)
-    // Civi init + load the singleton needed for the AJAX calls
+  // @TODO -> init civi only on pages where we need to (e.g. Dashboard)
+  // Civi init + load the singleton needed for the AJAX calls
   // Loads all the resources only for non-civicrm pages.
   if (!civicrm_invoke()) {
     civicrm_initialize();
