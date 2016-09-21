@@ -12,6 +12,21 @@ function civihr_employee_portal_css_alter(&$css) {
 
     // Remove defaults system messages css file.
     unset($css[drupal_get_path('module', 'system') . '/system.messages.css']);
+
+  // Removing unwanted css files from civicrm pages.
+  if (civicrm_invoke()) {
+    // Multi-dimensional array containing module name and file path.
+    $removeFiles = [
+      ['module_name' => 'ctools', 'file_name' => '/css/ctools.css'],
+      ['module_name' => 'date_api', 'file_name' => '/date.css'],
+      ['module_name' => 'date_popup', 'file_name' => '/themes/datepicker.1.7.css'],
+      ['module_name' => 'panels', 'file_name' => '/css/panels.css'],
+      ['module_name' => 'radix_layouts', 'file_name' => '/radix_layouts.css'],
+      ['module_name' => 'views_tooltip', 'file_name' => '/views_tooltip.css'],
+      ['module_name' => 'tipsy', 'file_name' => '/stylesheets/tipsy.css']
+    ];
+    _remove_alter_files_from_civicrm($css, $removeFiles);
+  }
 }
 
 /**
@@ -37,6 +52,37 @@ function civihr_employee_portal_js_alter(&$javascript) {
     drupal_add_js(array('currentCiviCRMUserId' => $uf['contact_id']), 'setting');
 
     _setup_modals();
+
+  // Removing unwanted js files from civicrm pages.
+  if (civicrm_invoke()) {
+
+    // Multi-dimensional array containing module name and file path.
+    $removeFiles = [
+      ['module_name' => 'tipsy', 'file_name' => '/javascripts/jquery.tipsy.js'],
+      ['module_name' => 'tipsy', 'file_name' => '/javascripts/tipsy.js'],
+      ['module_name' => 'jquery_update', 'file_name' => '/replace/ui/external/jquery.cookie.js'],
+      ['module_name' => 'jquery_update', 'file_name' => '/replace/jquery/1.8/jquery.min.js'],
+    ];
+    _remove_alter_files_from_civicrm($javascript, $removeFiles);
+  }
+}
+
+/**
+ * Removes javascript/css from civicrm pages.
+ *
+ * @param array &$style_type variable contains all the references to loaded
+ *   js/css array from alter.
+ *
+ * @param array $removeFiles contains multi-dimensional array : module_name key
+ *   as name of the contrib module from which we need to remove corresponding
+ *   file using file_name key.
+ */
+function _remove_alter_files_from_civicrm(&$style_type, $removeFiles = []) {
+  if ($style_type) {
+    foreach ($removeFiles as $key => $value) {
+      unset($style_type[drupal_get_path('module', $value['module_name']) . $value['file_name']]);
+    }
+  }
 }
 
 /**
@@ -78,11 +124,16 @@ function _setup_modals() {
  * @param string $scriptFile the name of the script file (extension included)
  * @param string $page
  */
-function _add_script_to_page($scriptFile, $page) {
+function _add_script_to_page($scriptFile, $page = NULL) {
   if (arg()[0] == $page) {
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . "/js/$scriptFile");
   }
+  if (is_null($page)) {
+    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $scriptFile, 'file');
+  }
 }
+
+
 
 /**
  * Rebuilds the absence list view.
@@ -295,8 +346,10 @@ function getModuleUrl($moduleName) {
  * Implements hook_init().
  */
 function civihr_employee_portal_init() {
-    // @TODO -> init civi only on pages where we need to (e.g. Dashboard)
-    // Civi init + load the singleton needed for the AJAX calls
+  // @TODO -> init civi only on pages where we need to (e.g. Dashboard)
+  // Civi init + load the singleton needed for the AJAX calls.
+  // Loads all the resources only for non-civicrm pages.
+  if (!civicrm_invoke()) {
     civicrm_initialize();
     CRM_Core_Resources::singleton()->addCoreResources();
 
@@ -307,10 +360,19 @@ function civihr_employee_portal_init() {
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
 
     _add_script_to_page('tasks.js', 'dashboard');
+    _add_script_to_page('/js/scripts.js');
+    _add_script_to_page('/js/filters.js');
+    _add_script_to_page('/js/plupload/plupload.full.min.js');
+    _add_script_to_page('/js/plupload-init.js');
+    _add_script_to_page('/js/chart.min.js');
+
+    _add_script_to_page('/lib/tablesorter/jquery.tablesorter.min.js');
+    _add_script_to_page('/lib/sweetalert/sweet-alert.min.js');
 
     _rebuild_view('absence_list');
     _rebuild_view('length_of_service');
     _rebuild_view('absence_activity');
+  }
 }
 
 /**
