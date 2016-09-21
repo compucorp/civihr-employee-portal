@@ -14,22 +14,19 @@ function civihr_employee_portal_css_alter(&$css) {
   unset($css[drupal_get_path('module', 'system') . '/system.messages.css']);
 
   // Removing unwanted css files from civicrm pages.
-  if (civicrm_invoke()) {
+  if (arg(0) == 'civicrm') {
     // Multi-dimensional array containing module name and file path.
     $removeFiles = [
       ['module_name' => 'ctools', 'file_name' => '/css/ctools.css'],
       ['module_name' => 'date_api', 'file_name' => '/date.css'],
-      [
-        'module_name' => 'date_popup',
-        'file_name' => '/themes/datepicker.1.7.css',
-      ],
+      ['module_name' => 'date_popup', 'file_name' => '/themes/datepicker.1.7.css'],
       ['module_name' => 'panels', 'file_name' => '/css/panels.css'],
       ['module_name' => 'radix_layouts', 'file_name' => '/radix_layouts.css'],
       ['module_name' => 'views_tooltip', 'file_name' => '/views_tooltip.css'],
       ['module_name' => 'tipsy', 'file_name' => '/stylesheets/tipsy.css'],
     ];
     // Removes above files.
-    _remove_alter_files_from_civicrm($css, $removeFiles);
+   _remove_resources($css, $removeFiles);
   }
 }
 
@@ -37,6 +34,9 @@ function civihr_employee_portal_css_alter(&$css) {
  * Implements hook_js_alter()
  */
 function civihr_employee_portal_js_alter(&$javascript) {
+
+  global $user;
+  $uf = get_civihr_uf_match_data($user->uid);
 
   // Unset jcarousel on panel admin pages as it's causes infinite loops
   // "admin/structure/pages"
@@ -48,48 +48,38 @@ function civihr_employee_portal_js_alter(&$javascript) {
     }
   }
 
-  global $user;
-  $uf = get_civihr_uf_match_data($user->uid);
   drupal_add_js(['currentDrupalUserId' => $user->uid], 'setting');
   drupal_add_js(['currentCiviCRMUserId' => $uf['contact_id']], 'setting');
 
   _setup_modals();
 
   // Removing unwanted js files from civicrm pages.
-  if (civicrm_invoke()) {
+  if (arg(0) == 'civicrm') {
 
     // Multi-dimensional array containing module name and file path.
     $removeFiles = [
       ['module_name' => 'tipsy', 'file_name' => '/javascripts/jquery.tipsy.js'],
-      ['module_name' => 'tipsy', 'file_name' => '/javascripts/tipsy.js'],
-      [
-        'module_name' => 'jquery_update',
-        'file_name' => '/replace/ui/external/jquery.cookie.js',
-      ],
-      [
-        'module_name' => 'jquery_update',
-        'file_name' => '/replace/jquery/1.8/jquery.min.js',
-      ],
+      ['module_name' => 'tipsy', 'file_name' => '/javascripts/tipsy.js']
     ];
     // Removes above files.
-    _remove_alter_files_from_civicrm($javascript, $removeFiles);
+     _remove_resources($javascript, $removeFiles);
   }
 }
 
 /**
  * Removes javascript/css from civicrm pages.
  *
- * @param array &$style_type variable contains all the references to loaded
+ * @param array &$resourcesList variable contains all the references to loaded
  *   js/css array from alter.
  *
- * @param array $removeFiles contains multi-dimensional array : module_name key
+ * @param array $blacklist contains multi-dimensional array : module_name key
  *   as name of the contrib module from which we need to remove corresponding
  *   file using file_name key.
  */
-function _remove_alter_files_from_civicrm(&$style_type, $removeFiles = []) {
-  if ($style_type) {
-    foreach ($removeFiles as $key => $value) {
-      unset($style_type[drupal_get_path('module', $value['module_name']) . $value['file_name']]);
+function _remove_resources(&$resourcesList, $blacklist = []) {
+  if ($resourcesList) {
+    foreach ($blacklist as $key => $value) {
+      unset($resourcesList[drupal_get_path('module', $value['module_name']) . $value['file_name']]);
     }
   }
 }
@@ -134,10 +124,16 @@ function _setup_modals() {
  * @param string $page
  */
 function _add_script_to_page($scriptFile, $page = NULL) {
-  if (arg()[0] == $page) {
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . "/js/$scriptFile");
+
+  if (!is_null($page) && arg(0) != $page) {
+    return;
   }
-  if (is_null($page)) {
+  if (is_array($scriptFile)) {
+    foreach ($scriptFile as $value) {
+      drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $value, 'file');
+    }
+  }
+  else {
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $scriptFile, 'file');
   }
 }
@@ -353,10 +349,10 @@ function getModuleUrl($moduleName) {
  * Implements hook_init().
  */
 function civihr_employee_portal_init() {
-  // @TODO -> init civi only on pages where we need to (e.g. Dashboard)
-  // Civi init + load the singleton needed for the AJAX calls
+
   // Loads all the resources only for non-civicrm pages.
-  if (!civicrm_invoke()) {
+  if (arg(0) != 'civicrm') {
+    // Civi init + load the singleton needed for the AJAX calls
     civicrm_initialize();
     CRM_Core_Resources::singleton()->addCoreResources();
 
@@ -366,15 +362,17 @@ function civihr_employee_portal_init() {
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweet-alert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
 
-    _add_script_to_page('tasks.js', 'dashboard');
-    _add_script_to_page('/js/scripts.js');
-    _add_script_to_page('/js/filters.js');
-    _add_script_to_page('/js/plupload/plupload.full.min.js');
-    _add_script_to_page('/js/plupload-init.js');
-    _add_script_to_page('/js/chart.min.js');
+    _add_script_to_page('/js/tasks.js', 'dashboard');
 
-    _add_script_to_page('/lib/tablesorter/jquery.tablesorter.min.js');
-    _add_script_to_page('/lib/sweetalert/sweet-alert.min.js');
+    _add_script_to_page([
+      '/js/scripts.js',
+      '/js/filters.js',
+      '/js/plupload/plupload.full.min.js',
+      '/js/plupload-init.js',
+      '/js/chart.min.js',
+      '/lib/tablesorter/jquery.tablesorter.min.js',
+      '/lib/sweetalert/sweet-alert.min.js'
+    ]);
 
     _rebuild_view('absence_list');
     _rebuild_view('length_of_service');
