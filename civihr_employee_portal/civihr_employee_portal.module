@@ -10,8 +10,8 @@ use Drupal\civihr_employee_portal\Helpers\HelperClass;
  */
 function civihr_employee_portal_css_alter(&$css) {
 
-    // Remove defaults system messages css file.
-    unset($css[drupal_get_path('module', 'system') . '/system.messages.css']);
+  // Remove defaults system messages css file.
+  unset($css[drupal_get_path('module', 'system') . '/system.messages.css']);
 
   // Removing unwanted css files from civicrm pages.
   if (civicrm_invoke()) {
@@ -19,12 +19,16 @@ function civihr_employee_portal_css_alter(&$css) {
     $removeFiles = [
       ['module_name' => 'ctools', 'file_name' => '/css/ctools.css'],
       ['module_name' => 'date_api', 'file_name' => '/date.css'],
-      ['module_name' => 'date_popup', 'file_name' => '/themes/datepicker.1.7.css'],
+      [
+        'module_name' => 'date_popup',
+        'file_name' => '/themes/datepicker.1.7.css',
+      ],
       ['module_name' => 'panels', 'file_name' => '/css/panels.css'],
       ['module_name' => 'radix_layouts', 'file_name' => '/radix_layouts.css'],
       ['module_name' => 'views_tooltip', 'file_name' => '/views_tooltip.css'],
-      ['module_name' => 'tipsy', 'file_name' => '/stylesheets/tipsy.css']
+      ['module_name' => 'tipsy', 'file_name' => '/stylesheets/tipsy.css'],
     ];
+    // Removes above files.
     _remove_alter_files_from_civicrm($css, $removeFiles);
   }
 }
@@ -34,24 +38,22 @@ function civihr_employee_portal_css_alter(&$css) {
  */
 function civihr_employee_portal_js_alter(&$javascript) {
 
-    // Unset jcarousel on panel admin pages as it's causes infinite loops
-    // "admin/structure/pages"
-    if (strpos(current_path(), 'admin/structure/pages') !== false) {
-        foreach ($javascript['settings']['data'] as $key => $value) {
-            if (isset($value['jcarousel'])) {
-
-                unset($javascript['settings']['data'][$key]);
-            }
-        }
-
+  // Unset jcarousel on panel admin pages as it's causes infinite loops
+  // "admin/structure/pages"
+  if (strpos(current_path(), 'admin/structure/pages') !== FALSE) {
+    foreach ($javascript['settings']['data'] as $key => $value) {
+      if (isset($value['jcarousel'])) {
+        unset($javascript['settings']['data'][$key]);
+      }
     }
+  }
 
-    global $user;
-    $uf = get_civihr_uf_match_data($user->uid);
-    drupal_add_js(array('currentDrupalUserId' => $user->uid), 'setting');
-    drupal_add_js(array('currentCiviCRMUserId' => $uf['contact_id']), 'setting');
+  global $user;
+  $uf = get_civihr_uf_match_data($user->uid);
+  drupal_add_js(['currentDrupalUserId' => $user->uid], 'setting');
+  drupal_add_js(['currentCiviCRMUserId' => $uf['contact_id']], 'setting');
 
-    _setup_modals();
+  _setup_modals();
 
   // Removing unwanted js files from civicrm pages.
   if (civicrm_invoke()) {
@@ -60,9 +62,16 @@ function civihr_employee_portal_js_alter(&$javascript) {
     $removeFiles = [
       ['module_name' => 'tipsy', 'file_name' => '/javascripts/jquery.tipsy.js'],
       ['module_name' => 'tipsy', 'file_name' => '/javascripts/tipsy.js'],
-      ['module_name' => 'jquery_update', 'file_name' => '/replace/ui/external/jquery.cookie.js'],
-      ['module_name' => 'jquery_update', 'file_name' => '/replace/jquery/1.8/jquery.min.js'],
+      [
+        'module_name' => 'jquery_update',
+        'file_name' => '/replace/ui/external/jquery.cookie.js',
+      ],
+      [
+        'module_name' => 'jquery_update',
+        'file_name' => '/replace/jquery/1.8/jquery.min.js',
+      ],
     ];
+    // Removes above files.
     _remove_alter_files_from_civicrm($javascript, $removeFiles);
   }
 }
@@ -132,8 +141,6 @@ function _add_script_to_page($scriptFile, $page = NULL) {
     drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $scriptFile, 'file');
   }
 }
-
-
 
 /**
  * Rebuilds the absence list view.
