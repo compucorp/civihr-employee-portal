@@ -19,30 +19,17 @@
  * @ingroup views_templates
  */
 
-$typeResult = civicrm_api3('Activity', 'getoptions', array(
-    'field' => "activity_type_id",
-));
-$types = $typeResult['values'];
-
-/*$statusesResult = civicrm_api3('Document', 'getstatuses', array(
-    'sequential' => 1,
-));
-$statuses = array();
-foreach ($statusesResult['values'] as $status):
-    $statuses[$status['value']] = $status['label'];
-endforeach;*/
 $statuses = array(
-    0 => 'All',
-    1 => 'Awaiting upload',
-    2 => 'Awaiting approval',
-    3 => 'Approved',
-    4 => 'Rejected',
+    0 => t('All'),
+    'awaiting-upload' => t('Awaiting upload'),
+    'awaiting-approval' => t('Awaiting approval'),
+    'approved' => t('Approved'),
+    'rejected' => t('Rejected'),
 );
-
 $statusesCount = array_combine(array_keys($statuses), array_fill(0, count($statuses), 0));
 
 foreach ($rows as $row):
-    $statusesCount[(int)strip_tags($row['status_id'])]++;
+    $statusesCount[strtolower(str_replace(' ', '-', $row['status_id']))]++;
     $statusesCount[0]++;
 endforeach;
 
@@ -86,29 +73,12 @@ endforeach;
                 <?php endif; ?>
                 <tbody>
                 <?php foreach ($rows as $row_count => $row): ?>
-                    <?php $class = 'document-row status-id-' . strip_tags($row['status_id']); ?>
+                    <?php $class = 'document-row status-id-' . strtolower(str_replace(' ', '-', $row['status_id'])); ?>
                     <tr <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?>>
                         <?php foreach ($row as $field => $content): ?>
                             <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
-                                <?php if ($field === 'activity_type_id'):
-                                    print $types[strip_tags($content)];
-                                    continue;
-                                endif;
-                                ?>
-                                <?php if ($field === 'activity_date_time' && trim(strip_tags($content))):
-                                    print date('M d Y', strtotime(strip_tags($content)));
-                                    continue;
-                                endif; ?>
-                                <?php if ($field === 'expire_date' && trim(strip_tags($content))):
-                                    print date('M d Y', strtotime(strip_tags($content)));
-                                    continue;
-                                endif; ?>
-                                <?php if ($field === 'status_id'):
-                                    print $statuses[strip_tags($content)];
-                                    continue;
-                                endif; ?>
                                 <?php if ($field === 'document_contacts' || $field === 'document_contacts_1'):
-                                    print $content;
+                                    print strip_tags(html_entity_decode($content));
                                     continue;
                                 endif; ?>
                                 <?php print $content; ?>

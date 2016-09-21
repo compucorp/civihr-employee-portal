@@ -340,7 +340,7 @@ function civihr_employee_portal_views_data_alter(&$data) {
         'help' => t('Task type'),
         'real field' => 'activity_type_id',
         'field' => array(
-            'handler' => 'civihr_employee_portal_handler_task_type',
+            'handler' => 'civihr_employee_portal_handler_activity_type',
             'click sortable' => TRUE,
         ),
         'argument' => array(
@@ -502,6 +502,194 @@ function civihr_employee_portal_views_data_alter(&$data) {
             'help' => t('Filter results to a particular result set'),
         ),
         'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+
+    // Task handlers
+    $data['tasks']['assignee_contact_id'] = array(
+        'title' => t('Assignee contact'),
+        'help' => t('Assignee contact'),
+        'real field' => 'assignee_contact_id',
+        'field' => array(
+            'handler' => 'views_handler_field',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'civihr_employee_portal_argument_contact_id',
+            'name_field' => 'assignee_contact',
+            'string' => TRUE,
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_numeric',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_handler_sort'),
+    );
+    $data['tasks']['target_contact_id'] = array(
+        'title' => t('Target contact'),
+        'help' => t('Target contact'),
+        'real field' => 'target_contact_id',
+        'field' => array(
+            'handler' => 'views_handler_field',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'civihr_employee_portal_argument_contact_id',
+            'name_field' => 'target_contact',
+            'string' => TRUE,
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_numeric',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_handler_sort'),
+    );
+    $data['tasks']['status_id'] = array(
+        'title' => t('Task status'),
+        'help' => t('Task status'),
+        'real field' => 'status_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_task_status',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_handler_argument',
+            'name_field' => 'task_status',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_string',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    $data['tasks']['activity_type_id'] = array(
+        'title' => t('Task type'),
+        'help' => t('Task type'),
+        'real field' => 'activity_type_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_activity_type',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_handler_argument',
+            'name_field' => 'task_type',
+            'string' => TRUE
+        ),
+    );
+    $data['tasks']['activity_date_time'] = array(
+        'title' => t('Task due date'),
+        'help' => t('Task due date'),
+        'real field' => 'activity_date_time',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_tasks_date',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_handler_argument',
+            'name_field' => 'task_due_date',
+            'string' => TRUE
+        ),
+    );
+
+    // Document handlers
+    $data['documents']['assignee_contact_id'] = array(
+        'title' => t('Assignee contact'),
+        'help' => t('Assignee contact'),
+        'real field' => 'assignee_contact_id',
+        'field' => array(
+            'handler' => 'views_handler_field',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'civihr_employee_portal_argument_contact_id',
+            'name_field' => 'assignee_contact',
+            'string' => TRUE,
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_numeric',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_handler_sort'),
+    );
+    $data['documents']['target_contact_id'] = array(
+        'title' => t('Target contact'),
+        'help' => t('Target contact'),
+        'real field' => 'target_contact_id',
+        'field' => array(
+            'handler' => 'views_handler_field',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'civihr_employee_portal_argument_contact_id',
+            'name_field' => 'target_contact',
+            'string' => TRUE,
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_numeric',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_handler_sort'),
+    );
+    $data['documents']['status_id'] = array(
+        'title' => t('Document status'),
+        'help' => t('Document status'),
+        'real field' => 'status_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_document_status',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_handler_argument',
+            'name_field' => 'status',
+            'string' => TRUE
+        ),
+        'filter' => array(
+            'handler' => 'views_handler_filter_string',
+            'help' => t('Filter results to a particular result set'),
+        ),
+        'sort' => array('handler' => 'views_json_query_handler_sort'),
+    );
+    $data['documents']['activity_type_id'] = array(
+        'title' => t('Document type'),
+        'help' => t('Document type'),
+        'real field' => 'activity_type_id',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_activity_type',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_handler_argument',
+            'name_field' => 'document_type',
+            'string' => TRUE
+        ),
+    );
+    $data['documents']['activity_date_time'] = array(
+        'title' => t('Document due date'),
+        'help' => t('Document due date'),
+        'real field' => 'activity_date_time',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_documents_date',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_handler_argument',
+            'name_field' => 'document_due_date',
+            'string' => TRUE
+        ),
+    );
+    $data['documents']['expire_date'] = array(
+        'title' => t('Document expire date'),
+        'help' => t('Document expire date'),
+        'real field' => 'expire_date',
+        'field' => array(
+            'handler' => 'civihr_employee_portal_handler_documents_date',
+            'click sortable' => TRUE,
+        ),
+        'argument' => array(
+            'handler' => 'views_handler_argument',
+            'name_field' => 'document_expire_date',
+            'string' => TRUE
+        ),
     );
 
     // Reports handlers

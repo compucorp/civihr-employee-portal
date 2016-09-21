@@ -85,7 +85,7 @@ function _add_script_to_page($scriptFile, $page) {
 }
 
 /**
- * Rebuilds the length of service view.
+ * Rebuilds absence_entitlement view.
  */
 function _rebuild_absence_entitlement_view() {
   $civi_settings = parse_url(CIVICRM_DSN);
@@ -100,7 +100,128 @@ function _rebuild_absence_entitlement_view() {
             ORDER BY che.contact_id ASC");
 
   // Set to false so it will not rebuild until not asked to rebuild
-  variable_set('rebuild_absence_entitlement', 'FALSE');
+  variable_set('rebuild_absence_entitlement_view', 'FALSE');
+}
+
+/**
+ * Rebuilds hrvacancy view.
+ */
+function _rebuild_hrvacancy_view() {
+  $civi_settings = parse_url(CIVICRM_DSN);
+  $civi_db_name = trim($civi_settings['path'], '/');
+
+  db_query('DROP view if exists hrvacancy');
+  db_query("CREATE VIEW hrvacancy AS
+            SELECT id, start_date, end_date, status_id, description, position, salary, location
+            FROM {$civi_db_name}.civicrm_hrvacancy
+            WHERE status_id = 2");
+
+  // Set to false so it will not rebuild until not asked to rebuild
+  variable_set('rebuild_hrvacancy_view', 'FALSE');
+}
+
+/**
+ * Rebuilds Tasks view.
+ */
+function _rebuild_tasks_view() {
+  $extensions = CRM_Core_PseudoConstant::getExtensions();
+  if (!empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+    $activityTypes = _get_activity_type_ids_by_component('CiviTask');
+    if (!empty($activityTypes)) {
+      db_query('DROP VIEW IF EXISTS tasks');
+      db_query('CREATE VIEW tasks AS ' . _get_tasks_documents_sql_query($activityTypes));
+
+      // Set to false so it will not rebuild until not asked to rebuild
+      variable_set('rebuild_tasks_view', 'FALSE');
+    }
+  }
+}
+
+/**
+ * Rebuilds Documents view.
+ */
+function _rebuild_documents_view() {
+  $extensions = CRM_Core_PseudoConstant::getExtensions();
+  if (!empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+    $activityTypes = _get_activity_type_ids_by_component('CiviDocument');
+    if (!empty($activityTypes)) {
+      db_query('DROP VIEW IF EXISTS documents');
+      db_query('CREATE VIEW documents AS ' . _get_tasks_documents_sql_query($activityTypes));
+
+      // Set to false so it will not rebuild until not asked to rebuild
+      variable_set('rebuild_documents_view', 'FALSE');
+    }
+  }
+}
+
+/**
+ * Return an array containg activity type IDs of given component.
+ *
+ * @param string $component
+ * @return array
+ * @throws API_Exception
+ */
+function _get_activity_type_ids_by_component($component) {
+  $civi_settings = parse_url(CIVICRM_DSN);
+  $civi_db_name = trim($civi_settings['path'], '/');
+  $typeIds = array();
+  $optionGroup = civicrm_api3('OptionGroup', 'get', array(
+    'sequential' => 1,
+    'name' => "activity_type",
+  ));
+
+  if (!isset($optionGroup['id'])) {
+    throw new API_Exception(ts("Cannot find OptionGroup with 'name' = 'activity_type'."));
+  }
+
+  $componentQuery = "SELECT * FROM {$civi_db_name}.civicrm_component WHERE name = %1";
+  $componentParams = array(
+    1 => array($component, 'String'),
+  );
+  $componentResult = CRM_Core_DAO::executeQuery($componentQuery, $componentParams);
+  if ($componentResult->fetch())
+  {
+    $componentId = $componentResult->id;
+    $result = civicrm_api3('OptionValue', 'get', array(
+      'sequential' => 0,
+      'option_group_id' => $optionGroup['id'],
+      'component_id' => $componentId,
+    ));
+    if (!empty($result['values'])) {
+      foreach ($result['values'] as $value) {
+        $typeIds[] = $value['value'];
+      }
+    }
+  }
+
+  return $typeIds;
+}
+
+/**
+ * Return a string containing SQL query to select Activity data required
+ * for create SQL View for Tasks / Documents.
+ * $activityTypes array should contain a set activity_type_id pointing to
+ * Task types or Document types.
+ *
+ * @param array $activityTypes
+ * @return string
+ */
+function _get_tasks_documents_sql_query(array $activityTypes) {
+  $civi_settings = parse_url(CIVICRM_DSN);
+  $civi_db_name = trim($civi_settings['path'], '/');
+  return "SELECT a.id, a.activity_type_id, a.subject, a.activity_date_time, acustom.expire_date, a.details, a.status_id, a.is_deleted, ca.case_id, COUNT(ef.id) AS file_count, acs.contact_id AS source_contact_id, contact_source.sort_name AS source_contact_name, act.contact_id AS target_contact_id, contact_target.sort_name AS target_contact_name, aca.contact_id AS assignee_contact_id, contact_assignee.sort_name AS assignee_contact_name
+            FROM {$civi_db_name}.civicrm_activity a
+            LEFT JOIN {$civi_db_name}.civicrm_value_activity_custom_fields_11 acustom ON acustom.entity_id = a.id
+            LEFT JOIN {$civi_db_name}.civicrm_case_activity ca ON ca.activity_id = a.id
+            LEFT JOIN {$civi_db_name}.civicrm_entity_file ef ON ef.entity_id = a.id AND ef.entity_table = 'civicrm_activity'
+            LEFT JOIN {$civi_db_name}.civicrm_activity_contact acs ON acs.activity_id = a.id AND acs.record_type_id = 2
+            LEFT JOIN {$civi_db_name}.civicrm_contact contact_source ON contact_source.id = acs.contact_id
+            LEFT JOIN {$civi_db_name}.civicrm_activity_contact act ON act.activity_id = a.id AND act.record_type_id = 3
+            LEFT JOIN {$civi_db_name}.civicrm_contact contact_target ON contact_target.id = act.contact_id
+            LEFT JOIN {$civi_db_name}.civicrm_activity_contact aca ON aca.activity_id = a.id AND aca.record_type_id = 1
+            LEFT JOIN {$civi_db_name}.civicrm_contact contact_assignee ON contact_assignee.id = aca.contact_id
+            WHERE a.is_deleted = 0 AND a.is_current_revision = 1 AND a.activity_type_id IN (" . implode(',', $activityTypes) . ")
+            GROUP BY a.id";
 }
 
 /**
@@ -284,7 +405,7 @@ function _rebuild_view($viewName) {
   $fnName = '_rebuild_' . $viewName . '_view';
   $varValue = variable_get($varName, 'TRUE');
 
-  if (isset($varValue) && $varValue == 'TRUE' && function_exists($fnName)) {
+  if (isset($varValue) && $varValue == 'TRUE' && function_exists($fnName)/* || 1*/) {
     call_user_func($fnName);
   }
 }
@@ -331,6 +452,9 @@ function civihr_employee_portal_init() {
     _rebuild_view('length_of_service');
     _rebuild_view('absence_entitlement');
     _rebuild_view('absence_activity');
+    _rebuild_view('hrvacancy');
+    _rebuild_view('tasks');
+    _rebuild_view('documents');
 }
 
 /**
@@ -360,8 +484,9 @@ function _run_civihr_tasks() {
     // Set variable to TRUE so the mysql database views will be refreshed
     variable_set('rebuild_absence_list_view', 'TRUE');
     variable_set('rebuild_length_of_service_view', 'TRUE');
-    variable_set('absence_entitlement_view', 'TRUE');
-    variable_set('absence_activity_view', 'TRUE');
+    variable_set('rebuild_absence_entitlement_view', 'TRUE');
+    variable_set('rebuild_absence_activity_view', 'TRUE');
+    variable_set('rebuild_hrvacancy_view', 'TRUE');
     variable_set('rebuild_hrjobcontract_entities_view', 'TRUE');
 
     watchdog('Rebuild view REQUEST', 'ABSENCE LIST MYSQL VIEW');
@@ -788,14 +913,20 @@ function get_task_statuses($status_id = NULL) {
     return $status_id_value;
 }
 
-function get_task_type($type_id = NULL) {
+/**
+ * Get value (a human-readable label) of given Activity type ID.
+ *
+ * @param int $type_id
+ * @return string
+ */
+function get_activity_type_value($type_id = NULL) {
 
-    $taskTypes = &drupal_static(__FUNCTION__);
+    $activityTypes = &drupal_static(__FUNCTION__);
 
-    if (!isset($taskTypes)) {
+    if (!isset($activityTypes)) {
 
-        if ($cache = cache_get('civihr_task_types')) {
-            $taskTypes = $cache->data;
+        if ($cache = cache_get('civihr_activity_types')) {
+            $activityTypes = $cache->data;
         }
         else {
             try {
@@ -803,7 +934,7 @@ function get_task_type($type_id = NULL) {
                 civicrm_initialize();
 
                 // Task types array
-                $taskTypes = civicrm_api3('Activity', 'getoptions', array(
+                $activityTypes = civicrm_api3('Activity', 'getoptions', array(
                     'field' => "activity_type_id",
                 ));
             }
@@ -813,16 +944,16 @@ function get_task_type($type_id = NULL) {
             }
 
             // Cache the task types for 5 minutes
-            cache_set('civihr_task_types', $taskTypes, 'cache', time() + 360);
+            cache_set('civihr_activity_types', $activityTypes, 'cache', time() + 360);
         }
     }
 
     if ($type_id === null) {
-        return $taskTypes['values'];
+        return $activityTypes['values'];
     }
 
     // Get the type values based on the type_id
-    $type_id_value = CRM_Utils_Array::value($type_id, $taskTypes['values']);
+    $type_id_value = CRM_Utils_Array::value($type_id, $activityTypes['values']);
 
     return $type_id_value;
 }
@@ -3112,7 +3243,7 @@ function civihr_employee_portal_civi_tasks_view_completed_callback($ajax) {
         ctools_add_js('ajax-responder');
 
         // Get the view for approved absences
-        $output[] = ctools_modal_command_display(t('My Completed Tasks'), views_embed_view('Tasks', 'block_1'));
+        $output[] = ctools_modal_command_display(t('My Completed Tasks'), views_embed_view('tasks', 'block_1'));
 
         print ajax_render($output);
         drupal_exit();
@@ -4727,6 +4858,229 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'not null' => TRUE,
         'description' => 'Absence Entitlement type',
     );
+
+    // hrvacancy view:
+    $schema['hrvacancy']['description'] = 'Views data representation of HRVacancy';
+    $schema['hrvacancy']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'Vacancy ID',
+    );
+    $schema['hrvacancy']['fields']['start_date'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => FALSE,
+        'description' => 'Vacancy start date',
+    );
+    $schema['hrvacancy']['fields']['end_date'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => FALSE,
+        'description' => 'Vacancy end date',
+    );
+    $schema['hrvacancy']['fields']['status_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Vacancy status ID',
+    );
+    $schema['hrvacancy']['fields']['description'] = array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'Vacancy description',
+    );
+    $schema['hrvacancy']['fields']['position'] = array(
+        'type' => 'varchar',
+        'length' => 127,
+        'not null' => TRUE,
+        'description' => 'Vacancy position',
+    );
+    $schema['hrvacancy']['fields']['salary'] = array(
+        'type' => 'varchar',
+        'length' => 127,
+        'not null' => TRUE,
+        'description' => 'Vacancy salary',
+    );
+    $schema['hrvacancy']['fields']['location'] = array(
+        'type' => 'varchar',
+        'length' => 254,
+        'not null' => TRUE,
+        'description' => 'Vacancy location',
+    );
+
+    // tasks view:
+    $schema['tasks']['description'] = 'Views data representation of CiviHR Tasks';
+    $schema['tasks']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'Task ID',
+    );
+    $schema['tasks']['fields']['activity_type_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Activity type ID',
+    );
+    $schema['tasks']['fields']['case_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Case ID',
+    );
+    $schema['tasks']['fields']['subject'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Task subject',
+    );
+    $schema['tasks']['fields']['activity_date_time'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Task start date',
+    );
+    $schema['tasks']['fields']['details'] = array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'Task details',
+    );
+    $schema['tasks']['fields']['status_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Task status ID',
+    );
+    $schema['tasks']['fields']['is_deleted'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Is Task deleted?',
+    );
+    $schema['tasks']['fields']['source_contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Source Contact ID',
+    );
+    $schema['tasks']['fields']['source_contact_name'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Source Contact name',
+    );
+    $schema['tasks']['fields']['target_contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Target Contact ID',
+    );
+    $schema['tasks']['fields']['target_contact_name'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Target Contact name',
+    );
+    $schema['tasks']['fields']['assignee_contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Assignee Contact ID',
+    );
+    $schema['tasks']['fields']['assignee_contact_name'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Assignee Contact name',
+    );
+
+    // tasks view:
+    $schema['documents']['description'] = 'Views data representation of CiviHR Documents';
+    $schema['documents']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'Document ID',
+    );
+    $schema['documents']['fields']['activity_type_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Activity type ID',
+    );
+    $schema['documents']['fields']['case_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Case ID',
+    );
+    $schema['documents']['fields']['subject'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Document subject',
+    );
+    $schema['documents']['fields']['activity_date_time'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Document start date',
+    );
+    $schema['documents']['fields']['expire_date'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Document end date',
+    );
+    $schema['documents']['fields']['details'] = array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'Document details',
+    );
+    $schema['documents']['fields']['file_count'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Document file count',
+    );
+    $schema['documents']['fields']['status_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Document status ID',
+    );
+    $schema['documents']['fields']['is_deleted'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Is Document deleted?',
+    );
+    $schema['documents']['fields']['source_contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Source Contact ID',
+    );
+    $schema['documents']['fields']['source_contact_name'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Source Contact name',
+    );
+    $schema['documents']['fields']['target_contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Target Contact ID',
+    );
+    $schema['documents']['fields']['target_contact_name'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Target Contact name',
+    );
+    $schema['documents']['fields']['assignee_contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Assignee Contact ID',
+    );
+    $schema['documents']['fields']['assignee_contact_name'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Assignee Contact name',
+    );
 }
 
 /**
@@ -4834,6 +5188,66 @@ function civihr_employee_portal_entity_info() {
         'entity keys' => array(
             'id' => 'contact_id',
             'label' => 'Contact ID',
+        ),
+        'bundles' => array(),
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        'module' => 'civihr_employee_portal',
+    );
+
+    // hrvacancy entity:
+    $info['civihr_hrvacancy'] = array(
+        'label' => t('HRVacancy entity'),
+        'plural label' => t('HRVacancy entity'),
+        'description' => t('HRVacancy'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'hrvacancy',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Vacancy ID',
+        ),
+        'bundles' => array(),
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        'module' => 'civihr_employee_portal',
+    );
+
+    // task entity:
+    $info['civihr_task'] = array(
+        'label' => t('Task entity'),
+        'plural label' => t('Task entity'),
+        'description' => t('Task'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'tasks',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Task ID',
+        ),
+        'bundles' => array(),
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        'module' => 'civihr_employee_portal',
+    );
+
+    // document entity:
+    $info['civihr_document'] = array(
+        'label' => t('Document entity'),
+        'plural label' => t('Document entity'),
+        'description' => t('Document'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'documents',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Document ID',
         ),
         'bundles' => array(),
         'label callback' => 'entity_class_label',
@@ -6411,27 +6825,6 @@ function _is_hrreports_data_table_view($viewName) {
 }
 
 /**
- * Return an array containing string values for given Contacts IDs.
- * Used in Tasks block template for create Contact javascript filter.
- *
- * @param array $contactsIds
- * @return array
- */
-function _get_contacts_filter_values(array $contactsIds) {
-    $result = array();
-    if (!empty($contactsIds)) {
-        $contactsResult = civicrm_api3('Contact', 'get', array(
-          'id' => array('IN' => array_keys($contactsIds)),
-          'return' => "sort_name",
-        ));
-        foreach ($contactsResult['values'] as $key => $value) {
-            $result[$key] = $value['sort_name'];
-        }
-    }
-    return $result;
-}
-
-/**
  * Return a key of the task filter by given date.
  * Used in Tasks block template.
  *
@@ -6467,17 +6860,6 @@ function _get_task_filter_by_date($date, $normalize = false) {
   }
 
   return $normalize ? ($filter == 'tomorrow' ? 'week' : $filter) : $filter;
-}
-
-/**
- * Check if given field is one of Task contacts fields.
- * Used in Tasks block template.
- *
- * @param string $field
- * @return bool
- */
-function _is_field_task_contact($field) {
-   return $field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2';
 }
 
 /**

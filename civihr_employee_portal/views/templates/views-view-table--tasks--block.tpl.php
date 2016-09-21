@@ -19,44 +19,19 @@
  * @ingroup views_templates
  */
 
-global $user;
-
-/**
- * Checks if a task is assigned to the given user
- * @param  object $task
- * @param  int $user_id
- * @return boolean
- */
-function taskAssignedToUser($task, $user_id) {
-  return strip_tags($task['task_contacts_1']) != $user_id;
-}
-
-$contacts = array();
-$contactsIds = array();
-
-$civiUser = get_civihr_uf_match_data($user->uid);
-$types = civicrm_api3('Activity', 'getoptions', array('field' => "activity_type_id"))['values'];
-
 $taskFilters = array(
-  'all'       => array('label' => 'All', 'count' => 0),
-  'overdue'   => array('label' => 'Overdue', 'count' => 0),
-  'today'     => array('label' => 'Due Today', 'count' => 0),
-  'week'      => array('label' => 'Due This Week', 'count' => 0),
-  'later'     => array('label' => 'Later', 'count' => 0)
+  'all'       => array('label' => t('All'), 'count' => 0),
+  'overdue'   => array('label' => t('Overdue'), 'count' => 0),
+  'today'     => array('label' => t('Due Today'), 'count' => 0),
+  'week'      => array('label' => t('Due This Week'), 'count' => 0),
+  'later'     => array('label' => t('Later'), 'count' => 0)
 );
 
 foreach ($rows as $row) {
-  if (taskAssignedToUser($row, $civiUser['contact_id'])) {
-    continue;
-  }
-
-  $contactsIds[strip_tags($row['task_contacts'])] = 1;
-
   $taskFilters['all']['count']++;
   $taskFilters[_get_task_filter_by_date($row['activity_date_time'], true)]['count']++;
 }
 
-$contactsFilterValues = _get_contacts_filter_values($contactsIds);
 ?>
 
 <div class="chr_table-w-filters row">
@@ -99,9 +74,6 @@ $contactsFilterValues = _get_contacts_filter_values($contactsIds);
                         <tr>
                         <?php
                           foreach ($header as $field => $label):
-                            if (_is_field_task_contact($field)) {
-                              continue;
-                            }
                         ?>
                             <th <?php if ($header_classes[$field]) { print 'class="'. $header_classes[$field] . '" '; } ?>>
                                 <?php print $label; ?>
@@ -114,33 +86,11 @@ $contactsFilterValues = _get_contacts_filter_values($contactsIds);
                 <tbody>
                 <?php foreach ($rows as $row_count => $row): ?>
                     <?php
-                      if (taskAssignedToUser($row, $civiUser['contact_id'])) {
-                        continue;
-                      }
-
                       $class = 'task-row task-filter-id-' . _get_task_filter_by_date($row['activity_date_time'], true);
-                      $targetKey = strip_tags($row['task_contacts']);
-                      $contactsFilterValue = !empty($contactsFilterValues[$targetKey]) ? $contactsFilterValues[$targetKey] : '';
                     ?>
-                    <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $contactsFilterValue; ?>">
+                    <tr id="row-task-id-<?php print strip_tags($row['id']); ?>" <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?> data-row-contacts="<?php print $row['target_contact_name']; ?>">
                       <?php
                         foreach ($row as $field => $content):
-                          if (_is_field_task_contact($field)) {
-                            continue;
-                          }
-
-                          if($field == 'activity_date_time') {
-                            $taskDate = strtotime(strip_tags($content));
-                            $dateFilter = _get_task_filter_by_date(date('Y-m-d', $taskDate));
-
-                            if ($dateFilter == 'tomorrow') {
-                              $content = 'Tomorrow';
-                            } else if ($dateFilter == 'today') {
-                              $content = 'Today';
-                            } else {
-                              $content = date('m/d/Y', $taskDate);
-                            }
-                          }
                       ?>
                       <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
                         <a

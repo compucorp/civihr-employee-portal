@@ -19,18 +19,6 @@
  * @ingroup views_templates
  */
 
-$typeResult = civicrm_api3('Activity', 'getoptions', array(
-    'field' => "activity_type_id",
-));
-$types = $typeResult['values'];
-
-/*$statusesResult = civicrm_api3('Document', 'getstatuses', array(
-    'sequential' => 1,
-));
-$statuses = array();
-foreach ($statusesResult['values'] as $status):
-    $statuses[$status['value']] = $status['label'];
-endforeach;*/
 $statuses = array(
     1 => 'Awaiting upload',
     2 => 'Awaiting approval',
@@ -61,11 +49,6 @@ $statuses = array(
       <tr <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?>>
         <?php foreach ($row as $field => $content): ?>
             <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
-              <?php if ($field === 'activity_type_id'):
-                print $types[strip_tags($content)];
-                continue;
-              endif;
-              ?>
               <?php if ($field === 'status_id'): ?>
                     <select class="document-status" name="document-<?php print strip_tags($row['id']); ?>-select-status" data-id="<?php print strip_tags($row['id']); ?>" data-original-value="<?php print (int)strip_tags($content); ?>">
                 <?php foreach ($statuses as $statusKey => $statusValue): ?>
@@ -97,15 +80,7 @@ $statuses = array(
               ?>
               <?php continue; ?>
               <?php endif; ?>
-              <?php if ($field === 'activity_date_time' && trim(strip_tags($content))):
-                  print date('M d Y', strtotime(strip_tags($content)));
-                  continue;
-              endif; ?>
-              <?php if ($field === 'expire_date' && trim(strip_tags($content))):
-                  print date('M d Y', strtotime(strip_tags($content)));
-                  continue;
-              endif; ?>
-              <?php print $content; ?>
+              <?php print strip_tags(html_entity_decode($content)); ?>
             </td>
         <?php endforeach; ?>
           <td>

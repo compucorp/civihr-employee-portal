@@ -22,19 +22,6 @@
 global $user;
 $civiUser = get_civihr_uf_match_data($user->uid);
 
-$typeResult = civicrm_api3('Activity', 'getoptions', array(
-    'field' => "activity_type_id",
-));
-$types = $typeResult['values'];
-
-$statusesResult = civicrm_api3('Task', 'getstatuses', array(
-    'sequential' => 1,
-));
-$statuses = array();
-foreach ($statusesResult['values'] as $status):
-    $statuses[$status['value']] = $status['label'];
-endforeach;
-
 ?>
 <div class="modal-civihr-custom__section--no-padding">
     <div class="table-responsive">
@@ -60,15 +47,12 @@ endforeach;
             <tbody>
             <?php foreach ($rows as $row_count => $row): ?>
                 <?php $rowType = 'task-my'; ?>
-                <?php if (strip_tags($row['task_contacts_1']) == $civiUser['contact_id']):
+                <?php if (strip_tags($row['target_contact_id']) == $civiUser['contact_id']): /// @TODO: previously it was $row['task_contacts_1']
                     $rowType = 'task-delegated';
                 endif; ?>
                 <?php $class = 'task-row status-id-' . strip_tags($row['status_id']) . ' ' . $rowType; ?>
                 <tr <?php if ($row_classes[$row_count] || $class) { print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';  } ?>>
                     <?php foreach ($row as $field => $content): ?>
-                        <?php if ($field == 'task_contacts' || $field == 'task_contacts_1' ||  $field == 'activity_date_time'):
-                            continue;
-                        endif; ?>
                         <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
                             <?php print strip_tags(html_entity_decode($content)); ?>
                         </td>
@@ -76,7 +60,7 @@ endforeach;
                         <td>
                             <?php
                             $checked = '';
-                            if (strip_tags($row['task_status']) == 'Completed'):
+                            if (strip_tags($row['status_id']) == 'Completed'):
                                 $checked = ' checked="checked" ';
                             endif;
                             ?>
