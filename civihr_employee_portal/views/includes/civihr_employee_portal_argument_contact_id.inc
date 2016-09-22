@@ -11,5 +11,5 @@ class civihr_employee_portal_argument_contact_id extends views_handler_argument 
     $this->ensure_my_table();
     $contact_match = get_civihr_uf_match_data($this->argument);
     $this->query->add_where(0, "{$this->table_alias}.{$this->real_field}", $contact_match['contact_id'], "=");
-  } 
+  }
 }
