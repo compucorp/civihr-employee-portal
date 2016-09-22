@@ -77,27 +77,9 @@ $filters = array(
 $filtersCount = array_combine(array_keys($filters), array_fill(0, count($filters), 0));
 
 // Calculating filter counters.
-// TODO: maybe move this code part below into separate function in SSP module?
 foreach ($rows as $row):
     $filtersCount[_get_appraisal_manager_filter_type($row['status_id'], $row['self_appraisal_due'], $row['manager_appraisal_due'], $row['grade_due'])]++;
 endforeach;
-
-function _get_appraisal_manager_filter_type($status, $selfAppraisalDue, $managerAppraisalDue, $gradeDue) {
-    $today = date('Y-m-d');
-    if ($status === 5) {
-        return 3;
-    }
-    if ($status === 1 && $selfAppraisalDue < $today) {
-        return 1;
-    }
-    if ($status === 2 && $managerAppraisalDue < $today) {
-        return 1;
-    }
-    if ($status === 3 && $gradeDue < $today) {
-        return 1;
-    }
-    return 2;
-}
 
 ?>
 

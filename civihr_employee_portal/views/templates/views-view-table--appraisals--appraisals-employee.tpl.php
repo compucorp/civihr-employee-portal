@@ -1,4 +1,4 @@
-<?php
+s<?php
 global $user;
 $civiUser = get_civihr_uf_match_data($user->uid);
 $employeeChartData = get_appraisal_employee_chart_data($civiUser['contact_id']);
@@ -84,18 +84,9 @@ $filters = array(
 $filtersCount = array_combine(array_keys($filters), array_fill(0, count($filters), 0));
 
 // Calculating filter counters.
-// TODO: maybe move this code part below into separate function in SSP module?
 foreach ($rows as $row):
     $filtersCount[_get_appraisal_employee_filter_type($row['status_id'], $row['self_appraisal_due'], $row['manager_appraisal_due'], $row['grade_due'])]++;
 endforeach;
-
-function _get_appraisal_employee_filter_type($status, $selfAppraisalDue, $managerAppraisalDue, $gradeDue) {
-    $today = date('Y-m-d');
-    if ($gradeDue < $today) {
-        return 2;
-    }
-    return 1;
-}
 
 ?>
 

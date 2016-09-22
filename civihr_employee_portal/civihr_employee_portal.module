@@ -91,7 +91,7 @@ function _rebuild_absence_entitlement_view() {
   $civi_settings = parse_url(CIVICRM_DSN);
   $civi_db_name = trim($civi_settings['path'], '/');
 
-  db_query('DROP view if exists absence_entitlement');
+  db_query('DROP VIEW IF EXISTS absence_entitlement');
   db_query("CREATE VIEW absence_entitlement AS
             SELECT che.contact_id, che.period_id, cufm.uf_id, CONCAT_WS('||', GROUP_CONCAT(amount SEPARATOR '@@'), GROUP_CONCAT(type_id SEPARATOR '@@')) AS entitlement_type
             FROM {$civi_db_name}.civicrm_hrabsence_entitlement che
@@ -104,13 +104,31 @@ function _rebuild_absence_entitlement_view() {
 }
 
 /**
+ * Rebuilds appraisal view.
+ */
+function _rebuild_appraisal_view() {
+  $civi_settings = parse_url(CIVICRM_DSN);
+  $civi_db_name = trim($civi_settings['path'], '/');
+
+  db_query('DROP VIEW IF EXISTS appraisal');
+  db_query("CREATE VIEW appraisal AS
+            SELECT a.id, a.contact_id, ac.cycle_type_id, ac.cycle_start_date, ac.cycle_end_date, a.status_id, a.manager_id, a.self_appraisal_due, a.manager_appraisal_due, a.grade_due, a.grade
+            FROM {$civi_db_name}.civicrm_appraisal a
+            LEFT JOIN {$civi_db_name}.civicrm_appraisal_cycle ac ON ac.id = a.appraisal_cycle_id
+            ORDER BY a.id ASC");
+
+  // Set to false so it will not rebuild until not asked to rebuild
+  variable_set('rebuild_appraisal_view', 'FALSE');
+}
+
+/**
  * Rebuilds hrvacancy view.
  */
 function _rebuild_hrvacancy_view() {
   $civi_settings = parse_url(CIVICRM_DSN);
   $civi_db_name = trim($civi_settings['path'], '/');
 
-  db_query('DROP view if exists hrvacancy');
+  db_query('DROP VIEW IF EXISTS hrvacancy');
   db_query("CREATE VIEW hrvacancy AS
             SELECT id, start_date, end_date, status_id, description, position, salary, location
             FROM {$civi_db_name}.civicrm_hrvacancy
@@ -453,6 +471,7 @@ function civihr_employee_portal_init() {
     _rebuild_view('absence_entitlement');
     _rebuild_view('absence_activity');
     _rebuild_view('hrvacancy');
+    _rebuild_view('appraisal');
     _rebuild_view('tasks');
     _rebuild_view('documents');
 }
@@ -486,7 +505,10 @@ function _run_civihr_tasks() {
     variable_set('rebuild_length_of_service_view', 'TRUE');
     variable_set('rebuild_absence_entitlement_view', 'TRUE');
     variable_set('rebuild_absence_activity_view', 'TRUE');
+    variable_set('rebuild_appraisal_view', 'TRUE');
     variable_set('rebuild_hrvacancy_view', 'TRUE');
+    variable_set('rebuild_tasks_view', 'TRUE');
+    variable_set('rebuild_documents_view', 'TRUE');
     variable_set('rebuild_hrjobcontract_entities_view', 'TRUE');
 
     watchdog('Rebuild view REQUEST', 'ABSENCE LIST MYSQL VIEW');
@@ -4859,6 +4881,75 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'description' => 'Absence Entitlement type',
     );
 
+    // appraisal view:
+    $schema['appraisal']['description'] = 'Views data representation of CiviHR Appraisal';
+    $schema['appraisal']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'Appraisal ID',
+    );
+    $schema['appraisal']['fields']['contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Contact ID',
+    );
+    $schema['appraisal']['fields']['cycle_type_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Cycle type ID',
+    );
+    $schema['appraisal']['fields']['cycle_start_date'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Cycle start date',
+    );
+    $schema['appraisal']['fields']['cycle_end_date'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Cycle end date',
+    );
+    $schema['appraisal']['fields']['status_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Status ID',
+    );
+    $schema['appraisal']['fields']['manager_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Manager ID',
+    );
+    $schema['appraisal']['fields']['self_appraisal_due'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Self appraisal due date',
+    );
+    $schema['appraisal']['fields']['manager_appraisal_due'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Manager appraisal due date',
+    );
+    $schema['appraisal']['fields']['grade_due'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Grade due date',
+    );
+    $schema['appraisal']['fields']['grade'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Grade',
+    );
+
     // hrvacancy view:
     $schema['hrvacancy']['description'] = 'Views data representation of HRVacancy';
     $schema['hrvacancy']['fields']['id'] = array(
@@ -4990,7 +5081,7 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'description' => 'Assignee Contact name',
     );
 
-    // tasks view:
+    // documents view:
     $schema['documents']['description'] = 'Views data representation of CiviHR Documents';
     $schema['documents']['fields']['id'] = array(
         'type' => 'serial',
@@ -5192,6 +5283,28 @@ function civihr_employee_portal_entity_info() {
         'bundles' => array(),
         'label callback' => 'entity_class_label',
         'uri callback' => 'entity_class_uri',
+        'module' => 'civihr_employee_portal',
+    );
+
+    // appraisal entity:
+    $info['civihr_appraisal'] = array(
+        'label' => t('Appraisal entity'),
+        'plural label' => t('Appraisal entity'),
+        'description' => t('Appraisal entity definition.'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'appraisal',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Entity Appraisal ID'
+        ),
+        'bundles' => array(),
+        // Use the default label() and uri() functions
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        // Entity API needs to know about your module for the views integration to work
         'module' => 'civihr_employee_portal',
     );
 
@@ -6822,6 +6935,49 @@ function _is_hrreports_data_table_view($viewName) {
         return TRUE;
     }
     return FALSE;
+}
+
+/**
+ * Return Appraisal Employee filter type used on Appraisal Manager template.
+ * 
+ * @param int $status
+ * @param string $selfAppraisalDue
+ * @param string $managerAppraisalDue
+ * @param string $gradeDue
+ * @return int
+ */
+function _get_appraisal_employee_filter_type($status, $selfAppraisalDue, $managerAppraisalDue, $gradeDue) {
+  $today = date('Y-m-d');
+  if ($gradeDue < $today) {
+    return 2;
+  }
+  return 1;
+}
+
+/**
+ * Return Appraisal Manager filter type used on Appraisal Manager template.
+ *
+ * @param int $status
+ * @param string $selfAppraisalDue
+ * @param string $managerAppraisalDue
+ * @param string $gradeDue
+ * @return int
+ */
+function _get_appraisal_manager_filter_type($status, $selfAppraisalDue, $managerAppraisalDue, $gradeDue) {
+    $today = date('Y-m-d');
+    if ($status === 5) {
+        return 3;
+    }
+    if ($status === 1 && $selfAppraisalDue < $today) {
+        return 1;
+    }
+    if ($status === 2 && $managerAppraisalDue < $today) {
+        return 1;
+    }
+    if ($status === 3 && $gradeDue < $today) {
+        return 1;
+    }
+    return 2;
 }
 
 /**
