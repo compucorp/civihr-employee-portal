@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * civihr_employee_portal_features.features.user_role.inc
+ * civihr_default_permissions.features.user_role.inc
  */
 
 /**
  * Implements hook_user_default_roles().
  */
-function civihr_employee_portal_features_user_default_roles() {
+function civihr_default_permissions_user_default_roles() {
   $roles = array();
 
   // Exported role: civihr_admin.
