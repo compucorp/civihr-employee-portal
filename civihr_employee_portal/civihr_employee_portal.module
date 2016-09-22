@@ -14,7 +14,7 @@ function civihr_employee_portal_css_alter(&$css) {
   unset($css[drupal_get_path('module', 'system') . '/system.messages.css']);
 
   // Removing unwanted css files from civicrm pages.
-  if (arg(0) == 'civicrm') {
+  if (_isCiviCRM()) {
     // Multi-dimensional array containing module name and file path.
     $removeFiles = [
       ['module_name' => 'ctools', 'file_name' => '/css/ctools.css'],
@@ -54,7 +54,7 @@ function civihr_employee_portal_js_alter(&$javascript) {
   _setup_modals();
 
   // Removing unwanted js files from civicrm pages.
-  if (arg(0) == 'civicrm') {
+  if (_isCiviCRM()) {
 
     // Multi-dimensional array containing module name and file path.
     $removeFiles = [
@@ -82,6 +82,21 @@ function _remove_resources(&$resourcesList, $blacklist = []) {
       unset($resourcesList[drupal_get_path('module', $value['module_name']) . $value['file_name']]);
     }
   }
+}
+
+/**
+ * Checks if the current page is an CiviCRM loaded page.
+ *
+ * @return bool
+ *  Returns true when the current page is on CiviCRM.
+ *
+ */
+function _isCiviCRM() {
+
+  if (arg(0) == 'civicrm') {
+    return TRUE;
+  }
+  return FALSE;
 }
 
 /**
@@ -351,7 +366,7 @@ function getModuleUrl($moduleName) {
 function civihr_employee_portal_init() {
 
   // Loads all the resources only for non-civicrm pages.
-  if (arg(0) != 'civicrm') {
+  if (!_isCiviCRM()) {
     // Civi init + load the singleton needed for the AJAX calls
     civicrm_initialize();
     CRM_Core_Resources::singleton()->addCoreResources();
