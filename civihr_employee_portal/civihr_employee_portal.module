@@ -92,11 +92,7 @@ function _remove_resources(&$resourcesList, $blacklist = []) {
  *
  */
 function _isCiviCRM() {
-
-  if (arg(0) == 'civicrm') {
-    return TRUE;
-  }
-  return FALSE;
+  return arg(0) == 'civicrm';
 }
 
 /**
