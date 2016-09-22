@@ -1,7 +1,7 @@
 <?php
 
 $view = new view();
-$view->name = 'documents';
+$view->name = 'Documents';
 $view->description = '';
 $view->tag = 'default';
 $view->base_table = 'documents';

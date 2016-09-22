@@ -1,7 +1,7 @@
 <?php
 
 $view = new view();
-$view->name = 'tasks';
+$view->name = 'Tasks';
 $view->description = '';
 $view->tag = 'default';
 $view->base_table = 'tasks';

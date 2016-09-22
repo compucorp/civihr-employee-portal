@@ -88,54 +88,63 @@ function _add_script_to_page($scriptFile, $page) {
  * Rebuilds absence_entitlement view.
  */
 function _rebuild_absence_entitlement_view() {
-  $civi_settings = parse_url(CIVICRM_DSN);
-  $civi_db_name = trim($civi_settings['path'], '/');
+  $extensions = CRM_Core_PseudoConstant::getExtensions();
+  if (!empty($extensions['org.civicrm.hrabsence'])) {
+    $civi_settings = parse_url(CIVICRM_DSN);
+    $civi_db_name = trim($civi_settings['path'], '/');
 
-  db_query('DROP VIEW IF EXISTS absence_entitlement');
-  db_query("CREATE VIEW absence_entitlement AS
-            SELECT che.contact_id, che.period_id, cufm.uf_id, CONCAT_WS('||', GROUP_CONCAT(amount SEPARATOR '@@'), GROUP_CONCAT(type_id SEPARATOR '@@')) AS entitlement_type
-            FROM {$civi_db_name}.civicrm_hrabsence_entitlement che
-            LEFT JOIN {$civi_db_name}.civicrm_uf_match cufm ON cufm.contact_id = che.contact_id
-            GROUP BY che.contact_id, che.period_id
-            ORDER BY che.contact_id ASC");
+    db_query('DROP VIEW IF EXISTS absence_entitlement');
+    db_query("CREATE VIEW absence_entitlement AS
+              SELECT che.contact_id, che.period_id, cufm.uf_id, CONCAT_WS('||', GROUP_CONCAT(amount SEPARATOR '@@'), GROUP_CONCAT(type_id SEPARATOR '@@')) AS entitlement_type
+              FROM {$civi_db_name}.civicrm_hrabsence_entitlement che
+              LEFT JOIN {$civi_db_name}.civicrm_uf_match cufm ON cufm.contact_id = che.contact_id
+              GROUP BY che.contact_id, che.period_id
+              ORDER BY che.contact_id ASC");
 
-  // Set to false so it will not rebuild until not asked to rebuild
-  variable_set('rebuild_absence_entitlement_view', 'FALSE');
+    // Set to false so it will not rebuild until not asked to rebuild
+    variable_set('rebuild_absence_entitlement_view', 'FALSE');
+  }
 }
 
 /**
  * Rebuilds appraisal view.
  */
 function _rebuild_appraisal_view() {
-  $civi_settings = parse_url(CIVICRM_DSN);
-  $civi_db_name = trim($civi_settings['path'], '/');
+  $extensions = CRM_Core_PseudoConstant::getExtensions();
+  if (!empty($extensions['uk.co.compucorp.civicrm.appraisals'])) {
+    $civi_settings = parse_url(CIVICRM_DSN);
+    $civi_db_name = trim($civi_settings['path'], '/');
 
-  db_query('DROP VIEW IF EXISTS appraisal');
-  db_query("CREATE VIEW appraisal AS
-            SELECT a.id, a.contact_id, ac.cycle_type_id, ac.cycle_start_date, ac.cycle_end_date, a.status_id, a.manager_id, a.self_appraisal_due, a.manager_appraisal_due, a.grade_due, a.grade
-            FROM {$civi_db_name}.civicrm_appraisal a
-            LEFT JOIN {$civi_db_name}.civicrm_appraisal_cycle ac ON ac.id = a.appraisal_cycle_id
-            ORDER BY a.id ASC");
+    db_query('DROP VIEW IF EXISTS appraisal');
+    db_query("CREATE VIEW appraisal AS
+              SELECT a.id, a.contact_id, ac.cycle_type_id, ac.cycle_start_date, ac.cycle_end_date, a.status_id, a.manager_id, a.self_appraisal_due, a.manager_appraisal_due, a.grade_due, a.grade
+              FROM {$civi_db_name}.civicrm_appraisal a
+              LEFT JOIN {$civi_db_name}.civicrm_appraisal_cycle ac ON ac.id = a.appraisal_cycle_id
+              ORDER BY a.id ASC");
 
-  // Set to false so it will not rebuild until not asked to rebuild
-  variable_set('rebuild_appraisal_view', 'FALSE');
+    // Set to false so it will not rebuild until not asked to rebuild
+    variable_set('rebuild_appraisal_view', 'FALSE');
+  }
 }
 
 /**
  * Rebuilds hrvacancy view.
  */
 function _rebuild_hrvacancy_view() {
-  $civi_settings = parse_url(CIVICRM_DSN);
-  $civi_db_name = trim($civi_settings['path'], '/');
+  $extensions = CRM_Core_PseudoConstant::getExtensions();
+  if (!empty($extensions['org.civicrm.hrrecruitment'])) {
+    $civi_settings = parse_url(CIVICRM_DSN);
+    $civi_db_name = trim($civi_settings['path'], '/');
 
-  db_query('DROP VIEW IF EXISTS hrvacancy');
-  db_query("CREATE VIEW hrvacancy AS
-            SELECT id, start_date, end_date, status_id, description, position, salary, location
-            FROM {$civi_db_name}.civicrm_hrvacancy
-            WHERE status_id = 2");
+    db_query('DROP VIEW IF EXISTS hrvacancy');
+    db_query("CREATE VIEW hrvacancy AS
+              SELECT id, start_date, end_date, status_id, description, position, salary, location
+              FROM {$civi_db_name}.civicrm_hrvacancy
+              WHERE status_id = 2");
 
-  // Set to false so it will not rebuild until not asked to rebuild
-  variable_set('rebuild_hrvacancy_view', 'FALSE');
+    // Set to false so it will not rebuild until not asked to rebuild
+    variable_set('rebuild_hrvacancy_view', 'FALSE');
+  }
 }
 
 /**
