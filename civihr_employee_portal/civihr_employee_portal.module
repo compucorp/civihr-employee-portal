@@ -382,6 +382,7 @@ function civihr_employee_portal_init() {
       '/js/plupload-init.js',
       '/js/chart.min.js',
       '/lib/tablesorter/jquery.tablesorter.min.js',
+      '/lib/tablesaw/tablesaw.js',
       '/lib/sweetalert/sweet-alert.min.js'
     ]);
 
