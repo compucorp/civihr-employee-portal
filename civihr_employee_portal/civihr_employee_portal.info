@@ -77,15 +77,3 @@ files[] = views/includes/civihr_employee_portal_handler_absence_day_of_week.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_duration_in_days.inc
 files[] = views/includes/civihr_employee_portal_handler_yes_no.inc
 files[] = views/includes/civihr_employee_portal_handler_pipe.inc
-
-; Custom js
-scripts[] = js/scripts.js
-scripts[] = js/filters.js
-scripts[] = js/plupload/plupload.full.min.js
-scripts[] = js/plupload-init.js
-scripts[] = js/chart.min.js
-
-; Additional js
-scripts[] = lib/tablesorter/jquery.tablesorter.min.js
-scripts[] = lib/tablesaw/tablesaw.js
-scripts[] = lib/sweetalert/sweet-alert.min.js
