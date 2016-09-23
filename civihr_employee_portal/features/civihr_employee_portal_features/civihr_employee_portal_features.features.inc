@@ -17,6 +17,13 @@ function civihr_employee_portal_features_ctools_plugin_api($module = NULL, $api 
 }
 
 /**
+ * Implements hook_views_api().
+ */
+function civihr_employee_portal_features_views_api($module = NULL, $api = NULL) {
+  return array("api" => "3.0");
+}
+
+/**
  * Implements hook_node_info().
  */
 function civihr_employee_portal_features_node_info() {

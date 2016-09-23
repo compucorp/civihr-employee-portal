@@ -20,12 +20,8 @@ $handler->display->display_options['title'] = 'Staff Directory';
 $handler->display->display_options['css_class'] = 'view-hr-staff-directory';
 $handler->display->display_options['use_ajax'] = TRUE;
 $handler->display->display_options['use_more_always'] = FALSE;
-$handler->display->display_options['access']['type'] = 'role';
-$handler->display->display_options['access']['role'] = array(
-  55120974 => '55120974',
-  57573969 => '57573969',
-  17087012 => '17087012',
-);
+$handler->display->display_options['access']['type'] = 'perm';
+$handler->display->display_options['access']['perm'] = 'view staff directory';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
 $handler->display->display_options['query']['options']['distinct'] = TRUE;
@@ -214,19 +210,20 @@ $handler->display->display_options['header']['result']['content'] = '@total';
 $handler->display->display_options['footer']['area_text_custom']['id'] = 'area_text_custom';
 $handler->display->display_options['footer']['area_text_custom']['table'] = 'views';
 $handler->display->display_options['footer']['area_text_custom']['field'] = 'area_text_custom';
-/* Relationship: CiviCRM Contacts: HRJobContract Details entity */
-$handler->display->display_options['relationships']['hrjc_details']['id'] = 'hrjc_details';
-$handler->display->display_options['relationships']['hrjc_details']['table'] = 'civicrm_contact';
-$handler->display->display_options['relationships']['hrjc_details']['field'] = 'hrjc_details';
-$handler->display->display_options['relationships']['hrjc_details']['required'] = TRUE;
-/* Relationship: CiviCRM Contacts: HRJobContract Role entity */
-$handler->display->display_options['relationships']['hrjc_role']['id'] = 'hrjc_role';
-$handler->display->display_options['relationships']['hrjc_role']['table'] = 'civicrm_contact';
-$handler->display->display_options['relationships']['hrjc_role']['field'] = 'hrjc_role';
-/* Relationship: CiviCRM Relationships: Contact ID B */
-$handler->display->display_options['relationships']['contact_id_b_']['id'] = 'contact_id_b_';
-$handler->display->display_options['relationships']['contact_id_b_']['table'] = 'civicrm_relationship';
-$handler->display->display_options['relationships']['contact_id_b_']['field'] = 'contact_id_b_';
+/* Relationship: CiviCRM Contacts: HRJobContract Revision entity */
+$handler->display->display_options['relationships']['hrjc_revision']['id'] = 'hrjc_revision';
+$handler->display->display_options['relationships']['hrjc_revision']['table'] = 'civicrm_contact';
+$handler->display->display_options['relationships']['hrjc_revision']['field'] = 'hrjc_revision';
+/* Relationship: HRJobContract Revision entity: Details_revision_id */
+$handler->display->display_options['relationships']['details_revision_id']['id'] = 'details_revision_id';
+$handler->display->display_options['relationships']['details_revision_id']['table'] = 'hrjc_revision';
+$handler->display->display_options['relationships']['details_revision_id']['field'] = 'details_revision_id';
+$handler->display->display_options['relationships']['details_revision_id']['relationship'] = 'hrjc_revision';
+/* Relationship: HRJobContract Revision entity: Role_jobcontract_id */
+$handler->display->display_options['relationships']['role_jobcontract_id']['id'] = 'role_jobcontract_id';
+$handler->display->display_options['relationships']['role_jobcontract_id']['table'] = 'hrjc_revision';
+$handler->display->display_options['relationships']['role_jobcontract_id']['field'] = 'role_jobcontract_id';
+$handler->display->display_options['relationships']['role_jobcontract_id']['relationship'] = 'hrjc_revision';
 /* Relationship: CiviCRM Contacts: CiviCRM Relationship (starting from contact A) */
 $handler->display->display_options['relationships']['relationship_id_a']['id'] = 'relationship_id_a';
 $handler->display->display_options['relationships']['relationship_id_a']['table'] = 'civicrm_contact';
@@ -290,7 +287,7 @@ $handler->display->display_options['fields']['phone_ext']['phone_type'] = '0';
 $handler->display->display_options['fields']['title']['id'] = 'title';
 $handler->display->display_options['fields']['title']['table'] = 'hrjc_details';
 $handler->display->display_options['fields']['title']['field'] = 'title';
-$handler->display->display_options['fields']['title']['relationship'] = 'hrjc_details';
+$handler->display->display_options['fields']['title']['relationship'] = 'details_revision_id';
 $handler->display->display_options['fields']['title']['label'] = 'Job Title';
 /* Field: CiviCRM Email: Email Address */
 $handler->display->display_options['fields']['email']['id'] = 'email';
@@ -304,18 +301,19 @@ $handler->display->display_options['fields']['email']['is_primary'] = 0;
 $handler->display->display_options['fields']['location']['id'] = 'location';
 $handler->display->display_options['fields']['location']['table'] = 'hrjc_details';
 $handler->display->display_options['fields']['location']['field'] = 'location';
-$handler->display->display_options['fields']['location']['relationship'] = 'hrjc_details';
+$handler->display->display_options['fields']['location']['relationship'] = 'details_revision_id';
 /* Field: HRJobContract Details entity: Contract_type */
 $handler->display->display_options['fields']['contract_type']['id'] = 'contract_type';
 $handler->display->display_options['fields']['contract_type']['table'] = 'hrjc_details';
 $handler->display->display_options['fields']['contract_type']['field'] = 'contract_type';
-$handler->display->display_options['fields']['contract_type']['relationship'] = 'hrjc_details';
+$handler->display->display_options['fields']['contract_type']['relationship'] = 'details_revision_id';
 $handler->display->display_options['fields']['contract_type']['label'] = ' Contract Type ';
 /* Field: HRJobContract Role entity: Department */
 $handler->display->display_options['fields']['department']['id'] = 'department';
 $handler->display->display_options['fields']['department']['table'] = 'hrjc_role';
-$handler->display->display_options['fields']['department']['field'] = 'department';
-$handler->display->display_options['fields']['department']['relationship'] = 'hrjc_role';
+$handler->display->display_options['fields']['department']['field'] = 'role_department';
+$handler->display->display_options['fields']['department']['relationship'] = 'role_jobcontract_id';
+$handler->display->display_options['fields']['department']['label'] = 'Department';
 /* Field: CiviCRM Relationships: End Date */
 $handler->display->display_options['fields']['end_date']['id'] = 'end_date';
 $handler->display->display_options['fields']['end_date']['table'] = 'civicrm_relationship';
@@ -339,14 +337,14 @@ $handler->display->display_options['fields']['start_date']['second_date_format']
 /* Field: HRJobContract Role entity: End_date */
 $handler->display->display_options['fields']['end_date_1']['id'] = 'end_date_1';
 $handler->display->display_options['fields']['end_date_1']['table'] = 'hrjc_role';
-$handler->display->display_options['fields']['end_date_1']['field'] = 'end_date';
-$handler->display->display_options['fields']['end_date_1']['relationship'] = 'hrjc_role';
+$handler->display->display_options['fields']['end_date_1']['field'] = 'role_end_date';
+$handler->display->display_options['fields']['end_date_1']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['fields']['end_date_1']['exclude'] = TRUE;
 /* Field: HRJobContract Role entity: Start_date */
 $handler->display->display_options['fields']['start_date_1']['id'] = 'start_date_1';
 $handler->display->display_options['fields']['start_date_1']['table'] = 'hrjc_role';
-$handler->display->display_options['fields']['start_date_1']['field'] = 'start_date';
-$handler->display->display_options['fields']['start_date_1']['relationship'] = 'hrjc_role';
+$handler->display->display_options['fields']['start_date_1']['field'] = 'role_star_date';
+$handler->display->display_options['fields']['start_date_1']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['fields']['start_date_1']['exclude'] = TRUE;
 /* Field: CiviCRM Contacts: First Name */
 $handler->display->display_options['fields']['first_name_1']['id'] = 'first_name_1';
@@ -418,7 +416,7 @@ $handler->display->display_options['filters']['display_name']['expose']['autocom
 $handler->display->display_options['filters']['title']['id'] = 'title';
 $handler->display->display_options['filters']['title']['table'] = 'hrjc_details';
 $handler->display->display_options['filters']['title']['field'] = 'title';
-$handler->display->display_options['filters']['title']['relationship'] = 'hrjc_details';
+$handler->display->display_options['filters']['title']['relationship'] = 'details_revision_id';
 $handler->display->display_options['filters']['title']['operator'] = 'contains';
 $handler->display->display_options['filters']['title']['group'] = 1;
 $handler->display->display_options['filters']['title']['exposed'] = TRUE;
@@ -496,8 +494,8 @@ $handler->display->display_options['filters']['email']['expose']['autocomplete_d
 /* Filter criterion: HRJobContract Role entity: Department */
 $handler->display->display_options['filters']['department']['id'] = 'department';
 $handler->display->display_options['filters']['department']['table'] = 'hrjc_role';
-$handler->display->display_options['filters']['department']['field'] = 'department';
-$handler->display->display_options['filters']['department']['relationship'] = 'hrjc_role';
+$handler->display->display_options['filters']['department']['field'] = 'role_department';
+$handler->display->display_options['filters']['department']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['filters']['department']['operator'] = 'contains';
 $handler->display->display_options['filters']['department']['group'] = 1;
 $handler->display->display_options['filters']['department']['exposed'] = TRUE;
@@ -524,7 +522,7 @@ $handler->display->display_options['filters']['department']['expose']['autocompl
 $handler->display->display_options['filters']['location']['id'] = 'location';
 $handler->display->display_options['filters']['location']['table'] = 'hrjc_details';
 $handler->display->display_options['filters']['location']['field'] = 'location';
-$handler->display->display_options['filters']['location']['relationship'] = 'hrjc_details';
+$handler->display->display_options['filters']['location']['relationship'] = 'details_revision_id';
 $handler->display->display_options['filters']['location']['operator'] = 'contains';
 $handler->display->display_options['filters']['location']['group'] = 1;
 $handler->display->display_options['filters']['location']['exposed'] = TRUE;
@@ -578,7 +576,7 @@ $handler->display->display_options['filters']['display_name_1']['expose']['autoc
 $handler->display->display_options['filters']['is_primary']['id'] = 'is_primary';
 $handler->display->display_options['filters']['is_primary']['table'] = 'hrjc_details';
 $handler->display->display_options['filters']['is_primary']['field'] = 'is_primary';
-$handler->display->display_options['filters']['is_primary']['relationship'] = 'hrjc_details';
+$handler->display->display_options['filters']['is_primary']['relationship'] = 'details_revision_id';
 $handler->display->display_options['filters']['is_primary']['value']['value'] = '1';
 $handler->display->display_options['filters']['is_primary']['group'] = 1;
 /* Filter criterion: CiviCRM Relationships: Relationship Type A-to-B */
@@ -610,6 +608,46 @@ $handler->display->display_options['pager']['options']['tags']['first'] = 'First
 $handler->display->display_options['pager']['options']['tags']['previous'] = 'Previous';
 $handler->display->display_options['pager']['options']['tags']['next'] = 'Next';
 $handler->display->display_options['pager']['options']['tags']['last'] = 'Last';
+$handler->display->display_options['defaults']['arguments'] = FALSE;
+/* Contextual filter: HRJobContract Details entity: Period start date */
+$handler->display->display_options['arguments']['period_start_date']['id'] = 'period_start_date';
+$handler->display->display_options['arguments']['period_start_date']['table'] = 'hrjc_details';
+$handler->display->display_options['arguments']['period_start_date']['field'] = 'period_start_date';
+$handler->display->display_options['arguments']['period_start_date']['relationship'] = 'details_revision_id';
+$handler->display->display_options['arguments']['period_start_date']['default_action'] = 'default';
+$handler->display->display_options['arguments']['period_start_date']['default_argument_type'] = 'php';
+$handler->display->display_options['arguments']['period_start_date']['default_argument_options']['code'] = 'return date(\'Y-m-d\');';
+$handler->display->display_options['arguments']['period_start_date']['summary']['number_of_records'] = '0';
+$handler->display->display_options['arguments']['period_start_date']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['period_start_date']['summary_options']['items_per_page'] = '25';
+$handler->display->display_options['arguments']['period_start_date']['civihr_range'] = '<=';
+$handler->display->display_options['arguments']['period_start_date']['civihr_range_empty'] = '0';
+/* Contextual filter: HRJobContract Details entity: Period end date */
+$handler->display->display_options['arguments']['period_end_date']['id'] = 'period_end_date';
+$handler->display->display_options['arguments']['period_end_date']['table'] = 'hrjc_details';
+$handler->display->display_options['arguments']['period_end_date']['field'] = 'period_end_date';
+$handler->display->display_options['arguments']['period_end_date']['relationship'] = 'details_revision_id';
+$handler->display->display_options['arguments']['period_end_date']['default_action'] = 'default';
+$handler->display->display_options['arguments']['period_end_date']['default_argument_type'] = 'php';
+$handler->display->display_options['arguments']['period_end_date']['default_argument_options']['code'] = 'return date(\'Y-m-d\');';
+$handler->display->display_options['arguments']['period_end_date']['summary']['number_of_records'] = '0';
+$handler->display->display_options['arguments']['period_end_date']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['period_end_date']['summary_options']['items_per_page'] = '25';
+$handler->display->display_options['arguments']['period_end_date']['civihr_range'] = '>=';
+$handler->display->display_options['arguments']['period_end_date']['civihr_range_empty'] = '1';
+/* Contextual filter: HRJobContract Revision entity: Effective_end_date */
+$handler->display->display_options['arguments']['effective_end_date']['id'] = 'effective_end_date';
+$handler->display->display_options['arguments']['effective_end_date']['table'] = 'hrjc_revision';
+$handler->display->display_options['arguments']['effective_end_date']['field'] = 'effective_end_date';
+$handler->display->display_options['arguments']['effective_end_date']['relationship'] = 'hrjc_revision';
+$handler->display->display_options['arguments']['effective_end_date']['default_action'] = 'default';
+$handler->display->display_options['arguments']['effective_end_date']['default_argument_type'] = 'php';
+$handler->display->display_options['arguments']['effective_end_date']['default_argument_options']['code'] = 'return date(\'Y-m-d\');';
+$handler->display->display_options['arguments']['effective_end_date']['summary']['number_of_records'] = '0';
+$handler->display->display_options['arguments']['effective_end_date']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['effective_end_date']['summary_options']['items_per_page'] = '25';
+$handler->display->display_options['arguments']['effective_end_date']['civihr_range'] = '>=';
+$handler->display->display_options['arguments']['effective_end_date']['civihr_range_empty'] = '1';
 $handler->display->display_options['merge_rows'] = TRUE;
 $handler->display->display_options['field_config'] = array(
   'id' => array(

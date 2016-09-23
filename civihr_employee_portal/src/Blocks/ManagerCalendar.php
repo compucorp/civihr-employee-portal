@@ -18,12 +18,34 @@ class ManagerCalendar {
         $months_data = array();
 
         $uid = $user->uid;
-        $result = db_query('SELECT aal.employee_id, aal.id, aal.activity_type_id, aal.absence_title, aal.duration, aal.absence_start_date_timestamp, aal.absence_end_date_timestamp, absence_status
-        FROM {absence_approval_list} aal WHERE absence_status != :cancelled', array('cancelled' => 3));
+
+        $managerData = get_civihr_uf_match_data($uid);
+        $managerId = $managerData['contact_id'];
+
+        $absencesQuery = '
+          SELECT
+            aal.employee_id,
+            aal.id,
+            aal.activity_type_id,
+            aal.absence_title,
+            aal.duration,
+            aal.absence_start_date_timestamp,
+            aal.absence_end_date_timestamp,
+            absence_status,
+            manager_id
+          FROM {absence_approval_list} aal
+          WHERE absence_status != :cancelled AND
+            absence_status != :rejected AND
+            YEAR(absence_end_date) = YEAR(CURDATE())';
+
+        $result = db_query($absencesQuery, array('cancelled' => 3, 'rejected' => 9));
 
         // Result is returned as a iterable object that returns a stdClass object on each iteration
         foreach ($result as $record) {
-
+            $managers = _getManagerContacts($record->employee_id);
+            if(!in_array($managerId, $managers)){
+              continue;
+            }
             $check_start_month = intval(date('n', $record->absence_start_date_timestamp + 3600)); // 1-12
             $check_end_month = intval(date('n', $record->absence_end_date_timestamp + 3600)); // 1-12
             $check_start_day = intval(date('d', $record->absence_start_date_timestamp + 3600));
@@ -124,8 +146,9 @@ class ManagerCalendar {
                                 
                                 if ($activity['start_month'] == $activity['end_month']) {
                                     if ($s >= $activity['start_day'] && $s <= $activity['end_day']) {
+                                        $colour_code = !empty($colour_codes[$activity['type']]) ? $colour_codes[$activity['type']] : '#999999';
                                         $rows[$employeeId][$s]['class'] = 'chr_calendar--manager__date chr_calendar--manager__date--filled';
-                                        $rows[$employeeId][$s]['style'] = 'background-color: ' . $colour_codes[$activity['type']] . ';';
+                                        $rows[$employeeId][$s]['style'] = 'background-color: ' . $colour_code . ';';
                                         $rows[$employeeId][$s]['data'] = '<div style="color: #ffffff;" class="views-tooltip stripe" tooltip-content="' . $activity['title'] . ': ' . $activity['duration'] . '">'  . date('D', strtotime($current_year . '/' . $activity['start_month'] . '/' . $s)) . '</div></div>';
                                     }
                                     else {
@@ -146,7 +169,7 @@ class ManagerCalendar {
                 $calendar_tables[]['data'] = theme('table', array(
                     'header' => $header,
                     'rows' => $rows,
-                    'attributes' => array('class' => 'chr_calendar--manager')
+                    'attributes' => array('class' => array('chr_calendar--manager'))
                 ));
             }
         }

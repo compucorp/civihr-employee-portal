@@ -96,6 +96,115 @@ function civihr_employee_portal_update_7000()
 }
 
 /**
+ * Create Report Pages and Report Age Settings menu links.
+ */
+function civihr_employee_portal_update_7001() {
+    // Report1: People
+    $path = 'reports/people/';
+    $link = array();
+    $link['link_path'] = $path;
+    $link['link_title'] = 'Report 1: People';
+    $link['menu_name'] = 'hr-reports';
+    $link['router_path'] = $path . '%';
+    $link['module'] = 'menu';
+    $link['options'] = array(
+        'attributes' => array(
+            'title' => 'CiviHR Report containing Employee, Contract and Role data.',
+        ),
+    );
+    menu_link_save($link);
+
+    // Report 2: Leave and Absence
+    $path = 'reports/leave_and_absence/';
+    $link = array();
+    $link['link_path'] = $path;
+    $link['link_title'] = 'Report 2: Leave and Absence';
+    $link['menu_name'] = 'hr-reports';
+    $link['router_path'] = $path . '%';
+    $link['module'] = 'menu';
+    $link['options'] = array(
+        'attributes' => array(
+            'title' => 'CiviHR Report containing Employee, Contract, Role and Absence Activity data.',
+        ),
+    );
+    menu_link_save($link);
+
+    // Age groups
+    $path = 'reports/settings/age_group/';
+    $link = array();
+    $link['link_path'] = $path;
+    $link['link_title'] = 'Age groups';
+    $link['menu_name'] = 'hr-reports-settings';
+    $link['router_path'] = $path . '%';
+    $link['module'] = 'menu';
+    menu_link_save($link);
+}
+
+/**
+ * Create db table for Age groups (Report settings).
+ */
+function civihr_employee_portal_update_7002() {
+    db_query('CREATE TABLE IF NOT EXISTS `reports_settings_age_group` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `age_from` int(3) DEFAULT NULL,
+    `age_to` int(3) DEFAULT NULL,
+    `label` varchar(32) NOT NULL,
+    PRIMARY KEY (id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8');
+}
+
+/**
+ * Rearrange Report pages in Drupal menu.
+ */
+function civihr_employee_portal_update_7003() {
+    db_update('menu_links')
+    ->fields(
+        array(
+            'weight' => 99,
+        )
+    )
+    ->condition('link_path', 'reports')
+    ->execute();
+    db_update('menu_links')
+    ->fields(
+        array(
+            'weight' => 1,
+        )
+    )
+    ->condition('link_path', 'reports/people/')
+    ->execute();
+    db_update('menu_links')
+    ->fields(
+        array(
+            'weight' => 2,
+        )
+    )
+    ->condition('link_path', 'reports/leave_and_absence/')
+    ->execute();
+    cache_clear_all();
+}
+
+/**
+ * Enable HR Reports settings block.
+ */
+function civihr_employee_portal_update_7004() {
+    db_update('block')
+    ->fields(
+        array(
+            'region' => 'content',
+            'visibility' => 1,
+            'pages' => 'reports',
+            'status' => 1,
+            'weight' => 1,
+        )
+    )
+    ->condition('module', 'menu')
+    ->condition('delta', 'hr-reports-settings')
+    ->execute();
+    cache_clear_all();
+}
+
+/**
  * Implements hook_uninstall().
  */
 function civihr_employee_portal_features_uninstall() {

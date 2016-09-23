@@ -20,12 +20,8 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 $handler = $view->new_display('default', 'Master', 'default');
 $handler->display->display_options['title'] = 'Absence Entitlement';
 $handler->display->display_options['use_more_always'] = FALSE;
-$handler->display->display_options['access']['type'] = 'role';
-$handler->display->display_options['access']['role'] = array(
-  55120974 => '55120974',
-  57573969 => '57573969',
-  17087012 => '17087012',
-);
+$handler->display->display_options['access']['type'] = 'perm';
+$handler->display->display_options['access']['perm'] = 'view my leave block';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
 $handler->display->display_options['query']['options']['json_file'] = $base_url . '/absence_entitlement_json/';
@@ -100,12 +96,12 @@ foreach ($absenceTypes as $absenceType) {
     if (isset($absenceType['id']) && $absenceType['is_active'] == 1) {
 
         // Should have a settings somewhere that the Sick type is our special case, which we need to display in different block
-        if ($absenceType['name'] != 'Sick') {
+        if (!civihr_employee_portal_is_sick_absence($absenceType['name'])) {
             /* Field: entitlement_type: Absence entitlement value */
             $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['id'] = 'absence_entitlement_' . $absenceType['id'];
             $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['table'] = 'json';
             $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['field'] = 'absence_entitlement';
-            $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['label'] = $absenceType['name'];
+            $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['label'] = $absenceType['title'];
             $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['key'] = 'entitlement_type';
             $handler->display->display_options['fields']['absence_entitlement_' . $absenceType['id']]['duration_type'] = $absenceType['id'];
         }

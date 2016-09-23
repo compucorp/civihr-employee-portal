@@ -125,3 +125,22 @@ span.appraisals-employee-legend {
     display: inline-block;
     margin-right: 8px;
 }
+
+.report-filters .btn-report-date-filter {
+    float: none;
+}
+
+.report-tabs {
+    margin-top: 12px;
+}
+
+.report-content {
+    margin-top: 12px;
+}
+
+#reportTable form {
+    display: none;
+}
+
+.datepicker-popup td,
+.datepicker-popup th { padding: 0; }
