@@ -14,7 +14,8 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 $handler = $view->new_display('default', 'Master', 'default');
 $handler->display->display_options['title'] = 'CiviHR Report - People';
 $handler->display->display_options['use_more_always'] = FALSE;
-$handler->display->display_options['access']['type'] = 'none';
+$handler->display->display_options['access']['type'] = 'perm';
+$handler->display->display_options['access']['perm'] = 'access hrreports';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
 $handler->display->display_options['query']['options']['distinct'] = TRUE;
@@ -213,11 +214,13 @@ $handler->display->display_options['fields']['role_start_date']['id'] = 'role_st
 $handler->display->display_options['fields']['role_start_date']['table'] = 'hrjc_role';
 $handler->display->display_options['fields']['role_start_date']['field'] = 'role_start_date';
 $handler->display->display_options['fields']['role_start_date']['relationship'] = 'role_jobcontract_id';
+$handler->display->display_options['fields']['role_start_date']['label'] = 'Role start date';
 /* Field: HRJobContract Role entity: Role end date */
 $handler->display->display_options['fields']['role_end_date']['id'] = 'role_end_date';
 $handler->display->display_options['fields']['role_end_date']['table'] = 'hrjc_role';
 $handler->display->display_options['fields']['role_end_date']['field'] = 'role_end_date';
 $handler->display->display_options['fields']['role_end_date']['relationship'] = 'role_jobcontract_id';
+$handler->display->display_options['fields']['role_end_date']['label'] = 'Role end date';
 /* Field: HRJobContract Role entity: Role_start_month */
 $handler->display->display_options['fields']['role_start_month']['id'] = 'role_start_month';
 $handler->display->display_options['fields']['role_start_month']['table'] = 'hrjc_role';
@@ -333,7 +336,7 @@ $handler->display->display_options['arguments']['effective_date']['field'] = 'ef
 $handler->display->display_options['arguments']['effective_date']['relationship'] = 'hrjc_revision';
 $handler->display->display_options['arguments']['effective_date']['default_action'] = 'default';
 $handler->display->display_options['arguments']['effective_date']['default_argument_type'] = 'php';
-$handler->display->display_options['arguments']['effective_date']['default_argument_options']['code'] = '$date_filter = $_REQUEST[\'between_date_filter\'];
+$handler->display->display_options['arguments']['effective_date']['default_argument_options']['code'] = '$date_filter = !empty($_REQUEST[\'between_date_filter\']) ? $_REQUEST[\'between_date_filter\'] : null;
 if (!empty($date_filter[\'value\'])) {
     $expl = explode(\'/\', $date_filter[\'value\']);
 if (count($expl) === 1) { return $date_filter[\'value\']; }
@@ -352,7 +355,7 @@ $handler->display->display_options['arguments']['effective_end_date']['field'] =
 $handler->display->display_options['arguments']['effective_end_date']['relationship'] = 'hrjc_revision';
 $handler->display->display_options['arguments']['effective_end_date']['default_action'] = 'default';
 $handler->display->display_options['arguments']['effective_end_date']['default_argument_type'] = 'php';
-$handler->display->display_options['arguments']['effective_end_date']['default_argument_options']['code'] = '$date_filter = $_REQUEST[\'between_date_filter\'];
+$handler->display->display_options['arguments']['effective_end_date']['default_argument_options']['code'] = '$date_filter = !empty($_REQUEST[\'between_date_filter\']) ? $_REQUEST[\'between_date_filter\'] : null;
 if (!empty($date_filter[\'value\'])) {
     $expl = explode(\'/\', $date_filter[\'value\']);
 if (count($expl) === 1) { return $date_filter[\'value\']; }
@@ -371,7 +374,7 @@ $handler->display->display_options['arguments']['period_start_date']['field'] = 
 $handler->display->display_options['arguments']['period_start_date']['relationship'] = 'details_revision_id';
 $handler->display->display_options['arguments']['period_start_date']['default_action'] = 'default';
 $handler->display->display_options['arguments']['period_start_date']['default_argument_type'] = 'php';
-$handler->display->display_options['arguments']['period_start_date']['default_argument_options']['code'] = '$date_filter = $_REQUEST[\'between_date_filter\'];
+$handler->display->display_options['arguments']['period_start_date']['default_argument_options']['code'] = '$date_filter = !empty($_REQUEST[\'between_date_filter\']) ? $_REQUEST[\'between_date_filter\'] : null;
 if (!empty($date_filter[\'value\'])) {
     $expl = explode(\'/\', $date_filter[\'value\']);
 if (count($expl) === 1) { return $date_filter[\'value\']; }
@@ -390,7 +393,7 @@ $handler->display->display_options['arguments']['period_end_date']['field'] = 'p
 $handler->display->display_options['arguments']['period_end_date']['relationship'] = 'details_revision_id';
 $handler->display->display_options['arguments']['period_end_date']['default_action'] = 'default';
 $handler->display->display_options['arguments']['period_end_date']['default_argument_type'] = 'php';
-$handler->display->display_options['arguments']['period_end_date']['default_argument_options']['code'] = '$date_filter = $_REQUEST[\'between_date_filter\'];
+$handler->display->display_options['arguments']['period_end_date']['default_argument_options']['code'] = '$date_filter = !empty($_REQUEST[\'between_date_filter\']) ? $_REQUEST[\'between_date_filter\'] : null;
 if (!empty($date_filter[\'value\'])) {
     $expl = explode(\'/\', $date_filter[\'value\']);
 if (count($expl) === 1) { return $date_filter[\'value\']; }
@@ -409,7 +412,7 @@ $handler->display->display_options['arguments']['role_start_date']['field'] = 'r
 $handler->display->display_options['arguments']['role_start_date']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['arguments']['role_start_date']['default_action'] = 'default';
 $handler->display->display_options['arguments']['role_start_date']['default_argument_type'] = 'php';
-$handler->display->display_options['arguments']['role_start_date']['default_argument_options']['code'] = '$date_filter = $_REQUEST[\'between_date_filter\'];
+$handler->display->display_options['arguments']['role_start_date']['default_argument_options']['code'] = '$date_filter = !empty($_REQUEST[\'between_date_filter\']) ? $_REQUEST[\'between_date_filter\'] : null;
 if (!empty($date_filter[\'value\'])) {
     $expl = explode(\'/\', $date_filter[\'value\']);
 if (count($expl) === 1) { return $date_filter[\'value\']; }
@@ -428,7 +431,7 @@ $handler->display->display_options['arguments']['role_end_date']['field'] = 'rol
 $handler->display->display_options['arguments']['role_end_date']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['arguments']['role_end_date']['default_action'] = 'default';
 $handler->display->display_options['arguments']['role_end_date']['default_argument_type'] = 'php';
-$handler->display->display_options['arguments']['role_end_date']['default_argument_options']['code'] = '$date_filter = $_REQUEST[\'between_date_filter\'];
+$handler->display->display_options['arguments']['role_end_date']['default_argument_options']['code'] = '$date_filter = !empty($_REQUEST[\'between_date_filter\']) ? $_REQUEST[\'between_date_filter\'] : null;
 if (!empty($date_filter[\'value\'])) {
     $expl = explode(\'/\', $date_filter[\'value\']);
 if (count($expl) === 1) { return $date_filter[\'value\']; }
@@ -486,6 +489,7 @@ $handler->display->display_options['filters']['between_date_filter']['expose']['
   17087012 => 0,
   57573969 => 0,
 );
+$handler->display->display_options['filters']['between_date_filter']['form_type'] = 'date_text';
 $handler->display->display_options['filters']['between_date_filter']['default_date'] = 'now';
 $handler->display->display_options['filters']['between_date_filter']['year_range'] = '-10:+10';
 $handler->display->display_options['filters']['between_date_filter']['start_date_field'] = 'hrjc_details.period_start_date';
