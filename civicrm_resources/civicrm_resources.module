@@ -12,50 +12,51 @@
  *   Machine path of civicrm extention.
  * @param array $req_files
  *   An array of file list to be included
+ *
  * @return NULL
  */
-function civicrm_resources_add_resources($extention_path, $req_files = array()) {
-   global $base_url;
+function civicrm_resources_add_resources($extention_path, $req_files = []) {
+  global $base_url;
 
-   $files = civicrm_resources_file_scan_directory($extention_path, '/\.(css|js)$/i');
-   
-   $js_list = array();
-   $css_list = array();
-    
-   foreach ($files as $key => $file) {
-        if(!empty($req_files)) {
-          if (in_array('*.js', $req_files)  && preg_match('/\.js$/', $file->filename)) {
-            $js_list[] = $file->uri;
-          } 
-          else {
-            if (in_array($file->filename, $req_files) && preg_match('/\.js$/', $file->filename)) {
-              $js_list[] = $file->uri;
-            }
-          }
-          if (in_array('*.css', $req_files) && preg_match('/\.css$/', $file->filename)) {
-            $css_list[] = $file->uri;
-          } 
-          else {
-            if (in_array($file->filename, $req_files) && preg_match('/\.css$/', $file->filename)) {
-              $css_list[] = $file->uri;
-            }
-          }
-        } 
-        else {
-          if (preg_match('/\.css$/', $file->filename)) {
-            $css_list[] = $file->uri;
-          } 
-          elseif (preg_match('/\.js$/', $file->filename)) {
-            $js_list[] = $file->uri;
-          }
+  $files = civicrm_resources_file_scan_directory($extention_path, '/\.(css|js)$/i');
+
+  $js_list = [];
+  $css_list = [];
+
+  foreach ($files as $key => $file) {
+    if (!empty($req_files)) {
+      if (in_array('*.js', $req_files) && preg_match('/\.js$/', $file->filename)) {
+        $js_list[] = $file->uri;
+      }
+      else {
+        if (in_array($file->filename, $req_files) && preg_match('/\.js$/', $file->filename)) {
+          $js_list[] = $file->uri;
         }
-    } 
-   foreach ($css_list as $key => $css_file) {
-     drupal_add_css(str_replace(DRUPAL_ROOT, $base_url, $css_file));
-   } 
-   foreach ($js_list as $key => $js_file) {
-     drupal_add_js(str_replace(DRUPAL_ROOT, $base_url, $js_file));
-   } 
+      }
+      if (in_array('*.css', $req_files) && preg_match('/\.css$/', $file->filename)) {
+        $css_list[] = $file->uri;
+      }
+      else {
+        if (in_array($file->filename, $req_files) && preg_match('/\.css$/', $file->filename)) {
+          $css_list[] = $file->uri;
+        }
+      }
+    }
+    else {
+      if (preg_match('/\.css$/', $file->filename)) {
+        $css_list[] = $file->uri;
+      }
+      elseif (preg_match('/\.js$/', $file->filename)) {
+        $js_list[] = $file->uri;
+      }
+    }
+  }
+  foreach ($css_list as $key => $css_file) {
+    drupal_add_css(ltrim(str_replace(DRUPAL_ROOT, '', $css_file), '/'));
+  }
+  foreach ($js_list as $key => $js_file) {
+    drupal_add_js(ltrim(str_replace(DRUPAL_ROOT, '', $js_file), '/'));
+  }
 }
 
 /**
@@ -91,18 +92,22 @@ function civicrm_resources_add_resources($extention_path, $req_files = array()) 
  *   An associative array (keyed on the chosen key) of objects with 'uri',
  *   'filename', and 'name' members corresponding to the matching files.
  */
-function civicrm_resources_file_scan_directory($dir, $mask, $options = array(), $depth = 0) {
+function civicrm_resources_file_scan_directory($dir, $mask, $options = [], $depth = 0) {
   // Merge in defaults.
-  $options += array(
+  $options += [
     'nomask' => '/(\.\.?|CVS)$/',
     'callback' => 0,
     'recurse' => TRUE,
     'key' => 'uri',
     'min_depth' => 0,
-  );
+  ];
 
-  $options['key'] = in_array($options['key'], array('uri', 'filename', 'name')) ? $options['key'] : 'uri';
-  $files = array();
+  $options['key'] = in_array($options['key'], [
+    'uri',
+    'filename',
+    'name',
+  ]) ? $options['key'] : 'uri';
+  $files = [];
   if (is_dir($dir) && $handle = opendir($dir)) {
     while (FALSE !== ($filename = readdir($handle))) {
       if (!preg_match($options['nomask'], $filename) && $filename[0] != '.') {
@@ -136,26 +141,28 @@ function civicrm_resources_file_scan_directory($dir, $mask, $options = array(), 
  *   Machine name of civicrm extention.
  * @param array $files
  *   An array of file list to be included
+ *
  * @return NULL
  */
-function civicrm_resources_load($extention_full_name, $files = array()) {
-
+function civicrm_resources_load($extention_full_name, $files = []) {
   if (cache_get($extention_full_name, 'cache_civicrm_resources')) {
     $ext_path_cache = cache_get($extention_full_name, 'cache_civicrm_resources');
     $ext_path = $ext_path_cache->data;
   }
   else {
     civicrm_initialize();
-    $ext_path = CRM_Extension_System::singleton()->getMapper()->keyToBasePath($extention_full_name);
+    $ext_path = CRM_Extension_System::singleton()
+      ->getMapper()
+      ->keyToBasePath($extention_full_name);
     cache_set($extention_full_name, $ext_path, 'cache_civicrm_resources');
   }
-   //civicrm_resources_add_resources($ext_path, array('gulpfile.js', 'hrjc.css', 'contact.js'));
-   civicrm_resources_add_resources($ext_path, $files); 
+  //civicrm_resources_add_resources($ext_path, array('gulpfile.js', 'hrjc.css', 'contact.js'));
+  civicrm_resources_add_resources($ext_path, $files);
 }
 
 /**
-* Implements hook_flush_caches().
-*/
+ * Implements hook_flush_caches().
+ */
 function civicrm_resources_flush_caches() {
-  return array('cache_civicrm_resources');
+  return ['cache_civicrm_resources'];
 }
