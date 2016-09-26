@@ -118,7 +118,7 @@ $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
 $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = '';
-$handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="index.php?q=civicrm/vacancy/apply&reset=1&id=[value_8]" class="btn btn-custom">Apply now</a>';
+$handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="index.php?q=civicrm/vacancy/apply&reset=1&id=[id]" class="btn btn-custom">Apply now</a>';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
 
 /* Display: HR Vacancies list */
@@ -315,6 +315,7 @@ $translatables['hr_vacancies'] = array(
   t('<a href="index.php?q=civicrm/vacancy/apply&reset=1&id=[value_8]" class="btn btn-custom">Apply now</a>'),
   t('Start_date'),
   t('HR Vacancies Dashboard block'),
+  t('<a href="index.php?q=civicrm/vacancy/apply&reset=1&id=[id]" class="btn btn-custom">Apply now</a>'),
   t('HR Vacancies list'),
   t('HR Vacancies'),
   t('Items per page'),
@@ -328,7 +329,6 @@ $translatables['hr_vacancies'] = array(
   t('End date'),
   t('Application Dates'),
   t('[start_date] - [end_date]'),
-  t('<a href="index.php?q=civicrm/vacancy/apply&reset=1&id=[id]" class="btn btn-custom">Apply now</a>'),
   t('More details'),
   t('Description'),
 );

@@ -3212,7 +3212,7 @@ function civihr_employee_portal_civi_tasks_view_completed_callback($ajax) {
         ctools_add_js('ajax-responder');
 
         // Get the view for approved absences
-        $output[] = ctools_modal_command_display(t('My Completed Tasks'), views_embed_view('tasks', 'block_1'));
+        $output[] = ctools_modal_command_display(t('My Completed Tasks'), views_embed_view('Tasks', 'block_1'));
 
         print ajax_render($output);
         drupal_exit();
