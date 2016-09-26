@@ -40,6 +40,15 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civicrm',
   );
 
+  // Exported permission: 'access CiviReport'.
+  $permissions['access CiviReport'] = array(
+    'name' => 'access CiviReport',
+    'roles' => array(
+      'civihr_admin' => 'civihr_admin',
+    ),
+    'module' => 'civicrm',
+  );
+
   // Exported permission: 'access Contact Dashboard'.
   $permissions['access Contact Dashboard'] = array(
     'name' => 'access Contact Dashboard',
@@ -64,6 +73,13 @@ function civihr_default_permissions_user_default_permissions() {
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
     ),
+    'module' => 'civicrm',
+  );
+
+  // Exported permission: 'access Report Criteria'.
+  $permissions['access Report Criteria'] = array(
+    'name' => 'access Report Criteria',
+    'roles' => array(),
     'module' => 'civicrm',
   );
 
@@ -401,6 +417,15 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civicrm',
   );
 
+  // Exported permission: 'administer Reports'.
+  $permissions['administer Reports'] = array(
+    'name' => 'administer Reports',
+    'roles' => array(
+      'civihr_admin' => 'civihr_admin',
+    ),
+    'module' => 'civicrm',
+  );
+
   // Exported permission: 'administer Tagsets'.
   $permissions['administer Tagsets'] = array(
     'name' => 'administer Tagsets',
@@ -627,6 +652,13 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'user',
   );
 
+  // Exported permission: 'administer private reports'.
+  $permissions['administer private reports'] = array(
+    'name' => 'administer private reports',
+    'roles' => array(),
+    'module' => 'civicrm',
+  );
+
   // Exported permission: 'administer reserved groups'.
   $permissions['administer reserved groups'] = array(
     'name' => 'administer reserved groups',
@@ -634,6 +666,13 @@ function civihr_default_permissions_user_default_permissions() {
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
     ),
+    'module' => 'civicrm',
+  );
+
+  // Exported permission: 'administer reserved reports'.
+  $permissions['administer reserved reports'] = array(
+    'name' => 'administer reserved reports',
+    'roles' => array(),
     'module' => 'civicrm',
   );
 
@@ -2040,6 +2079,13 @@ function civihr_default_permissions_user_default_permissions() {
       'administrator' => 'administrator',
     ),
     'module' => 'panels',
+  );
+
+  // Exported permission: 'view report sql'.
+  $permissions['view report sql'] = array(
+    'name' => 'view report sql',
+    'roles' => array(),
+    'module' => 'civicrm',
   );
 
   // Exported permission: 'view revisions'.
