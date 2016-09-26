@@ -137,7 +137,8 @@ $handler->display->display_options['arguments']['manager_id']['summary_options']
 $handler->display->display_options['path'] = 'hr-appraisals-manager';
 $handler->display->display_options['menu']['type'] = 'normal';
 $handler->display->display_options['menu']['title'] = 'Appraisals';
-$handler->display->display_options['menu']['weight'] = '0';
+$handler->display->display_options['menu']['weight'] = '22';
+$handler->display->display_options['menu']['name'] = 'main-menu';
 $handler->display->display_options['menu']['context'] = 0;
 $handler->display->display_options['menu']['context_only_inline'] = 0;
 
