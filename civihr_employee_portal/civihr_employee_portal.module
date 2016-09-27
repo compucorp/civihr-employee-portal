@@ -529,6 +529,10 @@ function civihr_employee_portal_permission() {
       'title' => t('Manage HR Reports settings'),
       'description' => t('Availability to manage HR Reports settings'),
     ),
+    'manage hrreports configuration' => array(
+      'title' => t('Manage HR Reports configuration'),
+      'description' => t('Availability to manage HR Reports configuration'),
+    ),
   );
 }
 
@@ -1578,14 +1582,14 @@ function civihr_employee_portal_menu() {
         'title' => 'Save Report configuration',
         'page callback' => 'civihr_employee_portal_save_report_configuration_json',
         'page arguments' => array(1, 3),
-        'access arguments' => array('access hrreports'),
+        'access arguments' => array('manage hrreports configuration'),
         'type' => MENU_CALLBACK,
     );
     $items['reports/%/configuration/%/delete'] = array(
         'title' => 'Delete Report configuration',
         'page callback' => 'civihr_employee_portal_delete_report_configuration_json',
         'page arguments' => array(1, 3),
-        'access arguments' => array('access hrreports'),
+        'access arguments' => array('manage hrreports configuration'),
         'type' => MENU_CALLBACK,
     );
 

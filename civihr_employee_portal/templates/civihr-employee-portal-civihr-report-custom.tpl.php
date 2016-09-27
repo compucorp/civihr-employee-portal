@@ -71,15 +71,17 @@
               <?php endif; ?>
             </select>
           </div>
-          <div class="form-item">
-            <input type="button" class="report-config-save-btn btn btn-primary" value="<?php print t('Save Report'); ?>">
-          </div>
-          <div class="form-item">
-            <input type="button" class="report-config-save-new-btn btn btn-primary" value="<?php print t('Save As New'); ?>">
-          </div>
-          <div class="form-item">
-            <input type="button" class="report-config-delete-btn btn btn-danger" value="<?php print t('Delete'); ?>">
-          </div>
+          <?php if (user_access('manage hrreports configuration')): ?>
+            <div class="form-item">
+              <input type="button" class="report-config-save-btn btn btn-primary" value="<?php print t('Save Report'); ?>">
+            </div>
+            <div class="form-item">
+              <input type="button" class="report-config-save-new-btn btn btn-primary" value="<?php print t('Save As New'); ?>">
+            </div>
+            <div class="form-item">
+              <input type="button" class="report-config-delete-btn btn btn-danger" value="<?php print t('Delete'); ?>">
+            </div>
+          <?php endif; ?>
         </form>
       </div>
       <div id="reportPivotTable" class="pvtTable-civi"></div>
