@@ -1576,6 +1576,16 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civihr_employee_portal',
   );
 
+  // Exported permission: 'manage hrreports configuration'.
+  $permissions['manage hrreports configuration'] = array(
+    'name' => 'manage hrreports configuration',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+    ),
+    'module' => 'civihr_employee_portal',
+  );
+
   // Exported permission: 'manage leave and absences in ssp'.
   $permissions['manage leave and absences in ssp'] = array(
     'name' => 'manage leave and absences in ssp',
