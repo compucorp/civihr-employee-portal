@@ -6667,7 +6667,8 @@ function civihr_employee_portal_get_report_configuration_json($reportName, $conf
  * @param int $configId
  */
 function civihr_employee_portal_save_report_configuration_json($reportName, $configId) {
-  if (empty($configId) && empty($_POST['label'])) {
+  $jsonConfig = json_encode($_POST['json_config']);
+  if ((empty($configId) && empty($_POST['label'])) || !$jsonConfig) {
     print drupal_json_output(array('status' => 'error'));
     drupal_exit();
   }
@@ -6680,7 +6681,7 @@ function civihr_employee_portal_save_report_configuration_json($reportName, $con
         ->condition('report_name', $reportName)
         ->condition('id', (int)$configId)
         ->fields(array(
-          'json_config' => json_encode($_POST['json_config'])
+          'json_config' => $jsonConfig,
         ))
         ->execute();
     } else {
@@ -6688,7 +6689,7 @@ function civihr_employee_portal_save_report_configuration_json($reportName, $con
         ->fields(array(
           'report_name' => $reportName,
           'label' => $_POST['label'],
-          'json_config' => json_encode($_POST['json_config'])
+          'json_config' => $jsonConfig,
         ))
       ->execute();
       $responseData['id'] = $result;
