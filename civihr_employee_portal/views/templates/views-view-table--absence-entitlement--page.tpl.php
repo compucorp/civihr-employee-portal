@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Template to display a view as a table.
@@ -19,40 +18,48 @@
  * @ingroup views_templates
  */
 ?>
-<table <?php if ($classes) { print 'class="'. $classes . '" '; } ?><?php print $attributes; ?>>
-   <?php if (!empty($title) || !empty($caption)) : ?>
-     <caption><?php print $caption . $title; ?></caption>
+<table <?php if ($classes) {
+  print 'class="' . $classes . '" ';
+} ?><?php print $attributes; ?>>
+  <?php if (!empty($title) || !empty($caption)) : ?>
+    <caption><?php print $caption . $title; ?></caption>
   <?php endif; ?>
-  <?php if (!empty($header)) : ?>
+<?php if (!empty($header)) : ?>
     <thead>
       <tr>
         <?php foreach ($header as $field => $label): ?>
-          
-          <?php if ($field !== 'period_html_1') { ?>
-            <th <?php if ($header_classes[$field]) { print 'class="'. $header_classes[$field] . '" '; } ?>>
-              <?php print $label; ?>
+
+            <?php if ($field !== 'period_html_1') { ?>
+            <th <?php if ($header_classes[$field]) {
+                print 'class="' . $header_classes[$field] . '" ';
+              } ?>>
+            <?php print $label; ?>
             </th>
-          <?php } ?>
-            
-        <?php endforeach; ?>
+    <?php } ?>
+
+    <?php endforeach; ?>
       </tr>
     </thead>
-  <?php endif; ?>
+    <?php endif; ?>
   <tbody>
 
-    <?php foreach ($rows as $row_count => $row): ?>
-      
-      <tr <?php if ($row_classes[$row_count]) { print 'class="' . implode(' ', $row_classes[$row_count]) .'"';  } ?>>
+      <?php foreach ($rows as $row_count => $row): ?>
+
+      <tr <?php if ($row_classes[$row_count]) {
+        print 'class="' . implode(' ', $row_classes[$row_count]) . '"';
+      } ?>>
         <?php foreach ($row as $field => $content): ?>
-          
+
           <?php if ($field !== 'period_html_1') { ?>
-            <td <?php if ($field_classes[$field][$row_count]) { print 'class="'. $field_classes[$field][$row_count] . '" '; } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
-              <?php print $content; ?>
+            <td <?php if ($field_classes[$field][$row_count]) {
+              print 'class="' . $field_classes[$field][$row_count] . '" ';
+            } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
+      <?php print $content; ?>
             </td>
-          <?php } ?>
-            
-        <?php endforeach; ?>
+    <?php } ?>
+
+  <?php endforeach; ?>
       </tr>
-    <?php endforeach; ?>
+<?php endforeach; ?>
   </tbody>
 </table>
