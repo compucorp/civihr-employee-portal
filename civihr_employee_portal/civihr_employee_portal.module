@@ -6672,6 +6672,7 @@ function civihr_employee_portal_save_report_configuration_json($reportName, $con
     print drupal_json_output(array('status' => 'error'));
     drupal_exit();
   }
+  $label = $_POST['label'];
   $responseData = array(
     'status' => 'success',
   );
@@ -6685,15 +6686,29 @@ function civihr_employee_portal_save_report_configuration_json($reportName, $con
         ))
         ->execute();
     } else {
+      $result = db_select('reports_configuration', 'rc')
+        ->fields('rc', array('id'))
+        ->condition('report_name', $reportName)
+        ->condition('label', $label)
+        ->range(0, 1)
+        ->execute();
+      if ($row = $result->fetchAssoc()) {
+        $responseData = array(
+          'status' => 'already_exists',
+          'id' => $row['id'],
+        );
+        print drupal_json_output($responseData);
+        drupal_exit();
+      }
       $result = db_insert('reports_configuration')
         ->fields(array(
           'report_name' => $reportName,
-          'label' => $_POST['label'],
+          'label' => $label,
           'json_config' => $jsonConfig,
         ))
       ->execute();
       $responseData['id'] = $result;
-      $responseData['label'] = $_POST['label'];
+      $responseData['label'] = $label;
     }
   } catch (Exception $e) {
     $responseData = array(

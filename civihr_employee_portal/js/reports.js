@@ -404,17 +404,20 @@
   /**
    * Save Report configuration with currently selected configId.
    */
-  HRReport.prototype.configSave = function() {
+  HRReport.prototype.configSave = function(message) {
     var that = this;
     var configId = this.getReportConfigurationId();
     if (!configId) {
       swal("No configuration selected", "Please choose configuration to update.", "error");
       return false;
     }
+    if (typeof message === 'undefined') {
+      message = "Are you sure you want to save this configuration changes?";
+    }
 
     swal({
         title: "Save Report configuration?",
-        text: "Are you sure you want to save this configuration changes?",
+        text: message,
         type: "info",
         showCancelButton: true,
         confirmButtonColor: "#DD6B55",
@@ -480,6 +483,10 @@
             CRM.$(".report-config-select").val(data['id']);
           }
           swal("Success", "Report configuration has been saved", "success");
+        } else if (data.status === 'already_exists') {
+          // If there is already a configuration with this label then we ask for overwriting it.
+          CRM.$(".report-config-select").val(data['id']);
+          that.configSave('Configuration with this name already exists. Do you want to modify it?');
         } else {
           swal("Failed", "Error saving Report configuration!", "error");
         }
