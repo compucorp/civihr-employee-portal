@@ -643,7 +643,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
      <div class="row">
          <div class="col-xs-12 text-center">
              <div class="logo-rect-wrapper">
-                 <img src="sites/default/files/logo.jpg">
+                 <img src="sites/all/modules/civihr-custom/civihr_employee_portal/images/logo.png">
              </div>
              <h1>CiviHR DEMO</h1>
              <h2>Self Service Portal</h2>
