@@ -40,6 +40,13 @@ $handler->display->display_options['header']['area']['field'] = 'area';
 $handler->display->display_options['header']['area']['empty'] = TRUE;
 $handler->display->display_options['header']['area']['content'] = '<a href="hr-vacancies">View all vacancies</a>';
 $handler->display->display_options['header']['area']['format'] = 'filtered_html';
+/* No results behavior: Global: Text area */
+$handler->display->display_options['empty']['area']['id'] = 'area';
+$handler->display->display_options['empty']['area']['table'] = 'views';
+$handler->display->display_options['empty']['area']['field'] = 'area';
+$handler->display->display_options['empty']['area']['empty'] = TRUE;
+$handler->display->display_options['empty']['area']['content'] = '<p style="text-align:center;">No results found</p>';
+$handler->display->display_options['empty']['area']['format'] = 'full_html';
 /* Field: HRVacancy entity: Hrvacancy entity ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'hrvacancy';
@@ -307,6 +314,7 @@ $translatables['hr_vacancies'] = array(
   t('Asc'),
   t('Desc'),
   t('<a href="hr-vacancies">View all vacancies</a>'),
+  t('<p style="text-align:center;">No results found</p>'),
   t('Job ID'),
   t('.'),
   t('Job Position'),
