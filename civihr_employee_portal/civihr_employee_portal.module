@@ -7087,7 +7087,7 @@ function civihr_employee_portal_get_report_configuration_list($reportName) {
 
 /**
  * Print JSON encoded array with Report configuration for given Report name and ID.
- * 
+ *
  * @param string $reportName
  * @param int $configId
  */
@@ -7112,7 +7112,7 @@ function civihr_employee_portal_get_report_configuration_json($reportName, $conf
   } else {
     print drupal_json_output(array('status' => 'error'));
   }
-  
+
   drupal_exit();
 }
 
@@ -7194,4 +7194,16 @@ function civihr_employee_portal_delete_report_configuration_json($reportName, $c
   }
   print drupal_json_output(array('status' => 'error'));
   drupal_exit();
+}
+
+function civihr_employee_portal_page_alter(&$pages) {
+  $favicon = drupal_get_path('module', 'civihr_employee_portal') . "/images/fav.png";
+  $type = theme_get_setting('favicon_mimetype');
+  drupal_add_html_head_link(array('rel' => 'shortcut icon', 'href' => drupal_strip_dangerous_protocols($favicon), 'type' => $type));
+}
+
+function civihr_employee_portal_html_head_alter(&$head_elements) {
+  global $base_url;
+  $default_favicon_element = 'drupal_add_html_head_link:shortcut icon:' . $base_url . '/misc/favicon.ico';
+  unset($head_elements[$default_favicon_element]);
 }
