@@ -7196,14 +7196,15 @@ function civihr_employee_portal_delete_report_configuration_json($reportName, $c
   drupal_exit();
 }
 
-function civihr_employee_portal_page_alter(&$pages) {
-  $favicon = drupal_get_path('module', 'civihr_employee_portal') . "/images/fav.png";
-  $type = theme_get_setting('favicon_mimetype');
-  drupal_add_html_head_link(array('rel' => 'shortcut icon', 'href' => drupal_strip_dangerous_protocols($favicon), 'type' => $type));
-}
-
+/**
+ * Implements hook_html_head_alter().
+ * Changes the favicon for both the SSP and CiviHR admin
+ */
 function civihr_employee_portal_html_head_alter(&$head_elements) {
   global $base_url;
+
   $default_favicon_element = 'drupal_add_html_head_link:shortcut icon:' . $base_url . '/misc/favicon.ico';
-  unset($head_elements[$default_favicon_element]);
+  $icoPath = drupal_get_path('module', 'civihr_employee_portal') . "/images/favicon.ico";
+
+  $head_elements[$default_favicon_element]['#attributes']['href'] = $icoPath;
 }
