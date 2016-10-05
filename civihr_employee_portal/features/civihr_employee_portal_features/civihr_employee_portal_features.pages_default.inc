@@ -281,7 +281,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $display->panels['header'][2] = 'new-80f12630-09c3-4ce3-8d65-f766db9a08a9';
     $pane = new stdClass();
     $pane->pid = 'new-b149e6e0-7df8-46c5-b5b9-085df7ed8a07';
-    $pane->panel = 'secondcolumn1';
+    $pane->panel = 'middle';
     $pane->type = 'block';
     $pane->subtype = 'views--exp-absence_list-page';
     $pane->shown = TRUE;
@@ -303,10 +303,10 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->locks = array();
     $pane->uuid = 'b149e6e0-7df8-46c5-b5b9-085df7ed8a07';
     $display->content['new-b149e6e0-7df8-46c5-b5b9-085df7ed8a07'] = $pane;
-    $display->panels['secondcolumn1'][0] = 'new-b149e6e0-7df8-46c5-b5b9-085df7ed8a07';
+    $display->panels['middle'][0] = 'new-b149e6e0-7df8-46c5-b5b9-085df7ed8a07';
     $pane = new stdClass();
     $pane->pid = 'new-ea7ad282-bc5e-4de0-876e-d856b3803460';
-    $pane->panel = 'secondcolumn1';
+    $pane->panel = 'middle';
     $pane->type = 'block';
     $pane->subtype = 'civihr_employee_portal-leave';
     $pane->shown = TRUE;
@@ -336,10 +336,10 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->locks = array();
     $pane->uuid = 'ea7ad282-bc5e-4de0-876e-d856b3803460';
     $display->content['new-ea7ad282-bc5e-4de0-876e-d856b3803460'] = $pane;
-    $display->panels['secondcolumn1'][1] = 'new-ea7ad282-bc5e-4de0-876e-d856b3803460';
+    $display->panels['middle'][1] = 'new-ea7ad282-bc5e-4de0-876e-d856b3803460';
     $pane = new stdClass();
     $pane->pid = 'new-90794cd4-53e8-4759-a786-f04977f62c7c';
-    $pane->panel = 'secondcolumn2';
+    $pane->panel = 'secondcolumn1';
     $pane->type = 'block';
     $pane->subtype = 'views--exp-absence_list-page_1';
     $pane->shown = TRUE;
@@ -361,10 +361,10 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->locks = array();
     $pane->uuid = '90794cd4-53e8-4759-a786-f04977f62c7c';
     $display->content['new-90794cd4-53e8-4759-a786-f04977f62c7c'] = $pane;
-    $display->panels['secondcolumn2'][0] = 'new-90794cd4-53e8-4759-a786-f04977f62c7c';
+    $display->panels['secondcolumn1'][0] = 'new-90794cd4-53e8-4759-a786-f04977f62c7c';
     $pane = new stdClass();
     $pane->pid = 'new-73347ee0-93bf-40ac-b270-9e9a46792cf0';
-    $pane->panel = 'secondcolumn2';
+    $pane->panel = 'secondcolumn1';
     $pane->type = 'block';
     $pane->subtype = 'civihr_employee_portal-sick';
     $pane->shown = TRUE;
@@ -394,7 +394,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     $pane->locks = array();
     $pane->uuid = '73347ee0-93bf-40ac-b270-9e9a46792cf0';
     $display->content['new-73347ee0-93bf-40ac-b270-9e9a46792cf0'] = $pane;
-    $display->panels['secondcolumn2'][1] = 'new-73347ee0-93bf-40ac-b270-9e9a46792cf0';
+    $display->panels['secondcolumn1'][1] = 'new-73347ee0-93bf-40ac-b270-9e9a46792cf0';
     $pane = new stdClass();
     $pane->pid = 'new-91c23893-858f-4a81-9708-e143fa11724b';
     $pane->panel = 'secondcolumn2';
@@ -423,11 +423,11 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     );
     $pane->css = array();
     $pane->extras = array();
-    $pane->position = 2;
+    $pane->position = 0;
     $pane->locks = array();
     $pane->uuid = '91c23893-858f-4a81-9708-e143fa11724b';
     $display->content['new-91c23893-858f-4a81-9708-e143fa11724b'] = $pane;
-    $display->panels['secondcolumn2'][2] = 'new-91c23893-858f-4a81-9708-e143fa11724b';
+    $display->panels['secondcolumn2'][0] = 'new-91c23893-858f-4a81-9708-e143fa11724b';
   $display->hide_title = PANELS_TITLE_FIXED;
   $display->title_pane = 'new-ea7ad282-bc5e-4de0-876e-d856b3803460';
   $handler->conf['display'] = $display;
@@ -454,6 +454,8 @@ function civihr_employee_portal_features_default_page_manager_pages() {
       ),
     ),
     'logic' => 'and',
+    'type' => 'none',
+    'settings' => NULL,
   );
   $page->menu = array(
     'type' => 'normal',
