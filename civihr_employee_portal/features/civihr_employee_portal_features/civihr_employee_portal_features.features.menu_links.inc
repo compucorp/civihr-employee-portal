@@ -70,6 +70,46 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 0,
     'customized' => 1,
   );
+  // Exported menu link: main-menu_civihr-admin:civicrm
+  $menu_links['main-menu_civihr-admin:civicrm'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'civicrm',
+    'router_path' => 'civicrm',
+    'link_title' => 'CiviHR admin',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+      'identifier' => 'main-menu_civihr-admin:civicrm',
+    ),
+    'module' => 'menu',
+    'hidden' => 0,
+    'external' => 0,
+    'has_children' => 0,
+    'expanded' => 0,
+    'weight' => -1,
+    'customized' => 1,
+  );
+  // Exported menu link: main-menu_civihr-ssp:dashboard
+  $menu_links['main-menu_civihr-ssp:dashboard'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'dashboard',
+    'router_path' => 'dashboard',
+    'link_title' => 'CiviHR SSP',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+      'identifier' => 'main-menu_civihr-ssp:dashboard',
+    ),
+    'module' => 'menu',
+    'hidden' => 0,
+    'external' => 0,
+    'has_children' => 0,
+    'expanded' => 0,
+    'weight' => 0,
+    'customized' => 1,
+  );
   // Exported menu link: main-menu_home:dashboard
   $menu_links['main-menu_home:dashboard'] = array(
     'menu_name' => 'main-menu',
@@ -113,6 +153,8 @@ function civihr_employee_portal_features_menu_default_menu_links() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Age groups');
+  t('CiviHR SSP');
+  t('CiviHR admin');
   t('Home');
   t('Report 1: People');
   t('Report 2: Leave and Absence');

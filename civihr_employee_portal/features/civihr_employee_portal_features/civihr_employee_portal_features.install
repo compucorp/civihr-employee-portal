@@ -205,6 +205,19 @@ function civihr_employee_portal_update_7004() {
 }
 
 /**
+ * Create db table for Reports configuration.
+ */
+function civihr_employee_portal_update_7005() {
+  db_query('CREATE TABLE IF NOT EXISTS `reports_configuration` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `report_name` VARCHAR(256) NOT NULL,
+  `label` VARCHAR(256) NOT NULL,
+  `json_config` TEXT DEFAULT NULL,
+  PRIMARY KEY (id)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8');
+}
+
+/**
  * Implements hook_uninstall().
  */
 function civihr_employee_portal_features_uninstall() {

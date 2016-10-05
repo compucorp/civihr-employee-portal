@@ -144,3 +144,14 @@ span.appraisals-employee-legend {
 
 .datepicker-popup td,
 .datepicker-popup th { padding: 0; }
+
+#reportPivotTableConfiguration {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 10px;
+  margin-top: 12px;
+}
+#reportPivotTableConfiguration .form-item {
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: 10px;
+}

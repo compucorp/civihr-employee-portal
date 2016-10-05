@@ -179,7 +179,7 @@ $handler->display->display_options['arguments']['period_start_date']['summary'][
 $handler->display->display_options['arguments']['period_start_date']['summary']['format'] = 'default_summary';
 $handler->display->display_options['arguments']['period_start_date']['summary_options']['items_per_page'] = '25';
 $handler->display->display_options['arguments']['period_start_date']['civihr_range'] = '<=';
-$handler->display->display_options['arguments']['period_start_date']['civihr_range_empty'] = '0';
+$handler->display->display_options['arguments']['period_start_date']['civihr_range_empty'] = '1';
 /* Contextual filter: HRJobContract Details entity: Period end date */
 $handler->display->display_options['arguments']['period_end_date']['id'] = 'period_end_date';
 $handler->display->display_options['arguments']['period_end_date']['table'] = 'hrjc_details';
