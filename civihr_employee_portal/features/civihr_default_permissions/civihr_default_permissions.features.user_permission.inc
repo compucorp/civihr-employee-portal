@@ -243,7 +243,11 @@ function civihr_default_permissions_user_default_permissions() {
   // Exported permission: 'access manager approval screen'.
   $permissions['access manager approval screen'] = array(
     'name' => 'access manager approval screen',
-    'roles' => array(),
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+    ),
     'module' => 'civihr_employee_portal',
   );
 
@@ -1605,9 +1609,9 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'features',
   );
 
-  // Exported permission: 'manage hrreports settings'.
-  $permissions['manage hrreports settings'] = array(
-    'name' => 'manage hrreports settings',
+  // Exported permission: 'manage hrreports configuration'.
+  $permissions['manage hrreports configuration'] = array(
+    'name' => 'manage hrreports configuration',
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
@@ -1615,9 +1619,9 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civihr_employee_portal',
   );
 
-  // Exported permission: 'manage hrreports configuration'.
-  $permissions['manage hrreports configuration'] = array(
-    'name' => 'manage hrreports configuration',
+  // Exported permission: 'manage hrreports settings'.
+  $permissions['manage hrreports settings'] = array(
+    'name' => 'manage hrreports settings',
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
