@@ -537,7 +537,7 @@ function civihr_employee_portal_init() {
     // Add our additional css libraries
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/custom.css");
     drupal_add_css(getModuleUrl('org.civicrm.bootstrapcivicrm') . 'css/bootstrap.css');
-    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweet-alert.css");
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweetalert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
 
     _add_script_to_page('/js/tasks.js', 'dashboard');
@@ -550,7 +550,7 @@ function civihr_employee_portal_init() {
       '/js/chart.min.js',
       '/lib/tablesorter/jquery.tablesorter.min.js',
       '/lib/tablesaw/tablesaw.js',
-      '/lib/sweetalert/sweet-alert.min.js'
+      '/lib/sweetalert/sweetalert.min.js'
     ]);
 
     _rebuild_view('absence_list');
@@ -707,6 +707,10 @@ function civihr_employee_portal_permission() {
     'manage hrreports settings' => array(
       'title' => t('Manage HR Reports settings'),
       'description' => t('Availability to manage HR Reports settings'),
+    ),
+    'manage hrreports configuration' => array(
+      'title' => t('Manage HR Reports configuration'),
+      'description' => t('Availability to manage HR Reports configuration'),
     ),
   );
 }
@@ -1715,6 +1719,27 @@ function civihr_employee_portal_menu() {
         'page callback' => 'civihr_employee_portal_hrreport_settings_age_group_delete',
         'page arguments' => array(3, 5),
         'access arguments' => array('manage hrreports settings'),
+        'type' => MENU_CALLBACK,
+    );
+    $items['reports/%/configuration/%'] = array(
+        'title' => 'Get Report configuration',
+        'page callback' => 'civihr_employee_portal_get_report_configuration_json',
+        'page arguments' => array(1, 3),
+        'access arguments' => array('access hrreports'),
+        'type' => MENU_CALLBACK,
+    );
+    $items['reports/%/configuration/%/save'] = array(
+        'title' => 'Save Report configuration',
+        'page callback' => 'civihr_employee_portal_save_report_configuration_json',
+        'page arguments' => array(1, 3),
+        'access arguments' => array('manage hrreports configuration'),
+        'type' => MENU_CALLBACK,
+    );
+    $items['reports/%/configuration/%/delete'] = array(
+        'title' => 'Delete Report configuration',
+        'page callback' => 'civihr_employee_portal_delete_report_configuration_json',
+        'page arguments' => array(1, 3),
+        'access arguments' => array('manage hrreports configuration'),
         'type' => MENU_CALLBACK,
     );
 
@@ -6211,6 +6236,8 @@ function civihr_employee_portal_hrreport_custom($reportName) {
   if (!$view) {
     return drupal_not_found();
   }
+  ctools_include('modal');
+  ctools_modal_add_js();
   _civihr_employee_portal_add_report_scripts();
   $table = civihr_employee_portal_hrreport_gettable($reportName);
   $exportPaths = _civihr_employee_portal_get_view_csv_export_paths($view);
@@ -6228,7 +6255,8 @@ function civihr_employee_portal_hrreport_custom($reportName) {
 
   return theme('civihr_employee_portal_civihr_report_custom',
     array(
-      'report_name' => $reportName,
+      'reportName' => $reportName,
+      'configurationList' => civihr_employee_portal_get_report_configuration_list($reportName),
       'table' => $table,
       'tableUrl' => !empty($table) ? '/reports/' . $reportName . '/table' : null,
       'jsonUrl' => '/reports/' . $reportName . '/json',
@@ -7036,4 +7064,134 @@ function civihr_employee_portal_convert_array_option_value($optionGroup, $fieldN
   }
 
   return $data;
+}
+
+/**
+ * Get an array containing existing configuration labels for specified Report.
+ *
+ * @param string $reportName
+ * @return array
+ */
+function civihr_employee_portal_get_report_configuration_list($reportName) {
+  $list = array();
+  $result = db_select('reports_configuration', 'rc')
+    ->fields('rc', array('id', 'label'))
+    ->condition('report_name', $reportName)
+    ->orderBy('label')
+    ->execute();
+  while ($row = $result->fetchAssoc()) {
+    $list[$row['id']] = $row['label'];
+  }
+  return $list;
+}
+
+/**
+ * Print JSON encoded array with Report configuration for given Report name and ID.
+ * 
+ * @param string $reportName
+ * @param int $configId
+ */
+function civihr_employee_portal_get_report_configuration_json($reportName, $configId) {
+  if (empty($reportName) || empty($configId)) {
+    print drupal_json_output(array('status' => 'error'));
+    drupal_exit();
+  }
+  $result = db_select('reports_configuration', 'rc')
+    ->fields('rc', array('json_config'))
+    ->condition('id', (int)$configId)
+    ->condition('report_name', $reportName)
+    ->range(0, 1)
+    ->execute();
+  if ($row = $result->fetchAssoc()) {
+    print drupal_json_output(
+      array(
+        'config' => json_decode($row['json_config']),
+        'status' => 'success',
+      )
+    );
+  } else {
+    print drupal_json_output(array('status' => 'error'));
+  }
+  
+  drupal_exit();
+}
+
+/**
+ * Save Report configuration in database.
+ *
+ * @param string $reportName
+ * @param int $configId
+ */
+function civihr_employee_portal_save_report_configuration_json($reportName, $configId) {
+  $jsonConfig = json_encode($_POST['json_config']);
+  if ((empty($configId) && empty($_POST['label'])) || !$jsonConfig) {
+    print drupal_json_output(array('status' => 'error'));
+    drupal_exit();
+  }
+  $label = $_POST['label'];
+  $responseData = array(
+    'status' => 'success',
+  );
+  try {
+    if (!empty($configId)) {
+      $result = db_update('reports_configuration')
+        ->condition('report_name', $reportName)
+        ->condition('id', (int)$configId)
+        ->fields(array(
+          'json_config' => $jsonConfig,
+        ))
+        ->execute();
+    } else {
+      $result = db_select('reports_configuration', 'rc')
+        ->fields('rc', array('id'))
+        ->condition('report_name', $reportName)
+        ->condition('label', $label)
+        ->range(0, 1)
+        ->execute();
+      if ($row = $result->fetchAssoc()) {
+        $responseData = array(
+          'status' => 'already_exists',
+          'id' => $row['id'],
+        );
+        print drupal_json_output($responseData);
+        drupal_exit();
+      }
+      $result = db_insert('reports_configuration')
+        ->fields(array(
+          'report_name' => $reportName,
+          'label' => $label,
+          'json_config' => $jsonConfig,
+        ))
+      ->execute();
+      $responseData['id'] = $result;
+      $responseData['label'] = $label;
+    }
+  } catch (Exception $e) {
+    $responseData = array(
+      'status' => 'error',
+    );
+  }
+  print drupal_json_output($responseData);
+  drupal_exit();
+}
+
+/**
+ * Delete Report configuration from database.
+ *
+ * @param string $reportName
+ * @param int $configId
+ */
+function civihr_employee_portal_delete_report_configuration_json($reportName, $configId) {
+  if (!empty($reportName) && empty(!$configId)) {
+    $result = db_delete('reports_configuration')
+      ->condition('report_name', $reportName)
+      ->condition('id', (int)$configId)
+      ->execute();
+    if ($result) {
+      print drupal_json_output(array('status' => 'success'));
+      drupal_exit();
+    }
+  }
+  print drupal_json_output(array('status' => 'error'));
+  drupal_exit();
 }
