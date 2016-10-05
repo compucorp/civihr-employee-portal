@@ -7206,5 +7206,5 @@ function civihr_employee_portal_html_head_alter(&$head_elements) {
   $default_favicon_element = 'drupal_add_html_head_link:shortcut icon:' . $base_url . '/misc/favicon.ico';
   $icoPath = drupal_get_path('module', 'civihr_employee_portal') . "/images/favicon.ico";
 
-  $head_elements[$default_favicon_element]['#attributes']['href'] = $icoPath;
+  $head_elements[$default_favicon_element]['#attributes']['href'] = "{$base_url}/{$icoPath}";
 }
