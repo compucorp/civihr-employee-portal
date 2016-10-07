@@ -1,7 +1,5 @@
 <?php
 
-const CIVIHR_ADMIN_ROLE_ID = 55120974;
-
 /**
  * Implements hook_install().
  */
@@ -21,79 +19,8 @@ function civihr_employee_portal_features_install() {
         'label' => "Partially Approved",
         'option_group_id' => $option_group['id'],
     ));
-
-    // Set up front page URLs based on Role IDs (if the site is update not new install this can cause problems)
-    // @TODO --> For site updates we will need to find the matching RID's first
-    $values = array(
-        array(
-            'rid' => 1,
-            'mode' => 'redirect',
-            'data' => 'welcome-page',
-            'filter_format' => '',
-            'weight' => 0
-        ),
-        array(
-            'rid' => 2,
-            'mode' => '',
-            'data' => '',
-            'filter_format' => '',
-            'weight' => 0
-        ),
-        array(
-            'rid' => 3,
-            'mode' => '',
-            'data' => '',
-            'filter_format' => '',
-            'weight' => 0
-        ),
-        array(
-            'rid' => CIVIHR_ADMIN_ROLE_ID,
-            'mode' => 'redirect',
-            'data' => 'civicrm/tasksassignments/dashboard#/tasks',
-            'filter_format' => '',
-            'weight' => 0
-        ),
-        array(
-            'rid' => 17087012,
-            'mode' => 'redirect',
-            'data' => 'dashboard',
-            'filter_format' => '',
-            'weight' => 0
-        ),
-        array(
-            'rid' => 57573969,
-            'mode' => 'redirect',
-            'data' => 'dashboard',
-            'filter_format' => '',
-            'weight' => 0
-        )      
-    );
-
-    $query = db_insert('front_page')->fields(array('rid', 'mode', 'data', 'filter_format', 'weight'));
-    
-    foreach ($values as $record) {
-        $query->values($record);
-    }
-
-    $query->execute();
-    
 }
 
-function civihr_employee_portal_update_7000()
-{
-    /** @var UpdateQuery $query */
-    $dashboardUrl = 'civicrm/tasksassignments/dashboard#/tasks';
-
-    db_update('front_page')
-      ->fields(array('data' => $dashboardUrl))
-      ->condition('rid', CIVIHR_ADMIN_ROLE_ID, '=')
-      ->execute();
-
-    db_update('login_destination')
-      ->fields(array('destination' => $dashboardUrl))
-      ->condition('destination', 'civicrm/dashboard', '=')
-      ->execute();
-}
 
 /**
  * Create Report Pages and Report Age Settings menu links.
@@ -217,12 +144,3 @@ function civihr_employee_portal_update_7005() {
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8');
 }
 
-/**
- * Implements hook_uninstall().
- */
-function civihr_employee_portal_features_uninstall() {
-
-    // Remove and truncate the old records
-    $result = db_truncate('front_page')->execute();
-
-}
