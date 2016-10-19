@@ -5799,6 +5799,16 @@ function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
     }
 }
 
+/**
+ * Implements hook_user_login
+ */
+function civihr_employee_portal_user_login(&$edit, $account) {
+  global $base_url;
+  if (!isset($_POST['form_id']) || $_POST['form_id'] != 'user_pass_reset') {
+    $_GET['destination'] = user_access('access CiviCRM') ?  'civicrm/tasksassignments/dashboard#/tasks' : 'dashboard';
+  }
+}
+
 function webform_client_form_ajax_callback($form, &$form_state) {
 
     if (form_get_errors()) {

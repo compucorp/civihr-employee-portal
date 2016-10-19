@@ -22,7 +22,6 @@ dependencies[] = views_block_area
 dependencies[] = jquery_update
 dependencies[] = webform
 dependencies[] = webform_civicrm
-dependencies[] = front_page
 dependencies[] = fancy_login
 dependencies[] = jcarousel
 dependencies[] = views_fieldsets

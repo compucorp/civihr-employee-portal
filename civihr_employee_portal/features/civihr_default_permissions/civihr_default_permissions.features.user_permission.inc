@@ -541,15 +541,6 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'filter',
   );
 
-  // Exported permission: 'administer front page'.
-  $permissions['administer front page'] = array(
-    'name' => 'administer front page',
-    'roles' => array(
-      'administrator' => 'administrator',
-    ),
-    'module' => 'front_page',
-  );
-
   // Exported permission: 'administer image styles'.
   $permissions['administer image styles'] = array(
     'name' => 'administer image styles',
