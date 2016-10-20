@@ -6419,11 +6419,10 @@ function setInputDatepickerForm($title) {
       '#description' => getCalendarButtonMarkup($idxKey),
       '#date_label_position' => 'within',
       '#attributes' => array(
-          'ng-init' => "$idxKey = false",
+          'ng-init' => "$idxKey = false; filters.dt$idxKey=filters.date",
           'placeholder' => '{{filters.placeholderFormat}}',
           'uib-datepicker-popup' => '{{filters.format}}',
           'close-text' => 'Close',
-          'date-input' => '',
           'ng-model' => "filters.dt$idxKey",
           'is-open' => "filters.$idxKey",
           'ng-click' => "filters.$idxKey = !filters.$idxKey"
