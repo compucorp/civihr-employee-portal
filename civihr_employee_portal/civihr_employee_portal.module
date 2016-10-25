@@ -7026,14 +7026,12 @@ function _block_anonymous_access() {
     // This is the URL for the modal that is displayed when the user
     // clicks on "Click here to request one from your HR administrator"
     'request_new_account/ajax',
-    // PCHR-1589 : The guest user should be able to access these urls
-    // to access default drupal login and rest password page specially for maintenance mode
-    'user',
-    'user/password',
-    'user/login',
   ];
 
-  if ($user_is_anonymous && !in_array($current_path, $allowed_paths)) {
+  if (
+    $user_is_anonymous &&
+    !in_array($current_path, $allowed_paths) && substr($current_path, 0, 4) !== 'user'
+  ) {
     drupal_add_http_header('Location', "$base_url/welcome-page");
     exit();
   }
