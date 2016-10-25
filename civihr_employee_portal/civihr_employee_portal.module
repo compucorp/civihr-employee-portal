@@ -6991,12 +6991,11 @@ function _get_task_filter_by_date($date, $normalize = false) {
  * Implements hook_boot()
  */
 function civihr_employee_portal_boot() {
-  _block_anonymous_access();
+  _user_redirection();
 }
 
 /**
- * This method redirect any request made by an anonymous
- * user to the welcome-page.
+ * This method handle user redirection for special use cases
  *
  * The redirection is made by manually setting the Location header,
  * and it checks the current_path using the request_path() function,
@@ -7004,7 +7003,7 @@ function civihr_employee_portal_boot() {
  * is called, only a limited set of functions is available, and things like
  * drupal_goto() and current_path() cannot be used).
  */
-function _block_anonymous_access() {
+function _user_redirection() {
   global $user, $base_url;
 
   // This function should only be executed in a
@@ -7028,11 +7027,16 @@ function _block_anonymous_access() {
     'request_new_account/ajax',
   ];
 
-  if (
-    $user_is_anonymous &&
-    !in_array($current_path, $allowed_paths) && substr($current_path, 0, 4) !== 'user'
-  ) {
-    drupal_add_http_header('Location', "$base_url/welcome-page");
+  if ($user_is_anonymous) {
+    if (!in_array($current_path, $allowed_paths) && substr($current_path, 0, 4) !== 'user') {
+      $redirect_path = 'welcome-page';
+    }
+  } else if ($current_path == 'civicrm') {
+    $redirect_path = 'civicrm/tasksassignments/dashboard#/tasks';
+  }
+
+  if (!empty($redirect_path)) {
+    drupal_add_http_header('Location', "$base_url/{$redirect_path}");
     exit();
   }
 }
