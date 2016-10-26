@@ -4584,6 +4584,11 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'not null' => TRUE,
         'description' => 'Absence activity (Is Credit type?)',
     );
+    $schema['absence_list']['fields']['absence_status'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Absence status',
+    );
     $schema['absence_list']['fields']['absence_start_date'] = array(
         'type' => 'varchar',
         'mysql_type' => 'DATETIME',

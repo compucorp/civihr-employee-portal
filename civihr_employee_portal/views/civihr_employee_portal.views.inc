@@ -910,6 +910,14 @@ function civihr_employee_portal_views_data_alter(&$data) {
     'sort' => array('handler' => 'views_handler_sort'),
   );
 
+  $data['absence_list']['absence_table_header'] = array(
+    'title' => t('Absence table header block area'),
+    'help' => t('Absence table header block area.'),
+    'area' => array(
+      'handler' => 'civihr_employee_portal_handler_absence_table_header_block_area',
+    ),
+  );
+
   $data['absence_list']['balance_totals'] = array(
     'title' => t('Balance / Totals block area'),
     'help' => t('Balance / Totals block area.'),
