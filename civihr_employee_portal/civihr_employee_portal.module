@@ -7028,7 +7028,10 @@ function _user_redirection() {
   ];
 
   if ($user_is_anonymous) {
-    if (!in_array($current_path, $allowed_paths) && substr($current_path, 0, 4) !== 'user') {
+    if (
+    (!in_array($current_path, $allowed_paths) && substr($current_path, 0, 4) !== 'user') ||
+    $current_path == 'user/register'
+    ) {
       $redirect_path = 'welcome-page';
     }
   } else if ($current_path == 'civicrm') {
