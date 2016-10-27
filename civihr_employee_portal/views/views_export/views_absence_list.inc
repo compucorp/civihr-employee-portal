@@ -1,5 +1,7 @@
 <?php
 
+$current_year = date("Y");
+
 $view = new view();
 $view->name = 'absence_list';
 $view->description = '';
@@ -299,8 +301,8 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
     'value' => array(
       'type' => 'date',
       'value' => '',
-      'min' => '2016-01-01 00:00:00',
-      'max' => '2016-12-31 23:59:59',
+      'min' => $current_year . '-01-01 00:00:00',
+      'max' => $current_year . '-12-31 23:59:59',
     ),
   ),
 );
@@ -406,8 +408,8 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
     'value' => array(
       'type' => 'date',
       'value' => '',
-      'min' => '2016-01-01 00:00:00',
-      'max' => '2016-12-31 23:59:59',
+      'min' => $current_year . '-01-01 00:00:00',
+      'max' => $current_year . '-12-31 23:59:59',
     ),
   ),
 );
@@ -663,8 +665,8 @@ $handler->display->display_options['filters']['absence_start_date_period_filter'
     'value' => array(
       'type' => 'date',
       'value' => '',
-      'min' => '2016-01-01 00:00:00',
-      'max' => '2016-12-31 23:59:59',
+      'min' => $current_year . '-01-01 00:00:00',
+      'max' => $current_year . '-12-31 23:59:59',
     ),
   ),
 );

@@ -9,6 +9,10 @@ class civihr_employee_portal_handler_absence_table_header_block_area extends vie
 
   /**
    * Render the area.
+   *
+   * @param bool $empty
+   *
+   * @return string
    */
   public function render($empty = FALSE) {
 
@@ -46,6 +50,7 @@ class civihr_employee_portal_handler_absence_table_header_block_area extends vie
    * Return an array containing entitlements row for given $entitlements array.
    *
    * @param array $entitlements
+   *
    * @return array
    */
   private function getEntitlementRow(array $entitlements) {
@@ -64,6 +69,7 @@ class civihr_employee_portal_handler_absence_table_header_block_area extends vie
    * Return an array containing content rows.
    *
    * @param array $entitlements
+   *
    * @return array
    */
   private function getContentRows(array $entitlements) {
@@ -107,6 +113,7 @@ class civihr_employee_portal_handler_absence_table_header_block_area extends vie
    *
    * @param array $activityAbsenceTypeIds
    * @param array $balance
+   *
    * @return array
    */
   private function getBalanceRow(array $activityAbsenceTypeIds, array $balance) {
@@ -168,25 +175,29 @@ class civihr_employee_portal_handler_absence_table_header_block_area extends vie
   /**
    * Return an assotiative array containing key / value pairs of
    * absence_type / amount values of currently logged in user for
-   * given period.
+   * given period (excluding Sick absence type).
    *
    * @param int $periodId
+   *
    * @return array
    */
   private function getEntitlementData($periodId) {
 
     $entitlementData = array();
-    $query = db_select('civicrm_hrabsence_entitlement', 'che')
-      ->fields('che', array('type_id', 'amount'))
-      ->orderBy('che.contact_id');
+    $sickTypeId = civihr_employee_portal_get_absence_sick_type_id();
 
-    $query->where('(che.contact_id = :c_id)', array(':c_id' => $_SESSION['CiviCRM']['userID']));
-    $query->where('(che.period_id = :period_id)', array(':period_id' => $periodId));
-    $query->where('(che.type_id <> 1)');
+    $absenceEntitlementParams = array(
+      'contact_id' => $_SESSION['CiviCRM']['userID'],
+      'period_id' => $periodId,
+      'return' => array('type_id', 'amount'),
+      'options' => array('limit' => 0),
+    );
+    if ($sickTypeId) {
+      $absenceEntitlementParams['type_id'] = array('!=' => $sickTypeId);
+    }
 
-    $result = $query->execute();
-
-    while ($record = $result->fetchAssoc()) {
+    $result = civicrm_api3('HRAbsenceEntitlement', 'get', $absenceEntitlementParams);
+    foreach ($result['values'] as $record) {
       $entitlementData[(int)$record['type_id']] = $record['amount'];
     }
 
@@ -198,6 +209,7 @@ class civihr_employee_portal_handler_absence_table_header_block_area extends vie
    *
    * @param string $pattern
    * @param object $entity
+   *
    * @return string
    */
   private function applyPlaceholders($pattern, $entity) {

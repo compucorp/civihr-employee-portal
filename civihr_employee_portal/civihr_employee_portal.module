@@ -6755,6 +6755,27 @@ function civihr_employee_portal_is_sick_absence($absenceName) {
 }
 
 /**
+ * Return an ID of 'sick' Absence Type or NULL if 'sick' type is not found.
+ * 
+ * @return int|NULL
+ */
+function civihr_employee_portal_get_absence_sick_type_id() {
+  $sickId = null;
+
+  try {
+    $result = civicrm_api3('HRAbsenceType', 'getsingle', array(
+      'name' => 'sick',
+      'return' => array('id'),
+    ));
+    $sickId = $result['id'];
+  } catch (Exception $e) {
+    return NULL;
+  }
+
+  return $sickId;
+}
+
+/**
  * Get an array containing Drupal Menu items of given Menu name.
  *
  * @param string $menuName
