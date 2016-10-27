@@ -182,35 +182,6 @@ function civihr_employee_portal_views_data_alter(&$data) {
     ),
   );
 
-  // Absence Entitlement entity:
-  $data['absence_entitlement']['period_html'] = array(
-    'title' => t('Html field for period date'),
-    'help' => t('Displays html field based on period ID'),
-    'real field' => 'period_id',
-    'field' => array(
-      'handler' => 'civihr_employee_portal_handler_absence_period',
-      'click sortable' => FALSE,
-    ),
-  );
-  $data['absence_entitlement']['absence_entitlement'] = array(
-    'title' => t('Absence entitlement value'),
-    'help' => t('Absence entitlement'),
-    'field' => array(
-      'handler' => 'civihr_employee_portal_handler_absence_entitlement',
-      'click sortable' => TRUE,
-    ),
-    'argument' => array(
-      'handler' => 'civihr_employee_portal_argument_absence_entitlement',
-      'name_field' => 'title',
-      'string' => TRUE
-    ),
-    'filter' => array(
-      'handler' => 'views_handler_filter_numeric',
-      'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
-
   $data['absence_list']['absence_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
   $data['absence_list']['absence_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
 
@@ -915,14 +886,6 @@ function civihr_employee_portal_views_data_alter(&$data) {
     'help' => t('Absence table header block area.'),
     'area' => array(
       'handler' => 'civihr_employee_portal_handler_absence_table_header_block_area',
-    ),
-  );
-
-  $data['absence_list']['balance_totals'] = array(
-    'title' => t('Balance / Totals block area'),
-    'help' => t('Balance / Totals block area.'),
-    'area' => array(
-      'handler' => 'civihr_employee_portal_handler_area_totals',
     ),
   );
 

@@ -150,28 +150,6 @@ function _add_script_to_page($scriptFile, $page = NULL) {
 }
 
 /**
- * Rebuilds absence_entitlement view.
- */
-function _rebuild_absence_entitlement_view() {
-  $extensions = CRM_Core_PseudoConstant::getExtensions();
-  if (!empty($extensions['org.civicrm.hrabsence'])) {
-    $civi_settings = parse_url(CIVICRM_DSN);
-    $civi_db_name = trim($civi_settings['path'], '/');
-
-    db_query('DROP VIEW IF EXISTS absence_entitlement');
-    db_query("CREATE VIEW absence_entitlement AS
-              SELECT che.contact_id, che.period_id, cufm.uf_id, CONCAT_WS('||', GROUP_CONCAT(amount SEPARATOR '@@'), GROUP_CONCAT(type_id SEPARATOR '@@')) AS entitlement_type
-              FROM {$civi_db_name}.civicrm_hrabsence_entitlement che
-              LEFT JOIN {$civi_db_name}.civicrm_uf_match cufm ON cufm.contact_id = che.contact_id
-              GROUP BY che.contact_id, che.period_id
-              ORDER BY che.contact_id ASC");
-
-    // Set to false so it will not rebuild until not asked to rebuild
-    variable_set('rebuild_absence_entitlement_view', 'FALSE');
-  }
-}
-
-/**
  * Rebuilds appraisal view.
  */
 function _rebuild_appraisal_view() {
@@ -556,7 +534,6 @@ function civihr_employee_portal_init() {
     _rebuild_view('absence_list');
     _rebuild_view('length_of_service');
     _rebuild_view('absence_activity');
-    _rebuild_view('absence_entitlement');
     _rebuild_view('hrvacancy');
     _rebuild_view('appraisal');
     _rebuild_view('tasks');
@@ -591,7 +568,6 @@ function _run_civihr_tasks() {
     // Set variable to TRUE so the mysql database views will be refreshed
     variable_set('rebuild_absence_list_view', 'TRUE');
     variable_set('rebuild_length_of_service_view', 'TRUE');
-    variable_set('rebuild_absence_entitlement_view', 'TRUE');
     variable_set('rebuild_absence_activity_view', 'TRUE');
     variable_set('rebuild_appraisal_view', 'TRUE');
     variable_set('rebuild_hrvacancy_view', 'TRUE');
@@ -4816,32 +4792,6 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'description' => 'Length of Service.',
     );
 
-    // absence_entitlement view:
-    $schema['absence_entitlement']['description'] = 'Views data representation of Absence Entitlement';
-    $schema['absence_entitlement']['fields']['contact_id'] = array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => FALSE,
-        'description' => 'CiviCRM Contact ID',
-    );
-    $schema['absence_entitlement']['fields']['period_id'] = array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => FALSE,
-        'description' => 'Period ID',
-    );
-    $schema['absence_entitlement']['fields']['uf_id'] = array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => FALSE,
-        'description' => 'User ID',
-    );
-    $schema['absence_entitlement']['fields']['entitlement_type'] = array(
-        'type' => 'text',
-        'not null' => TRUE,
-        'description' => 'Absence Entitlement type',
-    );
-
     // appraisal view:
     $schema['appraisal']['description'] = 'Views data representation of CiviHR Appraisal';
     $schema['appraisal']['fields']['id'] = array(
@@ -5224,26 +5174,6 @@ function civihr_employee_portal_entity_info() {
         'label callback' => 'entity_class_label',
         'uri callback' => 'entity_class_uri',
         // Entity API needs to know about your module for the views integration to work
-        'module' => 'civihr_employee_portal',
-    );
-
-    // absence_entitlement entity:
-    $info['civihr_absence_entitlement'] = array(
-        'label' => t('Absence Entitlement entity'),
-        'plural label' => t('Absence Entitlement entity'),
-        'description' => t('Absence Entitlement'),
-        'entity class' => 'Entity',
-        'controller class' => 'EntityAPIController',
-        'views controller class' => 'EntityDefaultViewsController',
-        'base table' => 'absence_entitlement',
-        'fieldable' => TRUE,
-        'entity keys' => array(
-            'id' => 'contact_id',
-            'label' => 'Contact ID',
-        ),
-        'bundles' => array(),
-        'label callback' => 'entity_class_label',
-        'uri callback' => 'entity_class_uri',
         'module' => 'civihr_employee_portal',
     );
 

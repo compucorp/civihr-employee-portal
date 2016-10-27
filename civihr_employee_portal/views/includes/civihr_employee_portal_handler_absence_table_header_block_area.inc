@@ -18,8 +18,7 @@ class civihr_employee_portal_handler_absence_table_header_block_area extends vie
 
     $header = $this->getHeaderRow();
     $rows = array();
-
-    $periodId = isset($_REQUEST['absence_start_date_period_filter']) ?: variable_get('default_date_period_id', '1');
+    $periodId = isset($_REQUEST['absence_start_date_period_filter']) ? $_REQUEST['absence_start_date_period_filter'] : variable_get('default_date_period_id', 1);
     $entitlements = $this->getEntitlementData($periodId);
     $rows[] = $this->getEntitlementRow($entitlements);
     $rows = array_merge($rows, $this->getContentRows($entitlements));
@@ -197,6 +196,7 @@ class civihr_employee_portal_handler_absence_table_header_block_area extends vie
     }
 
     $result = civicrm_api3('HRAbsenceEntitlement', 'get', $absenceEntitlementParams);
+
     foreach ($result['values'] as $record) {
       $entitlementData[(int)$record['type_id']] = $record['amount'];
     }
