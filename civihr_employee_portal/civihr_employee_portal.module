@@ -6312,11 +6312,18 @@ function civihr_employee_portal_hrreport_get_exposed_filter_default_values($view
   if (!empty($dateFilter['expose']['identifier'])) {
     $identifier = $dateFilter['expose']['identifier'];
 
-    $defaultFromDate = !empty($dateFilter['default_date']) ? $dateFilter['default_date'] : '';
-    $defaultToDate = !empty($dateFilter['default_to_date']) ? $dateFilter['default_to_date'] : '';
+    $defaultFromDate = !empty($dateFilter['default_date']) ? $dateFilter['default_date'] : null;
+    $defaultToDate = !empty($dateFilter['default_to_date']) ? $dateFilter['default_to_date'] : null;
 
-    $from = (new DateTime())->modify($defaultFromDate);
-    $to = (new DateTime())->modify($defaultToDate);
+    $from = new DateTime();
+    if ($defaultFromDate) {
+      $from->modify($defaultFromDate);
+    }
+
+    $to = new DateTime();
+    if ($defaultToDate) {
+      $to->modify($defaultToDate);
+    }
 
     if (empty($params[$identifier]['min'])) {
       $params[$identifier]['min'] = $from->format('Y-m-d');
