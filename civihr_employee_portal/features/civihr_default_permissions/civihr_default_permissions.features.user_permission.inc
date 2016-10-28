@@ -314,6 +314,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access site in maintenance mode',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'system',
   );
