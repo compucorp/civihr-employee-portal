@@ -6276,12 +6276,54 @@ function civihr_employee_portal_hrreport_custom($reportName) {
   );
 }
 
+/**
+ * Render a JSON structure containing data for specified report name.
+ *
+ * @param string $reportName
+ *
+ * @return string
+ */
 function civihr_employee_portal_hrreport_get_json($reportName) {
+  $params = drupal_get_query_parameters();
   $view = views_get_view('civihr_report_' . $reportName);
+  $view->exposed_input = civihr_employee_portal_hrreport_get_exposed_filter_default_values($view, $params);
   $view->set_display('page');
   $view->execute();
   $view->style_plugin->options['using_views_api_mode'] = FALSE;
   return $view->render('page');
+}
+
+/**
+ * Return an array with mapped default exposed filter values for given view
+ * and params. Used to map date filter default values if they are not specified
+ * in request.
+ *
+ * @param object $view
+ * @param array $params
+ *
+ * @return array
+ */
+function civihr_employee_portal_hrreport_get_exposed_filter_default_values($view, array $params) {
+  if (empty($view->display['default']->display_options['filters']['date_filter'])) {
+    return $params;
+  }
+
+  $dateFilter = $view->display['default']->display_options['filters']['date_filter'];
+  if (!empty($dateFilter['expose']['identifier'])) {
+    $identifier = $dateFilter['expose']['identifier'];
+    $defaultFromDate = !empty($dateFilter['default_date']) ? $dateFilter['default_date'] : '';
+    $defaultToDate = !empty($dateFilter['default_to_date']) ? $dateFilter['default_to_date'] : '';
+    $from = (new DateTime())->modify($defaultFromDate);
+    $to = (new DateTime())->modify($defaultToDate);
+    if (empty($params[$identifier]['min'])) {
+      $params[$identifier]['min'] = $from->format('Y-m-d');
+    }
+    if (empty($params[$identifier]['max'])) {
+      $params[$identifier]['max'] = $to->format('Y-m-d');
+    }
+  }
+
+  return $params;
 }
 
 function civihr_employee_portal_hrreport_custom_printtable($reportName, $dateFilterValue = null) {

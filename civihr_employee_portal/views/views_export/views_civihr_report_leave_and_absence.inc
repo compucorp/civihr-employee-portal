@@ -506,8 +506,8 @@ $handler->display->display_options['filters']['date_filter']['expose']['remember
   57573969 => 0,
 );
 $handler->display->display_options['filters']['date_filter']['form_type'] = 'date_popup';
-$handler->display->display_options['filters']['date_filter']['default_date'] = 'now -12 month';
-$handler->display->display_options['filters']['date_filter']['default_to_date'] = 'now +1 month';
+$handler->display->display_options['filters']['date_filter']['default_date'] = 'now -10 year';
+$handler->display->display_options['filters']['date_filter']['default_to_date'] = 'now +10 year';
 $handler->display->display_options['filters']['date_filter']['year_range'] = '-10:+10';
 $handler->display->display_options['filters']['date_filter']['date_fields'] = array(
   'absence_activity.absence_date' => 'absence_activity.absence_date',
