@@ -5,6 +5,7 @@ package = Compucorp
 dependencies[] = block
 dependencies[] = civihr_employee_portal
 dependencies[] = civihr_leave_absences
+dependencies[] = civicrm_resources
 dependencies[] = ctools
 dependencies[] = page_manager
 features[ctools][] = page_manager:pages_default:1
