@@ -492,10 +492,10 @@ function _rebuild_absence_activity_view() {
  * @return array
  */
 function _get_absence_activity_types_ids() {
-  $activityTypesIds = array();
-  $absenceTypes = civicrm_api3('HRAbsenceType', 'get', array(
+  $activityTypesIds = [];
+  $absenceTypes = civicrm_api3('HRAbsenceType', 'get', [
     'sequential' => 1,
-  ));
+  ]);
 
   foreach ($absenceTypes['values'] as $absenceType) {
     if (!empty($absenceType['debit_activity_type_id'])) {
