@@ -6312,29 +6312,37 @@ function civihr_employee_portal_hrreport_get_exposed_filter_default_values($view
   if (!empty($dateFilter['expose']['identifier'])) {
     $identifier = $dateFilter['expose']['identifier'];
 
-    $defaultFromDate = !empty($dateFilter['default_date']) ? $dateFilter['default_date'] : null;
-    $defaultToDate = !empty($dateFilter['default_to_date']) ? $dateFilter['default_to_date'] : null;
-
-    $from = new DateTime();
-    if ($defaultFromDate) {
-      $from->modify($defaultFromDate);
-    }
-
-    $to = new DateTime();
-    if ($defaultToDate) {
-      $to->modify($defaultToDate);
-    }
-
-    if (empty($params[$identifier]['min'])) {
-      $params[$identifier]['min'] = $from->format('Y-m-d');
-    }
-
-    if (empty($params[$identifier]['max'])) {
-      $params[$identifier]['max'] = $to->format('Y-m-d');
-    }
+    $params[$identifier]['min'] = civihr_employee_portal_get_date_filter_default_value($params, $dateFilter, 'default_date', $identifier, 'min');
+    $params[$identifier]['max'] = civihr_employee_portal_get_date_filter_default_value($params, $dateFilter, 'default_to_date', $identifier, 'max');
   }
 
   return $params;
+}
+
+/**
+ * Return a date filter default value from View filter settings
+ * if it's not specified in the parameters.
+ *
+ * @param array $params
+ * @param string $dateFilter
+ * @param string $dateFilterKey
+ * @param string $identifier
+ * @param string $identifierKey
+ *
+ * @return string
+ */
+function civihr_employee_portal_get_date_filter_default_value(array $params, $dateFilter, $dateFilterKey, $identifier, $identifierKey) {
+  if (empty($params[$identifier][$identifierKey])) {
+    $defaultDate = !empty($dateFilter[$dateFilterKey]) ? $dateFilter[$dateFilterKey] : null;
+
+    if ($defaultDate) {
+      $date = new DateTime();
+      $date->modify($defaultDate);
+      $params[$identifier][$identifierKey] = $date->format('Y-m-d');
+    }
+  }
+
+  return $params[$identifier][$identifierKey];
 }
 
 function civihr_employee_portal_hrreport_custom_printtable($reportName, $dateFilterValue = null) {
