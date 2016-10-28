@@ -6295,7 +6295,7 @@ function civihr_employee_portal_hrreport_get_json($reportName) {
 
 /**
  * Return an array with mapped default exposed filter values for given view
- * and params. Used to map date filter default values if they are not specified
+ * and parameters. Used to map date filter default values if they are not specified
  * in request.
  *
  * @param object $view
@@ -6311,13 +6311,17 @@ function civihr_employee_portal_hrreport_get_exposed_filter_default_values($view
   $dateFilter = $view->display['default']->display_options['filters']['date_filter'];
   if (!empty($dateFilter['expose']['identifier'])) {
     $identifier = $dateFilter['expose']['identifier'];
+
     $defaultFromDate = !empty($dateFilter['default_date']) ? $dateFilter['default_date'] : '';
     $defaultToDate = !empty($dateFilter['default_to_date']) ? $dateFilter['default_to_date'] : '';
+
     $from = (new DateTime())->modify($defaultFromDate);
     $to = (new DateTime())->modify($defaultToDate);
+
     if (empty($params[$identifier]['min'])) {
       $params[$identifier]['min'] = $from->format('Y-m-d');
     }
+
     if (empty($params[$identifier]['max'])) {
       $params[$identifier]['max'] = $to->format('Y-m-d');
     }
