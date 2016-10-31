@@ -845,8 +845,8 @@ function get_civihr_absence_types() {
     $absenceTypes = &drupal_static(__FUNCTION__);
 
     if (!isset($absenceTypes)) {
-
-        if ($cache = cache_get('civihr_absence_types')) {
+        $cache = cache_get('civihr_absence_types');
+        if (!empty($cache->data)) {
             $absenceTypes = $cache->data;
         }
         else {
@@ -6667,6 +6667,9 @@ function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$obje
         if (in_array($objectName, array('Document', 'Task'))) {
             _clear_json_cache();
         }
+    }
+    if ($objectName === 'HRAbsenceType') {
+      cache_set('civihr_absence_types', NULL);
     }
 }
 
