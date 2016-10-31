@@ -79,7 +79,7 @@ function civihr_employee_portal_features_install() {
     
 }
 
-function civihr_employee_portal_update_7000()
+function civihr_employee_portal_features_update_7000()
 {
     /** @var UpdateQuery $query */
     $dashboardUrl = 'civicrm/tasksassignments/dashboard#/tasks';
@@ -98,8 +98,9 @@ function civihr_employee_portal_update_7000()
 /**
  * Create Report Pages and Report Age Settings menu links.
  */
-function civihr_employee_portal_update_7001() {
-    // Report1: People
+function civihr_employee_portal_features_update_7001() {
+  // Report1: People
+  if (!_is_menu_link_path_exists('reports/people/')) {
     $path = 'reports/people/';
     $link = array();
     $link['link_path'] = $path;
@@ -108,12 +109,14 @@ function civihr_employee_portal_update_7001() {
     $link['router_path'] = $path . '%';
     $link['module'] = 'menu';
     $link['options'] = array(
-        'attributes' => array(
-            'title' => 'CiviHR Report containing Employee, Contract and Role data.',
-        ),
+      'attributes' => array(
+        'title' => 'CiviHR Report containing Employee, Contract and Role data.',
+      ),
     );
     menu_link_save($link);
+  }
 
+  if (!_is_menu_link_path_exists('reports/leave_and_absence/')) {
     // Report 2: Leave and Absence
     $path = 'reports/leave_and_absence/';
     $link = array();
@@ -123,11 +126,14 @@ function civihr_employee_portal_update_7001() {
     $link['router_path'] = $path . '%';
     $link['module'] = 'menu';
     $link['options'] = array(
-        'attributes' => array(
-            'title' => 'CiviHR Report containing Employee, Contract, Role and Absence Activity data.',
-        ),
+      'attributes' => array(
+        'title' => 'CiviHR Report containing Employee, Contract, Role and Absence Activity data.',
+      ),
     );
     menu_link_save($link);
+  }
+
+  if (!_is_menu_link_path_exists('reports/settings/age_group/')) {
 
     // Age groups
     $path = 'reports/settings/age_group/';
@@ -138,12 +144,13 @@ function civihr_employee_portal_update_7001() {
     $link['router_path'] = $path . '%';
     $link['module'] = 'menu';
     menu_link_save($link);
+  }
 }
 
 /**
  * Create db table for Age groups (Report settings).
  */
-function civihr_employee_portal_update_7002() {
+function civihr_employee_portal_features_update_7002() {
     db_query('CREATE TABLE IF NOT EXISTS `reports_settings_age_group` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `age_from` int(3) DEFAULT NULL,
@@ -156,7 +163,7 @@ function civihr_employee_portal_update_7002() {
 /**
  * Rearrange Report pages in Drupal menu.
  */
-function civihr_employee_portal_update_7003() {
+function civihr_employee_portal_features_update_7003() {
     db_update('menu_links')
     ->fields(
         array(
@@ -187,7 +194,7 @@ function civihr_employee_portal_update_7003() {
 /**
  * Enable HR Reports settings block.
  */
-function civihr_employee_portal_update_7004() {
+function civihr_employee_portal_features_update_7004() {
     db_update('block')
     ->fields(
         array(
@@ -213,3 +220,26 @@ function civihr_employee_portal_features_uninstall() {
     $result = db_truncate('front_page')->execute();
 
 }
+
+/**
+ * Function to determine whether menu link exists or not.
+ *
+ * @param string
+ *      Path of the menu link.
+ *
+ * @return bool
+ *      Status of the menu link path.
+ */
+function _is_menu_link_path_exists($path = '') {
+
+  if ($path) {
+    // Lookup for link path table if the path does exist.
+    $menu_status = db_select('menu_links', 'ml')
+      ->fields('ml', ['mlid'])
+      ->condition('ml.link_path', $path)
+      ->execute()->fetchField();
+    return $menu_status ? TRUE : FALSE;
+  }
+  return FALSE;
+}
+
