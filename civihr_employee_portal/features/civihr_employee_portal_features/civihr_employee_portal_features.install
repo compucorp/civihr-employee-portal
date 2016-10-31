@@ -233,7 +233,7 @@ function civihr_employee_portal_features_uninstall() {
 function _is_menu_link_path_exists($path = '') {
 
   if ($path) {
-    // Lookup fpr link path table if the path does exist.
+    // Lookup for link path table if the path does exist.
     $menu_status = db_select('menu_links', 'ml')
       ->fields('ml', ['mlid'])
       ->condition('ml.link_path', $path)
