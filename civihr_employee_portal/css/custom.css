@@ -12,6 +12,10 @@ and open the template in the editor.
     width: 15%;
 }
 
+.view-absence-list > .view-content {
+    margin: 0 -20px;
+}
+
 .table-editable {
     width: auto;
     position: relative;
