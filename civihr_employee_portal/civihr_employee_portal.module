@@ -593,6 +593,13 @@ function civihr_employee_portal_init() {
   }
 }
 
+function _rebuild_reports_views() {
+  variable_set('rebuild_length_of_service', 'TRUE');
+  _rebuild_view('length_of_service');
+  variable_set('rebuild_absence_activity', 'TRUE');
+  _rebuild_view('absence_activity');
+}
+
 /**
  * When caches are cleared rebuild the helper mysql views
  */
@@ -6271,6 +6278,8 @@ function civihr_employee_portal_hrreport_printtable($viewName) {
  * @return array
  */
 function civihr_employee_portal_hrreport_custom($reportName) {
+  _rebuild_reports_views();
+
   $view = views_get_view('civihr_report_' . $reportName);
   if (!$view) {
     return drupal_not_found();
