@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * leave_and_absences_feature.pages_default.inc
+ * leave_and_absences_features.pages_default.inc
  */
 
 /**
  * Implements hook_default_page_manager_pages().
  */
-function leave_and_absences_feature_default_page_manager_pages() {
+function leave_and_absences_features_default_page_manager_pages() {
   $page = new stdClass();
   $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
   $page->api_version = 1;

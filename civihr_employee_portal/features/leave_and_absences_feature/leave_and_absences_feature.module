@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the Leave and Absences Feature feature.
- */
-
-include_once 'leave_and_absences_feature.features.inc';
