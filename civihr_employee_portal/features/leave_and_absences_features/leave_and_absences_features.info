@@ -1,4 +1,4 @@
-name = Leave and Absences Feature
+name = Leave and Absences Features
 description = Contains all the sections related to Leave and Absences section.
 core = 7.x
 package = Compucorp
