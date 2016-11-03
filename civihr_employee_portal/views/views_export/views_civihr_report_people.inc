@@ -280,24 +280,6 @@ $handler->display->display_options['fields']['role_department']['table'] = 'hrjc
 $handler->display->display_options['fields']['role_department']['field'] = 'role_department';
 $handler->display->display_options['fields']['role_department']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['fields']['role_department']['label'] = 'Role department';
-/* Field: HRJobContract Role entity: Role_functional_area */
-$handler->display->display_options['fields']['role_functional_area']['id'] = 'role_functional_area';
-$handler->display->display_options['fields']['role_functional_area']['table'] = 'hrjc_role';
-$handler->display->display_options['fields']['role_functional_area']['field'] = 'role_functional_area';
-$handler->display->display_options['fields']['role_functional_area']['relationship'] = 'role_jobcontract_id';
-$handler->display->display_options['fields']['role_functional_area']['label'] = 'Role functional area';
-/* Field: HRJobContract Role entity: Role_hours */
-$handler->display->display_options['fields']['role_hours']['id'] = 'role_hours';
-$handler->display->display_options['fields']['role_hours']['table'] = 'hrjc_role';
-$handler->display->display_options['fields']['role_hours']['field'] = 'role_hours';
-$handler->display->display_options['fields']['role_hours']['relationship'] = 'role_jobcontract_id';
-$handler->display->display_options['fields']['role_hours']['label'] = 'Role hours';
-/* Field: HRJobContract Role entity: Role_hours_unit */
-$handler->display->display_options['fields']['role_hours_unit']['id'] = 'role_hours_unit';
-$handler->display->display_options['fields']['role_hours_unit']['table'] = 'hrjc_role';
-$handler->display->display_options['fields']['role_hours_unit']['field'] = 'role_hours_unit';
-$handler->display->display_options['fields']['role_hours_unit']['relationship'] = 'role_jobcontract_id';
-$handler->display->display_options['fields']['role_hours_unit']['label'] = 'Role hours unit';
 /* Field: HRJobContract Role entity: Role_level_type */
 $handler->display->display_options['fields']['role_level_type']['id'] = 'role_level_type';
 $handler->display->display_options['fields']['role_level_type']['table'] = 'hrjc_role';
@@ -943,9 +925,6 @@ $translatables['civihr_report_people'] = array(
   t('Role cost center'),
   t('Role percent pay cost center'),
   t('Role department'),
-  t('Role functional area'),
-  t('Role hours'),
-  t('Role hours unit'),
   t('Role level type'),
   t('Role organization'),
   t('Role region'),
