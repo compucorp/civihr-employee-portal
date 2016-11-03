@@ -150,28 +150,6 @@ function _add_script_to_page($scriptFile, $page = NULL) {
 }
 
 /**
- * Rebuilds absence_entitlement view.
- */
-function _rebuild_absence_entitlement_view() {
-  $extensions = CRM_Core_PseudoConstant::getExtensions();
-  if (!empty($extensions['org.civicrm.hrabsence'])) {
-    $civi_settings = parse_url(CIVICRM_DSN);
-    $civi_db_name = trim($civi_settings['path'], '/');
-
-    db_query('DROP VIEW IF EXISTS absence_entitlement');
-    db_query("CREATE VIEW absence_entitlement AS
-              SELECT che.contact_id, che.period_id, cufm.uf_id, CONCAT_WS('||', GROUP_CONCAT(amount SEPARATOR '@@'), GROUP_CONCAT(type_id SEPARATOR '@@')) AS entitlement_type
-              FROM {$civi_db_name}.civicrm_hrabsence_entitlement che
-              LEFT JOIN {$civi_db_name}.civicrm_uf_match cufm ON cufm.contact_id = che.contact_id
-              GROUP BY che.contact_id, che.period_id
-              ORDER BY che.contact_id ASC");
-
-    // Set to false so it will not rebuild until not asked to rebuild
-    variable_set('rebuild_absence_entitlement_view', 'FALSE');
-  }
-}
-
-/**
  * Rebuilds appraisal view.
  */
 function _rebuild_appraisal_view() {
@@ -556,7 +534,6 @@ function civihr_employee_portal_init() {
     _rebuild_view('absence_list');
     _rebuild_view('length_of_service');
     _rebuild_view('absence_activity');
-    _rebuild_view('absence_entitlement');
     _rebuild_view('hrvacancy');
     _rebuild_view('appraisal');
     _rebuild_view('tasks');
@@ -591,7 +568,6 @@ function _run_civihr_tasks() {
     // Set variable to TRUE so the mysql database views will be refreshed
     variable_set('rebuild_absence_list_view', 'TRUE');
     variable_set('rebuild_length_of_service_view', 'TRUE');
-    variable_set('rebuild_absence_entitlement_view', 'TRUE');
     variable_set('rebuild_absence_activity_view', 'TRUE');
     variable_set('rebuild_appraisal_view', 'TRUE');
     variable_set('rebuild_hrvacancy_view', 'TRUE');
@@ -869,8 +845,8 @@ function get_civihr_absence_types() {
     $absenceTypes = &drupal_static(__FUNCTION__);
 
     if (!isset($absenceTypes)) {
-
-        if ($cache = cache_get('civihr_absence_types')) {
+        $cache = cache_get('civihr_absence_types');
+        if (!empty($cache->data)) {
             $absenceTypes = $cache->data;
         }
         else {
@@ -4584,6 +4560,11 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'not null' => TRUE,
         'description' => 'Absence activity (Is Credit type?)',
     );
+    $schema['absence_list']['fields']['absence_status'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Absence status',
+    );
     $schema['absence_list']['fields']['absence_start_date'] = array(
         'type' => 'varchar',
         'mysql_type' => 'DATETIME',
@@ -4809,32 +4790,6 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'unsigned' => TRUE,
         'not null' => FALSE,
         'description' => 'Length of Service.',
-    );
-
-    // absence_entitlement view:
-    $schema['absence_entitlement']['description'] = 'Views data representation of Absence Entitlement';
-    $schema['absence_entitlement']['fields']['contact_id'] = array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => FALSE,
-        'description' => 'CiviCRM Contact ID',
-    );
-    $schema['absence_entitlement']['fields']['period_id'] = array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => FALSE,
-        'description' => 'Period ID',
-    );
-    $schema['absence_entitlement']['fields']['uf_id'] = array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => FALSE,
-        'description' => 'User ID',
-    );
-    $schema['absence_entitlement']['fields']['entitlement_type'] = array(
-        'type' => 'text',
-        'not null' => TRUE,
-        'description' => 'Absence Entitlement type',
     );
 
     // appraisal view:
@@ -5219,26 +5174,6 @@ function civihr_employee_portal_entity_info() {
         'label callback' => 'entity_class_label',
         'uri callback' => 'entity_class_uri',
         // Entity API needs to know about your module for the views integration to work
-        'module' => 'civihr_employee_portal',
-    );
-
-    // absence_entitlement entity:
-    $info['civihr_absence_entitlement'] = array(
-        'label' => t('Absence Entitlement entity'),
-        'plural label' => t('Absence Entitlement entity'),
-        'description' => t('Absence Entitlement'),
-        'entity class' => 'Entity',
-        'controller class' => 'EntityAPIController',
-        'views controller class' => 'EntityDefaultViewsController',
-        'base table' => 'absence_entitlement',
-        'fieldable' => TRUE,
-        'entity keys' => array(
-            'id' => 'contact_id',
-            'label' => 'Contact ID',
-        ),
-        'bundles' => array(),
-        'label callback' => 'entity_class_label',
-        'uri callback' => 'entity_class_uri',
         'module' => 'civihr_employee_portal',
     );
 
@@ -5797,6 +5732,16 @@ function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
         drupal_goto($destination);
         return true;
     }
+}
+
+/**
+ * Implements hook_user_login
+ */
+function civihr_employee_portal_user_login(&$edit, $account) {
+  global $base_url;
+  if (!isset($_POST['form_id']) || $_POST['form_id'] != 'user_pass_reset') {
+    $_GET['destination'] = user_access('access CiviCRM') ?  'civicrm/tasksassignments/dashboard#/tasks' : 'dashboard';
+  }
 }
 
 function webform_client_form_ajax_callback($form, &$form_state) {
@@ -6409,11 +6354,10 @@ function setInputDatepickerForm($title) {
       '#description' => getCalendarButtonMarkup($idxKey),
       '#date_label_position' => 'within',
       '#attributes' => array(
-          'ng-init' => "$idxKey = false",
+          'ng-init' => "$idxKey = false; filters.dt$idxKey=filters.date",
           'placeholder' => '{{filters.placeholderFormat}}',
           'uib-datepicker-popup' => '{{filters.format}}',
           'close-text' => 'Close',
-          'date-input' => '',
           'ng-model' => "filters.dt$idxKey",
           'is-open' => "filters.$idxKey",
           'ng-click' => "filters.$idxKey = !filters.$idxKey"
@@ -6723,6 +6667,9 @@ function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$obje
             _clear_json_cache();
         }
     }
+    if ($objectName === 'HRAbsenceType') {
+      cache_set('civihr_absence_types', NULL);
+    }
 }
 
 /**
@@ -6737,6 +6684,27 @@ function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$obje
  */
 function civihr_employee_portal_is_sick_absence($absenceName) {
   return preg_match('/^sick/i', $absenceName);
+}
+
+/**
+ * Return an ID of 'sick' Absence Type or NULL if 'sick' type is not found.
+ * 
+ * @return int|NULL
+ */
+function civihr_employee_portal_get_absence_sick_type_id() {
+  $sickId = null;
+
+  try {
+    $result = civicrm_api3('HRAbsenceType', 'getsingle', array(
+      'name' => 'sick',
+      'return' => array('id'),
+    ));
+    $sickId = $result['id'];
+  } catch (Exception $e) {
+    return NULL;
+  }
+
+  return $sickId;
 }
 
 /**
@@ -6981,12 +6949,11 @@ function _get_task_filter_by_date($date, $normalize = false) {
  * Implements hook_boot()
  */
 function civihr_employee_portal_boot() {
-  _block_anonymous_access();
+  _user_redirection();
 }
 
 /**
- * This method redirect any request made by an anonymous
- * user to the welcome-page.
+ * This method handle user redirection for special use cases
  *
  * The redirection is made by manually setting the Location header,
  * and it checks the current_path using the request_path() function,
@@ -6994,7 +6961,7 @@ function civihr_employee_portal_boot() {
  * is called, only a limited set of functions is available, and things like
  * drupal_goto() and current_path() cannot be used).
  */
-function _block_anonymous_access() {
+function _user_redirection() {
   global $user, $base_url;
 
   // This function should only be executed in a
@@ -7016,15 +6983,21 @@ function _block_anonymous_access() {
     // This is the URL for the modal that is displayed when the user
     // clicks on "Click here to request one from your HR administrator"
     'request_new_account/ajax',
-    // PCHR-1589 : The guest user should be able to access these urls
-    // to access default drupal login and rest password page specially for maintenance mode
-    'user',
-    'user/password',
-    'user/login',
   ];
 
-  if ($user_is_anonymous && !in_array($current_path, $allowed_paths)) {
-    drupal_add_http_header('Location', "$base_url/welcome-page");
+  if ($user_is_anonymous) {
+    if (
+    (!in_array($current_path, $allowed_paths) && substr($current_path, 0, 4) !== 'user') ||
+    $current_path == 'user/register'
+    ) {
+      $redirect_path = 'welcome-page';
+    }
+  } else if ($current_path == 'civicrm' || $current_path == 'civicrm/dashboard') {
+    $redirect_path = 'civicrm/tasksassignments/dashboard#/tasks';
+  }
+
+  if (!empty($redirect_path)) {
+    drupal_add_http_header('Location', "$base_url/{$redirect_path}");
     exit();
   }
 }

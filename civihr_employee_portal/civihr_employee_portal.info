@@ -22,7 +22,6 @@ dependencies[] = views_block_area
 dependencies[] = jquery_update
 dependencies[] = webform
 dependencies[] = webform_civicrm
-dependencies[] = front_page
 dependencies[] = fancy_login
 dependencies[] = jcarousel
 dependencies[] = views_fieldsets
@@ -38,16 +37,13 @@ dependencies[] = browserclass
 dependencies[] = conditional_styles
 
 ; Views Handlers
-files[] = views/includes/civihr_employee_portal_argument_absence_entitlement.inc
 files[] = views/includes/civihr_employee_portal_argument_date_range.inc
 files[] = views/includes/civihr_employee_portal_argument_contact_id.inc
 files[] = views/includes/civihr_employee_portal_handler_age_group.inc
 files[] = views/includes/civihr_employee_portal_argument_age_group.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_duration.inc
-files[] = views/includes/civihr_employee_portal_handler_absence_entitlement.inc
 files[] = views/includes/civihr_employee_portal_handler_activity_type.inc
-files[] = views/includes/civihr_employee_portal_handler_area_totals.inc
-files[] = views/includes/civihr_employee_portal_handler_absence_period.inc
+files[] = views/includes/civihr_employee_portal_handler_absence_table_header_block_area.inc
 files[] = views/includes/civihr_employee_portal_filter_absence_period.inc
 files[] = views/includes/civihr_employee_portal_handler_employee_id.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_status.inc

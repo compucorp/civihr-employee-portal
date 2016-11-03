@@ -182,35 +182,6 @@ function civihr_employee_portal_views_data_alter(&$data) {
     ),
   );
 
-  // Absence Entitlement entity:
-  $data['absence_entitlement']['period_html'] = array(
-    'title' => t('Html field for period date'),
-    'help' => t('Displays html field based on period ID'),
-    'real field' => 'period_id',
-    'field' => array(
-      'handler' => 'civihr_employee_portal_handler_absence_period',
-      'click sortable' => FALSE,
-    ),
-  );
-  $data['absence_entitlement']['absence_entitlement'] = array(
-    'title' => t('Absence entitlement value'),
-    'help' => t('Absence entitlement'),
-    'field' => array(
-      'handler' => 'civihr_employee_portal_handler_absence_entitlement',
-      'click sortable' => TRUE,
-    ),
-    'argument' => array(
-      'handler' => 'civihr_employee_portal_argument_absence_entitlement',
-      'name_field' => 'title',
-      'string' => TRUE
-    ),
-    'filter' => array(
-      'handler' => 'views_handler_filter_numeric',
-      'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
-
   $data['absence_list']['absence_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
   $data['absence_list']['absence_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
 
@@ -910,11 +881,11 @@ function civihr_employee_portal_views_data_alter(&$data) {
     'sort' => array('handler' => 'views_handler_sort'),
   );
 
-  $data['absence_list']['balance_totals'] = array(
-    'title' => t('Balance / Totals block area'),
-    'help' => t('Balance / Totals block area.'),
+  $data['absence_list']['absence_table_header'] = array(
+    'title' => t('Absence table header block area'),
+    'help' => t('Absence table header block area.'),
     'area' => array(
-      'handler' => 'civihr_employee_portal_handler_area_totals',
+      'handler' => 'civihr_employee_portal_handler_absence_table_header_block_area',
     ),
   );
 
@@ -1126,48 +1097,6 @@ function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
   if (($view->name == 'civihr_staff_directory' && $display_id == 'page') ||
           ($view->name == 'hr_documents' && $display_id == 'hr_resources')) {
 
-    // Default value for items per page
-    $default_count = $view->display_handler->display->display_options['pager']['options']['items_per_page'];
-
-    // Set number of items to show
-    $numbers_to_show = explode(',', $view->display_handler->display->display_options['pager']['options']['expose']['items_per_page_options']);
-
-    // Generate page path
-    $view_url_path = $view->display[$display_id]->display_options['path'];
-    $vupc = strlen($view_url_path);
-    $page_path = substr($_GET['q'], 0, $vupc);
-
-    // Set items to show per page
-    $selected_count = isset($_GET['items_per_page']) ? $_GET['items_per_page'] : $default_count;
-
-    // Create links
-    // Not using the l function as it can't handle the "active" class correctly (https://www.drupal.org/node/1410574)
-    $items_per_page = array_map(
-            function ($item) use ($page_path, $selected_count) {
-      $item = trim($item);
-      $href = $page_path . '?items_per_page=' . $item;
-      $class = 'chr_search-result__items-per-page__list__item btn btn-default';
-
-      if ($selected_count == $item) {
-        $class .= ' active';
-      }
-
-      return sprintf('<a href="%s" class="%s">%s</a>', $href, $class, $item);
-    }, $numbers_to_show
-    );
-
-    $item_per_page_nav = '<nav class="chr_search-result__items-per-page">
-            <span>' . t('View:') . '</span>
-            <div class="chr_search-result__items-per-page__list btn-group btn-group-sm">'
-            . implode('', $items_per_page) .
-            '</div>
-        </nav>';
-
-    // Set the custom footer
-    $view->set_item_option(
-            $display_id, 'footer', 'area_text_custom', 'content', $item_per_page_nav
-    );
-
     // Set the custom header
     $view->set_item_option(
             $display_id, 'header', 'result', 'content', '<div class="chr_search-result__total">'
@@ -1175,10 +1104,7 @@ function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
             '<span class="chr_search-result__total__count">'
             . $view->get_item($display_id, 'header', 'result')['content'] .
             '</span>
-            </div>' . $item_per_page_nav
+            </div>'
     );
-
-    // Set items per page to the view
-    $view->set_items_per_page($selected_count);
   }
 }

@@ -314,6 +314,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access site in maintenance mode',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'system',
   );
@@ -539,15 +540,6 @@ function civihr_default_permissions_user_default_permissions() {
       'administrator' => 'administrator',
     ),
     'module' => 'filter',
-  );
-
-  // Exported permission: 'administer front page'.
-  $permissions['administer front page'] = array(
-    'name' => 'administer front page',
-    'roles' => array(
-      'administrator' => 'administrator',
-    ),
-    'module' => 'front_page',
   );
 
   // Exported permission: 'administer image styles'.

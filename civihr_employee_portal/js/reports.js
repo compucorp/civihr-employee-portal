@@ -585,6 +585,7 @@
       .controller('FiltersController', function() {
         this.format = 'dd/MM/yyyy';
         this.placeholderFormat = 'dd/MM/yyyy';
+        this.date = new Date();
         this.filtersCollapsed = true;
       })
       .controller('SettingsController', function() {
