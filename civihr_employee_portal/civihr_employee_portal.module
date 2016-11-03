@@ -7033,7 +7033,7 @@ function _user_redirection() {
     ) {
       $redirect_path = 'welcome-page';
     }
-  } else if ($current_path == 'civicrm') {
+  } else if ($current_path == 'civicrm' || $current_path == 'civicrm/dashboard') {
     $redirect_path = 'civicrm/tasksassignments/dashboard#/tasks';
   }
 
