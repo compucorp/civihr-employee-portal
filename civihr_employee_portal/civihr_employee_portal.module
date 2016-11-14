@@ -150,6 +150,151 @@ function _add_script_to_page($scriptFile, $page = NULL) {
 }
 
 /**
+ * Rebuilds appraisal view.
+ */
+function _rebuild_appraisal_view() {
+  $extensions = CRM_Core_PseudoConstant::getExtensions();
+  if (!empty($extensions['uk.co.compucorp.civicrm.appraisals'])) {
+    $civi_settings = parse_url(CIVICRM_DSN);
+    $civi_db_name = trim($civi_settings['path'], '/');
+
+    db_query('DROP VIEW IF EXISTS appraisal');
+    db_query("CREATE VIEW appraisal AS
+              SELECT a.id, a.contact_id, ac.cycle_type_id, ac.cycle_start_date, ac.cycle_end_date, a.status_id, a.manager_id, a.self_appraisal_due, a.manager_appraisal_due, a.grade_due, a.grade
+              FROM {$civi_db_name}.civicrm_appraisal a
+              LEFT JOIN {$civi_db_name}.civicrm_appraisal_cycle ac ON ac.id = a.appraisal_cycle_id
+              ORDER BY a.id ASC");
+
+    // Set to false so it will not rebuild until not asked to rebuild
+    variable_set('rebuild_appraisal_view', 'FALSE');
+  }
+}
+
+/**
+ * Rebuilds hrvacancy view.
+ */
+function _rebuild_hrvacancy_view() {
+  $extensions = CRM_Core_PseudoConstant::getExtensions();
+  if (!empty($extensions['org.civicrm.hrrecruitment'])) {
+    $civi_settings = parse_url(CIVICRM_DSN);
+    $civi_db_name = trim($civi_settings['path'], '/');
+
+    db_query('DROP VIEW IF EXISTS hrvacancy');
+    db_query("CREATE VIEW hrvacancy AS
+              SELECT id, start_date, end_date, status_id, description, position, salary, location
+              FROM {$civi_db_name}.civicrm_hrvacancy
+              WHERE status_id = 2");
+
+    // Set to false so it will not rebuild until not asked to rebuild
+    variable_set('rebuild_hrvacancy_view', 'FALSE');
+  }
+}
+
+/**
+ * Rebuilds Tasks view.
+ */
+function _rebuild_tasks_view() {
+  $extensions = CRM_Core_PseudoConstant::getExtensions();
+  if (!empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+    $activityTypes = _get_activity_type_ids_by_component('CiviTask');
+    if (!empty($activityTypes)) {
+      db_query('DROP VIEW IF EXISTS tasks');
+      db_query('CREATE VIEW tasks AS ' . _get_tasks_documents_sql_query($activityTypes));
+
+      // Set to false so it will not rebuild until not asked to rebuild
+      variable_set('rebuild_tasks_view', 'FALSE');
+    }
+  }
+}
+
+/**
+ * Rebuilds Documents view.
+ */
+function _rebuild_documents_view() {
+  $extensions = CRM_Core_PseudoConstant::getExtensions();
+  if (!empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
+    $activityTypes = _get_activity_type_ids_by_component('CiviDocument');
+    if (!empty($activityTypes)) {
+      db_query('DROP VIEW IF EXISTS documents');
+      db_query('CREATE VIEW documents AS ' . _get_tasks_documents_sql_query($activityTypes));
+
+      // Set to false so it will not rebuild until not asked to rebuild
+      variable_set('rebuild_documents_view', 'FALSE');
+    }
+  }
+}
+
+/**
+ * Return an array containg activity type IDs of given component.
+ *
+ * @param string $component
+ * @return array
+ * @throws API_Exception
+ */
+function _get_activity_type_ids_by_component($component) {
+  $civi_settings = parse_url(CIVICRM_DSN);
+  $civi_db_name = trim($civi_settings['path'], '/');
+  $typeIds = array();
+  $optionGroup = civicrm_api3('OptionGroup', 'get', array(
+    'sequential' => 1,
+    'name' => "activity_type",
+  ));
+
+  if (!isset($optionGroup['id'])) {
+    throw new API_Exception(ts("Cannot find OptionGroup with 'name' = 'activity_type'."));
+  }
+
+  $componentQuery = "SELECT * FROM {$civi_db_name}.civicrm_component WHERE name = %1";
+  $componentParams = array(
+    1 => array($component, 'String'),
+  );
+  $componentResult = CRM_Core_DAO::executeQuery($componentQuery, $componentParams);
+  if ($componentResult->fetch())
+  {
+    $componentId = $componentResult->id;
+    $result = civicrm_api3('OptionValue', 'get', array(
+      'sequential' => 0,
+      'option_group_id' => $optionGroup['id'],
+      'component_id' => $componentId,
+    ));
+    if (!empty($result['values'])) {
+      foreach ($result['values'] as $value) {
+        $typeIds[] = $value['value'];
+      }
+    }
+  }
+
+  return $typeIds;
+}
+
+/**
+ * Return a string containing SQL query to select Activity data required
+ * for create SQL View for Tasks / Documents.
+ * $activityTypes array should contain a set activity_type_id pointing to
+ * Task types or Document types.
+ *
+ * @param array $activityTypes
+ * @return string
+ */
+function _get_tasks_documents_sql_query(array $activityTypes) {
+  $civi_settings = parse_url(CIVICRM_DSN);
+  $civi_db_name = trim($civi_settings['path'], '/');
+  return "SELECT a.id, a.activity_type_id, a.subject, a.activity_date_time, acustom.expire_date, a.details, a.status_id, a.is_deleted, ca.case_id, COUNT(ef.id) AS file_count, acs.contact_id AS source_contact_id, contact_source.sort_name AS source_contact_name, act.contact_id AS target_contact_id, contact_target.sort_name AS target_contact_name, aca.contact_id AS assignee_contact_id, contact_assignee.sort_name AS assignee_contact_name
+            FROM {$civi_db_name}.civicrm_activity a
+            LEFT JOIN {$civi_db_name}.civicrm_value_activity_custom_fields_11 acustom ON acustom.entity_id = a.id
+            LEFT JOIN {$civi_db_name}.civicrm_case_activity ca ON ca.activity_id = a.id
+            LEFT JOIN {$civi_db_name}.civicrm_entity_file ef ON ef.entity_id = a.id AND ef.entity_table = 'civicrm_activity'
+            LEFT JOIN {$civi_db_name}.civicrm_activity_contact acs ON acs.activity_id = a.id AND acs.record_type_id = 2
+            LEFT JOIN {$civi_db_name}.civicrm_contact contact_source ON contact_source.id = acs.contact_id
+            LEFT JOIN {$civi_db_name}.civicrm_activity_contact act ON act.activity_id = a.id AND act.record_type_id = 3
+            LEFT JOIN {$civi_db_name}.civicrm_contact contact_target ON contact_target.id = act.contact_id
+            LEFT JOIN {$civi_db_name}.civicrm_activity_contact aca ON aca.activity_id = a.id AND aca.record_type_id = 1
+            LEFT JOIN {$civi_db_name}.civicrm_contact contact_assignee ON contact_assignee.id = aca.contact_id
+            WHERE a.is_deleted = 0 AND a.is_current_revision = 1 AND a.activity_type_id IN (" . implode(',', $activityTypes) . ")
+            GROUP BY a.id";
+}
+
+/**
  * Rebuilds the absence list view.
  */
 function _rebuild_absence_list_view() {
@@ -370,7 +515,7 @@ function civihr_employee_portal_init() {
     // Add our additional css libraries
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/custom.css");
     drupal_add_css(getModuleUrl('org.civicrm.bootstrapcivicrm') . 'css/bootstrap.css');
-    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweet-alert.css");
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweetalert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
 
     _add_script_to_page('/js/tasks.js', 'dashboard');
@@ -383,12 +528,16 @@ function civihr_employee_portal_init() {
       '/js/chart.min.js',
       '/lib/tablesorter/jquery.tablesorter.min.js',
       '/lib/tablesaw/tablesaw.js',
-      '/lib/sweetalert/sweet-alert.min.js'
+      '/lib/sweetalert/sweetalert.min.js'
     ]);
 
     _rebuild_view('absence_list');
     _rebuild_view('length_of_service');
     _rebuild_view('absence_activity');
+    _rebuild_view('hrvacancy');
+    _rebuild_view('appraisal');
+    _rebuild_view('tasks');
+    _rebuild_view('documents');
   }
 }
 
@@ -418,6 +567,12 @@ function _run_civihr_tasks() {
 
     // Set variable to TRUE so the mysql database views will be refreshed
     variable_set('rebuild_absence_list_view', 'TRUE');
+    variable_set('rebuild_length_of_service_view', 'TRUE');
+    variable_set('rebuild_absence_activity_view', 'TRUE');
+    variable_set('rebuild_appraisal_view', 'TRUE');
+    variable_set('rebuild_hrvacancy_view', 'TRUE');
+    variable_set('rebuild_tasks_view', 'TRUE');
+    variable_set('rebuild_documents_view', 'TRUE');
     variable_set('rebuild_hrjobcontract_entities_view', 'TRUE');
 
     watchdog('Rebuild view REQUEST', 'ABSENCE LIST MYSQL VIEW');
@@ -528,6 +683,10 @@ function civihr_employee_portal_permission() {
     'manage hrreports settings' => array(
       'title' => t('Manage HR Reports settings'),
       'description' => t('Availability to manage HR Reports settings'),
+    ),
+    'manage hrreports configuration' => array(
+      'title' => t('Manage HR Reports configuration'),
+      'description' => t('Availability to manage HR Reports configuration'),
     ),
   );
 }
@@ -686,8 +845,8 @@ function get_civihr_absence_types() {
     $absenceTypes = &drupal_static(__FUNCTION__);
 
     if (!isset($absenceTypes)) {
-
-        if ($cache = cache_get('civihr_absence_types')) {
+        $cache = cache_get('civihr_absence_types');
+        if (!empty($cache->data)) {
             $absenceTypes = $cache->data;
         }
         else {
@@ -844,14 +1003,20 @@ function get_task_statuses($status_id = NULL) {
     return $status_id_value;
 }
 
-function get_task_type($type_id = NULL) {
+/**
+ * Get value (a human-readable label) of given Activity type ID.
+ *
+ * @param int $type_id
+ * @return string
+ */
+function get_activity_type_value($type_id = NULL) {
 
-    $taskTypes = &drupal_static(__FUNCTION__);
+    $activityTypes = &drupal_static(__FUNCTION__);
 
-    if (!isset($taskTypes)) {
+    if (!isset($activityTypes)) {
 
-        if ($cache = cache_get('civihr_task_types')) {
-            $taskTypes = $cache->data;
+        if ($cache = cache_get('civihr_activity_types')) {
+            $activityTypes = $cache->data;
         }
         else {
             try {
@@ -859,7 +1024,7 @@ function get_task_type($type_id = NULL) {
                 civicrm_initialize();
 
                 // Task types array
-                $taskTypes = civicrm_api3('Activity', 'getoptions', array(
+                $activityTypes = civicrm_api3('Activity', 'getoptions', array(
                     'field' => "activity_type_id",
                 ));
             }
@@ -869,16 +1034,16 @@ function get_task_type($type_id = NULL) {
             }
 
             // Cache the task types for 5 minutes
-            cache_set('civihr_task_types', $taskTypes, 'cache', time() + 360);
+            cache_set('civihr_activity_types', $activityTypes, 'cache', time() + 360);
         }
     }
 
     if ($type_id === null) {
-        return $taskTypes['values'];
+        return $activityTypes['values'];
     }
 
     // Get the type values based on the type_id
-    $type_id_value = CRM_Utils_Array::value($type_id, $taskTypes['values']);
+    $type_id_value = CRM_Utils_Array::value($type_id, $activityTypes['values']);
 
     return $type_id_value;
 }
@@ -1284,27 +1449,6 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
-    $items['absence_entitlement_json'] = array(
-        'title' => 'Absence Entitlement',
-        'page callback' => 'civihr_employee_portal_get_absence_entitlement',
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['civihr_vacancies'] = array(
-        'title' => 'Vacancy list',
-        'page callback' => 'civihr_employee_portal_get_vacancy_list',
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['civi_documents'] = array(
-        'title' => 'Document list',
-        'page callback' => 'civihr_employee_portal_get_document_list',
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
     $items['civi_documents/ajax/change_document_status/%/%'] = array(
         'title' => 'Change Document Status',
         'page callback' => 'civihr_employee_portal_change_document_status',
@@ -1333,13 +1477,6 @@ function civihr_employee_portal_menu() {
         'title' => 'Send Reminder',
         'page callback' => 'civihr_employee_portal_send_reminder_document',
         'page arguments' => array(1, 3),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['civi_tasks'] = array(
-        'title' => 'Task list',
-        'page callback' => 'civihr_employee_portal_get_task_list',
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
@@ -1378,13 +1515,6 @@ function civihr_employee_portal_menu() {
     /**
      * Appraisals menu items.
      */
-    $items['appraisals_list'] = array(
-        'title' => 'View Appraisals',
-        'page callback' => 'civihr_employee_portal_get_appraisals_list',
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
     $items['hr-appraisals-manager/%ctools_js/upload/%'] = array(
         'title' => 'Appraisal Upload',
         'page callback' => 'civihr_employee_portal_appraisal_manager_upload',
@@ -1567,6 +1697,27 @@ function civihr_employee_portal_menu() {
         'access arguments' => array('manage hrreports settings'),
         'type' => MENU_CALLBACK,
     );
+    $items['reports/%/configuration/%'] = array(
+        'title' => 'Get Report configuration',
+        'page callback' => 'civihr_employee_portal_get_report_configuration_json',
+        'page arguments' => array(1, 3),
+        'access arguments' => array('access hrreports'),
+        'type' => MENU_CALLBACK,
+    );
+    $items['reports/%/configuration/%/save'] = array(
+        'title' => 'Save Report configuration',
+        'page callback' => 'civihr_employee_portal_save_report_configuration_json',
+        'page arguments' => array(1, 3),
+        'access arguments' => array('manage hrreports configuration'),
+        'type' => MENU_CALLBACK,
+    );
+    $items['reports/%/configuration/%/delete'] = array(
+        'title' => 'Delete Report configuration',
+        'page callback' => 'civihr_employee_portal_delete_report_configuration_json',
+        'page arguments' => array(1, 3),
+        'access arguments' => array('manage hrreports configuration'),
+        'type' => MENU_CALLBACK,
+    );
 
     return $items;
 }
@@ -1711,6 +1862,16 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
         return '' . l("<span>$link_text</span>", 'absence_calendar/nojs/show',
             array(
                 'attributes' => array('class' => "chr_action--icon--calendar ctools-use-modal ctools-modal-civihr-default-style $class"),
+                'html' => true
+            )
+        ) . '';
+    }
+
+    if ($link_type == 'leave_report') {
+        return '' . l("<span>$link_text</span>", 'print-leave-report/',
+            array(
+                'query' => array('absence_start_date_period_filter' => $nid),
+                'attributes' => array('class' => "chr_action--icon--print $class", 'target'=>'_blank'),
                 'html' => true
             )
         ) . '';
@@ -2454,88 +2615,6 @@ function civihr_employee_portal_absence_request_form_submit($form, &$form_state)
 }
 
 /**
- * Returns the entitlements from CiviCRM in json format
- * The json response will be cached in local file when the VIEWS requests to load data from this endpoint
- */
-function civihr_employee_portal_get_absence_entitlement() {
-
-    watchdog('not cached entitlement list', 'test');
-
-    // Build the query
-    $query = db_select('civicrm_hrabsence_entitlement', 'che')
-        ->fields('che', array('contact_id', 'period_id'))
-        ->fields('cufm', array('uf_id'))
-        ->orderBy('che.contact_id');
-
-    $query->join('civicrm_uf_match', 'cufm', 'cufm.contact_id = che.contact_id');
-
-    // Add the group by
-    $query->groupBy('che.contact_id, che.period_id');
-
-    // Add the concat
-    $query->addExpression("CONCAT_WS('||', GROUP_CONCAT(amount SEPARATOR '@@'), GROUP_CONCAT(type_id SEPARATOR '@@'))", "entitlement_type");
-
-    $result = $query->execute();
-
-    // Loop and prepare the array
-    while($record = $result->fetchAssoc()) {
-        $result_output['data'][] = $record;
-    }
-
-    // Output json
-    drupal_json_output($result_output);
-    drupal_exit();
-}
-
-/**
- * Returns the vacancy list from CiviCRM in json format
- * The json response will be cached in local file when the VIEWS requests to load data from this endpoint
- */
-function civihr_employee_portal_get_vacancy_list() {
-
-    watchdog('not cached vacancy list', 'test');
-
-    $result_output = civicrm_api3('HRVacancy', 'get', array(
-        'sequential' => 1,
-        'status_id' => 2, // Only open Vacancies
-        'return' => "id,start_date,end_date,status_id,description,position,salary,location",
-    ));
-
-    $result_output['values'] = civihr_employee_portal_convert_array_option_value(
-      'hrjc_location',
-      'location',
-      $result_output['values']
-    );
-
-    // Output json
-    drupal_json_output($result_output);
-    drupal_exit();
-
-}
-
-/**
- * Returns the document list
- */
-function civihr_employee_portal_get_document_list() {
-
-    $result_output = array(
-        'values' => array(),
-    );
-    $extensions = CRM_Core_PseudoConstant::getExtensions();
-    if (!empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
-        $result_output = civicrm_api3('Document', 'get', array(
-            'sequential' => 1,
-            'is_deleted' => 0,
-            'return' => "id,activity_type_id,activity_subject,activity_date_time,expire_date,activity_details,activity_status_id,activity_is_deleted,case_id,file_count,source_contact_id,target_contact_id,assignee_contact_id",
-        ));
-    }
-
-    // Output json
-    drupal_json_output($result_output);
-    drupal_exit();
-}
-
-/**
  * Ajax menu callback for dashboard document status change.
  *
  * @param int $document_id
@@ -3130,30 +3209,6 @@ function civihr_employee_portal_document_form_send_reminder_submit($form, &$form
  */
 
 /**
- * Returns the document list
- */
-function civihr_employee_portal_get_task_list() {
-
-    $result_output = array(
-        'values' => array(),
-    );
-    $extensions = CRM_Core_PseudoConstant::getExtensions();
-    if (!empty($extensions['uk.co.compucorp.civicrm.tasksassignments'])) {
-        $result_output = civicrm_api3('Task', 'get', array(
-            'sequential' => 1,
-            'is_deleted' => 0,
-            'is_current_revision' => 1,
-            'return' => "id,activity_type_id,activity_subject,activity_date_time,expire_date,activity_details,activity_status_id,activity_is_deleted,case_id,file_count,source_contact_id,target_contact_id,assignee_contact_id",
-            'options' => array('limit' => 0),
-        ));
-    }
-
-    // Output json
-    drupal_json_output($result_output);
-    drupal_exit();
-}
-
-/**
  * Show all completed Tasks in modal window and not seperate page
  * @param $ajax
  */
@@ -3640,32 +3695,6 @@ function _task_can_be_edited($taskId = null) {
     }
 
     return $result;
-}
-
-
-/**
- * Returns the JSON containing Appraisals list
- */
-function civihr_employee_portal_get_appraisals_list() {
-
-    $result_output = array(
-        'values' => array(),
-    );
-    $extensions = CRM_Core_PseudoConstant::getExtensions();
-    if (!empty($extensions['uk.co.compucorp.civicrm.appraisals'])) {
-        $result_output = civicrm_api3('Appraisal', 'get', array(
-            'sequential' => 1,
-            //'is_deleted' => 0,
-            'is_current' => 1,
-            'api.AppraisalCycle.getsingle' => array('id' => "\$value.appraisal_cycle_id"),
-            'return' => "id,appraisal_cycle_id,contact_id,manager_id,self_appraisal_due,manager_appraisal_due,grade_due,due_changed,meeting_date,meeting_completed,approved_by_employee,grade,notes,status_id,original_id,created_date,is_current",
-            'options' => array('limit' => 0),
-        ));
-    }
-
-    // Output json
-    drupal_json_output($result_output);
-    drupal_exit();
 }
 
 /**
@@ -4531,6 +4560,11 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'not null' => TRUE,
         'description' => 'Absence activity (Is Credit type?)',
     );
+    $schema['absence_list']['fields']['absence_status'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Absence status',
+    );
     $schema['absence_list']['fields']['absence_start_date'] = array(
         'type' => 'varchar',
         'mysql_type' => 'DATETIME',
@@ -4757,6 +4791,298 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'not null' => FALSE,
         'description' => 'Length of Service.',
     );
+
+    // appraisal view:
+    $schema['appraisal']['description'] = 'Views data representation of CiviHR Appraisal';
+    $schema['appraisal']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'Appraisal ID',
+    );
+    $schema['appraisal']['fields']['contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Contact ID',
+    );
+    $schema['appraisal']['fields']['cycle_type_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Cycle type ID',
+    );
+    $schema['appraisal']['fields']['cycle_start_date'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Cycle start date',
+    );
+    $schema['appraisal']['fields']['cycle_end_date'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Cycle end date',
+    );
+    $schema['appraisal']['fields']['status_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Status ID',
+    );
+    $schema['appraisal']['fields']['manager_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Manager ID',
+    );
+    $schema['appraisal']['fields']['self_appraisal_due'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Self appraisal due date',
+    );
+    $schema['appraisal']['fields']['manager_appraisal_due'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Manager appraisal due date',
+    );
+    $schema['appraisal']['fields']['grade_due'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Grade due date',
+    );
+    $schema['appraisal']['fields']['grade'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Grade',
+    );
+
+    // hrvacancy view:
+    $schema['hrvacancy']['description'] = 'Views data representation of HRVacancy';
+    $schema['hrvacancy']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'Vacancy ID',
+    );
+    $schema['hrvacancy']['fields']['start_date'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => FALSE,
+        'description' => 'Vacancy start date',
+    );
+    $schema['hrvacancy']['fields']['end_date'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => FALSE,
+        'description' => 'Vacancy end date',
+    );
+    $schema['hrvacancy']['fields']['status_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Vacancy status ID',
+    );
+    $schema['hrvacancy']['fields']['description'] = array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'Vacancy description',
+    );
+    $schema['hrvacancy']['fields']['position'] = array(
+        'type' => 'varchar',
+        'length' => 127,
+        'not null' => TRUE,
+        'description' => 'Vacancy position',
+    );
+    $schema['hrvacancy']['fields']['salary'] = array(
+        'type' => 'varchar',
+        'length' => 127,
+        'not null' => TRUE,
+        'description' => 'Vacancy salary',
+    );
+    $schema['hrvacancy']['fields']['location'] = array(
+        'type' => 'varchar',
+        'length' => 254,
+        'not null' => TRUE,
+        'description' => 'Vacancy location',
+    );
+
+    // tasks view:
+    $schema['tasks']['description'] = 'Views data representation of CiviHR Tasks';
+    $schema['tasks']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'Task ID',
+    );
+    $schema['tasks']['fields']['activity_type_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Activity type ID',
+    );
+    $schema['tasks']['fields']['case_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Case ID',
+    );
+    $schema['tasks']['fields']['subject'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Task subject',
+    );
+    $schema['tasks']['fields']['activity_date_time'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Task start date',
+    );
+    $schema['tasks']['fields']['details'] = array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'Task details',
+    );
+    $schema['tasks']['fields']['status_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Task status ID',
+    );
+    $schema['tasks']['fields']['is_deleted'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Is Task deleted?',
+    );
+    $schema['tasks']['fields']['source_contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Source Contact ID',
+    );
+    $schema['tasks']['fields']['source_contact_name'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Source Contact name',
+    );
+    $schema['tasks']['fields']['target_contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Target Contact ID',
+    );
+    $schema['tasks']['fields']['target_contact_name'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Target Contact name',
+    );
+    $schema['tasks']['fields']['assignee_contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Assignee Contact ID',
+    );
+    $schema['tasks']['fields']['assignee_contact_name'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Assignee Contact name',
+    );
+
+    // documents view:
+    $schema['documents']['description'] = 'Views data representation of CiviHR Documents';
+    $schema['documents']['fields']['id'] = array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'Document ID',
+    );
+    $schema['documents']['fields']['activity_type_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Activity type ID',
+    );
+    $schema['documents']['fields']['case_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Case ID',
+    );
+    $schema['documents']['fields']['subject'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Document subject',
+    );
+    $schema['documents']['fields']['activity_date_time'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Document start date',
+    );
+    $schema['documents']['fields']['expire_date'] = array(
+        'type' => 'varchar',
+        'length' => 10,
+        'mysql_type' => 'DATE',
+        'not null' => TRUE,
+        'description' => 'Document end date',
+    );
+    $schema['documents']['fields']['details'] = array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'Document details',
+    );
+    $schema['documents']['fields']['file_count'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Document file count',
+    );
+    $schema['documents']['fields']['status_id'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Document status ID',
+    );
+    $schema['documents']['fields']['is_deleted'] = array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Is Document deleted?',
+    );
+    $schema['documents']['fields']['source_contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Source Contact ID',
+    );
+    $schema['documents']['fields']['source_contact_name'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Source Contact name',
+    );
+    $schema['documents']['fields']['target_contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Target Contact ID',
+    );
+    $schema['documents']['fields']['target_contact_name'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Target Contact name',
+    );
+    $schema['documents']['fields']['assignee_contact_id'] = array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'Assignee Contact ID',
+    );
+    $schema['documents']['fields']['assignee_contact_name'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Assignee Contact name',
+    );
 }
 
 /**
@@ -4848,6 +5174,88 @@ function civihr_employee_portal_entity_info() {
         'label callback' => 'entity_class_label',
         'uri callback' => 'entity_class_uri',
         // Entity API needs to know about your module for the views integration to work
+        'module' => 'civihr_employee_portal',
+    );
+
+    // appraisal entity:
+    $info['civihr_appraisal'] = array(
+        'label' => t('Appraisal entity'),
+        'plural label' => t('Appraisal entity'),
+        'description' => t('Appraisal entity definition.'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'appraisal',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Entity Appraisal ID'
+        ),
+        'bundles' => array(),
+        // Use the default label() and uri() functions
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        // Entity API needs to know about your module for the views integration to work
+        'module' => 'civihr_employee_portal',
+    );
+
+    // hrvacancy entity:
+    $info['civihr_hrvacancy'] = array(
+        'label' => t('HRVacancy entity'),
+        'plural label' => t('HRVacancy entity'),
+        'description' => t('HRVacancy'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'hrvacancy',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Vacancy ID',
+        ),
+        'bundles' => array(),
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        'module' => 'civihr_employee_portal',
+    );
+
+    // task entity:
+    $info['civihr_task'] = array(
+        'label' => t('Task entity'),
+        'plural label' => t('Task entity'),
+        'description' => t('Task'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'tasks',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Task ID',
+        ),
+        'bundles' => array(),
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
+        'module' => 'civihr_employee_portal',
+    );
+
+    // document entity:
+    $info['civihr_document'] = array(
+        'label' => t('Document entity'),
+        'plural label' => t('Document entity'),
+        'description' => t('Document'),
+        'entity class' => 'Entity',
+        'controller class' => 'EntityAPIController',
+        'views controller class' => 'EntityDefaultViewsController',
+        'base table' => 'documents',
+        'fieldable' => TRUE,
+        'entity keys' => array(
+            'id' => 'id',
+            'label' => 'Document ID',
+        ),
+        'bundles' => array(),
+        'label callback' => 'entity_class_label',
+        'uri callback' => 'entity_class_uri',
         'module' => 'civihr_employee_portal',
     );
 
@@ -5326,6 +5734,16 @@ function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
     }
 }
 
+/**
+ * Implements hook_user_login
+ */
+function civihr_employee_portal_user_login(&$edit, $account) {
+  global $base_url;
+  if (!isset($_POST['form_id']) || $_POST['form_id'] != 'user_pass_reset') {
+    $_GET['destination'] = user_access('access CiviCRM') ?  'civicrm/tasksassignments/dashboard#/tasks' : 'dashboard';
+  }
+}
+
 function webform_client_form_ajax_callback($form, &$form_state) {
 
     if (form_get_errors()) {
@@ -5763,6 +6181,8 @@ function civihr_employee_portal_hrreport_custom($reportName) {
   if (!$view) {
     return drupal_not_found();
   }
+  ctools_include('modal');
+  ctools_modal_add_js();
   _civihr_employee_portal_add_report_scripts();
   $table = civihr_employee_portal_hrreport_gettable($reportName);
   $exportPaths = _civihr_employee_portal_get_view_csv_export_paths($view);
@@ -5780,7 +6200,8 @@ function civihr_employee_portal_hrreport_custom($reportName) {
 
   return theme('civihr_employee_portal_civihr_report_custom',
     array(
-      'report_name' => $reportName,
+      'reportName' => $reportName,
+      'configurationList' => civihr_employee_portal_get_report_configuration_list($reportName),
       'table' => $table,
       'tableUrl' => !empty($table) ? '/reports/' . $reportName . '/table' : null,
       'jsonUrl' => '/reports/' . $reportName . '/json',
@@ -5933,11 +6354,10 @@ function setInputDatepickerForm($title) {
       '#description' => getCalendarButtonMarkup($idxKey),
       '#date_label_position' => 'within',
       '#attributes' => array(
-          'ng-init' => "$idxKey = false",
+          'ng-init' => "$idxKey = false; filters.dt$idxKey=filters.date",
           'placeholder' => '{{filters.placeholderFormat}}',
           'uib-datepicker-popup' => '{{filters.format}}',
           'close-text' => 'Close',
-          'date-input' => '',
           'ng-model' => "filters.dt$idxKey",
           'is-open' => "filters.$idxKey",
           'ng-click' => "filters.$idxKey = !filters.$idxKey"
@@ -6247,6 +6667,9 @@ function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$obje
             _clear_json_cache();
         }
     }
+    if ($objectName === 'HRAbsenceType') {
+      cache_set('civihr_absence_types', NULL);
+    }
 }
 
 /**
@@ -6261,6 +6684,27 @@ function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$obje
  */
 function civihr_employee_portal_is_sick_absence($absenceName) {
   return preg_match('/^sick/i', $absenceName);
+}
+
+/**
+ * Return an ID of 'sick' Absence Type or NULL if 'sick' type is not found.
+ * 
+ * @return int|NULL
+ */
+function civihr_employee_portal_get_absence_sick_type_id() {
+  $sickId = null;
+
+  try {
+    $result = civicrm_api3('HRAbsenceType', 'getsingle', array(
+      'name' => 'sick',
+      'return' => array('id'),
+    ));
+    $sickId = $result['id'];
+  } catch (Exception $e) {
+    return NULL;
+  }
+
+  return $sickId;
 }
 
 /**
@@ -6421,24 +6865,46 @@ function _is_hrreports_data_table_view($viewName) {
 }
 
 /**
- * Return an array containing string values for given Contacts IDs.
- * Used in Tasks block template for create Contact javascript filter.
+ * Return Appraisal Employee filter type used on Appraisal Manager template.
  *
- * @param array $contactsIds
- * @return array
+ * @param int $status
+ * @param string $selfAppraisalDue
+ * @param string $managerAppraisalDue
+ * @param string $gradeDue
+ * @return int
  */
-function _get_contacts_filter_values(array $contactsIds) {
-    $result = array();
-    if (!empty($contactsIds)) {
-        $contactsResult = civicrm_api3('Contact', 'get', array(
-          'id' => array('IN' => array_keys($contactsIds)),
-          'return' => "sort_name",
-        ));
-        foreach ($contactsResult['values'] as $key => $value) {
-            $result[$key] = $value['sort_name'];
-        }
+function _get_appraisal_employee_filter_type($status, $selfAppraisalDue, $managerAppraisalDue, $gradeDue) {
+  $today = date('Y-m-d');
+  if ($gradeDue < $today) {
+    return 2;
+  }
+  return 1;
+}
+
+/**
+ * Return Appraisal Manager filter type used on Appraisal Manager template.
+ *
+ * @param int $status
+ * @param string $selfAppraisalDue
+ * @param string $managerAppraisalDue
+ * @param string $gradeDue
+ * @return int
+ */
+function _get_appraisal_manager_filter_type($status, $selfAppraisalDue, $managerAppraisalDue, $gradeDue) {
+    $today = date('Y-m-d');
+    if ($status === 5) {
+        return 3;
     }
-    return $result;
+    if ($status === 1 && $selfAppraisalDue < $today) {
+        return 1;
+    }
+    if ($status === 2 && $managerAppraisalDue < $today) {
+        return 1;
+    }
+    if ($status === 3 && $gradeDue < $today) {
+        return 1;
+    }
+    return 2;
 }
 
 /**
@@ -6480,26 +6946,14 @@ function _get_task_filter_by_date($date, $normalize = false) {
 }
 
 /**
- * Check if given field is one of Task contacts fields.
- * Used in Tasks block template.
- *
- * @param string $field
- * @return bool
- */
-function _is_field_task_contact($field) {
-   return $field == 'task_contacts' || $field == 'task_contacts_1' || $field == 'task_contacts_2';
-}
-
-/**
  * Implements hook_boot()
  */
 function civihr_employee_portal_boot() {
-  _block_anonymous_access();
+  _user_redirection();
 }
 
 /**
- * This method redirect any request made by an anonymous
- * user to the welcome-page.
+ * This method handle user redirection for special use cases
  *
  * The redirection is made by manually setting the Location header,
  * and it checks the current_path using the request_path() function,
@@ -6507,7 +6961,7 @@ function civihr_employee_portal_boot() {
  * is called, only a limited set of functions is available, and things like
  * drupal_goto() and current_path() cannot be used).
  */
-function _block_anonymous_access() {
+function _user_redirection() {
   global $user, $base_url;
 
   // This function should only be executed in a
@@ -6529,18 +6983,21 @@ function _block_anonymous_access() {
     // This is the URL for the modal that is displayed when the user
     // clicks on "Click here to request one from your HR administrator"
     'request_new_account/ajax',
-    // The paths below are all JSON files for views
-    // Since the views module can't log in to the SSP, they need to
-    // be public
-    'absence_entitlement_json',
-    'appraisals_list',
-    'civi_documents',
-    'civihr_vacancies',
-    'civi_tasks'
   ];
 
-  if ($user_is_anonymous && !in_array($current_path, $allowed_paths)) {
-    drupal_add_http_header('Location', "$base_url/welcome-page");
+  if ($user_is_anonymous) {
+    if (
+    (!in_array($current_path, $allowed_paths) && substr($current_path, 0, 4) !== 'user') ||
+    $current_path == 'user/register'
+    ) {
+      $redirect_path = 'welcome-page';
+    }
+  } else if ($current_path == 'civicrm' || $current_path == 'civicrm/dashboard') {
+    $redirect_path = 'civicrm/tasksassignments/dashboard#/tasks';
+  }
+
+  if (!empty($redirect_path)) {
+    drupal_add_http_header('Location', "$base_url/{$redirect_path}");
     exit();
   }
 }
@@ -6580,4 +7037,147 @@ function civihr_employee_portal_convert_array_option_value($optionGroup, $fieldN
   }
 
   return $data;
+}
+
+/**
+ * Get an array containing existing configuration labels for specified Report.
+ *
+ * @param string $reportName
+ * @return array
+ */
+function civihr_employee_portal_get_report_configuration_list($reportName) {
+  $list = array();
+  $result = db_select('reports_configuration', 'rc')
+    ->fields('rc', array('id', 'label'))
+    ->condition('report_name', $reportName)
+    ->orderBy('label')
+    ->execute();
+  while ($row = $result->fetchAssoc()) {
+    $list[$row['id']] = $row['label'];
+  }
+  return $list;
+}
+
+/**
+ * Print JSON encoded array with Report configuration for given Report name and ID.
+ *
+ * @param string $reportName
+ * @param int $configId
+ */
+function civihr_employee_portal_get_report_configuration_json($reportName, $configId) {
+  if (empty($reportName) || empty($configId)) {
+    print drupal_json_output(array('status' => 'error'));
+    drupal_exit();
+  }
+  $result = db_select('reports_configuration', 'rc')
+    ->fields('rc', array('json_config'))
+    ->condition('id', (int)$configId)
+    ->condition('report_name', $reportName)
+    ->range(0, 1)
+    ->execute();
+  if ($row = $result->fetchAssoc()) {
+    print drupal_json_output(
+      array(
+        'config' => json_decode($row['json_config']),
+        'status' => 'success',
+      )
+    );
+  } else {
+    print drupal_json_output(array('status' => 'error'));
+  }
+
+  drupal_exit();
+}
+
+/**
+ * Save Report configuration in database.
+ *
+ * @param string $reportName
+ * @param int $configId
+ */
+function civihr_employee_portal_save_report_configuration_json($reportName, $configId) {
+  $jsonConfig = json_encode($_POST['json_config']);
+  if ((empty($configId) && empty($_POST['label'])) || !$jsonConfig) {
+    print drupal_json_output(array('status' => 'error'));
+    drupal_exit();
+  }
+  $label = $_POST['label'];
+  $responseData = array(
+    'status' => 'success',
+  );
+  try {
+    if (!empty($configId)) {
+      $result = db_update('reports_configuration')
+        ->condition('report_name', $reportName)
+        ->condition('id', (int)$configId)
+        ->fields(array(
+          'json_config' => $jsonConfig,
+        ))
+        ->execute();
+    } else {
+      $result = db_select('reports_configuration', 'rc')
+        ->fields('rc', array('id'))
+        ->condition('report_name', $reportName)
+        ->condition('label', $label)
+        ->range(0, 1)
+        ->execute();
+      if ($row = $result->fetchAssoc()) {
+        $responseData = array(
+          'status' => 'already_exists',
+          'id' => $row['id'],
+        );
+        print drupal_json_output($responseData);
+        drupal_exit();
+      }
+      $result = db_insert('reports_configuration')
+        ->fields(array(
+          'report_name' => $reportName,
+          'label' => $label,
+          'json_config' => $jsonConfig,
+        ))
+      ->execute();
+      $responseData['id'] = $result;
+      $responseData['label'] = $label;
+    }
+  } catch (Exception $e) {
+    $responseData = array(
+      'status' => 'error',
+    );
+  }
+  print drupal_json_output($responseData);
+  drupal_exit();
+}
+
+/**
+ * Delete Report configuration from database.
+ *
+ * @param string $reportName
+ * @param int $configId
+ */
+function civihr_employee_portal_delete_report_configuration_json($reportName, $configId) {
+  if (!empty($reportName) && empty(!$configId)) {
+    $result = db_delete('reports_configuration')
+      ->condition('report_name', $reportName)
+      ->condition('id', (int)$configId)
+      ->execute();
+    if ($result) {
+      print drupal_json_output(array('status' => 'success'));
+      drupal_exit();
+    }
+  }
+  print drupal_json_output(array('status' => 'error'));
+  drupal_exit();
+}
+
+/**
+ * Implements hook_html_head_alter().
+ * Changes the favicon for both the SSP and CiviHR admin
+ */
+function civihr_employee_portal_html_head_alter(&$head_elements) {
+  global $base_url;
+
+  $default_favicon_element = 'drupal_add_html_head_link:shortcut icon:' . $base_url . '/misc/favicon.ico';
+  $icoPath = drupal_get_path('module', 'civihr_employee_portal') . "/images/favicon.ico";
+
+  $head_elements[$default_favicon_element]['#attributes']['href'] = "{$base_url}/{$icoPath}";
 }

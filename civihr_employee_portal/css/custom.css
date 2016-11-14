@@ -12,6 +12,10 @@ and open the template in the editor.
     width: 15%;
 }
 
+.view-absence-list > .view-content {
+    margin: 0 -20px;
+}
+
 .table-editable {
     width: auto;
     position: relative;
@@ -144,3 +148,14 @@ span.appraisals-employee-legend {
 
 .datepicker-popup td,
 .datepicker-popup th { padding: 0; }
+
+#reportPivotTableConfiguration {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 10px;
+  margin-top: 12px;
+}
+#reportPivotTableConfiguration .form-item {
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: 10px;
+}

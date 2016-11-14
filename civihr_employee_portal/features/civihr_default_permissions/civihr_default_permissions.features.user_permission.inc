@@ -40,6 +40,15 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civicrm',
   );
 
+  // Exported permission: 'access CiviReport'.
+  $permissions['access CiviReport'] = array(
+    'name' => 'access CiviReport',
+    'roles' => array(
+      'civihr_admin' => 'civihr_admin',
+    ),
+    'module' => 'civicrm',
+  );
+
   // Exported permission: 'access Contact Dashboard'.
   $permissions['access Contact Dashboard'] = array(
     'name' => 'access Contact Dashboard',
@@ -64,6 +73,13 @@ function civihr_default_permissions_user_default_permissions() {
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
     ),
+    'module' => 'civicrm',
+  );
+
+  // Exported permission: 'access Report Criteria'.
+  $permissions['access Report Criteria'] = array(
+    'name' => 'access Report Criteria',
+    'roles' => array(),
     'module' => 'civicrm',
   );
 
@@ -227,7 +243,11 @@ function civihr_default_permissions_user_default_permissions() {
   // Exported permission: 'access manager approval screen'.
   $permissions['access manager approval screen'] = array(
     'name' => 'access manager approval screen',
-    'roles' => array(),
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+    ),
     'module' => 'civihr_employee_portal',
   );
 
@@ -294,6 +314,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access site in maintenance mode',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'system',
   );
@@ -395,6 +416,15 @@ function civihr_default_permissions_user_default_permissions() {
   // Exported permission: 'administer CiviCase'.
   $permissions['administer CiviCase'] = array(
     'name' => 'administer CiviCase',
+    'roles' => array(
+      'civihr_admin' => 'civihr_admin',
+    ),
+    'module' => 'civicrm',
+  );
+
+  // Exported permission: 'administer Reports'.
+  $permissions['administer Reports'] = array(
+    'name' => 'administer Reports',
     'roles' => array(
       'civihr_admin' => 'civihr_admin',
     ),
@@ -512,15 +542,6 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'filter',
   );
 
-  // Exported permission: 'administer front page'.
-  $permissions['administer front page'] = array(
-    'name' => 'administer front page',
-    'roles' => array(
-      'administrator' => 'administrator',
-    ),
-    'module' => 'front_page',
-  );
-
   // Exported permission: 'administer image styles'.
   $permissions['administer image styles'] = array(
     'name' => 'administer image styles',
@@ -627,6 +648,13 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'user',
   );
 
+  // Exported permission: 'administer private reports'.
+  $permissions['administer private reports'] = array(
+    'name' => 'administer private reports',
+    'roles' => array(),
+    'module' => 'civicrm',
+  );
+
   // Exported permission: 'administer reserved groups'.
   $permissions['administer reserved groups'] = array(
     'name' => 'administer reserved groups',
@@ -634,6 +662,13 @@ function civihr_default_permissions_user_default_permissions() {
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
     ),
+    'module' => 'civicrm',
+  );
+
+  // Exported permission: 'administer reserved reports'.
+  $permissions['administer reserved reports'] = array(
+    'name' => 'administer reserved reports',
+    'roles' => array(),
     'module' => 'civicrm',
   );
 
@@ -1566,6 +1601,16 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'features',
   );
 
+  // Exported permission: 'manage hrreports configuration'.
+  $permissions['manage hrreports configuration'] = array(
+    'name' => 'manage hrreports configuration',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+    ),
+    'module' => 'civihr_employee_portal',
+  );
+
   // Exported permission: 'manage hrreports settings'.
   $permissions['manage hrreports settings'] = array(
     'name' => 'manage hrreports settings',
@@ -2040,6 +2085,13 @@ function civihr_default_permissions_user_default_permissions() {
       'administrator' => 'administrator',
     ),
     'module' => 'panels',
+  );
+
+  // Exported permission: 'view report sql'.
+  $permissions['view report sql'] = array(
+    'name' => 'view report sql',
+    'roles' => array(),
+    'module' => 'civicrm',
   );
 
   // Exported permission: 'view revisions'.

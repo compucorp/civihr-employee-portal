@@ -230,16 +230,16 @@ function civihr_hrjobcontract_entities_init() {
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON t.job_contract_id = c.id
 
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_region ON og_region.name = 'hrjc_region'
-                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_region ON og_region.id = ov_region.option_group_id AND ov_region.id = t.region
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_region ON og_region.id = ov_region.option_group_id AND ov_region.value = t.region
 
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_department ON og_department.name = 'hrjc_department'
                     LEFT JOIN {$civi_db_name}.civicrm_option_value ov_department ON og_department.id = ov_department.option_group_id AND ov_department.value = t.department
 
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_level_type ON og_level_type.name = 'hrjc_level_type'
-                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_level_type ON og_level_type.id = ov_level_type.option_group_id AND ov_level_type.id = t.level_type
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_level_type ON og_level_type.id = ov_level_type.option_group_id AND ov_level_type.value = t.level_type
 
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_location ON og_location.name = 'hrjc_location'
-                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_location ON og_location.id = ov_location.option_group_id AND ov_location.id = t.location
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_location ON og_location.id = ov_location.option_group_id AND ov_location.value = t.location
 
                     WHERE c.deleted = 0
                     ORDER BY t.job_contract_id");
