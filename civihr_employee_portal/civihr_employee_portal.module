@@ -6247,12 +6247,73 @@ function civihr_employee_portal_hrreport_custom($reportName) {
   );
 }
 
+/**
+ * Render a JSON structure containing data for specified report name.
+ *
+ * @param string $reportName
+ *
+ * @return string
+ */
 function civihr_employee_portal_hrreport_get_json($reportName) {
+  $params = drupal_get_query_parameters();
   $view = views_get_view('civihr_report_' . $reportName);
+  $view->exposed_input = civihr_employee_portal_hrreport_get_exposed_filter_default_values($view, $params);
   $view->set_display('page');
   $view->execute();
   $view->style_plugin->options['using_views_api_mode'] = FALSE;
   return $view->render('page');
+}
+
+/**
+ * Return an array with mapped default exposed filter values for given view
+ * and parameters. Used to map date filter default values if they are not specified
+ * in request.
+ *
+ * @param object $view
+ * @param array $params
+ *
+ * @return array
+ */
+function civihr_employee_portal_hrreport_get_exposed_filter_default_values($view, array $params) {
+  if (empty($view->display['default']->display_options['filters']['date_filter'])) {
+    return $params;
+  }
+
+  $dateFilter = $view->display['default']->display_options['filters']['date_filter'];
+  if (!empty($dateFilter['expose']['identifier'])) {
+    $identifier = $dateFilter['expose']['identifier'];
+
+    $params[$identifier]['min'] = civihr_employee_portal_get_date_filter_default_value($params, $dateFilter, 'default_date', $identifier, 'min');
+    $params[$identifier]['max'] = civihr_employee_portal_get_date_filter_default_value($params, $dateFilter, 'default_to_date', $identifier, 'max');
+  }
+
+  return $params;
+}
+
+/**
+ * Return a date filter default value from View filter settings
+ * if it's not specified in the parameters.
+ *
+ * @param array $params
+ * @param string $dateFilter
+ * @param string $dateFilterKey
+ * @param string $identifier
+ * @param string $identifierKey
+ *
+ * @return string
+ */
+function civihr_employee_portal_get_date_filter_default_value(array $params, $dateFilter, $dateFilterKey, $identifier, $identifierKey) {
+  if (empty($params[$identifier][$identifierKey])) {
+    $defaultDate = !empty($dateFilter[$dateFilterKey]) ? $dateFilter[$dateFilterKey] : null;
+
+    if ($defaultDate) {
+      $date = new DateTime();
+      $date->modify($defaultDate);
+      $params[$identifier][$identifierKey] = $date->format('Y-m-d');
+    }
+  }
+
+  return $params[$identifier][$identifierKey];
 }
 
 function civihr_employee_portal_hrreport_custom_printtable($reportName, $dateFilterValue = null) {
