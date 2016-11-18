@@ -1625,6 +1625,13 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
+    $items['manager_approval/ajax/quick_approval'] = array(
+      'page callback' => 'civihr_employee_portal_manager_approval_quick_approval',
+      'page arguments' => array(1, 2, 3, 4, 5),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+    );
+
     $items['manager_approval/%ctools_js/calendar/show'] = array(
         'page callback' => 'civihr_employee_portal_manager_approval_show_calendar_callback',
         'page arguments' => array(1),
@@ -2167,6 +2174,127 @@ function civihr_employee_portal_manager_approval_pick_days_callback($ajax, $acti
         return drupal_get_form('civihr_employee_portal_manager_approval_pick_days_form');
     }
 
+}
+
+/**
+ * Function that processes approvals and rejections made by manager from the quick absence approval widget button
+ *
+ * @param int $ajax
+ *   boolean value, 1 if it is an ajax call
+ * @param string $action
+ *   should always be "quick_approval"
+ * @param int $activity_id
+ *   Activity ID that identifies the absence to be processed
+ * @param int $status
+ *   ID of status that should be set to main absence and each absence per day (2: Accepted, 9: Rejected)
+ * @param string $type
+ *   Staus type that is to be set, either "accept" or "reject"
+ */
+function civihr_employee_portal_manager_approval_quick_approval($ajax, $action, $activity_id, $status, $type) {
+  // Civi init
+  civicrm_initialize();
+
+  try {
+    // Load main activity leave
+    $main_activity = civicrm_api3('Activity', 'get', ['sequential' => 1, 'id' => $activity_id])['values'][0];
+
+    // Get activities for each day of leave
+    $absenceTypeValue = civicrm_api3('OptionValue', 'get', [
+      'sequential' => 1,
+      'return' => array("value"),
+      'option_group_id' => "activity_type",
+      'name' => "Absence",
+      'options' => array('limit' => 1),
+    ])['values'][0];
+    $search_params = [
+      'source_record_id' => $activity_id,
+      'activity_type_id' => CRM_Utils_Array::key('Absence', $absenceTypeValue['value'])
+    ];
+    $absence_details = civicrm_api3('Activity', 'get', $search_params);
+
+    // Set activities' status for each day of leave
+    foreach ($absence_details['values'] as $current_absence) {
+      civicrm_api3('Activity', 'setvalue', ['id' => $current_absence['id'], 'field' => 'status_id', 'value' => $status]);
+    }
+
+    // Set main activity's status
+    civicrm_api3('Activity', 'setvalue', ['id' => $activity_id, 'field' => 'status_id', 'value' => $status]);
+
+    // Invoke rules event
+    _invoke_rules_on_absence_decision($main_activity, $type, $absence_details['values']);
+
+    $result = ['status' => 'success'];
+  } catch (CiviCRM_API3_Exception $e) {
+    $errorMessage = $e->getMessage();
+    $errorCode = $e->getErrorCode();
+    $errorData = $e->getExtraParams();
+
+    $result = [
+      'status' => 'error',
+      'error' => $errorMessage,
+      'error_code' => $errorCode,
+      'error_data' => $errorData,
+    ];
+  }
+
+  // Issue response
+  print drupal_json_output($result);
+  drupal_exit();
+}
+
+/**
+ * Helper function that builds required parameters to pass to rules_invoke_event on decision (accept/reject) by manager
+ *
+ * @param $main_activity
+ * @param $type
+ * @param $absence_details
+ */
+function _invoke_rules_on_absence_decision($main_activity, $type, $absence_details) {
+  global $user;
+
+  // Get target user id
+  $target_user = user_load(_get_uf_match_contact($main_activity['source_contact_id'])['uf_id']);
+
+  // Build $leave_date
+  $disputes = [];
+  $all_duration = 0;
+
+  foreach ($absence_details as $key => $current_absence) {
+    $duration = $current_absence['duration'] / (6 * 80);
+    $all_duration += $duration;
+    $date = new DateTime($current_absence['activity_date_time']);
+    $disputes[$current_absence['id']] = [$date->format('Y-m-d'), $duration, get_civihr_absence_statuses($current_absence['status_id'])];
+    $last_day = $current_absence;
+  }
+
+  if ($all_duration <= 1) {
+    $date = new DateTime($last_day['activity_date_time']);
+    $duration_date = $date->format('Y-m-d');
+    $day = t('day');
+  }
+  else {
+    // Show start date and end date for the absence
+    $endDate = new DateTime($last_day['activity_date_time']);
+    $duration_date = array_values($disputes)[0][0] . ' - ' .  $endDate->format('Y-m-d');
+    $day = t('days');
+  }
+  $leave_date = $duration_date . ' = ' . $all_duration . ' ' . $day;
+
+  // Get absence type title
+  $absenceTypes = get_civihr_absence_types();
+
+  foreach ($absenceTypes as $absenceType) {
+    if (isset($absenceType['credit_activity_type_id']) && $absenceType['credit_activity_type_id'] == $main_activity['activity_type_id']) {
+      $leave_type = $absenceType['title'];
+    }
+
+    if (isset($absenceType['debit_activity_type_id']) && $absenceType['debit_activity_type_id'] == $main_activity['activity_type_id']) {
+      $leave_type = $absenceType['title'];
+    }
+  }
+
+  $event = ($type == 'approve' ? 'approve_all_post_event' : 'reject_all_post_event');
+  rules_invoke_event($event, $user, $target_user, '', $leave_type, $leave_date);
 }
 
 /**
