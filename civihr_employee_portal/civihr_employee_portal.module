@@ -2199,10 +2199,16 @@ function civihr_employee_portal_manager_approval_quick_approval($ajax, $action, 
     $main_activity = civicrm_api3('Activity', 'get', ['sequential' => 1, 'id' => $activity_id])['values'][0];
 
     // Get activities for each day of leave
-    $activityTypes = CRM_Core_OptionGroup::values('activity_type', FALSE, FALSE, FALSE, NULL, 'name');
+    $absenceTypeValue = civicrm_api3('OptionValue', 'get', [
+      'sequential' => 1,
+      'return' => array("value"),
+      'option_group_id' => "activity_type",
+      'name' => "Absence",
+      'options' => array('limit' => 1),
+    ])['values'][0];
     $search_params = [
       'source_record_id' => $activity_id,
-      'activity_type_id' => CRM_Utils_Array::key('Absence', $activityTypes)
+      'activity_type_id' => CRM_Utils_Array::key('Absence', $absenceTypeValue['value'])
     ];
     $absence_details = civicrm_api3('Activity', 'get', $search_params);
 
