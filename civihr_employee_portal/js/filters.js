@@ -51,7 +51,7 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     error: function(data) {
                         console.log(data);
                         console.log('Error approving leave!');
-                        swal("Failed!", "Error calling API", "error");
+                        swal("Failed!", "Error approving leave!", "error");
                     }
                 });
             }

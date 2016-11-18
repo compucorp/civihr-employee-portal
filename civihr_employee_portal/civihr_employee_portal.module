@@ -1625,7 +1625,7 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
-    $items['manager_approval/%ctools_js/quick_approval'] = array(
+    $items['manager_approval/ajax/quick_approval'] = array(
       'page callback' => 'civihr_employee_portal_manager_approval_quick_approval',
       'page arguments' => array(1, 2, 3, 4, 5),
       'access callback' => TRUE,
@@ -2177,7 +2177,7 @@ function civihr_employee_portal_manager_approval_pick_days_callback($ajax, $acti
 }
 
 /**
- * Function that processes approvals and rejections made by manager from the absence approval widget
+ * Function that processes approvals and rejections made by manager from the quick absence approval widget button
  *
  * @param int $ajax
  *   boolean value, 1 if it is an ajax call
