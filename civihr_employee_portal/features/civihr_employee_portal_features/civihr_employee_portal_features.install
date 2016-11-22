@@ -1,7 +1,5 @@
 <?php
 
-const CIVIHR_ADMIN_ROLE_ID = 55120974;
-
 /**
  * Implements hook_install().
  */
@@ -21,85 +19,14 @@ function civihr_employee_portal_features_install() {
         'label' => "Partially Approved",
         'option_group_id' => $option_group['id'],
     ));
-
-    // Set up front page URLs based on Role IDs (if the site is update not new install this can cause problems)
-    // @TODO --> For site updates we will need to find the matching RID's first
-    $values = array(
-        array(
-            'rid' => 1,
-            'mode' => 'redirect',
-            'data' => 'welcome-page',
-            'filter_format' => '',
-            'weight' => 0
-        ),
-        array(
-            'rid' => 2,
-            'mode' => '',
-            'data' => '',
-            'filter_format' => '',
-            'weight' => 0
-        ),
-        array(
-            'rid' => 3,
-            'mode' => '',
-            'data' => '',
-            'filter_format' => '',
-            'weight' => 0
-        ),
-        array(
-            'rid' => CIVIHR_ADMIN_ROLE_ID,
-            'mode' => 'redirect',
-            'data' => 'civicrm/tasksassignments/dashboard#/tasks',
-            'filter_format' => '',
-            'weight' => 0
-        ),
-        array(
-            'rid' => 17087012,
-            'mode' => 'redirect',
-            'data' => 'dashboard',
-            'filter_format' => '',
-            'weight' => 0
-        ),
-        array(
-            'rid' => 57573969,
-            'mode' => 'redirect',
-            'data' => 'dashboard',
-            'filter_format' => '',
-            'weight' => 0
-        )      
-    );
-
-    $query = db_insert('front_page')->fields(array('rid', 'mode', 'data', 'filter_format', 'weight'));
-    
-    foreach ($values as $record) {
-        $query->values($record);
-    }
-
-    $query->execute();
-    
-}
-
-function civihr_employee_portal_update_7000()
-{
-    /** @var UpdateQuery $query */
-    $dashboardUrl = 'civicrm/tasksassignments/dashboard#/tasks';
-
-    db_update('front_page')
-      ->fields(array('data' => $dashboardUrl))
-      ->condition('rid', CIVIHR_ADMIN_ROLE_ID, '=')
-      ->execute();
-
-    db_update('login_destination')
-      ->fields(array('destination' => $dashboardUrl))
-      ->condition('destination', 'civicrm/dashboard', '=')
-      ->execute();
 }
 
 /**
  * Create Report Pages and Report Age Settings menu links.
  */
-function civihr_employee_portal_update_7001() {
-    // Report1: People
+function civihr_employee_portal_features_update_7001() {
+  // Report1: People
+  if (!_is_menu_link_path_exists('reports/people/')) {
     $path = 'reports/people/';
     $link = array();
     $link['link_path'] = $path;
@@ -108,12 +35,14 @@ function civihr_employee_portal_update_7001() {
     $link['router_path'] = $path . '%';
     $link['module'] = 'menu';
     $link['options'] = array(
-        'attributes' => array(
-            'title' => 'CiviHR Report containing Employee, Contract and Role data.',
-        ),
+      'attributes' => array(
+        'title' => 'CiviHR Report containing Employee, Contract and Role data.',
+      ),
     );
     menu_link_save($link);
+  }
 
+  if (!_is_menu_link_path_exists('reports/leave_and_absence/')) {
     // Report 2: Leave and Absence
     $path = 'reports/leave_and_absence/';
     $link = array();
@@ -123,11 +52,14 @@ function civihr_employee_portal_update_7001() {
     $link['router_path'] = $path . '%';
     $link['module'] = 'menu';
     $link['options'] = array(
-        'attributes' => array(
-            'title' => 'CiviHR Report containing Employee, Contract, Role and Absence Activity data.',
-        ),
+      'attributes' => array(
+        'title' => 'CiviHR Report containing Employee, Contract, Role and Absence Activity data.',
+      ),
     );
     menu_link_save($link);
+  }
+
+  if (!_is_menu_link_path_exists('reports/settings/age_group/')) {
 
     // Age groups
     $path = 'reports/settings/age_group/';
@@ -138,12 +70,13 @@ function civihr_employee_portal_update_7001() {
     $link['router_path'] = $path . '%';
     $link['module'] = 'menu';
     menu_link_save($link);
+  }
 }
 
 /**
  * Create db table for Age groups (Report settings).
  */
-function civihr_employee_portal_update_7002() {
+function civihr_employee_portal_features_update_7002() {
     db_query('CREATE TABLE IF NOT EXISTS `reports_settings_age_group` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `age_from` int(3) DEFAULT NULL,
@@ -156,7 +89,7 @@ function civihr_employee_portal_update_7002() {
 /**
  * Rearrange Report pages in Drupal menu.
  */
-function civihr_employee_portal_update_7003() {
+function civihr_employee_portal_features_update_7003() {
     db_update('menu_links')
     ->fields(
         array(
@@ -187,7 +120,7 @@ function civihr_employee_portal_update_7003() {
 /**
  * Enable HR Reports settings block.
  */
-function civihr_employee_portal_update_7004() {
+function civihr_employee_portal_features_update_7004() {
     db_update('block')
     ->fields(
         array(
@@ -205,11 +138,38 @@ function civihr_employee_portal_update_7004() {
 }
 
 /**
- * Implements hook_uninstall().
+ * Create db table for Reports configuration.
  */
-function civihr_employee_portal_features_uninstall() {
-
-    // Remove and truncate the old records
-    $result = db_truncate('front_page')->execute();
-
+function civihr_employee_portal_features_update_7005() {
+  db_query('CREATE TABLE IF NOT EXISTS `reports_configuration` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `report_name` VARCHAR(256) NOT NULL,
+  `label` VARCHAR(256) NOT NULL,
+  `json_config` TEXT DEFAULT NULL,
+  PRIMARY KEY (id)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8');
 }
+
+
+/**
+ * Function to determine whether menu link exists or not.
+ *
+ * @param string
+ *      Path of the menu link.
+ *
+ * @return bool
+ *      Status of the menu link path.
+ */
+function _is_menu_link_path_exists($path = '') {
+
+  if ($path) {
+    // Lookup for link path table if the path does exist.
+    $menu_status = db_select('menu_links', 'ml')
+      ->fields('ml', ['mlid'])
+      ->condition('ml.link_path', $path)
+      ->execute()->fetchField();
+    return $menu_status ? TRUE : FALSE;
+  }
+  return FALSE;
+}
+

@@ -8,6 +8,7 @@
     var data = [];
     var pivotTableContainer = jQuery("#reportPivotTable");
     var derivedAttributes = {};
+    var pivotConfig = {};
 
     this.initScrollbarFallback();
   }
@@ -34,9 +35,9 @@
         jQuery.pivotUtilities.c3_renderers,
         jQuery.pivotUtilities.export_renderers
       ),
-      vals: ["Total"],
-      rows: ["Employee gender"],
-      cols: ["Contract Normal Place of Work"],
+      vals: ["Count"],
+      rows: [],
+      cols: [],
       aggregatorName: "Count",
       unusedAttrsVertical: false,
       aggregators: that.getAggregators(),
@@ -45,10 +46,27 @@
       // It's necessary to make all the DOM changes here
       // because the library doesn't have support to custom template
       // https://github.com/nicolaskruchten/pivottable/issues/484
-      onRefresh: function () {
-        Drupal.behaviors.civihr_employee_portal_reports.instance.updateCustomTemplate();
+      onRefresh: function (config) {
+        return that.pivotTableOnRefresh(config);
       }
     }, false);
+  }
+
+  /**
+   * Update Pivot Table config data on refresh.
+   *
+   * @param {JSON} config
+   */
+  HRReport.prototype.pivotTableOnRefresh = function(config) {
+    Drupal.behaviors.civihr_employee_portal_reports.instance.updateCustomTemplate();
+    var configCopy = JSON.parse(JSON.stringify(config));
+    //delete some values which are functions
+    delete configCopy["aggregators"];
+    delete configCopy["renderers"];
+    //delete some bulky default values
+    delete configCopy["rendererOptions"];
+    delete configCopy["localeStrings"];
+    this.pivotConfig = configCopy;
   }
 
   /**
@@ -194,6 +212,7 @@
   HRReport.prototype.show = function () {
     this.initPivotTable();
     this.bindFilters();
+    this.applyFilters();
   };
 
   /**
@@ -226,13 +245,20 @@
       success: function (data) {
         // Refreshing Pivot Table:
         data = that.processData(data);
+        that.data = data;
         that.pivotTableContainer.pivotUI(data, {
           rendererName: "Table",
           renderers: CRM.$.extend(
             jQuery.pivotUtilities.renderers,
             jQuery.pivotUtilities.c3_renderers
           ),
-          unusedAttrsVertical: false
+          unusedAttrsVertical: false,
+          // It's necessary to make all the DOM changes here
+          // because the library doesn't have support to custom template
+          // https://github.com/nicolaskruchten/pivottable/issues/484
+          onRefresh: function (config) {
+            return that.pivotTableOnRefresh(config);
+          }
         }, false);
       },
       type: 'GET'
@@ -307,21 +333,26 @@
 
     CRM.$('#report-filters input[type="submit"]').bind('click', function(e) {
       e.preventDefault();
-      var formSerialize = CRM.$('#report-filters form:first').serializeArray();
-
-      formSerialize.map(function(input) {
-        input.value = that.formatDate(input.value, 'DD/MM/YYYY', 'YYYY-MM-DD');
-      });
-
-      formSerialize = CRM.$.param(formSerialize);
-
-      if (that.jsonUrl) {
-        that.refreshJson('?' + formSerialize);
-      }
-      if (that.tableUrl) {
-        that.refreshTable('?' + formSerialize);
-      }
+      that.applyFilters();
     });
+  }
+
+  HRReport.prototype.applyFilters = function() {
+    var that = this;
+    var formSerialize = CRM.$('#report-filters form:first').serializeArray();
+
+    formSerialize.map(function(input) {
+      input.value = that.formatDate(input.value, 'DD/MM/YYYY', 'YYYY-MM-DD');
+    });
+
+    formSerialize = CRM.$.param(formSerialize);
+
+    if (that.jsonUrl) {
+      that.refreshJson('?' + formSerialize);
+    }
+    if (that.tableUrl) {
+      that.refreshTable('?' + formSerialize);
+    }
   }
 
   /**
@@ -342,6 +373,189 @@
 
     return date;
   };
+
+  /**
+   * Gets Report configuration by currently selected configId
+   * and apply it to the Pivot Table instance.
+   */
+  HRReport.prototype.configGet = function() {
+    var that = this;
+    var configId = this.getReportConfigurationId();
+    if (!configId) {
+      return false;
+    }
+
+    CRM.$.ajax({
+      url: '/reports/' + that.reportName + '/configuration/' + configId,
+      error: function () {
+        swal("Failed", "Error loading Report configuration!", "error");
+      },
+      success: function (data) {
+        if (data.status === 'success') {
+          that.configApply(data.config);
+        } else {
+          swal("Failed", "Error loading Report configuration!", "error");
+        }
+      },
+      type: 'GET'
+    });
+  }
+
+  /**
+   * Save Report configuration with currently selected configId.
+   */
+  HRReport.prototype.configSave = function(message) {
+    var that = this;
+    var configId = this.getReportConfigurationId();
+    if (!configId) {
+      swal("No configuration selected", "Please choose configuration to update.", "error");
+      return false;
+    }
+    if (typeof message === 'undefined') {
+      message = "Are you sure you want to save this configuration changes?";
+    }
+
+    swal({
+        title: "Save Report configuration?",
+        text: message,
+        type: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes",
+        closeOnConfirm: false,
+    }, function() {
+        that.configSaveProcess(configId);
+    });
+  }
+
+  /**
+   * Save new Report configuration basing on currently set configuration.
+   */
+  HRReport.prototype.configSaveNew = function() {
+    var that = this;
+
+    swal({
+      title: "New Report configuration",
+      text: "Configuration name:",
+      type: "input",
+      showCancelButton: true,
+      closeOnConfirm: false,
+      inputPlaceholder: ""
+    }, function (inputValue) {
+      if (inputValue === false) return false;
+      if (inputValue === "") {
+        swal.showInputError("Configuration name cannot be empty.");
+        return false
+      }
+      that.configSaveProcess(0, inputValue);
+    });
+  }
+
+  /**
+   * Handle both Save and SaveNew actions server requests.
+   *
+   * @param {Integer} configId
+   * @param {String} configName
+   */
+  HRReport.prototype.configSaveProcess = function(configId, configName) {
+    var that = this;
+    var reportName = this.reportName;
+
+    CRM.$.ajax({
+      url: '/reports/' + reportName + '/configuration/' + configId + '/save',
+      data: {
+        label: configName,
+        json_config: that.pivotConfig
+      },
+      error: function () {
+        swal("Failed", "Error saving Report configuration!", "error");
+      },
+      success: function (data) {
+        if (data.status === 'success') {
+          // Update select with new option if we saved a new configuration:
+          if (data['id']) {
+            CRM.$('.report-config-select').append('<option value="' + data['id'] + '">' + data['label'] + '</option>');
+            // Sort options by their labels alphabetically.
+            CRM.$('.report-config-select').append(CRM.$(".report-config-select option").remove().sort(function(a, b) {
+                var at = $(a).text(), bt = $(b).text();
+                return (at > bt) ? 1 : ((at < bt) ? -1 : 0);
+            }));
+            CRM.$(".report-config-select").val(data['id']);
+          }
+          swal("Success", "Report configuration has been saved", "success");
+        } else if (data.status === 'already_exists') {
+          // If there is already a configuration with this label then we ask for overwriting it.
+          CRM.$(".report-config-select").val(data['id']);
+          that.configSave('Configuration with this name already exists. Do you want to modify it?');
+        } else {
+          swal("Failed", "Error saving Report configuration!", "error");
+        }
+      },
+      method: 'POST'
+    });
+  }
+
+  /**
+   * Delete currently active configuration.
+   */
+  HRReport.prototype.configDelete = function() {
+    var configId = this.getReportConfigurationId();
+    if (!configId) {
+      swal("No configuration selected", "Please choose configuration to delete.", "error");
+      return false;
+    }
+    var reportName = this.reportName;
+    var configId = this.getReportConfigurationId();
+
+    swal({
+        title: "Delete Report configuration?",
+        text: "Are you sure you want to delete this configuration?",
+        type: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes",
+        closeOnConfirm: false,
+    }, function() {
+      CRM.$.ajax({
+        url: '/reports/' + reportName + '/configuration/' + configId + '/delete',
+        error: function () {
+          swal("Failed", "Error deleting Report configuration!", "error");
+        },
+        success: function (data) {
+          if (data.status === 'success') {
+            CRM.$('.report-config-select option[value=' + configId + ']').remove();
+            swal("Success", "Report configuration has been deleted", "success");
+          } else {
+            swal("Failed", "Error deleting Report configuration!", "error");
+          }
+        },
+        method: 'POST'
+      });
+    });
+  }
+  
+  /**
+   * Return an ID of currently active Report configuration.
+   *
+   * @returns {Integer}
+   */
+  HRReport.prototype.getReportConfigurationId = function() {
+    return CRM.$('.report-config-select').val();
+  }
+  
+  /**
+   * Apply given Pivot Table configuration.
+   *
+   * @param {Object} config
+   * @param {JSON} config
+   */
+  HRReport.prototype.configApply = function(config) {
+    var that = this;
+    config['onRefresh'] = function (config) {
+      return that.pivotTableOnRefresh(config);
+    }
+    this.pivotTableContainer.pivotUI(this.data, config , true);
+  }
 
   /**
    * Init angular in reports custom page,
@@ -371,6 +585,7 @@
       .controller('FiltersController', function() {
         this.format = 'dd/MM/yyyy';
         this.placeholderFormat = 'dd/MM/yyyy';
+        this.date = new Date();
         this.filtersCollapsed = true;
       })
       .controller('SettingsController', function() {
@@ -387,8 +602,8 @@
   Drupal.behaviors.civihr_employee_portal_reports = {
     instance: null,
     attach: function (context, settings) {
+      var that = this;
       this.instance = new HRReport();
-
       this.instance.initAngular();
 
       // Tabs bindings
@@ -400,6 +615,20 @@
         CRM.$('.report-block.' + CRM.$(this).data('tab')).removeClass('hidden');
       });
       CRM.$('.report-tabs a:first').click();
+      
+      // Reports configuration bindings
+      CRM.$('.report-config-select').bind('change', function(e) {
+        that.instance.configGet();
+      });
+      CRM.$('.report-config-save-btn').bind('click', function(e) {
+        that.instance.configSave();
+      });
+      CRM.$('.report-config-save-new-btn').bind('click', function(e) {
+        that.instance.configSaveNew();
+      });
+      CRM.$('.report-config-delete-btn').bind('click', function(e) {
+        that.instance.configDelete();
+      });
     }
   }
 })(jQuery);

@@ -92,6 +92,130 @@
             CRM.$('.btn.assignment-remove').click( function() {
                 CRM.$('#edit-assignment').select2('data', null);
             });
+        },
+        initTasksFilters: function () {
+          var $navTaskFilter = $('#nav-tasks-filter'),
+            $dropdownFilter = $('#select-tasks-filter'),
+            $tableTaskStaff = $('#tasks-dashboard-table-staff'),
+            $tableTaskStaffRows = $tableTaskStaff.find('.task-row');
+
+          var $selectedRowFilter =  $tableTaskStaff.find('.task-row'),
+            $selectedRowType = $tableTaskStaff.find('.task-row'),
+            selectedRowFilterSelector = null;
+
+          var chk = CRM.$('.checkbox-task-completed');
+
+          $navTaskFilter.find('a').bind('click', function (e) {
+            e.preventDefault();
+
+            var $this = $(this),
+              taskFilter = $this.data('taskFilter');
+
+            $navTaskFilter.find('> li').removeClass('active');
+            $this.parent().addClass('active');
+
+            if (taskFilter === 'all') {
+              $selectedRowFilter = $tableTaskStaff.find('.task-row');
+              selectedRowFilterSelector = '.task-row';
+            } else {
+              $selectedRowFilter = $tableTaskStaff.find('.task-filter-id-' + taskFilter);
+              selectedRowFilterSelector = '.task-filter-id-' + taskFilter;
+            }
+
+            showFilteredTaskRows();
+          });
+
+          $dropdownFilter.on('change', function (e) {
+            var taskFilter = $(this).val();
+
+            if (taskFilter === 'all') {
+              $selectedRowFilter = $tableTaskStaff.find('.task-row');
+              selectedRowFilterSelector = '.task-row';
+            } else {
+              $selectedRowFilter = $tableTaskStaff.find('.task-filter-id-' + taskFilter);
+              selectedRowFilterSelector = '.task-filter-id-' + taskFilter;
+            }
+
+            showFilteredTaskRows();
+          });
+
+          chk.unbind('change').bind('change', function(e) {
+            var checkedTaskId = $(this).val();
+
+            $.ajax({
+              url: '/civi_tasks/ajax/complete/' + checkedTaskId,
+              success: function (result) {
+                if (!result.success) {
+                  CRM.alert(result.message, 'Error', 'error');
+                  return;
+                }
+
+                $('#row-task-id-' + checkedTaskId).fadeOut(500, function () {
+                  $(this).remove();
+                  refreshTasksCounter();
+                });
+              }
+            });
+          });
+
+          buildTaskContactFilter();
+
+          function showFilteredTaskRows() {
+            $tableTaskStaffRows
+              .hide()
+              .removeClass('selected-by-type')
+              .removeClass('selected-by-filter');
+
+            $selectedRowType.addClass('selected-by-type');
+            $selectedRowFilter.addClass('selected-by-filter');
+
+            $('.selected-by-type.selected-by-filter.selected-by-contact', $tableTaskStaff).show();
+          }
+
+          function refreshTasksCounter() {
+            var sum = 0;
+
+            $navTaskFilter
+              .find('[data-task-filter]')
+              .not('[data-task-filter="all"]')
+              .each(function (i, filter) {
+                var $filter = $(filter),
+                  type = $filter.data('taskFilter'),
+                  count = $('.task-filter-id-' + type, $tableTaskStaff).length;
+
+                sum += count;
+
+                $filter.find('.task-counter-filter').text(count);
+              });
+
+            $navTaskFilter
+              .find('[data-task-filter="all"]')
+              .find('.task-counter-filter').text(sum);
+          }
+
+          function buildTaskContactFilter() {
+            $tableTaskStaffRows.addClass('selected-by-contact');
+
+            $('#task-filter-contact').on("keyup", function () {
+              var value = $(this).val().toLowerCase();
+
+              $tableTaskStaffRows.removeClass('selected-by-contact');
+
+              $("#tasks-dashboard-table-staff > tbody > tr.task-row").each(function (index) {
+                var $row = $(this);
+                var text = $row.data('rowContacts') || '';
+                var matchedIndex = text.toLowerCase().indexOf(value);
+
+                if (value.length === 0 || matchedIndex !== -1) {
+                  $row.addClass('selected-by-contact');
+                } else {
+                  $row.removeClass('selected-by-contact');
+                }
+              });
+
+              showFilteredTaskRows();
+            });
+          }
         }
     }
 })(jQuery);

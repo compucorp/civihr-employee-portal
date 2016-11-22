@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * @file
+ * Module to add functionality for CiviHR Leave and Absences.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function civihr_leave_absences_block_info() {
+  $blocks = [];
+  $blocks['my_leave'] = [
+    'info' => t('My Leave'),
+    'cache' => DRUPAL_NO_CACHE,
+  ];
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ *
+ * Generates block for Leave pages.
+ */
+function civihr_leave_absences_block_view($delta = '') {
+  $block = [];
+  switch ($delta) {
+    case 'my_leave':
+      $block['subject'] = t('My Leave');
+      $block['content'] = civihr_leave_absences_my_leave_get_markup();
+      break;
+  }
+  return $block;
+}
+
+/**
+ * Internal function for fetching custom markup from template/Angular Js to display My Leave block.
+ * @return Custom markup from template file.
+ */
+function civihr_leave_absences_my_leave_get_markup() {
+
+  // @ TODO -> Pointing to Angular JS App once its ready for My Leave block.
+  // Loading angular js application for My Leave block using CiviCRM Resources API.
+  // eg: civicrm_resources_load('org.civicrm.hrjobcontract', array('gulpfile.js', 'hrjc.css', 'contact.js'));
+
+  // Fetching custom markup from pre-defined template file.
+  $file_path = drupal_get_path('module', 'civihr_leave_absences') . '/templates/my_leave.html';
+  if (file_exists($file_path)) {
+    return @file_get_contents($file_path);
+  }
+  return '';
+}

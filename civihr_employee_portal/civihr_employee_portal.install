@@ -24,3 +24,27 @@ function _civi_setup() {
     ));
             
 }
+
+/**
+ * Implements hook_update_N().
+ *  Enables modules and throws an exception if that can't be done.
+ */
+function civihr_employee_portal_update_7001() {
+  $modules = ['civihr_leave_absences'];
+
+  if (empty(module_enable($modules))) {
+    throw new DrupalUpdateException(implode(', ', $modules) . ' or dependencies could not be enabled');
+  }
+}
+
+/**
+ * Implements hook_update_N().
+ *  Enables modules and throws an exception if that can't be done.
+ */
+function civihr_employee_portal_update_7002() {
+  $modules = ['leave_and_absences_feature'];
+
+  if (empty(module_enable($modules))) {
+    throw new DrupalUpdateException(implode(', ', $modules) . ' or dependencies could not be enabled');
+  }
+}

@@ -1,7 +1,7 @@
 <?php
 
 function civihr_hrjobcontract_entities_init() {
-    
+
     $rebuild_hrjobcontract_entities_view = variable_get('rebuild_hrjobcontract_entities_view', 'TRUE');
     if (isset($rebuild_hrjobcontract_entities_view) && $rebuild_hrjobcontract_entities_view == 'TRUE') {
         civicrm_initialize();
@@ -10,7 +10,7 @@ function civihr_hrjobcontract_entities_init() {
 
         db_query('DROP VIEW IF EXISTS hrjc_revision');
         db_query("CREATE OR REPLACE VIEW hrjc_revision AS
-                    SELECT 
+                    SELECT
                     c.contact_id,
 #                    c.is_primary,
 #                    r.id AS revision_id,
@@ -63,15 +63,15 @@ function civihr_hrjobcontract_entities_init() {
                     FROM {$civi_db_name}.civicrm_hrjobcontract_details AS t
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.details_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
-                    
+
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_contract_type ON og_contract_type.name = 'hrjc_contract_type'
                     LEFT JOIN {$civi_db_name}.civicrm_option_value ov_contract_type ON og_contract_type.id = ov_contract_type.option_group_id AND ov_contract_type.value = t.contract_type
-                    
+
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_location ON og_location.name = 'hrjc_location'
                     LEFT JOIN {$civi_db_name}.civicrm_option_value ov_location ON og_location.id = ov_location.option_group_id AND ov_location.value = t.location
-                    
+
                     WHERE c.deleted = 0");
-        
+
         db_query('DROP VIEW IF EXISTS hrjc_health');
         db_query("CREATE OR REPLACE VIEW hrjc_health AS
                     SELECT
@@ -90,11 +90,11 @@ function civihr_hrjobcontract_entities_init() {
                     FROM {$civi_db_name}.civicrm_hrjobcontract_health AS t
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.health_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
-                    
+
 #                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_details d ON r.details_revision_id = d.jobcontract_revision_id
-                    
+
                     WHERE c.deleted = 0");
-        
+
         db_query('DROP VIEW IF EXISTS hrjc_hour');
         db_query("CREATE OR REPLACE VIEW hrjc_hour AS
                     SELECT
@@ -113,14 +113,14 @@ function civihr_hrjobcontract_entities_init() {
                     FROM {$civi_db_name}.civicrm_hrjobcontract_hour AS t
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.hour_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
-                    
+
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_hours_type ON og_hours_type.name = 'hrjc_hours_type'
                     LEFT JOIN {$civi_db_name}.civicrm_option_value ov_hours_type ON og_hours_type.id = ov_hours_type.option_group_id AND ov_hours_type.value = t.hours_type
-                    
+
 #                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_details d ON r.details_revision_id = d.jobcontract_revision_id
-                    
+
                     WHERE c.deleted = 0");
-        
+
         db_query('DROP VIEW IF EXISTS hrjc_leave');
         db_query("CREATE OR REPLACE VIEW hrjc_leave AS
                     SELECT
@@ -133,13 +133,13 @@ function civihr_hrjobcontract_entities_init() {
                     FROM {$civi_db_name}.civicrm_hrjobcontract_leave AS t
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.leave_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
-                    
+
                     LEFT JOIN {$civi_db_name}.civicrm_hrabsence_type at ON t.leave_type = at.id
-                    
+
 #                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_details d ON r.details_revision_id = d.jobcontract_revision_id
-                    
+
                     WHERE c.deleted = 0");
-        
+
         db_query('DROP VIEW IF EXISTS hrjc_pay');
         db_query("CREATE OR REPLACE VIEW hrjc_pay AS
                     SELECT
@@ -162,20 +162,20 @@ function civihr_hrjobcontract_entities_init() {
                     FROM {$civi_db_name}.civicrm_hrjobcontract_pay AS t
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.pay_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
-                    
+
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_is_paid ON og_is_paid.name = 'hrjc_pay_grade'
                     LEFT JOIN {$civi_db_name}.civicrm_option_value ov_is_paid ON og_is_paid.id = ov_is_paid.option_group_id AND ov_is_paid.value = t.is_paid
-                    
+
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_pay_currency ON og_pay_currency.name = 'currencies_enabled'
                     LEFT JOIN {$civi_db_name}.civicrm_option_value ov_pay_currency ON og_pay_currency.id = ov_pay_currency.option_group_id AND ov_pay_currency.value = t.pay_currency
-                    
+
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_pay_cycle ON og_pay_cycle.name = 'hrjc_pay_cycle'
                     LEFT JOIN {$civi_db_name}.civicrm_option_value ov_pay_cycle ON og_pay_cycle.id = ov_pay_cycle.option_group_id AND ov_pay_cycle.value = t.pay_cycle
-                    
+
 #                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_details d ON r.details_revision_id = d.jobcontract_revision_id
-                    
+
                     WHERE c.deleted = 0");
-        
+
         db_query('DROP VIEW IF EXISTS hrjc_pension');
         db_query("CREATE OR REPLACE VIEW hrjc_pension AS
                     SELECT
@@ -192,14 +192,14 @@ function civihr_hrjobcontract_entities_init() {
                     FROM {$civi_db_name}.civicrm_hrjobcontract_pension AS t
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.pension_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
-                    
+
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_pension_type ON og_pension_type.name = 'hrjc_pension_type'
                     LEFT JOIN {$civi_db_name}.civicrm_option_value ov_pension_type ON og_pension_type.id = ov_pension_type.option_group_id AND ov_pension_type.value = t.pension_type
-                    
+
 #                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_details d ON r.details_revision_id = d.jobcontract_revision_id
-                    
+
                     WHERE c.deleted = 0");
-        
+
         db_query('DROP VIEW IF EXISTS hrjc_role');
         db_query("CREATE OR REPLACE VIEW hrjc_role AS
                     SELECT
@@ -226,24 +226,24 @@ function civihr_hrjobcontract_entities_init() {
                     t.percent_pay_cost_center AS role_percent_pay_cost_center,
                     ov_location.label AS role_location
                     FROM {$civi_db_name}.civicrm_hrjobroles AS t
-                        
+
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON t.job_contract_id = c.id
-                    
+
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_region ON og_region.name = 'hrjc_region'
-                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_region ON og_region.id = ov_region.option_group_id AND ov_region.id = t.region
-                    
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_region ON og_region.id = ov_region.option_group_id AND ov_region.value = t.region
+
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_department ON og_department.name = 'hrjc_department'
-                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_department ON og_department.id = ov_department.option_group_id AND ov_department.id = t.department
-                    
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_department ON og_department.id = ov_department.option_group_id AND ov_department.value = t.department
+
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_level_type ON og_level_type.name = 'hrjc_level_type'
-                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_level_type ON og_level_type.id = ov_level_type.option_group_id AND ov_level_type.id = t.level_type
-                    
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_level_type ON og_level_type.id = ov_level_type.option_group_id AND ov_level_type.value = t.level_type
+
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_location ON og_location.name = 'hrjc_location'
-                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_location ON og_location.id = ov_location.option_group_id AND ov_location.id = t.location
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_location ON og_location.id = ov_location.option_group_id AND ov_location.value = t.location
 
                     WHERE c.deleted = 0
                     ORDER BY t.job_contract_id");
-                    
+
         variable_set('rebuild_hrjobcontract_entities_view', 'FALSE');
     }
 }
@@ -437,8 +437,8 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
     );
     $schema['hrjc_details']['primary key'] = array('details_entity_revision_id');
 //    $schema['hrjc_details']['primary key'] = array('jobcontract_id');
-    
-    
+
+
     // Health:
     $schema['hrjc_health']['description'] = 'Views data associated with Job Contract Health';
 /*    $schema['hrjc_health']['fields']['contact_id'] = array(
@@ -509,8 +509,8 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'description' => 'Health Entity Revision ID',
     );
     $schema['hrjc_health']['primary key'] = array('health_entity_revision_id');
-    
-    
+
+
     // Hour:
     $schema['hrjc_hour']['description'] = 'Views data associated with Job Contract Hour';
 /*    $schema['hrjc_hour']['fields']['contact_id'] = array(
@@ -576,8 +576,8 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'description' => 'Hour Entity Revision ID',
     );
     $schema['hrjc_hour']['primary key'] = array('hour_entity_revision_id');
-    
-    
+
+
     // Leave:
     $schema['hrjc_leave']['description'] = 'Views data associated with Job Contract Leave';
 /*    $schema['hrjc_leave']['fields']['contact_id'] = array(
@@ -612,8 +612,8 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'description' => 'Leave Entity Revision ID',
     );
     $schema['hrjc_leave']['primary key'] = array('leave_entity_revision_id');
-    
-    
+
+
     // Pay:
     $schema['hrjc_pay']['description'] = 'Views data associated with Job Contract Pay';
 /*    $schema['hrjc_pay']['fields']['contact_id'] = array(
@@ -698,8 +698,8 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'description' => 'Pay Entity Revision ID',
     );
     $schema['hrjc_pay']['primary key'] = array('pay_entity_revision_id');
-    
-    
+
+
     // Pension:
     $schema['hrjc_pension']['description'] = 'Views data associated with Job Contract Pension';
 /*    $schema['hrjc_pension']['fields']['contact_id'] = array(
@@ -755,8 +755,8 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'description' => 'Pension Entity Revision ID',
     );
     $schema['hrjc_pension']['primary key'] = array('pension_entity_revision_id');
-    
-    
+
+
     // Role:
     $schema['hrjc_role']['description'] = 'Views data associated with Job Contract Role';
     $schema['hrjc_role']['fields']['role_id'] = array(
@@ -921,7 +921,7 @@ function civihr_hrjobcontract_entities_entity_info() {
         'uri callback' => 'entity_class_uri',
         'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
     );
-    
+
     $info['hrjobcontract_health'] = array(
         'label' => t('HRJobContract Health entity'),
         'plural label' => t('HRJobContract Health entity'),
@@ -940,7 +940,7 @@ function civihr_hrjobcontract_entities_entity_info() {
         'uri callback' => 'entity_class_uri',
         'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
     );
-    
+
     $info['hrjobcontract_hour'] = array(
         'label' => t('HRJobContract Hour entity'),
         'plural label' => t('HRJobContract Hour entity'),
@@ -959,7 +959,7 @@ function civihr_hrjobcontract_entities_entity_info() {
         'uri callback' => 'entity_class_uri',
         'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
     );
-    
+
     $info['hrjobcontract_leave'] = array(
         'label' => t('HRJobContract Leave entity'),
         'plural label' => t('HRJobContract Leave entity'),
@@ -978,7 +978,7 @@ function civihr_hrjobcontract_entities_entity_info() {
         'uri callback' => 'entity_class_uri',
         'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
     );
-    
+
     $info['hrjobcontract_pay'] = array(
         'label' => t('HRJobContract Pay entity'),
         'plural label' => t('HRJobContract Pay entity'),
@@ -997,7 +997,7 @@ function civihr_hrjobcontract_entities_entity_info() {
         'uri callback' => 'entity_class_uri',
         'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
     );
-    
+
     $info['hrjobcontract_pension'] = array(
         'label' => t('HRJobContract Pension entity'),
         'plural label' => t('HRJobContract Pension entity'),
@@ -1016,7 +1016,7 @@ function civihr_hrjobcontract_entities_entity_info() {
         'uri callback' => 'entity_class_uri',
         'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
     );
-    
+
     $info['hrjobcontract_role'] = array(
         'label' => t('HRJobContract Role entity'),
         'plural label' => t('HRJobContract Role entity'),
@@ -1035,7 +1035,7 @@ function civihr_hrjobcontract_entities_entity_info() {
         'uri callback' => 'entity_class_uri',
         'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
     );
-    
+
     return $info;
 }
 
