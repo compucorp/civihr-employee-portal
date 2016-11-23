@@ -159,3 +159,72 @@ span.appraisals-employee-legend {
   vertical-align: middle;
   padding-left: 10px;
 }
+
+/* styles for my leave report */
+body{
+    font-family: 'Lato', sans-serif;
+}
+
+.civi-container{
+    /*width: 80%;*/
+    margin-top: 60px;
+    background-color: rgb(247, 247, 249);
+    z-index: 46;
+
+
+}
+.civi-separator {
+    background-color: rgb(237, 237, 237);
+    height: 2px;
+    z-index: 55;
+}
+
+.civi-container__title{
+
+}
+.civi-container__row{
+
+}
+
+.civi-grid{
+
+}
+
+.civi-grid--open{
+
+}
+.civi-grid--closed{
+
+}
+
+.civi-grid__header{
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0px 6px 20px 0px rgba(0, 0, 0, 0.03),0px 8px 17px 0px rgba(0, 0, 0, 0.03);
+    z-index: 45;
+}
+.civi-grid__body{
+    margin: 32px;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0px 6px 20px 0px rgba(0, 0, 0, 0.03),0px 8px 17px 0px rgba(0, 0, 0, 0.03);
+    z-index: 74;
+
+}
+
+.civi-grid__row {
+
+}
+.civi-grid__row--header{
+
+}
+.civi-grid__row__cell{
+
+}
+.civi-grid__row__cell--light{
+
+}
+.civi-grid__row__cell--dark{
+
+}
+.civi-grid-summary{
+
+}

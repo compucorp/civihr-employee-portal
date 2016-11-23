@@ -517,6 +517,7 @@ function civihr_employee_portal_init() {
     drupal_add_css(getModuleUrl('org.civicrm.bootstrapcivicrm') . 'css/bootstrap.css');
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweetalert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
+    drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/fontawesome/font-awesome.min.css");
 
     _add_script_to_page('/js/tasks.js', 'dashboard');
 
