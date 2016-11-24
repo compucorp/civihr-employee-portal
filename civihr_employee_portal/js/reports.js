@@ -189,7 +189,7 @@
   HRReport.prototype.updateFilterbox = function() {
     $('.pvtFilterBox').each(function () {
       $(this).find('.pvtSearch').removeClass('pvtSearch').addClass('form-text');
-      $(this).find('button').addClass('btn btn-primary btn-default btn-block');
+      $(this).find('button').addClass('btn btn-primary btn-block');
 
       if ($(this).find('.pvtFilterSelectAllWrap').length === 0) {
         var filters = $(this).find(".pvtFilter");
@@ -533,7 +533,7 @@
       });
     });
   }
-  
+
   /**
    * Return an ID of currently active Report configuration.
    *
@@ -542,7 +542,7 @@
   HRReport.prototype.getReportConfigurationId = function() {
     return CRM.$('.report-config-select').val();
   }
-  
+
   /**
    * Apply given Pivot Table configuration.
    *
@@ -615,7 +615,7 @@
         CRM.$('.report-block.' + CRM.$(this).data('tab')).removeClass('hidden');
       });
       CRM.$('.report-tabs a:first').click();
-      
+
       // Reports configuration bindings
       CRM.$('.report-config-select').bind('change', function(e) {
         that.instance.configGet();

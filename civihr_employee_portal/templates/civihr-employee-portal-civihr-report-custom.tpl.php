@@ -43,7 +43,7 @@
       <?php if (!empty($exportUrl)): ?>
         <div class="chr_panel__footer">
           <div class="chr_actions-wrapper">
-            <a href="<?php print $exportUrl; ?>" id="export-report" class="btn btn-primary btn-default">Export</a>
+            <a href="<?php print $exportUrl; ?>" id="export-report" class="btn btn-primary">Export</a>
           </div>
         </div>
       <?php endif; ?>
