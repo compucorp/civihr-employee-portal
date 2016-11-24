@@ -26,7 +26,6 @@ function civihr_leave_absences_block_view($delta = '') {
   $block = [];
   switch ($delta) {
     case 'my_leave':
-      $block['subject'] = t('My Leave');
       $block['content'] = civihr_leave_absences_my_leave_get_markup();
       break;
   }

@@ -67,7 +67,7 @@ function leave_and_absences_features_default_page_manager_pages() {
     'name' => 'panel',
   );
   $display = new panels_display();
-  $display->layout = 'flexible';
+  $display->layout = 'radix_boxton';
   $display->layout_settings = array();
   $display->panel_settings = array(
     'style_settings' => array(
@@ -80,29 +80,29 @@ function leave_and_absences_features_default_page_manager_pages() {
   $display->uuid = '3e38d75b-5b66-4f4c-a262-f40536afc036';
   $display->content = array();
   $display->panels = array();
-    $pane = new stdClass();
-    $pane->pid = 'new-05560690-f3f8-4f5d-85bd-1ba75a3ad03a';
-    $pane->panel = 'center';
-    $pane->type = 'block';
-    $pane->subtype = 'civihr_leave_absences-my_leave';
-    $pane->shown = TRUE;
-    $pane->access = array();
-    $pane->configuration = array(
-      'override_title' => 0,
-      'override_title_text' => '',
-      'override_title_heading' => 'h2',
-    );
-    $pane->cache = array();
-    $pane->style = array(
-      'settings' => NULL,
-    );
-    $pane->css = array();
-    $pane->extras = array();
-    $pane->position = 0;
-    $pane->locks = array();
-    $pane->uuid = '05560690-f3f8-4f5d-85bd-1ba75a3ad03a';
-    $display->content['new-05560690-f3f8-4f5d-85bd-1ba75a3ad03a'] = $pane;
-    $display->panels['center'][0] = 'new-05560690-f3f8-4f5d-85bd-1ba75a3ad03a';
+  $pane = new stdClass();
+  $pane->pid = 'new-05560690-f3f8-4f5d-85bd-1ba75a3ad03a';
+  $pane->panel = 'contentmain';
+  $pane->type = 'block';
+  $pane->subtype = 'civihr_leave_absences-my_leave';
+  $pane->shown = TRUE;
+  $pane->access = array();
+  $pane->configuration = array(
+    'override_title' => 0,
+    'override_title_text' => '',
+    'override_title_heading' => 'h2',
+  );
+  $pane->cache = array();
+  $pane->style = array(
+    'settings' => NULL,
+  );
+  $pane->css = array();
+  $pane->extras = array();
+  $pane->position = 0;
+  $pane->locks = array();
+  $pane->uuid = '05560690-f3f8-4f5d-85bd-1ba75a3ad03a';
+  $display->content['new-05560690-f3f8-4f5d-85bd-1ba75a3ad03a'] = $pane;
+  $display->panels['contentmain'][0] = 'new-05560690-f3f8-4f5d-85bd-1ba75a3ad03a';
   $display->hide_title = PANELS_TITLE_FIXED;
   $display->title_pane = '0';
   $handler->conf['display'] = $display;
@@ -110,5 +110,4 @@ function leave_and_absences_features_default_page_manager_pages() {
   $pages['my_leave'] = $page;
 
   return $pages;
-
 }
