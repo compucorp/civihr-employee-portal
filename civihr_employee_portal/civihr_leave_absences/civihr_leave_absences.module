@@ -37,10 +37,8 @@ function civihr_leave_absences_block_view($delta = '') {
  * @return Custom markup from template file.
  */
 function civihr_leave_absences_my_leave_get_markup() {
-
-  // @ TODO -> Pointing to Angular JS App once its ready for My Leave block.
-  // Loading angular js application for My Leave block using CiviCRM Resources API.
-  // eg: civicrm_resources_load('org.civicrm.hrjobcontract', array('gulpfile.js', 'hrjc.css', 'contact.js'));
+  civicrm_resources_load('org.civicrm.reqangular', array('reqangular.min.js'));
+  civicrm_resources_load('uk.co.compucorp.civicrm.hrleaveandabsences', array('my-leave.min.js'));
 
   // Fetching custom markup from pre-defined template file.
   $file_path = drupal_get_path('module', 'civihr_leave_absences') . '/templates/my_leave.html';
