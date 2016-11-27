@@ -2,7 +2,9 @@
   <ui-view></ui-view>
 </section>
 <script>
-CRM.vars.leaveAbsences = {
-  baseURL: 'sites/all/modules/civicrm/tools/extensions/civihr/uk.co.compucorp.civicrm.hrleaveandabsences'
-};
+  // Transfers the baseURL from Drupal.settings into
+  // the expected (by the app) CRM.vars.leaveAbsences object
+  CRM.vars.leaveAbsences = {
+    baseURL: Drupal.settings.civihr_leave_absences.baseURL
+  };
 </script>
