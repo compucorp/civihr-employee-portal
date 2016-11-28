@@ -33,19 +33,30 @@ function civihr_leave_absences_block_view($delta = '') {
 }
 
 /**
+ * Implements hook_init().
+ *
+ * Fetches the base URL of the angular app, to be stored in the Drupal.settings global var
+ */
+function civihr_leave_absences_init() {
+  if (!_isCiviCRM()) {
+    $baseURL = CRM_Extension_System::singleton()->getMapper()->keyToUrl('uk.co.compucorp.civicrm.hrleaveandabsences');
+    drupal_add_js(array('civihr_leave_absences' => array('baseURL' => $baseURL)), 'setting');
+  }
+}
+
+/**
  * Internal function for fetching custom markup from template/Angular Js to display My Leave block.
  * @return Custom markup from template file.
  */
 function civihr_leave_absences_my_leave_get_markup() {
-
-  // @ TODO -> Pointing to Angular JS App once its ready for My Leave block.
-  // Loading angular js application for My Leave block using CiviCRM Resources API.
-  // eg: civicrm_resources_load('org.civicrm.hrjobcontract', array('gulpfile.js', 'hrjc.css', 'contact.js'));
+  civicrm_resources_load('org.civicrm.reqangular', array('reqangular.min.js'));
+  civicrm_resources_load('uk.co.compucorp.civicrm.hrleaveandabsences', array('my-leave.min.js'));
 
   // Fetching custom markup from pre-defined template file.
   $file_path = drupal_get_path('module', 'civihr_leave_absences') . '/templates/my_leave.html';
   if (file_exists($file_path)) {
     return @file_get_contents($file_path);
   }
+
   return '';
 }
