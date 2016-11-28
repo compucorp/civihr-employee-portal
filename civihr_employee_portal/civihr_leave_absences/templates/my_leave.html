@@ -2,9 +2,10 @@
   <ui-view></ui-view>
 </section>
 <script>
-  // Transfers the baseURL from Drupal.settings into
-  // the expected (by the app) CRM.vars.leaveAbsences object
-  CRM.vars.leaveAbsences = {
-    baseURL: Drupal.settings.civihr_leave_absences.baseURL
+  // Transfers the Drupal.settings data into
+  // the expected (by the app) CRM.vars.leaveAndAbsences object
+  CRM.vars.leaveAndAbsences = {
+    baseURL: Drupal.settings.civihr_leave_absences.baseURL,
+    contactId: Drupal.settings.currentCiviCRMUserId
   };
 </script>
