@@ -25,63 +25,33 @@ Drupal.behaviors.civihr_employee_portal_filters = {
                     var status_message = 'The whole leave request has been Rejected.';
                 }
 
-                CRM.api3('Activity', 'get', {
-                    "sequential": 1,
-                    "source_record_id": clicked_object,
-                }).done(function(result) {
+                $.ajax({
+                    type: 'GET',
+                    url: Drupal.settings.basePath + 'manager_approval/ajax/quick_approval/' + clicked_object + '/' + status_value + '/' + type,
+                    success: function(data) {
+                        console.log('Decision processed on Leave: ' + type);
+                        if (data.status == 'error') {
+                            swal("Failed!", data.error, "error");
+                        }
+                        else {
+                            // Update absence status on the screen
+                            $("#act-id-" + clicked_object).html(status_type);
 
-                    for (index = 0; index < result.count; ++index) {
+                            // Remove the row (so it will not be loaded when rebuilding the filters)
+                            $("#act-id-" + clicked_object).closest('tr').remove();
 
-                        CRM.api3('Activity', 'setvalue', {
-                            "sequential": 1,
-                            "id": result.values[index].id,
-                            "field": "status_id",
-                            "value": status_value
-                        }).done(function(result) {
+                            // Rebuild filters
+                            loadFilters();
 
-                        });
-                    }
+                            // Notify with popup
+                            swal(status_type + "!", status_message, "success");
+                        }
 
-                });
-
-                CRM.api3('Activity', 'setvalue', {
-                    "sequential": 1,
-                    "id": clicked_object,
-                    "field": "status_id",
-                    "value": status_value
-                }).done(function(result) {
-
-                    if (result.is_error == 1) {
-                        swal("Failed!", result.error_message, "error");
-                    }
-                    else {
-
-                        // Update absence status on the screen
-                        $("#act-id-" + clicked_object).html(status_type);
-
-                        // Remove the row (so it will not be loaded when rebuilding the filters)
-                        $("#act-id-" + clicked_object).closest('tr').remove();
-
-                        // Rebuild filters
-                        loadFilters();
-
-                        console.log(Drupal.settings.basePath + 'ajax/quick_email_notify/' + clicked_object + '/' + type);
-
-                        // Notify by email
-                        $.ajax({
-                            type: 'GET',
-                            url: Drupal.settings.basePath + 'ajax/quick_email_notify/' + clicked_object + '/' + type,
-                            success: function(data) {
-                                console.log('Email sent');
-                            },
-                            error: function(data) {
-                                console.log(data);
-                                console.log('Email not sent!');
-                            }
-                        });
-
-                        // Notify with popup
-                        swal(status_type + "!", status_message, "success");
+                    },
+                    error: function(data) {
+                        console.log(data);
+                        console.log('Error approving leave!');
+                        swal("Failed!", "Error approving leave!", "error");
                     }
                 });
             }
