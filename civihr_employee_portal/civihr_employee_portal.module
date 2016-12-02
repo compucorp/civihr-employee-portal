@@ -424,38 +424,65 @@ function _rebuild_absence_activity_view() {
     ));
     $absenceCommentColumn = $customName['column_name'];
 
-    db_query('DROP VIEW IF EXISTS absence_activity');
-    db_query("CREATE VIEW absence_activity AS
-              SELECT ac.contact_id AS absence_contact_id,
-                abc.entity_id AS absence_activity_id,
-                ov.label AS absence_type,
-                DATE(a2.activity_date_time) AS absence_date,
-                DATE_FORMAT(DATE(a2.activity_date_time), '%Y-%m') AS absence_month,
-                (SELECT MIN(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id) AS absence_start_date,
-                DATE_FORMAT((SELECT MIN(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id), '%Y-%m') AS absence_start_date_month,
-                (SELECT MAX(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id) AS absence_end_date,
-                DATE_FORMAT((SELECT MAX(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id), '%Y-%m') AS absence_end_date_month,
-                CONCAT(IF (DATE_FORMAT(a2.activity_date_time, '%w') = 0, 7, DATE_FORMAT(a2.activity_date_time, '%w')), '. ', DATE_FORMAT(a2.activity_date_time, '%W')) AS absence_day_of_week,
-                a2.duration AS absence_duration,
-                IF (ov.label <> 'TOIL (Credit)', a2.duration, NULL) AS absence_amount_taken,
-                IF (ov.label = 'TOIL (Credit)', a2.duration, NULL) AS absence_amount_accrued,
-                IF (ov.label = 'TOIL (Credit)', -a2.duration, a2.duration) AS absence_absolute_amount,
-                abc.{$absenceCommentColumn} AS absence_comment,
-                ov2.label AS absence_status,
-                IF (ov.label = 'TOIL (Credit)', 1, 0) AS absence_is_credit
-              FROM {$civi_db_name}.{$absenceCommentTable} abc
-              LEFT JOIN {$civi_db_name}.civicrm_activity a ON a.id = abc.entity_id
-              LEFT JOIN {$civi_db_name}.civicrm_activity a2 ON a2.source_record_id = abc.entity_id
-              LEFT JOIN {$civi_db_name}.civicrm_option_group og ON og.name = 'activity_type'
-              LEFT JOIN {$civi_db_name}.civicrm_option_value ov ON ov.value = a.activity_type_id AND ov.option_group_id = og.id
-              LEFT JOIN {$civi_db_name}.civicrm_option_group og2 ON og2.name = 'activity_status'
-              LEFT JOIN {$civi_db_name}.civicrm_option_value ov2 ON ov2.value = a.status_id AND ov2.option_group_id = og2.id
-              LEFT JOIN {$civi_db_name}.civicrm_activity_contact ac ON ac.activity_id = abc.entity_id AND ac.record_type_id = 3
-              WHERE (a2.duration IS NOT NULL AND a2.duration > 0)");
+    $activityTypesIds = _get_absence_activity_types_ids();
+    if (!empty($activityTypesIds)) {
+      db_query('DROP VIEW IF EXISTS absence_activity');
+      db_query("CREATE VIEW absence_activity AS
+                SELECT ac.contact_id AS absence_contact_id,
+                  absence_activity.id AS absence_activity_id,
+                  ov.label AS absence_type,
+                  DATE(a2.activity_date_time) AS absence_date,
+                  DATE_FORMAT(DATE(a2.activity_date_time), '%Y-%m') AS absence_month,
+                  (SELECT MIN(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id) AS absence_start_date,
+                  DATE_FORMAT((SELECT MIN(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id), '%Y-%m') AS absence_start_date_month,
+                  (SELECT MAX(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id) AS absence_end_date,
+                  DATE_FORMAT((SELECT MAX(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id), '%Y-%m') AS absence_end_date_month,
+                  CONCAT(IF (DATE_FORMAT(a2.activity_date_time, '%w') = 0, 7, DATE_FORMAT(a2.activity_date_time, '%w')), '. ', DATE_FORMAT(a2.activity_date_time, '%W')) AS absence_day_of_week,
+                  a2.duration AS absence_duration,
+                  IF (ov.label <> 'TOIL (Credit)', a2.duration, NULL) AS absence_amount_taken,
+                  IF (ov.label = 'TOIL (Credit)', a2.duration, NULL) AS absence_amount_accrued,
+                  IF (ov.label = 'TOIL (Credit)', -a2.duration, a2.duration) AS absence_absolute_amount,
+                  abc.{$absenceCommentColumn} AS absence_comment,
+                  a.status_id AS absence_status,
+                  IF (ov.label = 'TOIL (Credit)', 1, 0) AS absence_is_credit
+                FROM {$civi_db_name}.civicrm_activity absence_activity
+                LEFT JOIN {$civi_db_name}.civicrm_activity a ON a.id = absence_activity.id
+                LEFT JOIN {$civi_db_name}.civicrm_activity a2 ON a2.source_record_id = absence_activity.id
+                LEFT JOIN {$civi_db_name}.civicrm_option_group og ON og.name = 'activity_type'
+                LEFT JOIN {$civi_db_name}.civicrm_option_value ov ON ov.value = a.activity_type_id AND ov.option_group_id = og.id
+                LEFT JOIN {$civi_db_name}.civicrm_activity_contact ac ON ac.activity_id = absence_activity.id AND ac.record_type_id = 3
+                LEFT JOIN {$civi_db_name}.{$absenceCommentTable} abc ON abc.entity_id = absence_activity.id
+                WHERE (a2.duration IS NOT NULL AND a2.duration > 0)
+                AND
+                absence_activity.activity_type_id IN (" . implode(',', $activityTypesIds) . ")");
 
-    // Set to false so it will not rebuild until not asked to rebuild
-    variable_set('rebuild_absence_activity', 'FALSE');
+      // Set to false so it will not rebuild until not asked to rebuild
+      variable_set('rebuild_absence_activity', 'FALSE');
+    }
   }
+}
+
+/**
+ * Return an array of absence activity types IDs.
+ *
+ * @return array
+ */
+function _get_absence_activity_types_ids() {
+  $activityTypesIds = [];
+  $absenceTypes = civicrm_api3('HRAbsenceType', 'get', [
+    'sequential' => 1,
+  ]);
+
+  foreach ($absenceTypes['values'] as $absenceType) {
+    if (!empty($absenceType['debit_activity_type_id'])) {
+      $activityTypesIds[] = $absenceType['debit_activity_type_id'];
+    }
+    if (!empty($absenceType['credit_activity_type_id'])) {
+      $activityTypesIds[] = $absenceType['credit_activity_type_id'];
+    }
+  }
+
+  return $activityTypesIds;
 }
 
 /**
@@ -539,6 +566,13 @@ function civihr_employee_portal_init() {
     _rebuild_view('tasks');
     _rebuild_view('documents');
   }
+}
+
+function _rebuild_reports_views() {
+  variable_set('rebuild_length_of_service', 'TRUE');
+  _rebuild_view('length_of_service');
+  variable_set('rebuild_absence_activity', 'TRUE');
+  _rebuild_view('absence_activity');
 }
 
 /**
@@ -1591,6 +1625,13 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
+    $items['manager_approval/ajax/quick_approval'] = array(
+      'page callback' => 'civihr_employee_portal_manager_approval_quick_approval',
+      'page arguments' => array(1, 2, 3, 4, 5),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+    );
+
     $items['manager_approval/%ctools_js/calendar/show'] = array(
         'page callback' => 'civihr_employee_portal_manager_approval_show_calendar_callback',
         'page arguments' => array(1),
@@ -2133,6 +2174,127 @@ function civihr_employee_portal_manager_approval_pick_days_callback($ajax, $acti
         return drupal_get_form('civihr_employee_portal_manager_approval_pick_days_form');
     }
 
+}
+
+/**
+ * Function that processes approvals and rejections made by manager from the quick absence approval widget button
+ *
+ * @param int $ajax
+ *   boolean value, 1 if it is an ajax call
+ * @param string $action
+ *   should always be "quick_approval"
+ * @param int $activity_id
+ *   Activity ID that identifies the absence to be processed
+ * @param int $status
+ *   ID of status that should be set to main absence and each absence per day (2: Accepted, 9: Rejected)
+ * @param string $type
+ *   Staus type that is to be set, either "accept" or "reject"
+ */
+function civihr_employee_portal_manager_approval_quick_approval($ajax, $action, $activity_id, $status, $type) {
+  // Civi init
+  civicrm_initialize();
+
+  try {
+    // Load main activity leave
+    $main_activity = civicrm_api3('Activity', 'get', ['sequential' => 1, 'id' => $activity_id])['values'][0];
+
+    // Get activities for each day of leave
+    $absenceTypeValue = civicrm_api3('OptionValue', 'get', [
+      'sequential' => 1,
+      'return' => array("value"),
+      'option_group_id' => "activity_type",
+      'name' => "Absence",
+      'options' => array('limit' => 1),
+    ])['values'][0];
+    $search_params = [
+      'source_record_id' => $activity_id,
+      'activity_type_id' => CRM_Utils_Array::key('Absence', $absenceTypeValue['value'])
+    ];
+    $absence_details = civicrm_api3('Activity', 'get', $search_params);
+
+    // Set activities' status for each day of leave
+    foreach ($absence_details['values'] as $current_absence) {
+      civicrm_api3('Activity', 'setvalue', ['id' => $current_absence['id'], 'field' => 'status_id', 'value' => $status]);
+    }
+
+    // Set main activity's status
+    civicrm_api3('Activity', 'setvalue', ['id' => $activity_id, 'field' => 'status_id', 'value' => $status]);
+
+    // Invoke rules event
+    _invoke_rules_on_absence_decision($main_activity, $type, $absence_details['values']);
+
+    $result = ['status' => 'success'];
+  } catch (CiviCRM_API3_Exception $e) {
+    $errorMessage = $e->getMessage();
+    $errorCode = $e->getErrorCode();
+    $errorData = $e->getExtraParams();
+
+    $result = [
+      'status' => 'error',
+      'error' => $errorMessage,
+      'error_code' => $errorCode,
+      'error_data' => $errorData,
+    ];
+  }
+
+  // Issue response
+  print drupal_json_output($result);
+  drupal_exit();
+}
+
+/**
+ * Helper function that builds required parameters to pass to rules_invoke_event on decision (accept/reject) by manager
+ *
+ * @param $main_activity
+ * @param $type
+ * @param $absence_details
+ */
+function _invoke_rules_on_absence_decision($main_activity, $type, $absence_details) {
+  global $user;
+
+  // Get target user id
+  $target_user = user_load(_get_uf_match_contact($main_activity['source_contact_id'])['uf_id']);
+
+  // Build $leave_date
+  $disputes = [];
+  $all_duration = 0;
+
+  foreach ($absence_details as $key => $current_absence) {
+    $duration = $current_absence['duration'] / (6 * 80);
+    $all_duration += $duration;
+    $date = new DateTime($current_absence['activity_date_time']);
+    $disputes[$current_absence['id']] = [$date->format('Y-m-d'), $duration, get_civihr_absence_statuses($current_absence['status_id'])];
+    $last_day = $current_absence;
+  }
+
+  if ($all_duration <= 1) {
+    $date = new DateTime($last_day['activity_date_time']);
+    $duration_date = $date->format('Y-m-d');
+    $day = t('day');
+  }
+  else {
+    // Show start date and end date for the absence
+    $endDate = new DateTime($last_day['activity_date_time']);
+    $duration_date = array_values($disputes)[0][0] . ' - ' .  $endDate->format('Y-m-d');
+    $day = t('days');
+  }
+  $leave_date = $duration_date . ' = ' . $all_duration . ' ' . $day;
+
+  // Get absence type title
+  $absenceTypes = get_civihr_absence_types();
+
+  foreach ($absenceTypes as $absenceType) {
+    if (isset($absenceType['credit_activity_type_id']) && $absenceType['credit_activity_type_id'] == $main_activity['activity_type_id']) {
+      $leave_type = $absenceType['title'];
+    }
+
+    if (isset($absenceType['debit_activity_type_id']) && $absenceType['debit_activity_type_id'] == $main_activity['activity_type_id']) {
+      $leave_type = $absenceType['title'];
+    }
+  }
+
+  $event = ($type == 'approve' ? 'approve_all_post_event' : 'reject_all_post_event');
+  rules_invoke_event($event, $user, $target_user, '', $leave_type, $leave_date);
 }
 
 /**
@@ -6177,6 +6339,8 @@ function civihr_employee_portal_hrreport_printtable($viewName) {
  * @return array
  */
 function civihr_employee_portal_hrreport_custom($reportName) {
+  _rebuild_reports_views();
+
   $view = views_get_view('civihr_report_' . $reportName);
   if (!$view) {
     return drupal_not_found();
@@ -6211,12 +6375,73 @@ function civihr_employee_portal_hrreport_custom($reportName) {
   );
 }
 
+/**
+ * Render a JSON structure containing data for specified report name.
+ *
+ * @param string $reportName
+ *
+ * @return string
+ */
 function civihr_employee_portal_hrreport_get_json($reportName) {
+  $params = drupal_get_query_parameters();
   $view = views_get_view('civihr_report_' . $reportName);
+  $view->exposed_input = civihr_employee_portal_hrreport_get_exposed_filter_default_values($view, $params);
   $view->set_display('page');
   $view->execute();
   $view->style_plugin->options['using_views_api_mode'] = FALSE;
   return $view->render('page');
+}
+
+/**
+ * Return an array with mapped default exposed filter values for given view
+ * and parameters. Used to map date filter default values if they are not specified
+ * in request.
+ *
+ * @param object $view
+ * @param array $params
+ *
+ * @return array
+ */
+function civihr_employee_portal_hrreport_get_exposed_filter_default_values($view, array $params) {
+  if (empty($view->display['default']->display_options['filters']['date_filter'])) {
+    return $params;
+  }
+
+  $dateFilter = $view->display['default']->display_options['filters']['date_filter'];
+  if (!empty($dateFilter['expose']['identifier'])) {
+    $identifier = $dateFilter['expose']['identifier'];
+
+    $params[$identifier]['min'] = civihr_employee_portal_get_date_filter_default_value($params, $dateFilter, 'default_date', $identifier, 'min');
+    $params[$identifier]['max'] = civihr_employee_portal_get_date_filter_default_value($params, $dateFilter, 'default_to_date', $identifier, 'max');
+  }
+
+  return $params;
+}
+
+/**
+ * Return a date filter default value from View filter settings
+ * if it's not specified in the parameters.
+ *
+ * @param array $params
+ * @param string $dateFilter
+ * @param string $dateFilterKey
+ * @param string $identifier
+ * @param string $identifierKey
+ *
+ * @return string
+ */
+function civihr_employee_portal_get_date_filter_default_value(array $params, $dateFilter, $dateFilterKey, $identifier, $identifierKey) {
+  if (empty($params[$identifier][$identifierKey])) {
+    $defaultDate = !empty($dateFilter[$dateFilterKey]) ? $dateFilter[$dateFilterKey] : null;
+
+    if ($defaultDate) {
+      $date = new DateTime();
+      $date->modify($defaultDate);
+      $params[$identifier][$identifierKey] = $date->format('Y-m-d');
+    }
+  }
+
+  return $params[$identifier][$identifierKey];
 }
 
 function civihr_employee_portal_hrreport_custom_printtable($reportName, $dateFilterValue = null) {

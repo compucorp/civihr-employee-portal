@@ -920,12 +920,19 @@ Type ID: [activity_type_id] '),
     57573969 => 0,
   );
   $handler->display->display_options['filters']['date_filter']['form_type'] = 'date_popup';
-  $handler->display->display_options['filters']['date_filter']['default_date'] = 'now -12 month';
-  $handler->display->display_options['filters']['date_filter']['default_to_date'] = 'now +1 month';
+  $handler->display->display_options['filters']['date_filter']['default_date'] = 'now -10 year';
+  $handler->display->display_options['filters']['date_filter']['default_to_date'] = 'now +10 year';
   $handler->display->display_options['filters']['date_filter']['year_range'] = '-10:+10';
   $handler->display->display_options['filters']['date_filter']['date_fields'] = array(
     'absence_activity.absence_date' => 'absence_activity.absence_date',
   );
+  /* Filter criterion: Absence Activity entity: Absence activity entity ID */
+  $handler->display->display_options['filters']['absence_activity_id']['id'] = 'absence_activity_id';
+  $handler->display->display_options['filters']['absence_activity_id']['table'] = 'absence_activity';
+  $handler->display->display_options['filters']['absence_activity_id']['field'] = 'absence_activity_id';
+  $handler->display->display_options['filters']['absence_activity_id']['relationship'] = 'absence_activity';
+  $handler->display->display_options['filters']['absence_activity_id']['operator'] = '>';
+  $handler->display->display_options['filters']['absence_activity_id']['value']['value'] = '0';
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
