@@ -4645,36 +4645,65 @@ function _civihr_employee_portal_block_generate_content($class_name = '') {
  * Implements hook_schema().
  */
 function civihr_employee_portal_schema() {
-    $schema = array();
+    $schema = [];
 
-    // Installing Reports settings db tables.
-    $schema['reports_settings_age_group'] = array(
+    // Reports settings db table.
+    $schema['reports_settings_age_group'] = [
         'description' => 'HR Reports Age Group settings',
-        'fields' => array(
-            'id' => array(
+        'fields' => [
+            'id' => [
                 'type' => 'serial',
                 'unsigned' => TRUE,
                 'not null' => TRUE,
-            ),
-            'age_from' => array(
+            ],
+            'age_from' => [
                 'type' => 'int',
                 'not null' => FALSE,
                 'default' => NULL,
-            ),
-            'age_to' => array(
+            ],
+            'age_to' => [
                 'type' => 'int',
                 'not null' => FALSE,
                 'default' => NULL,
-            ),
-            'label' => array(
+            ],
+            'label' => [
                 'type' => 'varchar',
                 'length' => 32,
                 'not null' => TRUE,
-            ),
-        ),
-        'unique keys' => array(),
-        'primary key' => array('id'),
-    );
+            ],
+        ],
+        'unique keys' => [],
+        'primary key' => ['id'],
+    ];
+
+    // Reports configuration db table.
+    $schema['reports_configuration'] = [
+        'description' => 'HR Reports Configuration',
+        'fields' => [
+            'id' => [
+                'type' => 'serial',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ],
+            'report_name' => [
+                'type' => 'varchar',
+                'length' => 256,
+                'not null' => TRUE,
+            ],
+            'label' => [
+                'type' => 'varchar',
+                'length' => 256,
+                'not null' => TRUE,
+            ],
+            'json_config' => [
+                'type' => 'text',
+                'not null' => FALSE,
+            ],
+        ],
+        'unique keys' => [],
+        'primary key' => ['id'],
+    ];
+
     return $schema;
 }
 

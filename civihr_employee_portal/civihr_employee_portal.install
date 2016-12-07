@@ -49,13 +49,8 @@ function civihr_employee_portal_update_7101() {
  * Create db table for Age groups (Report settings).
  */
 function civihr_employee_portal_update_7102() {
-    db_query('CREATE TABLE IF NOT EXISTS `reports_settings_age_group` (
-    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `age_from` int(3) DEFAULT NULL,
-    `age_to` int(3) DEFAULT NULL,
-    `label` varchar(32) NOT NULL,
-    PRIMARY KEY (id)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8');
+  $schema = module_invoke('civihr_employee_portal', 'schema');
+  db_create_table('reports_settings_age_group', $schema['reports_settings_age_group']);
 }
 
 /**
@@ -113,11 +108,6 @@ function civihr_employee_portal_update_7104() {
  * Create db table for Reports configuration.
  */
 function civihr_employee_portal_update_7105() {
-  db_query('CREATE TABLE IF NOT EXISTS `reports_configuration` (
-  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `report_name` VARCHAR(256) NOT NULL,
-  `label` VARCHAR(256) NOT NULL,
-  `json_config` TEXT DEFAULT NULL,
-  PRIMARY KEY (id)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8');
+  $schema = module_invoke('civihr_employee_portal', 'schema');
+  db_create_table('reports_configuration', $schema['reports_configuration']);
 }
