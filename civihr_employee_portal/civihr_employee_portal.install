@@ -3,7 +3,7 @@
 /**
  * Create Report Pages and Report Age Settings menu links.
  */
-function civihr_employee_portal_update_7001() {
+function civihr_employee_portal_update_7101() {
     // Report1: People
     $path = 'reports/people/';
     $link = array();
@@ -48,7 +48,7 @@ function civihr_employee_portal_update_7001() {
 /**
  * Create db table for Age groups (Report settings).
  */
-function civihr_employee_portal_update_7002() {
+function civihr_employee_portal_update_7102() {
     db_query('CREATE TABLE IF NOT EXISTS `reports_settings_age_group` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `age_from` int(3) DEFAULT NULL,
@@ -61,7 +61,7 @@ function civihr_employee_portal_update_7002() {
 /**
  * Rearrange Report pages in Drupal menu.
  */
-function civihr_employee_portal_update_7003() {
+function civihr_employee_portal_update_7103() {
     db_update('menu_links')
     ->fields(
         array(
@@ -92,7 +92,7 @@ function civihr_employee_portal_update_7003() {
 /**
  * Enable HR Reports settings block.
  */
-function civihr_employee_portal_update_7004() {
+function civihr_employee_portal_update_7104() {
     db_update('block')
     ->fields(
         array(
@@ -112,7 +112,7 @@ function civihr_employee_portal_update_7004() {
 /**
  * Create db table for Reports configuration.
  */
-function civihr_employee_portal_update_7005() {
+function civihr_employee_portal_update_7105() {
   db_query('CREATE TABLE IF NOT EXISTS `reports_configuration` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `report_name` VARCHAR(256) NOT NULL,

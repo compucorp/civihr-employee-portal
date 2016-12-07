@@ -2,6 +2,7 @@ name = civiHR Employee Portal
 description = Provides civiHR employee portal functionality on Drupal build
 core = 7.x
 package = Compucorp
+version = 7.x-1.0
 dependencies[] = views
 dependencies[] = views_ui
 dependencies[] = node_export
