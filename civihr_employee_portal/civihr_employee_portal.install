@@ -3,7 +3,7 @@
 /**
  * Create Report Pages and Report Age Settings menu links.
  */
-function civihr_employee_portal_update_7101() {
+function civihr_employee_portal_update_7001() {
     // Report1: People
     $path = 'reports/people/';
     $link = array();
@@ -48,7 +48,7 @@ function civihr_employee_portal_update_7101() {
 /**
  * Create db table for Age groups (Report settings).
  */
-function civihr_employee_portal_update_7102() {
+function civihr_employee_portal_update_7002() {
   $schema = module_invoke('civihr_employee_portal', 'schema');
   db_create_table('reports_settings_age_group', $schema['reports_settings_age_group']);
 }
@@ -56,7 +56,7 @@ function civihr_employee_portal_update_7102() {
 /**
  * Rearrange Report pages in Drupal menu.
  */
-function civihr_employee_portal_update_7103() {
+function civihr_employee_portal_update_7003() {
     db_update('menu_links')
     ->fields(
         array(
@@ -87,27 +87,30 @@ function civihr_employee_portal_update_7103() {
 /**
  * Enable HR Reports settings block.
  */
-function civihr_employee_portal_update_7104() {
-    db_update('block')
-    ->fields(
-        array(
-            'region' => 'content',
-            'visibility' => 1,
-            'pages' => 'reports',
-            'status' => 1,
-            'weight' => 1,
-        )
-    )
-    ->condition('module', 'menu')
-    ->condition('delta', 'hr-reports-settings')
-    ->execute();
-    cache_clear_all();
+function civihr_employee_portal_update_7004() {
+  db_merge('block')
+  ->key([
+    'theme' => 'civihr_default_theme',
+    'module' => 'menu',
+    'delta' => 'hr-reports-settings',
+  ])
+  ->fields(
+    [
+      'region' => 'content',
+      'visibility' => 1,
+      'pages' => 'reports',
+      'status' => 1,
+      'weight' => 1,
+    ]
+  )
+  ->execute();
+  cache_clear_all();
 }
 
 /**
  * Create db table for Reports configuration.
  */
-function civihr_employee_portal_update_7105() {
+function civihr_employee_portal_update_7005() {
   $schema = module_invoke('civihr_employee_portal', 'schema');
   db_create_table('reports_configuration', $schema['reports_configuration']);
 }
