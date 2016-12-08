@@ -85,30 +85,6 @@ function civihr_employee_portal_update_7003() {
 }
 
 /**
- * Enable HR Reports settings block.
- */
-function civihr_employee_portal_update_7004() {
-  drupal_flush_all_caches();
-  db_merge('block')
-  ->key([
-    'theme' => 'civihr_default_theme',
-    'module' => 'menu',
-    'delta' => 'hr-reports-settings',
-  ])
-  ->fields(
-    [
-      'region' => 'content',
-      'visibility' => 1,
-      'pages' => 'reports',
-      'status' => 1,
-      'weight' => 1,
-    ]
-  )
-  ->execute();
-  cache_clear_all();
-}
-
-/**
  * Create db table for Reports configuration.
  */
 function civihr_employee_portal_update_7005() {
