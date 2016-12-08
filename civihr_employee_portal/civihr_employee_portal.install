@@ -88,6 +88,7 @@ function civihr_employee_portal_update_7003() {
  * Enable HR Reports settings block.
  */
 function civihr_employee_portal_update_7004() {
+  drupal_flush_all_caches();
   db_merge('block')
   ->key([
     'theme' => 'civihr_default_theme',
