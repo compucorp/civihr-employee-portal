@@ -59,6 +59,7 @@ function civihr_hrjobcontract_entities_init() {
                     t.notice_amount_employee,
                     t.notice_unit_employee,
                     t.location,
+                    ov_location.label AS location_label,
                     t.jobcontract_revision_id AS details_entity_revision_id
                     FROM {$civi_db_name}.civicrm_hrjobcontract_details AS t
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.details_revision_id
@@ -424,6 +425,11 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'type' => 'varchar',
         'not null' => FALSE,
         'description' => 'Location.',
+    );
+    $schema['hrjc_details']['fields']['location_label'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Location label.',
     );
     $schema['hrjc_details']['fields']['is_primary'] = array(
         'type' => 'int',
