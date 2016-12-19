@@ -14,6 +14,10 @@ function civihr_leave_absences_block_info() {
     'info' => t('My Leave'),
     'cache' => DRUPAL_NO_CACHE,
   ];
+  $blocks['manager_leave'] = [
+    'info' => t('Manager Leave'),
+    'cache' => DRUPAL_NO_CACHE,
+  ];
   return $blocks;
 }
 
@@ -27,6 +31,9 @@ function civihr_leave_absences_block_view($delta = '') {
   switch ($delta) {
     case 'my_leave':
       $block['content'] = civihr_leave_absences_my_leave_get_markup();
+      break;
+    case 'manager_leave':
+      $block['content'] = civihr_leave_absences_manager_leave_get_markup();
       break;
   }
   return $block;
@@ -46,7 +53,8 @@ function civihr_leave_absences_init() {
 
 /**
  * Internal function for fetching custom markup from template/Angular Js to display My Leave block.
- * @return Custom markup from template file.
+ * @return String
+ *    Custom markup from template file.
  */
 function civihr_leave_absences_my_leave_get_markup() {
   civicrm_resources_load('org.civicrm.reqangular', array('reqangular.min.js'));
@@ -58,5 +66,25 @@ function civihr_leave_absences_my_leave_get_markup() {
     return @file_get_contents($file_path);
   }
 
+  return '';
+}
+
+/**
+ * Internal function for fetching custom markup from template/Angular Js to display
+ * Manager Leave block.
+ * @return String
+ *    Custom markup from template file.
+ */
+function civihr_leave_absences_manager_leave_get_markup() {
+
+  // @ TODO -> Pointing to Angular JS App once its ready for Manager Leave block.
+  // Loading angular js application for Manager Leave block using CiviCRM Resources API.
+  // eg: civicrm_resources_load('org.civicrm.hrjobcontract', array('gulpfile.js', 'hrjc.css', 'contact.js'));
+
+  // Fetching custom markup from pre-defined template file.
+  $file_path = drupal_get_path('module', 'civihr_leave_absences') . '/templates/manager_leave.html';
+  if (file_exists($file_path)) {
+    return @file_get_contents($file_path);
+  }
   return '';
 }
