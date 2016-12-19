@@ -56,6 +56,7 @@ $handler->display->display_options['style_options']['columns'] = array(
   'end_date_1' => 'end_date_1',
   'start_date_1' => 'start_date_1',
   'display_name_1' => 'display_name_1',
+  'display_name_2' => 'display_name_2',
 );
 $handler->display->display_options['style_options']['default'] = '-1';
 $handler->display->display_options['style_options']['info'] = array(
@@ -190,6 +191,13 @@ $handler->display->display_options['style_options']['info'] = array(
     'separator' => '',
     'empty_column' => 0,
   ),
+  'display_name_2' => array(
+    'sortable' => 1,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
 );
 /* Header: Global: Result summary */
 $handler->display->display_options['header']['result']['id'] = 'result';
@@ -232,6 +240,18 @@ $handler->display->display_options['relationships']['contact_id_b_']['id'] = 'co
 $handler->display->display_options['relationships']['contact_id_b_']['table'] = 'civicrm_relationship';
 $handler->display->display_options['relationships']['contact_id_b_']['field'] = 'contact_id_b_';
 $handler->display->display_options['relationships']['contact_id_b_']['relationship'] = 'relationship_id_a';
+/* Relationship: CiviCRM Contacts: CiviCRM Relationship (starting from contact A) */
+$handler->display->display_options['relationships']['relationship_id_a_1']['id'] = 'relationship_id_a_1';
+$handler->display->display_options['relationships']['relationship_id_a_1']['table'] = 'civicrm_contact';
+$handler->display->display_options['relationships']['relationship_id_a_1']['field'] = 'relationship_id_a';
+$handler->display->display_options['relationships']['relationship_id_a_1']['label'] = 'Rel From A Unfiltered';
+$handler->display->display_options['relationships']['relationship_id_a_1']['relationship_type'] = array();
+/* Relationship: CiviCRM Relationships: Contact ID B */
+$handler->display->display_options['relationships']['contact_id_b__1']['id'] = 'contact_id_b__1';
+$handler->display->display_options['relationships']['contact_id_b__1']['table'] = 'civicrm_relationship';
+$handler->display->display_options['relationships']['contact_id_b__1']['field'] = 'contact_id_b_';
+$handler->display->display_options['relationships']['contact_id_b__1']['relationship'] = 'relationship_id_a_1';
+$handler->display->display_options['relationships']['contact_id_b__1']['label'] = 'Unfiltered Managers';
 /* Field: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'civicrm_contact';
@@ -362,7 +382,15 @@ $handler->display->display_options['fields']['display_name_1']['table'] = 'civic
 $handler->display->display_options['fields']['display_name_1']['field'] = 'display_name';
 $handler->display->display_options['fields']['display_name_1']['relationship'] = 'contact_id_b_';
 $handler->display->display_options['fields']['display_name_1']['label'] = 'Manager';
+$handler->display->display_options['fields']['display_name_1']['exclude'] = TRUE;
 $handler->display->display_options['fields']['display_name_1']['link_to_civicrm_contact'] = 0;
+/* Field: CiviCRM Contacts: Display Name */
+$handler->display->display_options['fields']['display_name_2']['id'] = 'display_name_2';
+$handler->display->display_options['fields']['display_name_2']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['display_name_2']['field'] = 'display_name';
+$handler->display->display_options['fields']['display_name_2']['relationship'] = 'contact_id_b__1';
+$handler->display->display_options['fields']['display_name_2']['label'] = 'Managers';
+$handler->display->display_options['fields']['display_name_2']['link_to_civicrm_contact'] = 0;
 /* Sort criterion: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['sorts']['id']['id'] = 'id';
 $handler->display->display_options['sorts']['id']['table'] = 'civicrm_contact';
@@ -720,6 +748,8 @@ $translatables['civihr_staff_directory'] = array(
   t('Email Address'),
   t('CiviCRM Relationship (starting from contact A)'),
   t('CiviCRM Contact B'),
+  t('Rel From A Unfiltered'),
+  t('Unfiltered Managers'),
   t('Contact ID'),
   t('.'),
   t('Name'),
@@ -737,6 +767,7 @@ $translatables['civihr_staff_directory'] = array(
   t('Role end date'),
   t('Broken handler hrjc_role.role_star_date'),
   t('Manager'),
+  t('Managers'),
   t('Phone'),
   t('Email'),
   t('Department'),
