@@ -130,6 +130,23 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 0,
     'customized' => 1,
   );
+  // Exported menu link: main-menu_my-details:hr-details
+  $menu_links['main-menu_my-details:hr-details'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'hr-details',
+    'router_path' => 'hr-details',
+    'link_title' => 'My Details',
+    'options' => array(
+      'identifier' => 'main-menu_my-details:hr-details',
+    ),
+    'module' => 'system',
+    'hidden' => 0,
+    'external' => 0,
+    'has_children' => 0,
+    'expanded' => 0,
+    'weight' => 3,
+    'customized' => 1,
+  );
   // Exported menu link: main-menu_reports:reports
   $menu_links['main-menu_reports:reports'] = array(
     'menu_name' => 'main-menu',
@@ -156,6 +173,7 @@ function civihr_employee_portal_features_menu_default_menu_links() {
   t('CiviHR SSP');
   t('CiviHR admin');
   t('Home');
+  t('My Details');
   t('Report 1: People');
   t('Report 2: Leave and Absence');
   t('Reports');

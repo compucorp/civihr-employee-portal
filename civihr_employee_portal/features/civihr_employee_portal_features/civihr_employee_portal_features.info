@@ -51,6 +51,7 @@ features[menu_links][] = hr-reports_report-2-leave-and-absence:reports/leave_and
 features[menu_links][] = main-menu_civihr-admin:civicrm
 features[menu_links][] = main-menu_civihr-ssp:dashboard
 features[menu_links][] = main-menu_home:dashboard
+features[menu_links][] = main-menu_my-details:hr-details
 features[menu_links][] = main-menu_reports:reports
 features[node][] = hr_documents
 features[page_manager_pages][] = dashboard
