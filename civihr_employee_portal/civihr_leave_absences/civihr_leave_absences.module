@@ -42,12 +42,16 @@ function civihr_leave_absences_block_view($delta = '') {
 /**
  * Implements hook_init().
  *
- * Fetches the base URL of the angular app, to be stored in the Drupal.settings global var
+ * Fetches the base URL of the angular app, to be stored in the Drupal.settings
+ * global var.
+ *
+ * Adds the Leave and Absences permissions to the CRM.permissions global var.
  */
 function civihr_leave_absences_init() {
   if (!_isCiviCRM()) {
     $baseURL = CRM_Extension_System::singleton()->getMapper()->keyToUrl('uk.co.compucorp.civicrm.hrleaveandabsences');
     drupal_add_js(array('civihr_leave_absences' => array('baseURL' => $baseURL)), 'setting');
+    _civihr_leave_absences_push_permissions();
   }
 }
 
@@ -95,4 +99,19 @@ function civihr_leave_absences_load_file($template = '') {
   else {
     return '';
   }
+}
+
+/**
+ * Internal function to push the Leave & Absences permissions to the frontend.
+ *
+ * This will add the permissions to the CRM.permissions javascript variable,
+ * which then can be used by the CRM.checkPerm() function.
+ */
+function _civihr_leave_absences_push_permissions() {
+  CRM_Core_Resources::singleton()->addPermissions([
+    'access leave and absences',
+    'administer leave and absences',
+    'access leave and absences in ssp',
+    'manage leave and absences in ssp',
+  ]);
 }
