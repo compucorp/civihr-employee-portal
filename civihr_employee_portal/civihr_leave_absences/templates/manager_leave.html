@@ -1,3 +1,11 @@
 <section data-leave-absences-manager-leave>
-  <p>Manager Leave Block Template.</p>
+  <ui-view></ui-view>
 </section>
+<script>
+  // Transfers the Drupal.settings data into
+  // the expected (by the app) CRM.vars.leaveAndAbsences object
+  CRM.vars.leaveAndAbsences = {
+    baseURL: Drupal.settings.civihr_leave_absences.baseURL,
+    contactId: Drupal.settings.currentCiviCRMUserId
+  };
+</script>
