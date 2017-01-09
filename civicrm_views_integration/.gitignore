@@ -1,0 +1,5 @@
+# Ignore PHPStorm project folder
+.idea/
+
+# Ignore Linux backup files
+*~

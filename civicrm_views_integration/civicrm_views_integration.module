@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * Implements CiviCRM hook :  hook_civicrm_post() [https://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_post].
+ * This hook will check if any custom group get added and will append the prefix for it to settings.php
+ * file automatically
+ */
+function civicrm_views_integration_post($op, $objectName, $id, &$params) {
+  if ($objectName == 'CustomGroup' && $op == 'create') {
+    $config = CRM_Core_Config::singleton();
+
+    $tableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup', $id, 'table_name' );
+
+    // Only add the prefix if civicrm and drupal database are not the same one
+    if ($config->dsn != $config->userFrameworkDSN) {
+      $dsnArray = DB::parseDSN($config->dsn);
+      $prefix = "`{$dsnArray['database']}`.";
+
+      $ctable = '$databases[\'default\'][\'default\'][\'prefix\'][\'' . $tableName . '\']= ' . '\'' . $prefix . '\';';
+
+      $cmsSettingsPath = $config->userSystem->cmsRootPath() . '/sites/default/settings.php';
+      $myfile = fopen($cmsSettingsPath, 'a');
+      fwrite($myfile, "\n". $ctable);
+      fclose($myfile);
+    }
+  }
+}

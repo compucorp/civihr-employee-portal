@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * Implements hook_install().
+ * Appends settings.php file with prefixes for all current civicrm tables
+ * when installing this module for the first time
+ */
+function civicrm_views_integration_install() {
+  civicrm_initialize();
+
+  global $databases;
+
+  // Don't do anything if there are prefixes already defined
+  if (is_array($databases['default']['default']['prefix'])) {
+    return NULL;
+  }
+
+  $config = CRM_Core_Config::singleton();
+
+  // Only add the prefix if civicrm and drupal database are not the same one
+  if ($config->dsn != $config->userFrameworkDSN) {
+    $tableNames = CRM_Core_DAO::GetStorageValues(NULL, 0, 'Name');
+
+    $tablePrefixes = '$databases[\'default\'][\'default\'][\'prefix\']= array(';
+
+    // add default prefix: the drupal database prefix
+    $tablePrefixes .= "\n  'default' => '" .$databases['default']['default']['prefix'] . "',";
+
+    $dsnArray = DB::parseDSN($config->dsn);
+    $prefix = "`{$dsnArray['database']}`.";
+
+    foreach ($tableNames as $tableName => $value) {
+      $tablePrefixes .= "\n  '" . str_pad($tableName . '\'', 41) . " => '{$prefix}',";
+    }
+    $tablePrefixes .= "\n);";
+
+    $cmsSettingsPath = $config->userSystem->cmsRootPath() . '/sites/default/settings.php';
+    $myfile = fopen($cmsSettingsPath, 'a');
+    fwrite($myfile, "\n". $tablePrefixes);
+    fclose($myfile);
+  }
+}

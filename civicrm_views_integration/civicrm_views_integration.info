@@ -1,0 +1,7 @@
+name = CiviCRM Views Integration
+description = Easy and automatic intergration with drupal (views) module
+
+core = 7.x
+
+dependencies[] = views
+dependencies[] = civicrm
