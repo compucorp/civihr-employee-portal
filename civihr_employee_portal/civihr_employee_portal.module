@@ -532,6 +532,9 @@ function getModuleUrl($moduleName) {
  * Implements hook_init().
  */
 function civihr_employee_portal_init() {
+  // calling this inside hook_init so we could access
+  // some drupal functions such as user_access
+  _user_redirection();
 
   // Loads all the resources only for non-civicrm pages.
   if (!_isCiviCRM()) {
@@ -7199,12 +7202,6 @@ function _get_task_filter_by_date($date, $normalize = false) {
   return $normalize ? ($filter == 'tomorrow' ? 'week' : $filter) : $filter;
 }
 
-/**
- * Implements hook_boot()
- */
-function civihr_employee_portal_boot() {
-  _user_redirection();
-}
 
 /**
  * This method handle user redirection for special use cases
@@ -7240,14 +7237,13 @@ function _user_redirection() {
   ];
 
   if ($user_is_anonymous) {
-    if (
-    (!in_array($current_path, $allowed_paths) && substr($current_path, 0, 4) !== 'user') ||
-    $current_path == 'user/register'
-    ) {
+    if ((!in_array($current_path, $allowed_paths) && substr($current_path, 0, 4) !== 'user') ||
+      $current_path == 'user/register') {
       $redirect_path = 'welcome-page';
     }
-  } else if ($current_path == 'civicrm' || $current_path == 'civicrm/dashboard') {
-    $redirect_path = 'civicrm/tasksassignments/dashboard#/tasks';
+  }
+  else if (in_array($current_path, ['', 'civicrm', 'civicrm/dashboard'])) {
+    $redirect_path = user_access('access CiviCRM') ?  'civicrm/tasksassignments/dashboard#/tasks' : 'dashboard';
   }
 
   if (!empty($redirect_path)) {
