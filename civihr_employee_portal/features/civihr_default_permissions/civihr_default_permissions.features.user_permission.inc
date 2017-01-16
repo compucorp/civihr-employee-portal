@@ -787,6 +787,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer users',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'user',
   );
