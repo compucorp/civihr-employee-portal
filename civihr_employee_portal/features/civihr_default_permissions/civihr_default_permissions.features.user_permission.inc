@@ -236,6 +236,9 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access leave and absences in ssp',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
     ),
     'module' => 'civihr_employee_portal',
   );
@@ -784,6 +787,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer users',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'user',
   );

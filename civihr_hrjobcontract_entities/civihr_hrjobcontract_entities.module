@@ -59,7 +59,9 @@ function civihr_hrjobcontract_entities_init() {
                     t.notice_amount_employee,
                     t.notice_unit_employee,
                     t.location,
-                    t.jobcontract_revision_id AS details_entity_revision_id
+                    ov_location.label AS location_label,
+                    t.jobcontract_revision_id AS details_entity_revision_id,
+                    GROUP_CONCAT(DISTINCT ov_department.label ORDER BY ov_department.label ASC SEPARATOR ', ') AS department_list
                     FROM {$civi_db_name}.civicrm_hrjobcontract_details AS t
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.details_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
@@ -70,7 +72,12 @@ function civihr_hrjobcontract_entities_init() {
                     LEFT JOIN {$civi_db_name}.civicrm_option_group og_location ON og_location.name = 'hrjc_location'
                     LEFT JOIN {$civi_db_name}.civicrm_option_value ov_location ON og_location.id = ov_location.option_group_id AND ov_location.value = t.location
 
-                    WHERE c.deleted = 0");
+                    LEFT JOIN {$civi_db_name}.civicrm_hrjobroles jr ON (jr.job_contract_id = c.id AND (jr.end_date >= CURDATE() OR jr.end_date IS NULL))
+                    LEFT JOIN {$civi_db_name}.civicrm_option_group og_department ON og_department.name = 'hrjc_department'
+                    LEFT JOIN {$civi_db_name}.civicrm_option_value ov_department ON og_department.id = ov_department.option_group_id AND ov_department.value = jr.department
+
+                    WHERE c.deleted = 0
+                    GROUP BY c.contact_id, t.id");
 
         db_query('DROP VIEW IF EXISTS hrjc_health');
         db_query("CREATE OR REPLACE VIEW hrjc_health AS
@@ -424,6 +431,16 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'type' => 'varchar',
         'not null' => FALSE,
         'description' => 'Location.',
+    );
+    $schema['hrjc_details']['fields']['location_label'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'Location label.',
+    );
+    $schema['hrjc_details']['fields']['department_list'] = array(
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'description' => 'List of departments.',
     );
     $schema['hrjc_details']['fields']['is_primary'] = array(
         'type' => 'int',

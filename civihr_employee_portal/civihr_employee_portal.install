@@ -1,26 +1,93 @@
 <?php
 
 /**
- * Implements hook_install().
+ * Create Report Pages and Report Age Settings menu links.
  */
-function civihr_employee_portal_install() {
-    
-    // Civi init
-    civicrm_initialize();
-    
-    // Setup default settings for the CiviCRM to work with the new CiviHR dashboard
-    _civi_setup();
+function civihr_employee_portal_update_7001() {
+    // Report1: People
+    $path = 'reports/people/';
+    $link = array();
+    $link['link_path'] = $path;
+    $link['link_title'] = 'Report 1: People';
+    $link['menu_name'] = 'hr-reports';
+    $link['router_path'] = $path . '%';
+    $link['module'] = 'menu';
+    $link['options'] = array(
+        'attributes' => array(
+            'title' => 'CiviHR Report containing Employee, Contract and Role data.',
+        ),
+    );
+    menu_link_save($link);
 
+    // Report 2: Leave and Absence
+    $path = 'reports/leave_and_absence/';
+    $link = array();
+    $link['link_path'] = $path;
+    $link['link_title'] = 'Report 2: Leave and Absence';
+    $link['menu_name'] = 'hr-reports';
+    $link['router_path'] = $path . '%';
+    $link['module'] = 'menu';
+    $link['options'] = array(
+        'attributes' => array(
+            'title' => 'CiviHR Report containing Employee, Contract, Role and Absence Activity data.',
+        ),
+    );
+    menu_link_save($link);
+
+    // Age groups
+    $path = 'reports/settings/age_group/';
+    $link = array();
+    $link['link_path'] = $path;
+    $link['link_title'] = 'Age groups';
+    $link['menu_name'] = 'hr-reports-settings';
+    $link['router_path'] = $path . '%';
+    $link['module'] = 'menu';
+    menu_link_save($link);
 }
 
-function _civi_setup() {
-            
-    $result = civicrm_api3('RelationshipType', 'create', array(
-        'sequential' => 1,
-        'name_a_b' => "has Leave Approved by",
-        'name_b_a' => "is Leave Approver of",
-        'contact_type_a' => "individual",
-        'contact_type_b' => "individual",
-    ));
-            
+/**
+ * Create db table for Age groups (Report settings).
+ */
+function civihr_employee_portal_update_7002() {
+  $schema = module_invoke('civihr_employee_portal', 'schema');
+  db_create_table('reports_settings_age_group', $schema['reports_settings_age_group']);
+}
+
+/**
+ * Rearrange Report pages in Drupal menu.
+ */
+function civihr_employee_portal_update_7003() {
+    db_update('menu_links')
+    ->fields(
+        array(
+            'weight' => 99,
+        )
+    )
+    ->condition('link_path', 'reports')
+    ->execute();
+    db_update('menu_links')
+    ->fields(
+        array(
+            'weight' => 1,
+        )
+    )
+    ->condition('link_path', 'reports/people/')
+    ->execute();
+    db_update('menu_links')
+    ->fields(
+        array(
+            'weight' => 2,
+        )
+    )
+    ->condition('link_path', 'reports/leave_and_absence/')
+    ->execute();
+    cache_clear_all();
+}
+
+/**
+ * Create db table for Reports configuration.
+ */
+function civihr_employee_portal_update_7005() {
+  $schema = module_invoke('civihr_employee_portal', 'schema');
+  db_create_table('reports_configuration', $schema['reports_configuration']);
 }
