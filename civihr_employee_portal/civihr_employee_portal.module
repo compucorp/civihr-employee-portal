@@ -7432,6 +7432,9 @@ function civihr_employee_portal_html_head_alter(&$head_elements) {
   $head_elements[$default_favicon_element]['#attributes']['href'] = "{$base_url}/{$icoPath}";
 }
 
+/**
+ *  Return current version of Civihr.
+ */
 function get_civihr_version() {
     $civihrVersion = &drupal_static(__FUNCTION__);
 
