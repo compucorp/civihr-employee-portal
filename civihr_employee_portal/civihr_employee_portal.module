@@ -7450,7 +7450,7 @@ function get_civihr_version() {
             } catch (CiviCRM_API3_Exception $e) {
                 $error = $e->getMessage();
             }
-            cache_set('civihr_version', $civihrVersion, 'cache', time() + 360);
+            cache_set('civihr_version', $civihrVersion, 'cache', time() + 86400);
         }
     }
 
