@@ -42,8 +42,8 @@ $handler->display->display_options['style_options']['columns'] = array(
   'first_name' => 'first_name',
   'last_name' => 'last_name',
   'display_name' => 'display_name',
-  'phone' => 'phone',
-  'phone_ext' => 'phone_ext',
+  'work_phone' => 'work_phone',
+  'work_phone_ext' => 'work_phone_ext',
   'title' => 'title',
   'email_1' => 'email_1',
   'location_label' => 'location_label',
@@ -95,14 +95,14 @@ $handler->display->display_options['style_options']['info'] = array(
     'separator' => '',
     'empty_column' => 0,
   ),
-  'phone' => array(
+  'work_phone' => array(
     'sortable' => 1,
     'default_sort_order' => 'asc',
     'align' => '',
     'separator' => '',
     'empty_column' => 0,
   ),
-  'phone_ext' => array(
+  'work_phone_ext' => array(
     'sortable' => 1,
     'default_sort_order' => 'asc',
     'align' => '',
@@ -252,6 +252,10 @@ $handler->display->display_options['relationships']['contact_id_b__1']['table'] 
 $handler->display->display_options['relationships']['contact_id_b__1']['field'] = 'contact_id_b_';
 $handler->display->display_options['relationships']['contact_id_b__1']['relationship'] = 'relationship_id_a_1';
 $handler->display->display_options['relationships']['contact_id_b__1']['label'] = 'Unfiltered Managers';
+/* Relationship: CiviCRM Contacts: HRJobContract Contact Work/Home Phone and E-mail Entity */
+$handler->display->display_options['relationships']['hrjc_contact_details']['id'] = 'hrjc_contact_details';
+$handler->display->display_options['relationships']['hrjc_contact_details']['table'] = 'civicrm_contact';
+$handler->display->display_options['relationships']['hrjc_contact_details']['field'] = 'hrjc_contact_details';
 /* Field: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'civicrm_contact';
@@ -287,24 +291,17 @@ $handler->display->display_options['fields']['display_name']['exclude'] = TRUE;
 $handler->display->display_options['fields']['display_name']['alter']['alter_text'] = TRUE;
 $handler->display->display_options['fields']['display_name']['alter']['text'] = '[first_name] [last_name]';
 $handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 0;
-/* Field: CiviCRM Phone Details: Phone */
-$handler->display->display_options['fields']['phone']['id'] = 'phone';
-$handler->display->display_options['fields']['phone']['table'] = 'civicrm_phone';
-$handler->display->display_options['fields']['phone']['field'] = 'phone';
-$handler->display->display_options['fields']['phone']['label'] = 'Work Phone';
-$handler->display->display_options['fields']['phone']['location_type'] = '2';
-$handler->display->display_options['fields']['phone']['location_op'] = '0';
-$handler->display->display_options['fields']['phone']['is_primary'] = 0;
-$handler->display->display_options['fields']['phone']['phone_type'] = '0';
-/* Field: CiviCRM Phone Details: Phone Number Extension */
-$handler->display->display_options['fields']['phone_ext']['id'] = 'phone_ext';
-$handler->display->display_options['fields']['phone_ext']['table'] = 'civicrm_phone';
-$handler->display->display_options['fields']['phone_ext']['field'] = 'phone_ext';
-$handler->display->display_options['fields']['phone_ext']['label'] = 'Work Phone Extension';
-$handler->display->display_options['fields']['phone_ext']['location_type'] = '2';
-$handler->display->display_options['fields']['phone_ext']['location_op'] = '0';
-$handler->display->display_options['fields']['phone_ext']['is_primary'] = 0;
-$handler->display->display_options['fields']['phone_ext']['phone_type'] = '0';
+/* Field: HRJobContract Contact Work/Home Phone and E-mail Entity: Work_phone */
+$handler->display->display_options['fields']['work_phone']['id'] = 'work_phone';
+$handler->display->display_options['fields']['work_phone']['table'] = 'hrjc_contact_details';
+$handler->display->display_options['fields']['work_phone']['field'] = 'work_phone';
+$handler->display->display_options['fields']['work_phone']['relationship'] = 'hrjc_contact_details';
+/* Field: HRJobContract Contact Work/Home Phone and E-mail Entity: Work_phone_ext */
+$handler->display->display_options['fields']['work_phone_ext']['id'] = 'work_phone_ext';
+$handler->display->display_options['fields']['work_phone_ext']['table'] = 'hrjc_contact_details';
+$handler->display->display_options['fields']['work_phone_ext']['field'] = 'work_phone_ext';
+$handler->display->display_options['fields']['work_phone_ext']['relationship'] = 'hrjc_contact_details';
+$handler->display->display_options['fields']['work_phone_ext']['label'] = 'Work Phone Extension';
 /* Field: HRJobContract Details entity: Title */
 $handler->display->display_options['fields']['title']['id'] = 'title';
 $handler->display->display_options['fields']['title']['table'] = 'hrjc_details';
@@ -456,32 +453,32 @@ $handler->display->display_options['filters']['title']['expose']['autocomplete_f
 $handler->display->display_options['filters']['title']['expose']['autocomplete_raw_suggestion'] = 1;
 $handler->display->display_options['filters']['title']['expose']['autocomplete_raw_dropdown'] = 1;
 $handler->display->display_options['filters']['title']['expose']['autocomplete_dependent'] = 0;
-/* Filter criterion: CiviCRM Phone Details: Phone */
-$handler->display->display_options['filters']['phone']['id'] = 'phone';
-$handler->display->display_options['filters']['phone']['table'] = 'civicrm_phone';
-$handler->display->display_options['filters']['phone']['field'] = 'phone';
-$handler->display->display_options['filters']['phone']['operator'] = 'contains';
-$handler->display->display_options['filters']['phone']['group'] = 1;
-$handler->display->display_options['filters']['phone']['exposed'] = TRUE;
-$handler->display->display_options['filters']['phone']['expose']['operator_id'] = 'phone_op';
-$handler->display->display_options['filters']['phone']['expose']['label'] = 'Phone';
-$handler->display->display_options['filters']['phone']['expose']['operator'] = 'phone_op';
-$handler->display->display_options['filters']['phone']['expose']['identifier'] = 'phone';
-$handler->display->display_options['filters']['phone']['expose']['remember_roles'] = array(
+/* Filter criterion: HRJobContract Contact Work/Home Phone and E-mail Entity: Work_phone */
+$handler->display->display_options['filters']['work_phone']['id'] = 'work_phone';
+$handler->display->display_options['filters']['work_phone']['table'] = 'hrjc_contact_details';
+$handler->display->display_options['filters']['work_phone']['field'] = 'work_phone';
+$handler->display->display_options['filters']['work_phone']['relationship'] = 'hrjc_contact_details';
+$handler->display->display_options['filters']['work_phone']['operator'] = 'contains';
+$handler->display->display_options['filters']['work_phone']['group'] = 1;
+$handler->display->display_options['filters']['work_phone']['exposed'] = TRUE;
+$handler->display->display_options['filters']['work_phone']['expose']['operator_id'] = 'work_phone_op';
+$handler->display->display_options['filters']['work_phone']['expose']['label'] = 'Work_phone';
+$handler->display->display_options['filters']['work_phone']['expose']['operator'] = 'work_phone_op';
+$handler->display->display_options['filters']['work_phone']['expose']['identifier'] = 'work_phone';
+$handler->display->display_options['filters']['work_phone']['expose']['remember_roles'] = array(
   2 => '2',
   1 => 0,
   3 => 0,
-  4 => 0,
-  6 => 0,
-  5 => 0,
+  55120974 => 0,
+  17087012 => 0,
+  57573969 => 0,
 );
-$handler->display->display_options['filters']['phone']['expose']['autocomplete_filter'] = 1;
-$handler->display->display_options['filters']['phone']['expose']['autocomplete_items'] = '10';
-$handler->display->display_options['filters']['phone']['expose']['autocomplete_min_chars'] = '0';
-$handler->display->display_options['filters']['phone']['expose']['autocomplete_field'] = 'phone';
-$handler->display->display_options['filters']['phone']['expose']['autocomplete_raw_suggestion'] = 1;
-$handler->display->display_options['filters']['phone']['expose']['autocomplete_raw_dropdown'] = 1;
-$handler->display->display_options['filters']['phone']['expose']['autocomplete_dependent'] = 0;
+$handler->display->display_options['filters']['work_phone']['expose']['autocomplete_items'] = '10';
+$handler->display->display_options['filters']['work_phone']['expose']['autocomplete_min_chars'] = '0';
+$handler->display->display_options['filters']['work_phone']['expose']['autocomplete_field'] = 'work_phone';
+$handler->display->display_options['filters']['work_phone']['expose']['autocomplete_raw_suggestion'] = 1;
+$handler->display->display_options['filters']['work_phone']['expose']['autocomplete_raw_dropdown'] = 1;
+$handler->display->display_options['filters']['work_phone']['expose']['autocomplete_dependent'] = 0;
 /* Filter criterion: CiviCRM Email: Email Address */
 $handler->display->display_options['filters']['email']['id'] = 'email';
 $handler->display->display_options['filters']['email']['table'] = 'civicrm_email';
@@ -750,11 +747,12 @@ $translatables['civihr_staff_directory'] = array(
   t('CiviCRM Contact B'),
   t('Rel From A Unfiltered'),
   t('Unfiltered Managers'),
+  t('HRJobContract Contact Work/Home Phone and E-mail Entity'),
   t('Contact ID'),
   t('.'),
   t('Name'),
   t('[first_name] [last_name]'),
-  t('Work Phone'),
+  t('Work_phone'),
   t('Work Phone Extension'),
   t('Job Title'),
   t('Location'),
@@ -768,7 +766,6 @@ $translatables['civihr_staff_directory'] = array(
   t('Broken handler hrjc_role.role_star_date'),
   t('Manager'),
   t('Managers'),
-  t('Phone'),
   t('Email'),
   t('Department'),
   t('Staff directory list page'),
