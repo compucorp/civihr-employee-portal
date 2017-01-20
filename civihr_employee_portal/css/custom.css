@@ -159,3 +159,27 @@ span.appraisals-employee-legend {
   vertical-align: middle;
   padding-left: 10px;
 }
+
+#footer {
+  height: 250px;
+  color: #727e8a;
+  padding-top: 85px;
+  font-size: 13px;
+  line-height: 2;
+}
+
+#footer a {
+  color: #42afcb;
+}
+
+#footer a:hover {
+  color: #42afcb;
+}
+
+#footer a:visited {
+  color: #42afcb;
+}
+
+.footer-logo {
+  margin-top: 25px;
+}
