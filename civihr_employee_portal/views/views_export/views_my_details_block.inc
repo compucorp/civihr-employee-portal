@@ -106,37 +106,19 @@ $handler->display->display_options['fields']['display_name']['table'] = 'civicrm
 $handler->display->display_options['fields']['display_name']['field'] = 'display_name';
 $handler->display->display_options['fields']['display_name']['label'] = 'Name';
 $handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 0;
-/* Field: CiviCRM Phone Details: Phone */
-$handler->display->display_options['fields']['phone']['id'] = 'phone';
-$handler->display->display_options['fields']['phone']['table'] = 'civicrm_phone';
-$handler->display->display_options['fields']['phone']['field'] = 'phone';
-$handler->display->display_options['fields']['phone']['label'] = 'Work Phone';
-$handler->display->display_options['fields']['phone']['exclude'] = TRUE;
-$handler->display->display_options['fields']['phone']['location_type'] = '2';
-$handler->display->display_options['fields']['phone']['location_op'] = '0';
-$handler->display->display_options['fields']['phone']['is_primary'] = 0;
-$handler->display->display_options['fields']['phone']['phone_type'] = '1';
-/* Field: CiviCRM Phone Details: Phone Number Extension */
-$handler->display->display_options['fields']['phone_ext']['id'] = 'phone_ext';
-$handler->display->display_options['fields']['phone_ext']['table'] = 'civicrm_phone';
-$handler->display->display_options['fields']['phone_ext']['field'] = 'phone_ext';
-$handler->display->display_options['fields']['phone_ext']['label'] = 'Work Phone Extension';
-$handler->display->display_options['fields']['phone_ext']['exclude'] = TRUE;
-$handler->display->display_options['fields']['phone_ext']['location_type'] = '2';
-$handler->display->display_options['fields']['phone_ext']['location_op'] = '0';
-$handler->display->display_options['fields']['phone_ext']['is_primary'] = 0;
-$handler->display->display_options['fields']['phone_ext']['phone_type'] = '1';
 /* Field: HRJobContract Contact Work/Home Phone and E-mail Entity: Work_phone */
 $handler->display->display_options['fields']['work_phone']['id'] = 'work_phone';
 $handler->display->display_options['fields']['work_phone']['table'] = 'hrjc_contact_details';
 $handler->display->display_options['fields']['work_phone']['field'] = 'work_phone';
 $handler->display->display_options['fields']['work_phone']['relationship'] = 'hrjc_contact_details';
+$handler->display->display_options['fields']['work_phone']['label'] = 'Work Phone';
 $handler->display->display_options['fields']['work_phone']['exclude'] = TRUE;
 /* Field: HRJobContract Contact Work/Home Phone and E-mail Entity: Work_phone_ext */
 $handler->display->display_options['fields']['work_phone_ext']['id'] = 'work_phone_ext';
 $handler->display->display_options['fields']['work_phone_ext']['table'] = 'hrjc_contact_details';
 $handler->display->display_options['fields']['work_phone_ext']['field'] = 'work_phone_ext';
 $handler->display->display_options['fields']['work_phone_ext']['relationship'] = 'hrjc_contact_details';
+$handler->display->display_options['fields']['work_phone_ext']['label'] = 'Work Phone Extension';
 $handler->display->display_options['fields']['work_phone_ext']['exclude'] = TRUE;
 /* Field: Global: Custom text */
 $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
@@ -350,12 +332,14 @@ $handler->display->display_options['fields']['work_phone']['id'] = 'work_phone';
 $handler->display->display_options['fields']['work_phone']['table'] = 'hrjc_contact_details';
 $handler->display->display_options['fields']['work_phone']['field'] = 'work_phone';
 $handler->display->display_options['fields']['work_phone']['relationship'] = 'hrjc_contact_details';
+$handler->display->display_options['fields']['work_phone']['label'] = 'Work Phone';
 $handler->display->display_options['fields']['work_phone']['exclude'] = TRUE;
 /* Field: HRJobContract Contact Work/Home Phone and E-mail Entity: Work_phone_ext */
 $handler->display->display_options['fields']['work_phone_ext']['id'] = 'work_phone_ext';
 $handler->display->display_options['fields']['work_phone_ext']['table'] = 'hrjc_contact_details';
 $handler->display->display_options['fields']['work_phone_ext']['field'] = 'work_phone_ext';
 $handler->display->display_options['fields']['work_phone_ext']['relationship'] = 'hrjc_contact_details';
+$handler->display->display_options['fields']['work_phone_ext']['label'] = 'Work Phone Extension';
 $handler->display->display_options['fields']['work_phone_ext']['exclude'] = TRUE;
 /* Field: Global: Custom text */
 $handler->display->display_options['fields']['nothing_1']['id'] = 'nothing_1';
@@ -550,8 +534,6 @@ $translatables['my_details_block'] = array(
   t('Name'),
   t('Work Phone'),
   t('Work Phone Extension'),
-  t('Work_phone'),
-  t('Work_phone_ext'),
   t('[work_phone] ext. [work_phone_ext]'),
   t('Work E-mail'),
   t('Designation'),

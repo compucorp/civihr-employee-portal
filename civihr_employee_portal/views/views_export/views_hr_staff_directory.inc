@@ -296,6 +296,7 @@ $handler->display->display_options['fields']['work_phone']['id'] = 'work_phone';
 $handler->display->display_options['fields']['work_phone']['table'] = 'hrjc_contact_details';
 $handler->display->display_options['fields']['work_phone']['field'] = 'work_phone';
 $handler->display->display_options['fields']['work_phone']['relationship'] = 'hrjc_contact_details';
+$handler->display->display_options['fields']['work_phone']['label'] = 'Work Phone';
 /* Field: HRJobContract Contact Work/Home Phone and E-mail Entity: Work_phone_ext */
 $handler->display->display_options['fields']['work_phone_ext']['id'] = 'work_phone_ext';
 $handler->display->display_options['fields']['work_phone_ext']['table'] = 'hrjc_contact_details';
@@ -462,7 +463,7 @@ $handler->display->display_options['filters']['work_phone']['operator'] = 'conta
 $handler->display->display_options['filters']['work_phone']['group'] = 1;
 $handler->display->display_options['filters']['work_phone']['exposed'] = TRUE;
 $handler->display->display_options['filters']['work_phone']['expose']['operator_id'] = 'work_phone_op';
-$handler->display->display_options['filters']['work_phone']['expose']['label'] = 'Work_phone';
+$handler->display->display_options['filters']['work_phone']['expose']['label'] = 'Work Phone';
 $handler->display->display_options['filters']['work_phone']['expose']['operator'] = 'work_phone_op';
 $handler->display->display_options['filters']['work_phone']['expose']['identifier'] = 'work_phone';
 $handler->display->display_options['filters']['work_phone']['expose']['remember_roles'] = array(
@@ -752,7 +753,7 @@ $translatables['civihr_staff_directory'] = array(
   t('.'),
   t('Name'),
   t('[first_name] [last_name]'),
-  t('Work_phone'),
+  t('Work Phone'),
   t('Work Phone Extension'),
   t('Job Title'),
   t('Location'),
