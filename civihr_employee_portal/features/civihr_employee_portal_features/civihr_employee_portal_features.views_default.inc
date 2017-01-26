@@ -563,12 +563,12 @@ Type ID: [activity_type_id] '),
   $handler->display->display_options['fields']['end_reason']['table'] = 'hrjc_details';
   $handler->display->display_options['fields']['end_reason']['field'] = 'end_reason';
   $handler->display->display_options['fields']['end_reason']['relationship'] = 'details_revision_id';
-  /* Field: HRJobContract Details entity: Location */
-  $handler->display->display_options['fields']['location']['id'] = 'location';
-  $handler->display->display_options['fields']['location']['table'] = 'hrjc_details';
-  $handler->display->display_options['fields']['location']['field'] = 'location';
-  $handler->display->display_options['fields']['location']['relationship'] = 'details_revision_id';
-  $handler->display->display_options['fields']['location']['label'] = 'Contract Normal Place of Work';
+  /* Field: HRJobContract Details entity: Location_label */
+  $handler->display->display_options['fields']['location_label']['id'] = 'location_label';
+  $handler->display->display_options['fields']['location_label']['table'] = 'hrjc_details';
+  $handler->display->display_options['fields']['location_label']['field'] = 'location_label';
+  $handler->display->display_options['fields']['location_label']['relationship'] = 'details_revision_id';
+  $handler->display->display_options['fields']['location_label']['label'] = 'Contract Normal Place of Work';
   /* Field: HRJobContract Hour entity: Contract location standard hours */
   $handler->display->display_options['fields']['location_standard_hours']['id'] = 'location_standard_hours';
   $handler->display->display_options['fields']['location_standard_hours']['table'] = 'hrjc_hour';
