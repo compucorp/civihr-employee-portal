@@ -1822,44 +1822,6 @@ return date(\'Y-m-d\');';
   $handler->display->display_options['arguments']['period_end_date']['summary_options']['items_per_page'] = '25';
   $handler->display->display_options['arguments']['period_end_date']['civihr_range'] = '>=';
   $handler->display->display_options['arguments']['period_end_date']['civihr_range_empty'] = '1';
-  /* Contextual filter: HRJobContract Role entity: Role start date */
-  $handler->display->display_options['arguments']['role_start_date']['id'] = 'role_start_date';
-  $handler->display->display_options['arguments']['role_start_date']['table'] = 'hrjc_role';
-  $handler->display->display_options['arguments']['role_start_date']['field'] = 'role_start_date';
-  $handler->display->display_options['arguments']['role_start_date']['relationship'] = 'role_jobcontract_id';
-  $handler->display->display_options['arguments']['role_start_date']['default_action'] = 'default';
-  $handler->display->display_options['arguments']['role_start_date']['default_argument_type'] = 'php';
-  $handler->display->display_options['arguments']['role_start_date']['default_argument_options']['code'] = '$date_filter = !empty($_REQUEST[\'between_date_filter\']) ? $_REQUEST[\'between_date_filter\'] : null;
-if (!empty($date_filter[\'value\'])) {
-    $expl = explode(\'/\', $date_filter[\'value\']);
-if (count($expl) === 1) { return $date_filter[\'value\']; }
-    return $expl[2] . \'-\' . $expl[1] . \'-\' . $expl[0];
-}
-return date(\'Y-m-d\');';
-  $handler->display->display_options['arguments']['role_start_date']['summary']['number_of_records'] = '0';
-  $handler->display->display_options['arguments']['role_start_date']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['role_start_date']['summary_options']['items_per_page'] = '25';
-  $handler->display->display_options['arguments']['role_start_date']['civihr_range'] = '<=';
-  $handler->display->display_options['arguments']['role_start_date']['civihr_range_empty'] = '0';
-  /* Contextual filter: HRJobContract Role entity: Role end date */
-  $handler->display->display_options['arguments']['role_end_date']['id'] = 'role_end_date';
-  $handler->display->display_options['arguments']['role_end_date']['table'] = 'hrjc_role';
-  $handler->display->display_options['arguments']['role_end_date']['field'] = 'role_end_date';
-  $handler->display->display_options['arguments']['role_end_date']['relationship'] = 'role_jobcontract_id';
-  $handler->display->display_options['arguments']['role_end_date']['default_action'] = 'default';
-  $handler->display->display_options['arguments']['role_end_date']['default_argument_type'] = 'php';
-  $handler->display->display_options['arguments']['role_end_date']['default_argument_options']['code'] = '$date_filter = !empty($_REQUEST[\'between_date_filter\']) ? $_REQUEST[\'between_date_filter\'] : null;
-if (!empty($date_filter[\'value\'])) {
-    $expl = explode(\'/\', $date_filter[\'value\']);
-if (count($expl) === 1) { return $date_filter[\'value\']; }
-    return $expl[2] . \'-\' . $expl[1] . \'-\' . $expl[0];
-}
-return date(\'Y-m-d\');';
-  $handler->display->display_options['arguments']['role_end_date']['summary']['number_of_records'] = '0';
-  $handler->display->display_options['arguments']['role_end_date']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['role_end_date']['summary_options']['items_per_page'] = '25';
-  $handler->display->display_options['arguments']['role_end_date']['civihr_range'] = '>=';
-  $handler->display->display_options['arguments']['role_end_date']['civihr_range_empty'] = '1';
   /* Filter criterion: CiviCRM Contacts: Is Deleted */
   $handler->display->display_options['filters']['is_deleted']['id'] = 'is_deleted';
   $handler->display->display_options['filters']['is_deleted']['table'] = 'civicrm_contact';
