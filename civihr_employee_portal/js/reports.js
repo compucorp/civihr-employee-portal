@@ -187,6 +187,8 @@
    *
    */
   HRReport.prototype.updateFilterbox = function() {
+
+    var that = this;
     $('.pvtFilterBox').each(function () {
       $(this).find('.pvtSearch').removeClass('pvtSearch').addClass('form-text');
       $(this).find('button').addClass('btn btn-primary btn-default btn-block');
@@ -203,7 +205,61 @@
 
         $(this).find('.pvtCheckContainer p').addClass('chr_custom-checkbox');
       }
+
+      // Altering Employee length of service data to show number of days into
+      // String format of Year Months and days of length of service.
+      // Finding the field called Employee length of service.
+      if($(this).find('h4').text().indexOf("Employee length of service (") >= 0 ) {
+         // Iterating through all the filter values.
+        $(this).find('p.chr_custom-checkbox').each(function(i){
+          // Skip the Select All checkbox from filters.
+          if (!$(this).hasClass("pvtFilterSelectAllWrap")){
+            // Fetching the Employee length of service from filter values.
+            var employee_length_service = $(this).find('span:first').text();
+            // Replacing with format string calling function as parameter.
+            $(this).find('span:first').text(that.formatLengthsOfService(employee_length_service));
+          }
+        });
+      }
+
     });
+  };
+
+  /**
+   * Processes results in people report view to format length of service for each
+   * contact in a human readable form.
+   *
+   * @param employee_length_service
+   *
+   * @returns string
+   *
+   */
+  HRReport.prototype.formatLengthsOfService = function (employee_length_service) {
+
+    var date_current = new Date();
+    var utime_target = date_current.getTime() + employee_length_service*86400*1000;
+    var date_target = new Date(utime_target);
+
+    var diff_year  = parseInt(date_target.getUTCFullYear() - date_current.getUTCFullYear());
+    var diff_month = parseInt(date_target.getUTCMonth() - date_current.getUTCMonth());
+    var diff_day   = parseInt(date_target.getUTCDate() - date_current.getUTCDate());
+
+    var days_in_month = [31, (date_target.getUTCFullYear()%4?29:28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    var date_string = "";
+    while(true)
+    {
+      date_string = "";
+      date_string += (diff_year>0?diff_year + " years ":"");
+
+      if(diff_month<0){diff_year -= 1; diff_month += 12; continue;}
+      date_string += (diff_month>0?diff_month + " months ":"");
+
+      if(diff_day<0){diff_month -= 1; diff_day += days_in_month[((11+date_target.getUTCMonth())%12)]; continue;}
+      date_string += (diff_day>0?diff_day + " days ":"");
+      break;
+    }
+
+    return date_string;
   };
 
   /**

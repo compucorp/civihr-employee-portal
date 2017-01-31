@@ -1026,7 +1026,7 @@ function civihr_employee_portal_views_pre_render(&$view) {
     $view->result = removeAbsencesForOtherManagers($view->result);
   }
   
-  if ($view->name == "civihr_report_people") {
+  if ($view->name == "civihr_report_people" && $view->current_display == 'civihr_report_table_people' ) {
     formatLengthsOfService($view->result);
   }
 }
@@ -1038,7 +1038,7 @@ function civihr_employee_portal_views_pre_render(&$view) {
  * @param array $results
  *   Array of objects (stdClass) that hold data for each contact in people report.
  */
-function formatLengthsOfService(&$results) {
+function formatLengthsOfService($results) {
   
   foreach ($results as $key => $currentRecord) {
     
