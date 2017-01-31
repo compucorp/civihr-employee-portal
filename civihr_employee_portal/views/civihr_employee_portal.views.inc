@@ -1039,9 +1039,7 @@ function civihr_employee_portal_views_pre_render(&$view) {
  *   Array of objects (stdClass) that hold data for each contact in people report.
  */
 function formatLengthsOfService($results) {
-  
   foreach ($results as $key => $currentRecord) {
-    
     if (!empty($currentRecord->civicrm_value_length_of_service_11_length_of_service)) {
       $length = [];
       

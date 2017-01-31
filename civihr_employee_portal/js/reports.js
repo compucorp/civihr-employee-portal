@@ -207,55 +207,96 @@
       }
 
       // Altering Employee length of service data to show number of days into
-      // String format of Year Months and days of length of service.
-      // Finding the field called Employee length of service.
-      if($(this).find('h4').text().indexOf("Employee length of service (") >= 0 ) {
+      // String format of Year, Months and Days of length of service.
+      if(that.lengthOfServiceFilter(this)) {
          // Iterating through all the filter values.
-        $(this).find('p.chr_custom-checkbox').each(function(i){
+        $(this).find('p.chr_custom-checkbox').each(function(i) {
           // Skip the Select All checkbox from filters.
-          if (!$(this).hasClass("pvtFilterSelectAllWrap")){
-            // Fetching the Employee length of service from filter values.
-            var employee_length_service = $(this).find('span:first').text();
-            // Replacing with format string calling function as parameter.
-            $(this).find('span:first').text(that.formatLengthsOfService(employee_length_service));
+          if (!$(this).hasClass("pvtFilterSelectAllWrap")) {
+            that.lengthOfServiceValue(this);
           }
         });
       }
-
     });
   };
 
+  /*
+   * Finding the filter box for field Employee length of service.
+   *
+   *  @param {string} filter_data
+   *
+   *  @return {bool}
+   */
+  HRReport.prototype.lengthOfServiceFilter = function(filter_data) {
+    if($(filter_data).find('h4').text().indexOf("Employee length of service (") >= 0) {
+      return true;
+    }
+    return false;
+  }
+
+  /*
+   * Finding and replacing the value of Employee length of service.
+   *
+   *  @param {string} filter_selector - DOM element that has value.
+   */
+  HRReport.prototype.lengthOfServiceValue = function(filter_selector) {
+    var that = this;
+    // Fetching the Employee length of service from filter values.
+    var employee_length_service = $(filter_selector).find('span:first').text();
+    if($.isNumeric(employee_length_service)) {
+      $(filter_selector).find('span:first').text(that.formatLengthsOfService(employee_length_service));
+    }
+  }
+  
   /**
    * Processes results in people report view to format length of service for each
    * contact in a human readable form.
    *
-   * @param employee_length_service
+   * @param {string} employee_length_service - Employee length of service field value.
    *
-   * @returns string
-   *
+   * @returns {string} date_string - Date format string for provide length of service.
    */
   HRReport.prototype.formatLengthsOfService = function (employee_length_service) {
 
     var date_current = new Date();
-    var utime_target = date_current.getTime() + employee_length_service*86400*1000;
+    // Calculating unix timestamp from current time adding length of service.
+    var utime_target = date_current.getTime() + employee_length_service * (24*60*60) * 1000;
     var date_target = new Date(utime_target);
 
+    // Getting difference of Dates in integer between current and target date.
     var diff_year  = parseInt(date_target.getUTCFullYear() - date_current.getUTCFullYear());
     var diff_month = parseInt(date_target.getUTCMonth() - date_current.getUTCMonth());
     var diff_day   = parseInt(date_target.getUTCDate() - date_current.getUTCDate());
 
-    var days_in_month = [31, (date_target.getUTCFullYear()%4?29:28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    // Checking and assigning values for days in month considering leap year.
+    var days_in_month = [31, (date_target.getUTCFullYear() % 4 ? 28 : 29), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     var date_string = "";
-    while(true)
-    {
+
+    while(true) {
+      var date_noun;
       date_string = "";
-      date_string += (diff_year>0?diff_year + " years ":"");
 
-      if(diff_month<0){diff_year -= 1; diff_month += 12; continue;}
-      date_string += (diff_month>0?diff_month + " months ":"");
+      // Checking for singular or plural for year string.
+      diff_year > 1 ? date_noun = "s" : date_noun = "";
+      date_string += (diff_year > 0 ? diff_year + " year" + date_noun + " " : "");
 
-      if(diff_day<0){diff_month -= 1; diff_day += days_in_month[((11+date_target.getUTCMonth())%12)]; continue;}
-      date_string += (diff_day>0?diff_day + " days ":"");
+      if(diff_month < 0) {
+        diff_year -= 1;
+        diff_month += 12;
+        continue;
+      }
+      // Checking for singular or plural for month string.
+      diff_month > 1 ? date_noun = "s" : date_noun = "";
+      date_string += (diff_month > 0 ? diff_month + " month" + date_noun + " " : "");
+
+      if(diff_day < 0) {
+        diff_month -= 1;
+        diff_day += days_in_month[diff_month];
+        continue;
+      }
+      // Checking for singular or plural for day string.
+      diff_day > 1 ? date_noun = "s" : date_noun = "";
+      date_string += (diff_day > 0 ? diff_day + " day" + date_noun + " " : "");
       break;
     }
 
