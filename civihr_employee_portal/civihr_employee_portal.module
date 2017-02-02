@@ -5929,12 +5929,17 @@ function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
 }
 
 /**
- * Implements hook_user_login
+ * Implements hook_user_login().
  */
 function civihr_employee_portal_user_login(&$edit, $account) {
-  global $base_url;
+
   if (!isset($_POST['form_id']) || $_POST['form_id'] != 'user_pass_reset') {
-    $_GET['destination'] = user_access('access CiviCRM') ?  'civicrm/tasksassignments/dashboard#/tasks' : 'dashboard';
+    $sspEntryPath = 'dashboard';
+    $civicrmEntryPath = 'civicrm/tasksassignments/dashboard#/tasks';
+    if (current_path() != drupal_get_destination()['destination']) {
+      $civicrmEntryPath = $_GET['destination'];
+    }
+    $_GET['destination'] = user_access('access CiviCRM') ? $civicrmEntryPath : $sspEntryPath;
   }
 }
 
@@ -7240,6 +7245,9 @@ function _user_redirection() {
     if ((!in_array($current_path, $allowed_paths) && substr($current_path, 0, 4) !== 'user') ||
       $current_path == 'user/register') {
       $redirect_path = 'welcome-page';
+      if ($current_path) {
+        $redirect_path .= "?destination={$current_path}";
+      }
     }
   }
   else if (in_array($current_path, ['', 'civicrm', 'civicrm/dashboard'])) {
