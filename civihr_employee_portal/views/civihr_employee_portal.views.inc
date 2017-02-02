@@ -1042,18 +1042,14 @@ function formatLengthsOfService($results) {
   foreach ($results as $key => $currentRecord) {
     if (!empty($currentRecord->civicrm_value_length_of_service_11_length_of_service)) {
       $length = [];
-      
-      $startDate = new \DateTime($currentRecord->hrjc_details_hrjc_revision_period_start_date);
-      
-      $endDate = new \DateTime($currentRecord->hrjc_details_hrjc_revision_period_start_date);
-      $endDate->add(new DateInterval("P{$currentRecord->civicrm_value_length_of_service_11_length_of_service}D"));
-      
-      $interval = $startDate->diff($endDate);
-      
+      $today = new DateTime();
+      $past = (new DateTime())->sub(new DateInterval('P' . $currentRecord->civicrm_value_length_of_service_11_length_of_service . 'D'));
+      $interval = $today->diff($past);
+
       $years = intval($interval->format('%y'));
       $months = intval($interval->format('%m'));
       $days = intval($interval->format('%d'));
-      
+
       if ($years > 0) {
         $length[] = $years > 1 ? "$years years" : "$years year";
       }
@@ -1063,7 +1059,7 @@ function formatLengthsOfService($results) {
       if ($days > 0) {
         $length[] = $days > 1 ? "$days days" : "$days day";
       }
-      
+
       $currentRecord->civicrm_value_length_of_service_11_length_of_service = implode(' ', $length);
     }
   }

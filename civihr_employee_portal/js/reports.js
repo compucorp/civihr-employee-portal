@@ -250,57 +250,34 @@
   
   /**
    * Processes results in people report view to format length of service for each
-   * contact in a human readable form.
+   * contact in a human readable form using moment lib.
    *
    * @param {string} employee_length_service - Employee length of service field value.
    *
-   * @returns {string} date_string - Date format string for provide length of service.
+   * @returns {string} Date format string for provide length of service.
    */
   HRReport.prototype.formatLengthsOfService = function (employee_length_service) {
-
-    var date_current = new Date();
-    // Calculating unix timestamp from current time adding length of service.
-    var utime_target = date_current.getTime() + employee_length_service * (24*60*60) * 1000;
-    var date_target = new Date(utime_target);
-
-    // Getting difference of Dates in integer between current and target date.
-    var diff_year  = parseInt(date_target.getUTCFullYear() - date_current.getUTCFullYear());
-    var diff_month = parseInt(date_target.getUTCMonth() - date_current.getUTCMonth());
-    var diff_day   = parseInt(date_target.getUTCDate() - date_current.getUTCDate());
-
-    // Checking and assigning values for days in month considering leap year.
-    var days_in_month = [31, (date_target.getUTCFullYear() % 4 ? 28 : 29), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    var date_string = "";
-
-    while(true) {
-      var date_noun;
-      date_string = "";
-
-      // Checking for singular or plural for year string.
-      diff_year > 1 ? date_noun = "s" : date_noun = "";
-      date_string += (diff_year > 0 ? diff_year + " year" + date_noun + " " : "");
-
-      if(diff_month < 0) {
-        diff_year -= 1;
-        diff_month += 12;
-        continue;
-      }
-      // Checking for singular or plural for month string.
-      diff_month > 1 ? date_noun = "s" : date_noun = "";
-      date_string += (diff_month > 0 ? diff_month + " month" + date_noun + " " : "");
-
-      if(diff_day < 0) {
-        diff_month -= 1;
-        diff_day += days_in_month[diff_month];
-        continue;
-      }
-      // Checking for singular or plural for day string.
-      diff_day > 1 ? date_noun = "s" : date_noun = "";
-      date_string += (diff_day > 0 ? diff_day + " day" + date_noun + " " : "");
-      break;
+    var dateEnd = moment();
+    var dateStart = moment().subtract(employee_length_service, 'days');
+    if (!dateStart || !dateEnd) {
+      return null;
     }
 
-    return date_string;
+    var days, months, m, years;
+
+    m = moment(dateEnd);
+    years = m.diff(dateStart, 'years');
+
+    m.add(-years, 'years');
+    months = m.diff(dateStart, 'months');
+
+    m.add(-months, 'months');
+    days = m.diff(dateStart, 'days');
+
+    years = years > 0  ? (years > 1 ? years + ' years ' : years + ' year ') :  '';
+    months = months > 0 ? (months > 1 ? months + ' months ' : months + ' month ') :  '';
+    days = days > 0 ? (days > 1 ? days + ' days' : days + ' day') : '';
+    return (years + months + days) || '0 days';
   };
 
   /**
