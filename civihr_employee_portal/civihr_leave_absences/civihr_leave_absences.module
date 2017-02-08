@@ -81,6 +81,21 @@ function civihr_leave_absences_manager_leave_get_markup() {
 }
 
 /**
+ * Internal function for fetching custom markup from template/Angular Js to
+ * display number of pending leave requests.
+ *
+ * @return String
+ *    Custom markup from template file.
+ */
+function civihr_leave_absences_pending_leave_request_get_markup() {
+  civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
+  // @ TODO -> Pointing to Angular JS App once its ready for Showing Number of Pending Leave Requests.
+  // civicrm_resources_load('uk.co.compucorp.civicrm.hrleaveandabsences', array('pending-leave-request.min.js'));
+
+  return civihr_leave_absences_load_file('pending_leave_request');
+}
+
+/**
  * Internal function to load predefined template file.
  *
  * @param String
