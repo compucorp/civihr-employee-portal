@@ -1,16 +1,22 @@
 CiviHR employee portal custom Drupal modules
 ======================
 
-DEMO site available here:
-http://178.79.132.53/welcome-page
+CiviHR demo site is available at:
+
+http://demo.civihrhosting.co.uk/
+
+For more information about CiviHR see:
+
+http://civihr.org/
+
 ======================
 
-Installation instructions - CiviHR 1.5
+Installation instructions - CiviHR 1.6+
 ======================
 
-- Install the hr15 profile with civicrm_buildkit (https://github.com/civicrm/civicrm-buildkit)
-- Example command to install CiviHR: civibuild create hr15 --civi-ver 4.5 --url http://localhost:8900
+- CiviHR is currently most easily installed by using CiviCRM Buildkit. Build kit can be downloaded from the following link:
 
-Optionally:
-- search for civihr_staff -> set absence entitlement for holidays, maternity etc
-- put the leave approver for the civihr_staff, for example put leave approver as civihr_manager, after requesting a leave as staff, the civihr_manager will need to approve that leave.
+https://github.com/civicrm/civicrm-buildkit
+
+- Install the hr16 profile with civicrm_buildkit
+- Example command to install CiviHR: civibuild create hr16 --civi-ver 4.7 --url http://localhost:8900

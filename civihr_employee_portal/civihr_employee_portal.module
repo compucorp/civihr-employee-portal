@@ -7431,3 +7431,29 @@ function civihr_employee_portal_html_head_alter(&$head_elements) {
 
   $head_elements[$default_favicon_element]['#attributes']['href'] = "{$base_url}/{$icoPath}";
 }
+
+/**
+ *  Return current version of Civihr.
+ */
+function get_civihr_version() {
+  $civihrVersion = &drupal_static(__FUNCTION__);
+
+  if (!isset($civihrVersion)) {
+    if ($cache = cache_get('civihr_version')) {
+      $civihrVersion = $cache->data;
+    } else {
+      try {
+        // Civi init
+        civicrm_initialize();
+        $result = civicrm_api3('HRCoreInfo', 'getversion', array('sequential' => 1));
+        $civihrVersion = $result['values'];
+      } catch (CiviCRM_API3_Exception $e) {
+        $error = $e->getMessage();
+      }
+
+      cache_set('civihr_version', $civihrVersion, 'cache', time() + 86400);
+    }
+  }
+
+  return $civihrVersion;
+}
