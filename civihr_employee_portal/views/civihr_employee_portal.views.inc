@@ -1026,7 +1026,7 @@ function civihr_employee_portal_views_pre_render(&$view) {
     $view->result = removeAbsencesForOtherManagers($view->result);
   }
   
-  if ($view->name == "civihr_report_people"  ) {
+  if ($view->name == "civihr_report_people" || $view->name == "civihr_report_leave_and_absence") {
     formatLengthsOfService($view->result);
   }
 }
