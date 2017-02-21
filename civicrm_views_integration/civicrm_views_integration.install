@@ -16,7 +16,7 @@ function civicrm_views_integration_install() {
  * Implements hook_requirements().
  */
 function civicrm_views_integration_requirements($phase) {
-  $requirements = array();
+  $requirements = []; 
   if ($phase == 'runtime') {
     // Provides Database prefix array for civicrm to be used in settings.php.
     $settings_message = "

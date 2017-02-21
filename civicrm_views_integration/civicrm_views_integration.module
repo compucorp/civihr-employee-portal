@@ -16,7 +16,6 @@ function civicrm_views_integration_post($op, $objectName, $id, &$params) {
  * for connecting CiviCRM to views.
  */
 function _civicrm_views_integrating_generate_db_prefixes(){
-
   civicrm_initialize();
   global $databases;
 
@@ -26,7 +25,7 @@ function _civicrm_views_integrating_generate_db_prefixes(){
   if ($config->dsn != $config->userFrameworkDSN) {
     $tableNames = CRM_Core_DAO::GetStorageValues(NULL, 0, 'Name');
 
-    $tablePrefixes = array();
+    $tablePrefixes = [];
     // add default prefix: the drupal database prefix
     $tablePrefixes['default'] = '';
 
@@ -37,21 +36,19 @@ function _civicrm_views_integrating_generate_db_prefixes(){
       $tablePrefixes[$tableName] = "'" . $prefix . "',";;
     }
     // Generates JSON file.
-    _civicrm_views_integrating_generate_json($tablePrefixes, $config);
+    _civicrm_views_integrating_generate_json($tablePrefixes);
   }
 }
 
 /**
  * Creates Json file to hold Views integration settings database prefix array to be used in settings.php 
- * @param array
+ *
+ * @param array $tablePrefixes
  *      Database prefix array.
- * @param object
- *      CiviCRM config object.
  */
-function _civicrm_views_integrating_generate_json($tablePrefixes = array(), $config){
-
+function _civicrm_views_integrating_generate_json($tablePrefixes = []){
   $json_data = json_encode($tablePrefixes);
-  $cmsSettingsPath = $config->userSystem->cmsRootPath() . '/sites/default/files/civicrm/custom/views-mapping.json';
+  $cmsSettingsPath = DRUPAL_ROOT . '/sites/default/files/civicrm/custom/views-mapping.json';
   $myfile = fopen($cmsSettingsPath, 'w+');
   fwrite($myfile, "\n" . $json_data);
   fclose($myfile);
