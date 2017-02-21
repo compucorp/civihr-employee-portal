@@ -839,39 +839,50 @@ function civihr_employee_portal_views_default_views() {
 }
 
 /**
- * Function for caching date periods returned from CiviCRM (avoiding expensive DB calls for each dashboard page hit)
+ * Function for caching date periods returned from CiviCRM (avoiding expensive 
+ * DB calls for each dashboard page hit)
  */
 function get_civihr_date_periods() {
 
-    $periods_data = &drupal_static(__FUNCTION__);
+  $periods_data = &drupal_static(__FUNCTION__);
 
-    if (!isset($periods_data)) {
-        if ($cache = cache_get('civihr_date_periods')) {
-            $periods_data = $cache->data;
-        }
-        else {
-
-            try {
-
-                // Civi init
-                civicrm_initialize();
-
-                $res = civicrm_api3('HRAbsencePeriod', 'get', array('options' => array('sort' => "start_date DESC")));
-                $periods_data = $res['values'];
-                watchdog('DB hit', 'DB');
-
-            }
-
-            catch (CiviCRM_API3_Exception $e) {
-                $error = $e->getMessage();
-            }
-
-            // Cache the date periods for 5 minutes
-            cache_set('civihr_date_periods', $periods_data, 'cache', time() + 360);
-        }
+  if (!isset($periods_data)) {
+    if ($cache = cache_get('civihr_date_periods')) {
+      $periods_data = $cache->data;
+      watchdog(
+        'CiviHR Period Cache', 
+        'Periods found in cache: <br/><pre>' . print_r($periods_data, true) . '</pre>'
+      );
     }
+    else {
+      try {
+        // Civi init
+        civicrm_initialize();
 
-    return $periods_data;
+        $res = civicrm_api3('HRAbsencePeriod', 'get', ['options' => ['sort' => "start_date DESC"]]);
+        $periods_data = $res['values'];
+        watchdog('DB hit', 'DB');
+      }
+      catch (CiviCRM_API3_Exception $e) {
+          $error = $e->getMessage();
+          watchdog(
+            'CiviHR Period Cache', 
+            "Error obtaining periods from DB: $error ",
+            array(),
+            WATCHDOG_ALERT
+          );
+      }
+
+      // Cache the date periods for 5 minutes
+      cache_set('civihr_date_periods', $periods_data, 'cache', time() + 360);
+      watchdog(
+        'CiviHR Period Cache', 
+        'Periods obtained from DB and stored in cache: <br/><pre>' . print_r($periods_data, true) . '</pre>'
+      );
+    }
+  }
+
+  return $periods_data;
 }
 
 /**
