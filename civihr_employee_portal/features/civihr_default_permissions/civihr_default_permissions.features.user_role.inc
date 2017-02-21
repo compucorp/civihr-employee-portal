@@ -17,6 +17,13 @@ function civihr_default_permissions_user_default_roles() {
     'machine_name' => 'civihr_admin',
   );
 
+  // Exported role: civihr_admin_local.
+  $roles['civihr_admin_local'] = array(
+    'name' => 'civihr_admin_local',
+    'weight' => 6,
+    'machine_name' => 'civihr_admin_local',
+  );
+
   // Exported role: civihr_manager.
   $roles['civihr_manager'] = array(
     'name' => 'civihr_manager',
