@@ -873,8 +873,7 @@ function get_civihr_date_periods() {
           );
       }
 
-      // Cache the date periods for 5 minutes
-      cache_set('civihr_date_periods', $periods_data, 'cache', time() + 360);
+      cache_set('civihr_date_periods', $periods_data, 'cache', strtotime('+6 minutes'));
       watchdog(
         'CiviHR Period Cache', 
         'Periods obtained from DB and stored in cache: <br/><pre>' . print_r($periods_data, true) . '</pre>'
