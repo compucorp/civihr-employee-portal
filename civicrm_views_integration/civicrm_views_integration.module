@@ -5,7 +5,7 @@
  * This hook will check if any custom group get added and will create database prefix for it to be used in settings.php
  * file automatically
  */
-function civicrm_views_integration_post($op, $objectName, $id, &$params) {
+function civicrm_views_integration_civicrm_post($op, $objectName, $id, &$params) {
   if ($objectName == 'CustomGroup' && $op == 'create') {
     _civicrm_views_integrating_generate_db_prefixes();
   }

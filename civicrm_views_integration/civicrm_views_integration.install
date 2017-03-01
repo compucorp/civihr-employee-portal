@@ -16,36 +16,30 @@ function civicrm_views_integration_install() {
  * Implements hook_requirements().
  */
 function civicrm_views_integration_requirements($phase) {
+  global $databases;
   $requirements = []; 
+
   if ($phase == 'runtime') {
-    // Provides Database prefix array for civicrm to be used in settings.php.
-    $settings_message = "
-      if (file_exists(DRUPAL_ROOT . '/sites/default/files/civicrm/custom/views-mapping.json')) {
-        \$databases['default']['default']['prefix'] = json_decode(file_get_contents(DRUPAL_ROOT . '/sites/default/files/civicrm/custom/views-mapping.json'), true);
-      }";
+    if (!is_array($databases['default']['default']['prefix'])) {
+      // Provides Database prefix array for civicrm to be used in settings.php.
+      $settings_message = "
+        if (file_exists(DRUPAL_ROOT . '/sites/default/files/civicrm/custom/views-mapping.json')) {
+          \$databases['default']['default']['prefix'] = json_decode(file_get_contents(DRUPAL_ROOT . '/sites/default/files/civicrm/custom/views-mapping.json'), true);
+        }";
 
-    $message = "<fieldset>
-                  <legend>Views integration settings</legend>
-                    <div>To enable CiviCRM Views integration, add the following to the site <code>settings.php</code> file:</div>
-                    <pre>{$settings_message}</pre>
-                </fieldset>";
+      $message = "<fieldset>
+                    <legend>Views integration settings</legend>
+                      <div>To enable CiviCRM Views integration, add the following to the site <code>settings.php</code> file:</div>
+                      <pre>{$settings_message}</pre>
+                  </fieldset>";
 
-    $requirements['civicrm_db_prefix'] = array(
-      'title' => t('Views integration settings'),
-      'description' => $message,
-      'severity' => REQUIREMENT_INFO,
-    );
+      $requirements['civicrm_db_prefix'] = array(
+        'title' => t('Views integration settings'),
+        'description' => $message,
+        'severity' => REQUIREMENT_INFO,
+      );
+    }
   }
 
   return $requirements;
-}
-
-/**
- * Implements hook_uninstall().
- */
-function civicrm_views_integration_uninstall() {
-  // Deletes views settngs json file.
-  if (file_exists(DRUPAL_ROOT . '/sites/default/files/civicrm/custom/views-mapping.json')) {
-    unlink(DRUPAL_ROOT . '/sites/default/files/civicrm/custom/views-mapping.json');
-  }
 }
