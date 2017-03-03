@@ -839,39 +839,49 @@ function civihr_employee_portal_views_default_views() {
 }
 
 /**
- * Function for caching date periods returned from CiviCRM (avoiding expensive DB calls for each dashboard page hit)
+ * Function for caching date periods returned from CiviCRM (avoiding expensive 
+ * DB calls for each dashboard page hit)
  */
 function get_civihr_date_periods() {
 
-    $periods_data = &drupal_static(__FUNCTION__);
+  $periods_data = &drupal_static(__FUNCTION__);
 
-    if (!isset($periods_data)) {
-        if ($cache = cache_get('civihr_date_periods')) {
-            $periods_data = $cache->data;
-        }
-        else {
-
-            try {
-
-                // Civi init
-                civicrm_initialize();
-
-                $res = civicrm_api3('HRAbsencePeriod', 'get', array('options' => array('sort' => "start_date DESC")));
-                $periods_data = $res['values'];
-                watchdog('DB hit', 'DB');
-
-            }
-
-            catch (CiviCRM_API3_Exception $e) {
-                $error = $e->getMessage();
-            }
-
-            // Cache the date periods for 5 minutes
-            cache_set('civihr_date_periods', $periods_data, 'cache', time() + 360);
-        }
+  if (!isset($periods_data)) {
+    if ($cache = cache_get('civihr_date_periods')) {
+      $periods_data = $cache->data;
+      watchdog(
+        'CiviHR Period Cache', 
+        'Periods found in cache: <br/><pre>' . print_r($periods_data, true) . '</pre>'
+      );
     }
+    else {
+      try {
+        // Civi init
+        civicrm_initialize();
 
-    return $periods_data;
+        $res = civicrm_api3('HRAbsencePeriod', 'get', ['options' => ['sort' => "start_date DESC"]]);
+        $periods_data = $res['values'];
+        watchdog('DB hit', 'DB');
+      }
+      catch (CiviCRM_API3_Exception $e) {
+          $error = $e->getMessage();
+          watchdog(
+            'CiviHR Period Cache', 
+            "Error obtaining periods from DB: $error ",
+            array(),
+            WATCHDOG_ALERT
+          );
+      }
+
+      cache_set('civihr_date_periods', $periods_data, 'cache', strtotime('+6 minutes'));
+      watchdog(
+        'CiviHR Period Cache', 
+        'Periods obtained from DB and stored in cache: <br/><pre>' . print_r($periods_data, true) . '</pre>'
+      );
+    }
+  }
+
+  return $periods_data;
 }
 
 /**
@@ -5918,23 +5928,28 @@ function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
 }
 
 function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
+  $destination = !empty($_REQUEST['destination']) ? rawurldecode($_REQUEST['destination']) : '';
 
-    $destination = !empty($_REQUEST['destination']) ? $_REQUEST['destination'] : '';
-    if ($form_state['input']['forgot-password']) {
-        user_pass_submit($form, $form_state);
-        _drupal_session_write('custom_login_success_message', t('Details sent!'));
-        drupal_goto($destination);
-        return true;
-    }
+  if ($form_state['input']['forgot-password']) {
+    user_pass_submit($form, $form_state);
+    _drupal_session_write('custom_login_success_message', t('Details sent!'));
+    drupal_goto($destination);
+    return true;
+  }
 }
 
 /**
- * Implements hook_user_login
+ * Implements hook_user_login().
  */
 function civihr_employee_portal_user_login(&$edit, $account) {
-  global $base_url;
+
   if (!isset($_POST['form_id']) || $_POST['form_id'] != 'user_pass_reset') {
-    $_GET['destination'] = user_access('access CiviCRM') ?  'civicrm/tasksassignments/dashboard#/tasks' : 'dashboard';
+    $sspEntryPath = 'dashboard';
+    $civicrmEntryPath = 'civicrm/tasksassignments/dashboard#/tasks';
+
+    if (current_path() == drupal_get_destination()['destination']) {
+      $_GET['destination'] = user_access('access CiviCRM') ? $civicrmEntryPath : $sspEntryPath;
+    }
   }
 }
 
@@ -7224,6 +7239,7 @@ function _user_redirection() {
   }
 
   $current_path = request_path();
+  $requestURI = rawurlencode(request_uri());
   $user_is_anonymous = $user->uid == 0;
 
   $allowed_paths = [
@@ -7240,6 +7256,9 @@ function _user_redirection() {
     if ((!in_array($current_path, $allowed_paths) && substr($current_path, 0, 4) !== 'user') ||
       $current_path == 'user/register') {
       $redirect_path = 'welcome-page';
+      if ($current_path) {
+        $redirect_path .= "?destination={$requestURI}";
+      }
     }
   }
   else if (in_array($current_path, ['', 'civicrm', 'civicrm/dashboard'])) {
