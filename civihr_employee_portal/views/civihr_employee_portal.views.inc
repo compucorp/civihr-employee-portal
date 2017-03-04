@@ -1025,6 +1025,44 @@ function civihr_employee_portal_views_pre_render(&$view) {
   if ($view->name == "approvals") {
     $view->result = removeAbsencesForOtherManagers($view->result);
   }
+  
+  if ($view->name == "civihr_report_people" || $view->name == "civihr_report_leave_and_absence") {
+    formatLengthsOfService($view->result);
+  }
+}
+
+/**
+ * Processes results in people report view to format length of service for each
+ * contact in a human readable form.
+ * 
+ * @param array $results
+ *   Array of objects (stdClass) that hold data for each contact in people report.
+ */
+function formatLengthsOfService($results) {
+  foreach ($results as $key => $currentRecord) {
+    if (!empty($currentRecord->civicrm_value_length_of_service_11_length_of_service)) {
+      $length = [];
+      $today = new DateTime();
+      $past = (new DateTime())->sub(new DateInterval('P' . $currentRecord->civicrm_value_length_of_service_11_length_of_service . 'D'));
+      $interval = $today->diff($past);
+
+      $years = intval($interval->format('%y'));
+      $months = intval($interval->format('%m'));
+      $days = intval($interval->format('%d'));
+
+      if ($years > 0) {
+        $length[] = $years > 1 ? "$years years" : "$years year";
+      }
+      if ($months > 0) {
+        $length[] = $months > 1 ? "$months months" : "$months month";
+      }
+      if ($days > 0) {
+        $length[] = $days > 1 ? "$days days" : "$days day";
+      }
+
+      $currentRecord->civicrm_value_length_of_service_11_length_of_service = implode(' ', $length);
+    }
+  }
 }
 
 /**

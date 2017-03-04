@@ -544,6 +544,15 @@ class AbsenceRequestForm {
             }
         }
 
+        if ($period_id == null) {
+          watchdog(
+            'CiviHR Period Cache', 
+            'Period for ' . implode('-', $start_date) . ' not found in period cache.  Cache data: <br/><pre>' . print_r(get_civihr_date_periods(), true) . '</pre>',
+            array(),
+            WATCHDOG_ALERT
+          );
+        }
+
         return $period_id;
     }
 

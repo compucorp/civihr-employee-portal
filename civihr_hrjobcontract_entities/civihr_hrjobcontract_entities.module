@@ -251,6 +251,43 @@ function civihr_hrjobcontract_entities_init() {
                     WHERE c.deleted = 0
                     ORDER BY t.job_contract_id");
 
+
+        db_query('DROP VIEW IF EXISTS hrjc_contact_details');
+        db_query("CREATE OR REPLACE VIEW hrjc_contact_details AS
+          SELECT c.id AS contact_id,
+            GROUP_CONCAT(DISTINCT CASE WHEN phone_location.name = 'Work' THEN c_phone.phone ELSE '' END
+              ORDER BY c_phone.phone DESC SEPARATOR ' ') AS work_phone,
+            GROUP_CONCAT(DISTINCT CASE WHEN phone_location.name = 'Work' THEN c_phone.phone_ext ELSE '' END 
+              ORDER BY c_phone.phone_ext DESC SEPARATOR ' ') AS work_phone_ext,
+            GROUP_CONCAT(DISTINCT CASE WHEN email_location.name = 'Work' THEN c_email.email ELSE '' END 
+              ORDER BY c_email.email DESC SEPARATOR ' ') AS work_email,
+
+            GROUP_CONCAT(DISTINCT CASE WHEN phone_location.name = 'Home' THEN c_phone.phone ELSE '' END
+              ORDER BY c_phone.phone DESC SEPARATOR ' ') AS home_phone,
+            GROUP_CONCAT(DISTINCT CASE WHEN phone_location.name = 'Home' THEN c_phone.phone_ext ELSE '' END 
+              ORDER BY c_phone.phone_ext DESC SEPARATOR ' ') AS home_phone_ext,
+            GROUP_CONCAT(DISTINCT CASE WHEN email_location.name = 'Home' THEN c_email.email ELSE '' END 
+              ORDER BY c_email.email DESC SEPARATOR ' ') AS home_email
+
+          FROM {$civi_db_name}.civicrm_contact c
+          LEFT JOIN {$civi_db_name}.civicrm_phone c_phone ON c_phone.contact_id = c.id
+          LEFT JOIN {$civi_db_name}.civicrm_location_type phone_location ON (
+            c_phone.location_type_id = phone_location.id
+            AND (phone_location.name = 'Work' OR phone_location.name = 'Home')
+          )
+          LEFT JOIN {$civi_db_name}.civicrm_email c_email ON c_email.contact_id = c.id
+          LEFT JOIN {$civi_db_name}.civicrm_location_type email_location ON (
+            c_email.location_type_id = email_location.id
+            AND (email_location.name = 'Work' OR email_location.name = 'Home')
+          )
+
+          WHERE phone_location.name = 'Work'
+          OR email_location.name = 'Work'
+          OR phone_location.name = 'Home'
+          OR email_location.name = 'Home'
+          GROUP BY contact_id
+        ");
+
         variable_set('rebuild_hrjobcontract_entities_view', 'FALSE');
     }
 }
@@ -259,7 +296,6 @@ function civihr_hrjobcontract_entities_init() {
  * Implements hook_schema_alter().
  */
 function civihr_hrjobcontract_entities_schema_alter(&$schema) {
-
     // Revision:
     $schema['hrjc_revision']['description'] = 'Views data associated with Job Contract Revision';
     $schema['hrjc_revision']['fields']['contact_id'] = array(
@@ -893,6 +929,43 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
     );
     $schema['hrjc_role']['primary key'] = array('jobcontract_id');
 
+  // Phone Contact Details: hrjc_contact_details
+    $schema['hrjc_contact_details']['description'] = 'Views work/home phone and e-mail data associated with Contact';
+    $schema['hrjc_contact_details']['fields']['contact_id'] = array(
+      'type' => 'int',
+      'not null' => TRUE,
+      'description' => 'Contact ID.',
+    );
+    $schema['hrjc_contact_details']['fields']['work_phone'] = array(
+      'type' => 'varchar',
+      'not null' => FALSE,
+      'description' => 'Work phone number.',
+    );
+    $schema['hrjc_contact_details']['fields']['work_phone_ext'] = array(
+      'type' => 'varchar',
+      'not null' => FALSE,
+      'description' => 'Work phone extension.',
+    );
+    $schema['hrjc_contact_details']['fields']['work_email'] = array(
+      'type' => 'varchar',
+      'not null' => FALSE,
+      'description' => 'Work e-mail.',
+    );
+    $schema['hrjc_contact_details']['fields']['home_phone'] = array(
+      'type' => 'varchar',
+      'not null' => FALSE,
+      'description' => 'Home phone number.',
+    );
+    $schema['hrjc_contact_details']['fields']['home_phone_ext'] = array(
+      'type' => 'varchar',
+      'not null' => FALSE,
+      'description' => 'Home phone extension.',
+    );
+    $schema['hrjc_contact_details']['fields']['home_email'] = array(
+      'type' => 'varchar',
+      'not null' => FALSE,
+      'description' => 'Home e-mail.',
+    );
 }
 
 /**
@@ -1053,6 +1126,25 @@ function civihr_hrjobcontract_entities_entity_info() {
         'module' => 'civicrm',// 'civihr_hrjobcontract_entities',
     );
 
+    $info['hrjobcontract_contact_info'] = array(
+      'label' => t('HRJobContract Contact Work/Home Phone and E-mail Entity'),
+      'plural label' => t('HRJobContract Contact Work/Home Phone and E-mail Entity'),
+      'description' => t('HRJobContract Contact Work/Home Phone and E-mail Entity.'),
+      'entity class' => 'Entity',
+      'controller class' => 'EntityAPIController',
+      'views controller class' => 'EntityDefaultViewsController',
+      'base table' => 'hrjc_contact_details',
+      'fieldable' => TRUE,
+      'entity keys' => array(
+          'id' => 'id',
+          'label' => 'Contact ID'
+      ),
+      'bundles' => array(),
+      'label callback' => 'entity_class_label',
+      'uri callback' => 'entity_class_uri',
+      'module' => 'civicrm',
+    );
+
     return $info;
 }
 
@@ -1090,6 +1182,8 @@ function civihr_hrjobcontract_entities_entity_property_info_alter(&$info) {
     $info['civihr_absence_activity']['properties']['absence_contact_id']['type'] = 'civicrm_contact';
     $info['civihr_length_of_service']['properties']['entity_id']['type'] = 'civicrm_contact';
 
+    // Properties for phone
+    $info['hrjobcontract_contact_info']['properties']['contact_id']['type'] = 'civicrm_contact';
 }
 
 /**
@@ -1101,3 +1195,4 @@ function civihr_hrjobcontract_entities_views_api() {
         'path' => drupal_get_path('module', 'civihr_hrjobcontract_entities') . '/views',
     );
 }
+
