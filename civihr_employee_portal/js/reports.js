@@ -187,6 +187,8 @@
    *
    */
   HRReport.prototype.updateFilterbox = function() {
+
+    var that = this;
     $('.pvtFilterBox').each(function () {
       $(this).find('.pvtSearch').removeClass('pvtSearch').addClass('form-text');
       $(this).find('button').addClass('btn btn-primary btn-block');
@@ -203,7 +205,79 @@
 
         $(this).find('.pvtCheckContainer p').addClass('chr_custom-checkbox');
       }
+
+      // Altering Employee length of service data to show number of days into
+      // String format of Year, Months and Days of length of service.
+      if(that.lengthOfServiceFilter(this)) {
+         // Iterating through all the filter values.
+        $(this).find('p.chr_custom-checkbox').each(function(i) {
+          // Skip the Select All checkbox from filters.
+          if (!$(this).hasClass("pvtFilterSelectAllWrap")) {
+            that.lengthOfServiceValue(this);
+          }
+        });
+      }
     });
+  };
+
+  /*
+   * Finding the filter box for field Employee length of service.
+   *
+   *  @param {string} filter_data
+   *
+   *  @return {bool}
+   */
+  HRReport.prototype.lengthOfServiceFilter = function(filter_data) {
+    if($(filter_data).find('h4').text().indexOf("Employee length of service (") >= 0) {
+      return true;
+    }
+    return false;
+  }
+
+  /*
+   * Finding and replacing the value of Employee length of service.
+   *
+   *  @param {string} filter_selector - DOM element that has value.
+   */
+  HRReport.prototype.lengthOfServiceValue = function(filter_selector) {
+    var that = this;
+    // Fetching the Employee length of service from filter values.
+    var employee_length_service = $(filter_selector).find('span:first').text();
+    if($.isNumeric(employee_length_service)) {
+      $(filter_selector).find('span:first').text(that.formatLengthsOfService(employee_length_service));
+    }
+  }
+  
+  /**
+   * Processes results in people report view to format length of service for each
+   * contact in a human readable form using moment lib.
+   *
+   * @param {string} employee_length_service - Employee length of service field value.
+   *
+   * @returns {string} Date format string for provide length of service.
+   */
+  HRReport.prototype.formatLengthsOfService = function (employee_length_service) {
+    var dateEnd = moment();
+    var dateStart = moment().subtract(employee_length_service, 'days');
+    if (!dateStart || !dateEnd) {
+      return null;
+    }
+
+    var days, months, m, years;
+
+    m = moment(dateEnd);
+    years = m.diff(dateStart, 'years');
+
+    m.add(-years, 'years');
+    months = m.diff(dateStart, 'months');
+
+    m.add(-months, 'months');
+    days = m.diff(dateStart, 'days');
+
+    years = years > 0  ? (years > 1 ? years + ' years ' : years + ' year ') :  '';
+    months = months > 0 ? (months > 1 ? months + ' months ' : months + ' month ') :  '';
+    days = days > 0 ? (days > 1 ? days + ' days' : days + ' day') : '';
+    return (years + months + days) || '0 days';
   };
 
   /**

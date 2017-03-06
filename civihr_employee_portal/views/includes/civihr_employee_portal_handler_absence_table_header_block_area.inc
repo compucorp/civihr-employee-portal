@@ -98,7 +98,7 @@ class civihr_employee_portal_handler_absence_table_header_block_area extends vie
         $row['type_' . $typeId] = '';
       }
       $row['type_' . $activityAbsenceTypeIds[$absence->absence_list_activity_type_id]] = ($absence->absence_list_is_credit ? '+ ' : '- ') . $amount;
-      $entitlements[$activityAbsenceTypeIds[$absence->absence_list_activity_type_id]] -= $amount;
+      $entitlements[$activityAbsenceTypeIds[$absence->absence_list_activity_type_id]] += ($absence->absence_list_is_credit ? $amount : -$amount);
       $rows[] = $row;
     }
 
