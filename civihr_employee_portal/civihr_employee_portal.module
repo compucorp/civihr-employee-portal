@@ -7252,6 +7252,12 @@ function _user_redirection() {
     'request_new_account/ajax',
   ];
 
+  // If we are not in maintenance mode then the guest users should
+  // be able to access vacancy apply public page.
+  if (!variable_get('maintenance_mode', 0)) {
+    $allowed_paths[] = 'civicrm/vacancy/apply';
+  }
+
   if ($user_is_anonymous) {
     if ((!in_array($current_path, $allowed_paths) && substr($current_path, 0, 4) !== 'user') ||
       $current_path == 'user/register') {
