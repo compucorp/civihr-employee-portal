@@ -50,7 +50,16 @@ function civihr_leave_absences_block_view($delta = '') {
 function civihr_leave_absences_init() {
   if (!_isCiviCRM()) {
     $baseURL = CRM_Extension_System::singleton()->getMapper()->keyToUrl('uk.co.compucorp.civicrm.hrleaveandabsences');
-    drupal_add_js(array('civihr_leave_absences' => array('baseURL' => $baseURL)), 'setting');
+    $attachmentToken = CRM_Core_Page_AJAX_Attachment::createToken();
+
+    $settings = [
+      'civihr_leave_absences' => [
+        'baseURL' => $baseURL,
+        'attachmentToken' => $attachmentToken
+      ]
+    ];
+    drupal_add_js($settings, 'setting');
+
     _civihr_leave_absences_push_permissions();
   }
 }
