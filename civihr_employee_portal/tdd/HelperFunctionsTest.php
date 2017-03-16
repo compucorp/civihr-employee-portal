@@ -30,9 +30,9 @@ class HelperFunctionsTest extends PHPUnit_Framework_TestCase {
     ]
   ];
 
-  public function testGetWhereParts() {
+  public function testGetWhereFields() {
     $parts = [];
-    get_where_parts($this->sampleWherePart, $parts);
+    getWhereFields($this->sampleWherePart, $parts);
     $expectedCount = 4;
     $this->assertCount($expectedCount, $parts);
     for ($i = 1; $i < $expectedCount + 1; $i++) {
