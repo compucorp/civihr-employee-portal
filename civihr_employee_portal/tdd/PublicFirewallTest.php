@@ -7,10 +7,7 @@ require_once __DIR__ . '/../src/Security/PublicFirewall.php';
 
 class PublicFirewallTest extends \PHPUnit_Framework_TestCase {
 
-  /**
-   * @test
-   */
-  public function willAllowAuthenticatedUser() {
+  public function testAuthenticatedUserIsAllowed() {
     $user = new \stdClass();
     $user->uid = 132;
 
@@ -19,11 +16,10 @@ class PublicFirewallTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @test
    * @dataProvider protectedRouteProvider
    * @param $route
    */
-  public function willDenyAnonymousUserAsExpected($route) {
+  public function testAnonymousUserDeniedAsExpected($route) {
     $user = new \stdClass();
     $user->uid = 0;
     $firewall = new PublicFirewall();
@@ -35,7 +31,7 @@ class PublicFirewallTest extends \PHPUnit_Framework_TestCase {
    * @dataProvider publicRouteProvider
    * @param $route
    */
-  public function willAllowAnonymousUserAsExpected($route) {
+  public function testAnonymousUserAllowedAsExpected($route) {
     $user = new \stdClass();
     $user->uid = 0;
     $firewall = new PublicFirewall();
@@ -53,6 +49,7 @@ class PublicFirewallTest extends \PHPUnit_Framework_TestCase {
       ['home/user'],
       ['yoti_connect'],
       ['something/yoti-connect'],
+      [''],
     ];
   }
 

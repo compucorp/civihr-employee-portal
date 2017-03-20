@@ -9,21 +9,26 @@ namespace Drupal\civihr_employee_portal\Security;
 class PublicFirewall {
 
   /**
-   * Anonymous users can access these paths
-   *
    * @var array
+   *
+   * Anonymous users can access these paths.
+   * Routes starting with @ will be treated as '@' delimited regular expressions
    */
   public static $publicRoutes = [
-    '/^welcome-page$/',
-    '/^sites\/default\/files\/logo.jpg$/', // if logo is missing
-    '/^request_new_account\/ajax$/', // from login page
-    '/^user((?!\/register).)*$/', // user* except user/register
-    '/^yoti-connect*/' // yoti login plugin
+    'welcome-page',
+    'sites/default/files/logo.jpg', // if logo is missing
+    'request_new_account/ajax', // from login page
+    '@^user((?!\/register).)*$@', // user* except user/register
+    '@^yoti-connect*@' // yoti login plugin
   ];
 
   /**
-   * @param \stdClass $user the user to check access for
-   * @param string $route the route to check
+   * Checks against all public routes, returning true if any match
+   *
+   * @param \stdClass $user
+   *  The user to check access for
+   * @param string $route
+   *  The route to check
    *
    * @return bool
    */
@@ -34,7 +39,7 @@ class PublicFirewall {
       return TRUE;
     }
 
-    return $this->allowAnonymousAccess($route);
+    return $this->canAccessAnonymously($route);
   }
 
   /**
@@ -43,9 +48,12 @@ class PublicFirewall {
    * @param string $route
    * @return bool
    */
-  private function allowAnonymousAccess($route) {
+  private function canAccessAnonymously($route) {
     foreach (self::$publicRoutes as $pattern) {
-      if (preg_match($pattern, $route)) {
+      if ($pattern[0] == '@' && preg_match($pattern, $route)) {
+        return TRUE;
+      }
+      elseif ($route === $pattern) {
         return TRUE;
       }
     }
