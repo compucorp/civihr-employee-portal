@@ -9,10 +9,10 @@ namespace Drupal\civihr_employee_portal\Security;
 class PublicFirewall {
 
   /**
-   * @var array
-   *
    * Anonymous users can access these paths.
    * Routes starting with @ will be treated as '@' delimited regular expressions
+   *
+   * @var array
    */
   public static $publicRoutes = [
     'welcome-page',
