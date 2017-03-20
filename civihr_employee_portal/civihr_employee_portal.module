@@ -6818,15 +6818,19 @@ function civihr_employee_portal_tokens($type, $tokens, array $data = array(), ar
 
         case 'assigned_manager_email':
 
-          // Find the assigned manager email address.
-          $value = '';
+          // Build list of assigned managers e-mails
+          $managerEmails = [];
 
-          if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['email'] != '') {
-            $value = $assigned_manager_contact_data['email'];
+          foreach ($managers as $currentManagerID) {
+            $managerData = get_civihr_contact_data($currentManagerID);
+
+            if (isset($managerData) && !empty($managerData['email'])) {
+              $managerEmails[] = $managerData['email'];
+            }
           }
 
           // Set the token values!
-          $replacements[$original] = $value;
+          $replacements[$original] = implode(',', $managerEmails);
           break;
       }
     }
