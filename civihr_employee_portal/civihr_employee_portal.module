@@ -6746,94 +6746,93 @@ function civihr_employee_portal_token_info() {
  * Implements hook_tokens().
  */
 function civihr_employee_portal_tokens($type, $tokens, array $data = array(), array $options = array()) {
-    $replacements = array();
+  $replacements = array();
 
-    if ($type == 'user') {
+  if ($type == 'user') {
 
-        // Get the assigned manager contact IDs for the passed USER object
-        if (isset($data['user']) && $data['user']->uid != '') {
+    // Get the assigned manager contact IDs for the passed USER object
+    if (isset($data['user']) && $data['user']->uid != '') {
+      $user_contact_data = get_civihr_contact_data(NULL, $data['user']->uid);
 
-            $managers = HelperClass::_get_contact_manager_contact_id($data['user']->uid);
-            $user_contact_data = get_civihr_contact_data(NULL, $data['user']->uid);
-
-        }
-
-        // Get the details for the manager
-        $assigned_manager_contact_data = get_civihr_contact_data($managers[0]);
-
-        // Loop through the available tokens.
-        foreach ($tokens as $name => $original) {
-            // Find our custom tokens by name.
-            switch ($name) {
-
-                case 'contact_display_name':
-
-                    // Find the contact display name.
-                    $value = '';
-
-                    if (isset($user_contact_data) && $user_contact_data['display_name'] != '') {
-                        $value = $user_contact_data['display_name'];
-                    }
-
-                    // Set the token values!
-                    $replacements[$original] = $value;
-                    break;
-                case 'contact_phone':
-
-                    // Find the contact phone number.
-                    $value = '';
-
-                    if (isset($user_contact_data) && $user_contact_data['phone'] != '') {
-                        $value = $user_contact_data['phone'];
-                    }
-
-                    // Set the token values!
-                    $replacements[$original] = $value;
-                    break;
-
-                case 'assigned_manager_name':
-
-                    // Find the assigned manager name.
-                    $value = '';
-
-                    if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['display_name'] != '') {
-                        $value = $assigned_manager_contact_data['display_name'];
-                    }
-
-                    // Set the token values!
-                    $replacements[$original] = $value;
-                    break;
-
-                case 'assigned_manager_phone':
-
-                    // Find the assigned manager phone.
-                    $value = '';
-
-                    if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['phone'] != '') {
-                        $value = $assigned_manager_contact_data['phone'];
-                    }
-
-                    // Set the token values!
-                    $replacements[$original] = $value;
-                    break;
-
-                case 'assigned_manager_email':
-
-                    // Find the assigned manager email address.
-                    $value = '';
-
-                    if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['email'] != '') {
-                        $value = $assigned_manager_contact_data['email'];
-                    }
-
-                    // Set the token values!
-                    $replacements[$original] = $value;
-                    break;
-            }
-        }
+      // Get the details for the manager
+      $managers = HelperClass::_get_contact_manager_contact_id($data['user']->uid);
+      $assigned_manager_contact_data = get_civihr_contact_data($managers[0]);
     }
 
-    return $replacements;
+    // Loop through the available tokens.
+    foreach ($tokens as $name => $original) {
+      // Find our custom tokens by name.
+      switch ($name) {
+
+        case 'contact_display_name':
+
+          // Find the contact display name.
+          $value = '';
+
+          if (isset($user_contact_data) && $user_contact_data['display_name'] != '') {
+            $value = $user_contact_data['display_name'];
+          }
+
+          // Set the token values!
+          $replacements[$original] = $value;
+          break;
+
+        case 'contact_phone':
+
+          // Find the contact phone number.
+          $value = '';
+
+          if (isset($user_contact_data) && $user_contact_data['phone'] != '') {
+            $value = $user_contact_data['phone'];
+          }
+
+          // Set the token values!
+          $replacements[$original] = $value;
+          break;
+
+        case 'assigned_manager_name':
+
+          // Find the assigned manager name.
+          $value = '';
+
+          if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['display_name'] != '') {
+            $value = $assigned_manager_contact_data['display_name'];
+          }
+
+          // Set the token values!
+          $replacements[$original] = $value;
+          break;
+
+        case 'assigned_manager_phone':
+
+          // Find the assigned manager phone.
+          $value = '';
+
+          if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['phone'] != '') {
+            $value = $assigned_manager_contact_data['phone'];
+          }
+
+          // Set the token values!
+          $replacements[$original] = $value;
+          break;
+
+        case 'assigned_manager_email':
+
+          // Find the assigned manager email address.
+          $value = '';
+
+          if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['email'] != '') {
+            $value = $assigned_manager_contact_data['email'];
+          }
+
+          // Set the token values!
+          $replacements[$original] = $value;
+          break;
+      }
+    }
+  }
+
+  return $replacements;
 }
 
 /**
