@@ -28,7 +28,7 @@ class civihr_employee_portal_handler_absence_table_header_block_area extends vie
 
   /**
    * Return an array containing header row.
-   * 
+   *
    * @return array
    */
   private function getHeaderRow() {
@@ -195,7 +195,7 @@ class civihr_employee_portal_handler_absence_table_header_block_area extends vie
       $absenceEntitlementParams['type_id'] = array('!=' => $sickTypeId);
     }
 
-    $result = civicrm_api3('HRAbsenceEntitlement', 'get', $absenceEntitlementParams);
+    $result = ['values' => []];
 
     foreach ($result['values'] as $record) {
       $entitlementData[(int)$record['type_id']] = $record['amount'];
