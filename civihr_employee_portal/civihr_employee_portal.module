@@ -859,14 +859,13 @@ function get_civihr_date_periods() {
         // Civi init
         civicrm_initialize();
 
-        $res = civicrm_api3('HRAbsencePeriod', 'get', ['options' => ['sort' => "start_date DESC"]]);
-        $periods_data = $res['values'];
+        $periods_data = [];
         watchdog('DB hit', 'DB');
       }
       catch (CiviCRM_API3_Exception $e) {
           $error = $e->getMessage();
           watchdog(
-            'CiviHR Period Cache', 
+            'CiviHR Period Cache',
             "Error obtaining periods from DB: $error ",
             array(),
             WATCHDOG_ALERT
@@ -903,8 +902,7 @@ function get_civihr_absence_types() {
                 // Civi init
                 civicrm_initialize();
 
-                $res = civicrm_api3('HRAbsenceType', 'get', array());
-                $absenceTypes = $res['values'];
+                $absenceTypes = [];
                 watchdog('DB hit absence types', 'DB');
 
             }
