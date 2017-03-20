@@ -31,6 +31,18 @@ class PublicFirewallTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * @test
+   * @dataProvider publicRouteProvider
+   * @param $route
+   */
+  public function willAllowAnonymousUserAsExpected($route) {
+    $user = new \stdClass();
+    $user->uid = 0;
+    $firewall = new PublicFirewall();
+    $this->assertTrue($firewall->canAccess($user, $route));
+  }
+
+  /**
    * @return array
    */
   public function protectedRouteProvider() {
@@ -45,28 +57,16 @@ class PublicFirewallTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @test
-   * @dataProvider protectedRouteProvider
-   * @param $route
-   */
-  public function willAllowAnonymousUserAsExpected($route) {
-    $user = new \stdClass();
-    $user->uid = 0;
-    $firewall = new PublicFirewall();
-    $this->assertFalse($firewall->canAccess($user, $route));
-  }
-
-  /**
    * @return array
    */
   public function publicRouteProvider() {
     return [
       ['user'],
       ['sites/default/files/logo.jpg'],
-      'request_new_account/ajax',
-      'user/some/other/path',
-      'yoti-connect',
-      'yoti-connect/anything',
+      ['request_new_account/ajax'],
+      ['user/some/other/path'],
+      ['yoti-connect'],
+      ['yoti-connect/anything'],
     ];
   }
 
