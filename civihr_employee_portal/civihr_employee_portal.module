@@ -6724,19 +6724,9 @@ function civihr_employee_portal_token_info() {
     );
 
 
-    $info['tokens']['user']['assigned_manager_name'] = array(
-        'name' => t('Assigned manager name'),
-        'description' => t('Full Name of the assigned manager.'),
-    );
-
-    $info['tokens']['user']['assigned_manager_phone'] = array(
-        'name' => t('Assigned manager phone'),
-        'description' => t('Phone of the assigned manager.'),
-    );
-
     $info['tokens']['user']['assigned_manager_email'] = array(
-        'name' => t('Assigned manager email address'),
-        'description' => t('Email Address of the assigned manager.'),
+        'name' => t('Assigned managers email addresses'),
+        'description' => t('Comma separated list of email addresses for the contact\'s assigned managers.'),
     );
 
     return $info;
