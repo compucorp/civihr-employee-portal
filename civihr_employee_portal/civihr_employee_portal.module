@@ -349,7 +349,7 @@ function _rebuild_absence_list_view() {
                         ON request.activity_type_id = absence_type_debit.debit_activity_type_id
                         LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_credit
                         ON request.activity_type_id = absence_type_credit.credit_activity_type_id
-                        INNER JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
+                        LEFT JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
                         ON tgt.contact_id = drupal_contact.contact_id
                         WHERE (request.activity_type_id IN (" . rtrim($options, ',') . "))
                         GROUP BY request.id");
