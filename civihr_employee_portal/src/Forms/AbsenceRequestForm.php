@@ -9,7 +9,7 @@ class AbsenceRequestForm {
     protected $form_state;
 
     const CANCELLED_LEAVE_TYPE_ID = 3;
-    const DENIED_LEAVE_TYPE_ID = 9;
+    const REJECTED_LEAVE_TYPE_ID = 9;
 
     /**
      * Constructor
@@ -419,7 +419,7 @@ class AbsenceRequestForm {
         $absencesDataQuery = db_select('absence_list', 'al')
             ->condition('contact_id', $_SESSION['CiviCRM']['userID'])
             ->condition('absence_status', self::CANCELLED_LEAVE_TYPE_ID, '<>')
-            ->condition('absence_status', self::DENIED_LEAVE_TYPE_ID, '<>')
+            ->condition('absence_status', self::REJECTED_LEAVE_TYPE_ID, '<>')
             ->fields('al', array('absence_start_date_timestamp', 'absence_end_date_timestamp'));
 
         $absencesData = $absencesDataQuery->execute()->fetchAll();
