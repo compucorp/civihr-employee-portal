@@ -508,7 +508,6 @@ Type ID: [activity_type_id] '),
   $handler->display->display_options['fields']['length_of_service']['table'] = 'civicrm_value_length_of_service_11';
   $handler->display->display_options['fields']['length_of_service']['field'] = 'length_of_service';
   $handler->display->display_options['fields']['length_of_service']['label'] = 'Employee length of service';
-  $handler->display->display_options['fields']['length_of_service']['separator'] = '';
   /* Field: HRJobContract Revision entity: Jobcontract_id */
   $handler->display->display_options['fields']['jobcontract_id']['id'] = 'jobcontract_id';
   $handler->display->display_options['fields']['jobcontract_id']['table'] = 'hrjc_revision';
@@ -632,13 +631,11 @@ Type ID: [activity_type_id] '),
   $handler->display->display_options['fields']['role_start_date']['table'] = 'hrjc_role';
   $handler->display->display_options['fields']['role_start_date']['field'] = 'role_start_date';
   $handler->display->display_options['fields']['role_start_date']['relationship'] = 'role_jobcontract_id';
-  $handler->display->display_options['fields']['role_start_date']['label'] = 'Role start date';
   /* Field: HRJobContract Role entity: Role end date */
   $handler->display->display_options['fields']['role_end_date']['id'] = 'role_end_date';
   $handler->display->display_options['fields']['role_end_date']['table'] = 'hrjc_role';
   $handler->display->display_options['fields']['role_end_date']['field'] = 'role_end_date';
   $handler->display->display_options['fields']['role_end_date']['relationship'] = 'role_jobcontract_id';
-  $handler->display->display_options['fields']['role_end_date']['label'] = 'Role end date';
   /* Field: HRJobContract Role entity: Role_start_month */
   $handler->display->display_options['fields']['role_start_month']['id'] = 'role_start_month';
   $handler->display->display_options['fields']['role_start_month']['table'] = 'hrjc_role';
@@ -784,12 +781,11 @@ Type ID: [activity_type_id] '),
   $handler->display->display_options['fields']['absence_type']['field'] = 'absence_type';
   $handler->display->display_options['fields']['absence_type']['relationship'] = 'absence_activity';
   $handler->display->display_options['fields']['absence_type']['label'] = 'Absence type';
-  /* Field: Absence Activity entity: Absence_status */
+  /* Field: Absence Activity entity: Absence status */
   $handler->display->display_options['fields']['absence_status']['id'] = 'absence_status';
   $handler->display->display_options['fields']['absence_status']['table'] = 'absence_activity';
   $handler->display->display_options['fields']['absence_status']['field'] = 'absence_status';
   $handler->display->display_options['fields']['absence_status']['relationship'] = 'absence_activity';
-  $handler->display->display_options['fields']['absence_status']['label'] = 'Absence status';
   /* Field: Absence Activity entity: Absence amount taken */
   $handler->display->display_options['fields']['absence_amount_taken']['id'] = 'absence_amount_taken';
   $handler->display->display_options['fields']['absence_amount_taken']['table'] = 'absence_activity';
@@ -1507,7 +1503,6 @@ Type ID: [activity_type_id] '),
   $handler->display->display_options['fields']['length_of_service']['table'] = 'civicrm_value_length_of_service_11';
   $handler->display->display_options['fields']['length_of_service']['field'] = 'length_of_service';
   $handler->display->display_options['fields']['length_of_service']['label'] = 'Employee length of service';
-  $handler->display->display_options['fields']['length_of_service']['separator'] = '';
   /* Field: HRJobContract Revision entity: Jobcontract_id */
   $handler->display->display_options['fields']['jobcontract_id']['id'] = 'jobcontract_id';
   $handler->display->display_options['fields']['jobcontract_id']['table'] = 'hrjc_revision';
@@ -1631,13 +1626,11 @@ Type ID: [activity_type_id] '),
   $handler->display->display_options['fields']['role_start_date']['table'] = 'hrjc_role';
   $handler->display->display_options['fields']['role_start_date']['field'] = 'role_start_date';
   $handler->display->display_options['fields']['role_start_date']['relationship'] = 'role_jobcontract_id';
-  $handler->display->display_options['fields']['role_start_date']['label'] = 'Role start date';
   /* Field: HRJobContract Role entity: Role end date */
   $handler->display->display_options['fields']['role_end_date']['id'] = 'role_end_date';
   $handler->display->display_options['fields']['role_end_date']['table'] = 'hrjc_role';
   $handler->display->display_options['fields']['role_end_date']['field'] = 'role_end_date';
   $handler->display->display_options['fields']['role_end_date']['relationship'] = 'role_jobcontract_id';
-  $handler->display->display_options['fields']['role_end_date']['label'] = 'Role end date';
   /* Field: HRJobContract Role entity: Role_start_month */
   $handler->display->display_options['fields']['role_start_month']['id'] = 'role_start_month';
   $handler->display->display_options['fields']['role_start_month']['table'] = 'hrjc_role';

@@ -10,7 +10,7 @@
 function civihr_employee_portal_features_menu_default_menu_links() {
   $menu_links = array();
 
-  // Exported menu link: hr-reports-settings_age-groups:reports/settings/age_group/
+  // Exported menu link: hr-reports-settings_age-groups:reports/settings/age_group/.
   $menu_links['hr-reports-settings_age-groups:reports/settings/age_group/'] = array(
     'menu_name' => 'hr-reports-settings',
     'link_path' => 'reports/settings/age_group/',
@@ -30,7 +30,7 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 0,
     'customized' => 1,
   );
-  // Exported menu link: hr-reports_report-1-people:reports/people/
+  // Exported menu link: hr-reports_report-1-people:reports/people/.
   $menu_links['hr-reports_report-1-people:reports/people/'] = array(
     'menu_name' => 'hr-reports',
     'link_path' => 'reports/people/',
@@ -50,7 +50,7 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 0,
     'customized' => 1,
   );
-  // Exported menu link: hr-reports_report-2-leave-and-absence:reports/leave_and_absence/
+  // Exported menu link: hr-reports_report-2-leave-and-absence:reports/leave_and_absence/.
   $menu_links['hr-reports_report-2-leave-and-absence:reports/leave_and_absence/'] = array(
     'menu_name' => 'hr-reports',
     'link_path' => 'reports/leave_and_absence/',
@@ -70,7 +70,7 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 0,
     'customized' => 1,
   );
-  // Exported menu link: main-menu_civihr-admin:civicrm
+  // Exported menu link: main-menu_civihr-admin:civicrm.
   $menu_links['main-menu_civihr-admin:civicrm'] = array(
     'menu_name' => 'main-menu',
     'link_path' => 'civicrm',
@@ -90,7 +90,7 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => -1,
     'customized' => 1,
   );
-  // Exported menu link: main-menu_civihr-ssp:dashboard
+  // Exported menu link: main-menu_civihr-ssp:dashboard.
   $menu_links['main-menu_civihr-ssp:dashboard'] = array(
     'menu_name' => 'main-menu',
     'link_path' => 'dashboard',
@@ -110,7 +110,7 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 0,
     'customized' => 1,
   );
-  // Exported menu link: main-menu_home:dashboard
+  // Exported menu link: main-menu_home:dashboard.
   $menu_links['main-menu_home:dashboard'] = array(
     'menu_name' => 'main-menu',
     'link_path' => 'dashboard',
@@ -130,7 +130,7 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 0,
     'customized' => 1,
   );
-  // Exported menu link: main-menu_my-details:hr-details
+  // Exported menu link: main-menu_my-details:hr-details.
   $menu_links['main-menu_my-details:hr-details'] = array(
     'menu_name' => 'main-menu',
     'link_path' => 'hr-details',
@@ -147,7 +147,7 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 3,
     'customized' => 1,
   );
-  // Exported menu link: main-menu_reports:reports
+  // Exported menu link: main-menu_reports:reports.
   $menu_links['main-menu_reports:reports'] = array(
     'menu_name' => 'main-menu',
     'link_path' => 'reports',
@@ -167,6 +167,7 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 10,
     'customized' => 1,
   );
+
   // Translatables
   // Included for use with string extractors like potx.
   t('Age groups');
@@ -177,7 +178,6 @@ function civihr_employee_portal_features_menu_default_menu_links() {
   t('Report 1: People');
   t('Report 2: Leave and Absence');
   t('Reports');
-
 
   return $menu_links;
 }
