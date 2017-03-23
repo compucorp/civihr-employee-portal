@@ -11,11 +11,6 @@ class Base {
     public static function returnBlockTypes() {
 
       return [
-        'manager_calendar' => [
-          'info' => t('CiviHR manager calendar block'),
-          'class_name' => 'ManagerCalendar',
-          'title' => '<none>'
-        ],
         'my_details' => [
           'info' => t('CiviHR my details block'),
           'class_name' => 'MyDetailsData',
