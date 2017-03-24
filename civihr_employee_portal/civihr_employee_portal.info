@@ -44,8 +44,6 @@ files[] = views/includes/civihr_employee_portal_handler_age_group.inc
 files[] = views/includes/civihr_employee_portal_argument_age_group.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_duration.inc
 files[] = views/includes/civihr_employee_portal_handler_activity_type.inc
-files[] = views/includes/civihr_employee_portal_handler_absence_table_header_block_area.inc
-files[] = views/includes/civihr_employee_portal_filter_absence_period.inc
 files[] = views/includes/civihr_employee_portal_handler_employee_id.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_status.inc
 files[] = views/includes/civihr_employee_portal_handler_document_status.inc
@@ -58,7 +56,6 @@ files[] = views/includes/civihr_employee_portal_handler_appraisal_line_manager.i
 files[] = views/includes/civihr_employee_portal_handler_appraisal_due_date.inc
 files[] = views/includes/civihr_employee_portal_handler_tasks_date.inc
 files[] = views/includes/civihr_employee_portal_handler_documents_date.inc
-files[] = views/includes/civihr_employee_portal_handler_manager_id.inc
 files[] = views/includes/views_json_query_argument_request_handler.inc
 files[] = views/includes/views_between_dates_filter_handler.inc
 

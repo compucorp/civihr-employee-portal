@@ -508,7 +508,6 @@ function _run_civihr_tasks() {
     }
 
     // Set variable to TRUE so the mysql database views will be refreshed
-    variable_set('rebuild_absence_list_view', 'TRUE');
     variable_set('rebuild_length_of_service_view', 'TRUE');
     variable_set('rebuild_absence_activity_view', 'TRUE');
     variable_set('rebuild_appraisal_view', 'TRUE');
@@ -3742,144 +3741,6 @@ function civihr_employee_portal_schema() {
  * Implements hook_schema_alter().
  */
 function civihr_employee_portal_schema_alter(&$schema) {
-
-    $schema['absence_list']['description'] = 'Views data associated with absence_list';
-    $schema['absence_list']['fields']['id'] = array(
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'description' => 'Activity ID.',
-    );
-    $schema['absence_list']['fields']['contact_id'] = array(
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'description' => 'CiviCRM Contact ID.',
-    );
-    $schema['absence_list']['fields']['absence_title'] = array(
-        'type' => 'varchar',
-        'length' => 200,
-        'not null' => TRUE,
-        'description' => 'Activity Title.',
-    );
-    $schema['absence_list']['fields']['drupal_uid'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Drupal User ID.',
-    );
-    $schema['absence_list']['fields']['duration'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Absence duration.',
-    );
-    $schema['absence_list']['fields']['activity_type_id'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Absence type ID.',
-    );
-    $schema['absence_list']['fields']['is_credit'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Absence activity (Is Credit type?)',
-    );
-    $schema['absence_list']['fields']['absence_status'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Absence status',
-    );
-    $schema['absence_list']['fields']['absence_start_date'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence start date.',
-    );
-    $schema['absence_list']['fields']['absence_end_date'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence end date.',
-    );
-    $schema['absence_list']['fields']['absence_start_date_timestamp'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence start date. (TIMESTAMP)',
-    );
-    $schema['absence_list']['fields']['absence_end_date_timestamp'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence end date. (TIMESTAMP)',
-    );
-    $schema['absence_list']['fields']['details'] = array(
-        'type' => 'text',
-        'not null' => TRUE,
-        'description' => 'Activity details text.',
-    );
-
-    $schema['absence_approval_list']['description'] = 'Views data associated with absence_approval_list';
-    $schema['absence_approval_list']['fields']['id'] = array(
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'description' => 'Activity ID.',
-    );
-    $schema['absence_approval_list']['fields']['absence_title'] = array(
-        'type' => 'varchar',
-        'length' => 200,
-        'not null' => TRUE,
-        'description' => 'Activity Title.',
-    );
-    $schema['absence_approval_list']['fields']['drupal_uid'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Drupal User ID.',
-    );
-    $schema['absence_approval_list']['fields']['employee_id'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Employee ID.',
-    );
-    $schema['absence_approval_list']['fields']['duration'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Absence duration.',
-    );
-    $schema['absence_approval_list']['fields']['activity_type_id'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Absence type ID.',
-    );
-    $schema['absence_approval_list']['fields']['is_credit'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Absence activity (Is Credit type?)',
-    );
-    $schema['absence_approval_list']['fields']['absence_start_date'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence start date.',
-    );
-    $schema['absence_approval_list']['fields']['absence_end_date'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence end date.',
-    );
-    $schema['absence_approval_list']['fields']['absence_start_date_timestamp'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence start date timestamp.',
-    );
-    $schema['absence_approval_list']['fields']['absence_end_date_timestamp'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence end date timestamp.',
-    );
-
     $schema['absence_activity']['description'] = 'Views data associated with Absence Activities';
     $schema['absence_activity']['fields']['absence_activity_id'] = array(
         'type' => 'serial',
@@ -4312,50 +4173,6 @@ function civihr_employee_portal_schema_alter(&$schema) {
  */
 function civihr_employee_portal_entity_info() {
     $info = array();
-
-    $info['civihr_absences'] = array(
-        'label' => t('Absence entity'),
-        'plural label' => t('Absences entity'),
-        'description' => t('Absences entity definition.'),
-        'entity class' => 'Entity',
-        'controller class' => 'EntityAPIController',
-        'views controller class' => 'EntityDefaultViewsController',
-        'base table' => 'absence_list',
-        'fieldable' => TRUE,
-        'entity keys' => array(
-            'id' => 'id',
-            'label' => 'Entity Activity ID'
-        ),
-        'bundles' => array(),
-        // Use the default label() and uri() functions
-        'label callback' => 'entity_class_label',
-        'uri callback' => 'entity_class_uri',
-        // Entity API needs to know about your module for the views integration to work
-        'module' => 'civihr_employee_portal',
-
-    );
-
-    $info['civihr_absence_approvals'] = array(
-        'label' => t('Absence approval entity'),
-        'plural label' => t('Absence approvals entity'),
-        'description' => t('Absence approval entity for managers.'),
-        'entity class' => 'Entity',
-        'controller class' => 'EntityAPIController',
-        'views controller class' => 'EntityDefaultViewsController',
-        'base table' => 'absence_approval_list',
-        'fieldable' => TRUE,
-        'entity keys' => array(
-            'id' => 'id',
-            'label' => 'Entity Activity ID'
-        ),
-        'bundles' => array(),
-        // Use the default label() and uri() functions
-        'label callback' => 'entity_class_label',
-        'uri callback' => 'entity_class_uri',
-        // Entity API needs to know about your module for the views integration to work
-        'module' => 'civihr_employee_portal',
-
-    );
 
     $info['civihr_absence_activity'] = array(
         'label' => t('Absence Activity entity'),
