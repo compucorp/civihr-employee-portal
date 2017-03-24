@@ -30,10 +30,10 @@ function civihr_leave_absences_block_view($delta = '') {
   $block = [];
   switch ($delta) {
     case 'my_leave':
-      $block['content'] = civihr_leave_absences_my_leave_get_markup();
+      $block['content'] = civihr_leave_absences_get_markup('my-leave');
       break;
     case 'manager_leave':
-      $block['content'] = civihr_leave_absences_manager_leave_get_markup();
+      $block['content'] = civihr_leave_absences_get_markup('manager-leave');
       break;
   }
   return $block;
@@ -65,28 +65,20 @@ function civihr_leave_absences_init() {
 }
 
 /**
- * Internal function for fetching custom markup from template/Angular Js to display My Leave block.
+ * Internal function for fetching custom markup from template and Angular Js.
+ *
+ * @param String
+ *    Name of the resource to load template and angular js.
+ *
  * @return String
  *    Custom markup from template file.
  */
-function civihr_leave_absences_my_leave_get_markup() {
-  civicrm_resources_load('org.civicrm.reqangular', array('reqangular.min.js'));
-  civicrm_resources_load('uk.co.compucorp.civicrm.hrleaveandabsences', array('my-leave.min.js'));
+function civihr_leave_absences_get_markup($resource = '') {
 
-  return civihr_leave_absences_load_file('my_leave');
-}
+  civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
+  civicrm_resources_load('uk.co.compucorp.civicrm.hrleaveandabsences', ["$resource.min.js"]);
 
-/**
- * Internal function for fetching custom markup from template/Angular Js to display
- * Manager Leave block.
- * @return String
- *    Custom markup from template file.
- */
-function civihr_leave_absences_manager_leave_get_markup() {
-  civicrm_resources_load('org.civicrm.reqangular', array('reqangular.min.js'));
-  civicrm_resources_load('uk.co.compucorp.civicrm.hrleaveandabsences', array('manager-leave.min.js'));
-
-  return civihr_leave_absences_load_file('manager_leave');
+  return civihr_leave_absences_load_file(str_replace('-', '_', $resource));
 }
 
 /**
