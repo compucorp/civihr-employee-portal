@@ -1529,13 +1529,6 @@ function civihr_employee_portal_menu() {
         'weight' => 4
     );
 
-    $items['ajax/quick_email_notify/%/%'] = array(
-        'title' => 'Quick Approve Leave',
-        'page callback' => '_ajax_quick_email_notify',
-        'page arguments' => array(2, 3),
-        'access arguments' => array('access manager approval screen'),
-    );
-
     $items['reports'] = array(
         'title' => 'Reports',
         'page callback' => 'civihr_employee_portal_hrreport_landing_page',
@@ -1633,56 +1626,6 @@ function _user_has_role($roles = array()) {
     }
 
     return FALSE;
-
-}
-
-/**
- * Quick Approve/Reject email notifications
- * Used to trigger rules events from javascript calls
- * @param $absence_id
- */
-function _ajax_quick_email_notify($absence_id, $email_type = NULL) {
-
-    global $user;
-
-    // Get additional details about the absence
-    $q = db_select('absence_approval_list', 'aal')
-        ->fields('aal', array('absence_title', 'absence_start_date', 'absence_end_date', 'duration', 'employee_id'))
-        ->condition('id', $absence_id);
-
-    $result = $q->execute()->fetchObject();
-
-    // Loads the target user based on passed user ID
-    $target_user = user_load(_get_uf_match_contact($result->employee_id)['uf_id']);
-
-    // Pass empty manager notes as this is quick approval
-    $manager_notes = '';
-
-    // Calculate total duration
-    $duration = $result->duration / (6 * 80);
-
-    if ($duration > 1) {
-        $day = 'days';
-    }
-    else {
-        $day = 'day';
-    }
-
-    $leave_date = explode(" ", $result->absence_start_date)[0] . ' - ' . explode(" ", $result->absence_end_date)[0] . ' = ' . $duration . ' ' . $day;
-
-    if ($email_type == 'approve') {
-
-        // Fire rules events
-        rules_invoke_event('approve_all_post_event', $user, $target_user, $manager_notes, $result->absence_title, $leave_date);
-
-    }
-
-    if ($email_type == 'reject') {
-
-        // Fire rules events
-        rules_invoke_event('reject_all_post_event', $user, $target_user, $manager_notes, $result->absence_title, $leave_date);
-
-    }
 
 }
 
