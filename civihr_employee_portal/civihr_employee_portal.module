@@ -600,12 +600,6 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
                 'civihr_employee_portal_preprocess_user_login'
             ),
         ),
-        'civihr_employee_portal_manager_calendar_block' => array(
-            'variables' => array(
-                'custom_data' => NULL
-            ),
-            'template' => 'templates/civihr-employee-portal-manager-calendar--block',
-        ),
         'civihr_employee_portal_my_details_block' => array(
             'variables' => array(
                 'profile_image' => NULL,
@@ -620,12 +614,6 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
                 'custom_data' => NULL
             ),
             'template' => 'templates/civihr-employee-portal-login-block--block',
-        ),
-        'civihr_employee_portal_print_leave_report' => array(
-            'variables' => array(
-                'custom_data' => NULL
-            ),
-            'template' => 'templates/civihr-employee-portal-print-leave-report',
         ),
         'civihr_employee_portal_document_form' => array(
             //'arguments' => array('form' => NULL),
@@ -675,10 +663,6 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
  * Implements hook_views_default_views().
  */
 function civihr_employee_portal_views_default_views() {
-
-    // Get the absence types
-    $absenceTypes = get_civihr_absence_types();
-
     // Check for all view files in views directory
     $files = file_scan_directory(drupal_get_path('module', 'civihr_employee_portal') . '/views/views_export', '/.*\.inc$/');
 
@@ -694,51 +678,6 @@ function civihr_employee_portal_views_default_views() {
 
     // At the end, return array of default views.
     return $views;
-}
-
-/**
- * Function for caching date periods returned from CiviCRM (avoiding expensive
- * DB calls for each dashboard page hit)
- */
-function get_civihr_date_periods() {
-
-  $periods_data = &drupal_static(__FUNCTION__);
-
-  if (!isset($periods_data)) {
-    if ($cache = cache_get('civihr_date_periods')) {
-      $periods_data = $cache->data;
-      watchdog(
-        'CiviHR Period Cache',
-        'Periods found in cache: <br/><pre>' . print_r($periods_data, true) . '</pre>'
-      );
-    }
-    else {
-      try {
-        // Civi init
-        civicrm_initialize();
-
-        $periods_data = [];
-        watchdog('DB hit', 'DB');
-      }
-      catch (CiviCRM_API3_Exception $e) {
-          $error = $e->getMessage();
-          watchdog(
-            'CiviHR Period Cache',
-            "Error obtaining periods from DB: $error ",
-            array(),
-            WATCHDOG_ALERT
-          );
-      }
-
-      cache_set('civihr_date_periods', $periods_data, 'cache', strtotime('+6 minutes'));
-      watchdog(
-        'CiviHR Period Cache',
-        'Periods obtained from DB and stored in cache: <br/><pre>' . print_r($periods_data, true) . '</pre>'
-      );
-    }
-  }
-
-  return $periods_data;
 }
 
 /**
@@ -3791,12 +3730,6 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'not null' => FALSE,
         'description' => 'Absence absolute amount.',
     );
-    $schema['absence_activity']['fields']['absence_comment'] = array(
-        'type' => 'varchar',
-        'length' => 256,
-        'not null' => FALSE,
-        'description' => 'Absence Comment.',
-    );
     $schema['absence_activity']['fields']['absence_status'] = array(
         'type' => 'varchar',
         'length' => 32,
@@ -5447,7 +5380,6 @@ function civihr_employee_portal_token_info() {
         'description' => t('CiviCRM Contact Phone from the contact record.'),
     );
 
-
     $info['tokens']['user']['assigned_manager_name'] = array(
         'name' => t('Assigned manager name'),
         'description' => t('Full Name of the assigned manager.'),
@@ -5592,103 +5524,12 @@ function civihr_employee_portal_module_implements_alter(&$implementations, $hook
     watchdog('alter modified order', print_r($implementations, TRUE));
 }
 
-/**
- * Check if a passed date is weekend day or not
- */
-function _isWeekend($date_passed) {
-
-    $date = explode("-", $date_passed);
-
-    $time = mktime(0, 0, 0, $date[1], $date[2], $date[0]);
-    $weekday = date('w', $time);
-    return ($weekday == 0 || $weekday == 6);
-}
-
-/**
- * @param $public_holidays
- * Check if the requested day is holiday or not working day
- */
-function _checkRequestedDay($public_holidays, $date) {
-
-    $not_working_day = t('Weekend');
-
-    foreach ($public_holidays['values'] as $public_holiday) {
-
-        $public_holiday_date = explode(" ", $public_holiday['activity_date_time']);
-
-        // If the public holiday equals with the requested date and the public holiday is enabled
-        if ($public_holiday_date[0] == $date && $public_holiday['status_id'] == 1) {
-            $exclude_type = " (" . $public_holiday['subject'] . ")";
-
-            return array(
-                'default_value' => 0,
-                'exclude_type' => $exclude_type
-            );
-        }
-        else if (_isWeekend($date)) {
-            $exclude_type = " (" . $not_working_day . ")";
-
-            return array(
-                'default_value' => 0,
-                'exclude_type' => $exclude_type
-            );
-
-        }
-
-    }
-
-    // Default fallback value
-    return array(
-        'default_value' => 480,
-        'exclude_type' => ''
-    );
-
-}
-
 function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$objectRef) {
     if ($op === 'create' || $op === 'edit') {
         if (in_array($objectName, array('Document', 'Task'))) {
             _clear_json_cache();
         }
     }
-    if ($objectName === 'HRAbsenceType') {
-      cache_set('civihr_absence_types', NULL);
-    }
-}
-
-/**
- * Checks if the given absence is of the "Sick" type
- *
- * There is no other way currently to check if an absence type is of the
- * "Sick" type other than checking its title, so we have to resort to a
- * simple regex match on the title string, looking for the "sick" word
- *
- * @param  string $absenceName
- * @return boolean
- */
-function civihr_employee_portal_is_sick_absence($absenceName) {
-  return preg_match('/^sick/i', $absenceName);
-}
-
-/**
- * Return an ID of 'sick' Absence Type or NULL if 'sick' type is not found.
- *
- * @return int|NULL
- */
-function civihr_employee_portal_get_absence_sick_type_id() {
-  $sickId = null;
-
-  try {
-    $result = civicrm_api3('HRAbsenceType', 'getsingle', array(
-      'name' => 'sick',
-      'return' => array('id'),
-    ));
-    $sickId = $result['id'];
-  } catch (Exception $e) {
-    return NULL;
-  }
-
-  return $sickId;
 }
 
 /**
@@ -5981,43 +5822,6 @@ function _user_redirection() {
     drupal_add_http_header('Location', "$base_url/{$redirect_path}");
     exit();
   }
-}
-
-/**
- * Convert array option values in an array to labels
- *
- * @param string $optionGroup The option group name to check against for converting data
- * @param string $fieldName The option field name ( key ) in data array to be converted
- * @param array $data The data which contain an option field to be converted
- *
- * @return array The data list with converted option values
- */
-function civihr_employee_portal_convert_array_option_value($optionGroup, $fieldName, $data) {
-  // get location option values list
-  $locationOptions = civicrm_api3('OptionValue', 'get', array(
-    'sequential' => 1,
-    'return' => array("value", "label"),
-    'option_group_id' => $optionGroup,
-    'options' => array('limit' => 0),
-  ));
-
-  // create a value => label array from option values
-  $locationList = [];
-  foreach($locationOptions['values'] as $location) {
-    $locationList[$location['value']] = $location['label'];
-  }
-
-  // change location value to location label
-  for($i=0; $i < count($data); $i++) {
-    if (!empty($data[$i][$fieldName])) {
-      $data[$i][$fieldName] = $locationList[$data[$i][$fieldName]];
-    }
-    else {
-      $data[$i][$fieldName] = '';
-    }
-  }
-
-  return $data;
 }
 
 /**
