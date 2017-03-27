@@ -315,56 +315,38 @@ function _rebuild_absence_activity_view() {
   $civi_settings = parse_url(CIVICRM_DSN);
   $civi_db_name = trim($civi_settings['path'], '/');
 
-  $customGroup = civicrm_api3('CustomGroup', 'getsingle', array(
-    'sequential' => 1,
-    'name' => "Absence_Comment",
-  ));
+  $activityTypesIds = _get_absence_activity_types_ids();
+  if (!empty($activityTypesIds)) {
+    db_query('DROP VIEW IF EXISTS absence_activity');
+    db_query("CREATE VIEW absence_activity AS
+              SELECT ac.contact_id AS absence_contact_id,
+                absence_activity.id AS absence_activity_id,
+                ov.label AS absence_type,
+                DATE(a2.activity_date_time) AS absence_date,
+                DATE_FORMAT(DATE(a2.activity_date_time), '%Y-%m') AS absence_month,
+                (SELECT MIN(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id) AS absence_start_date,
+                DATE_FORMAT((SELECT MIN(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id), '%Y-%m') AS absence_start_date_month,
+                (SELECT MAX(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id) AS absence_end_date,
+                DATE_FORMAT((SELECT MAX(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id), '%Y-%m') AS absence_end_date_month,
+                CONCAT(IF (DATE_FORMAT(a2.activity_date_time, '%w') = 0, 7, DATE_FORMAT(a2.activity_date_time, '%w')), '. ', DATE_FORMAT(a2.activity_date_time, '%W')) AS absence_day_of_week,
+                a2.duration AS absence_duration,
+                IF (ov.label <> 'TOIL (Credit)', a2.duration, NULL) AS absence_amount_taken,
+                IF (ov.label = 'TOIL (Credit)', a2.duration, NULL) AS absence_amount_accrued,
+                IF (ov.label = 'TOIL (Credit)', -a2.duration, a2.duration) AS absence_absolute_amount,
+                a.status_id AS absence_status,
+                IF (ov.label = 'TOIL (Credit)', 1, 0) AS absence_is_credit
+              FROM {$civi_db_name}.civicrm_activity absence_activity
+              LEFT JOIN {$civi_db_name}.civicrm_activity a ON a.id = absence_activity.id
+              LEFT JOIN {$civi_db_name}.civicrm_activity a2 ON a2.source_record_id = absence_activity.id
+              LEFT JOIN {$civi_db_name}.civicrm_option_group og ON og.name = 'activity_type'
+              LEFT JOIN {$civi_db_name}.civicrm_option_value ov ON ov.value = a.activity_type_id AND ov.option_group_id = og.id
+              LEFT JOIN {$civi_db_name}.civicrm_activity_contact ac ON ac.activity_id = absence_activity.id AND ac.record_type_id = 3
+              WHERE (a2.duration IS NOT NULL AND a2.duration > 0)
+              AND
+              absence_activity.activity_type_id IN (" . implode(',', $activityTypesIds) . ")");
 
-  if (!array_key_exists('is_error', $customGroup) ||
-    (array_key_exists('is_error', $customGroup) && !(int)$customGroup['is_error'])) {
-    $absenceCommentTable = $customGroup['table_name'];
-    $customName = civicrm_api3('CustomField', 'getsingle', array(
-      'sequential' => 1,
-      'custom_group_id' => $customGroup['id'],
-      'name' => "Comment",
-    ));
-    $absenceCommentColumn = $customName['column_name'];
-
-    $activityTypesIds = _get_absence_activity_types_ids();
-    if (!empty($activityTypesIds)) {
-      db_query('DROP VIEW IF EXISTS absence_activity');
-      db_query("CREATE VIEW absence_activity AS
-                SELECT ac.contact_id AS absence_contact_id,
-                  absence_activity.id AS absence_activity_id,
-                  ov.label AS absence_type,
-                  DATE(a2.activity_date_time) AS absence_date,
-                  DATE_FORMAT(DATE(a2.activity_date_time), '%Y-%m') AS absence_month,
-                  (SELECT MIN(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id) AS absence_start_date,
-                  DATE_FORMAT((SELECT MIN(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id), '%Y-%m') AS absence_start_date_month,
-                  (SELECT MAX(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id) AS absence_end_date,
-                  DATE_FORMAT((SELECT MAX(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id), '%Y-%m') AS absence_end_date_month,
-                  CONCAT(IF (DATE_FORMAT(a2.activity_date_time, '%w') = 0, 7, DATE_FORMAT(a2.activity_date_time, '%w')), '. ', DATE_FORMAT(a2.activity_date_time, '%W')) AS absence_day_of_week,
-                  a2.duration AS absence_duration,
-                  IF (ov.label <> 'TOIL (Credit)', a2.duration, NULL) AS absence_amount_taken,
-                  IF (ov.label = 'TOIL (Credit)', a2.duration, NULL) AS absence_amount_accrued,
-                  IF (ov.label = 'TOIL (Credit)', -a2.duration, a2.duration) AS absence_absolute_amount,
-                  abc.{$absenceCommentColumn} AS absence_comment,
-                  a.status_id AS absence_status,
-                  IF (ov.label = 'TOIL (Credit)', 1, 0) AS absence_is_credit
-                FROM {$civi_db_name}.civicrm_activity absence_activity
-                LEFT JOIN {$civi_db_name}.civicrm_activity a ON a.id = absence_activity.id
-                LEFT JOIN {$civi_db_name}.civicrm_activity a2 ON a2.source_record_id = absence_activity.id
-                LEFT JOIN {$civi_db_name}.civicrm_option_group og ON og.name = 'activity_type'
-                LEFT JOIN {$civi_db_name}.civicrm_option_value ov ON ov.value = a.activity_type_id AND ov.option_group_id = og.id
-                LEFT JOIN {$civi_db_name}.civicrm_activity_contact ac ON ac.activity_id = absence_activity.id AND ac.record_type_id = 3
-                LEFT JOIN {$civi_db_name}.{$absenceCommentTable} abc ON abc.entity_id = absence_activity.id
-                WHERE (a2.duration IS NOT NULL AND a2.duration > 0)
-                AND
-                absence_activity.activity_type_id IN (" . implode(',', $activityTypesIds) . ")");
-
-      // Set to false so it will not rebuild until not asked to rebuild
-      variable_set('rebuild_absence_activity', 'FALSE');
-    }
+    // Set to false so it will not rebuild until not asked to rebuild
+    variable_set('rebuild_absence_activity', 'FALSE');
   }
 }
 
@@ -375,18 +357,6 @@ function _rebuild_absence_activity_view() {
  */
 function _get_absence_activity_types_ids() {
   $activityTypesIds = [];
-  $absenceTypes = civicrm_api3('HRAbsenceType', 'get', [
-    'sequential' => 1,
-  ]);
-
-  foreach ($absenceTypes['values'] as $absenceType) {
-    if (!empty($absenceType['debit_activity_type_id'])) {
-      $activityTypesIds[] = $absenceType['debit_activity_type_id'];
-    }
-    if (!empty($absenceType['credit_activity_type_id'])) {
-      $activityTypesIds[] = $absenceType['credit_activity_type_id'];
-    }
-  }
 
   return $activityTypesIds;
 }
