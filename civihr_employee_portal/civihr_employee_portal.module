@@ -531,14 +531,6 @@ function _clear_json_cache($cli = FALSE) {
  */
 function civihr_employee_portal_permission() {
   return array(
-    'access manager approval screen' => array(
-      'title' => t('Access CiviHR manager approval screen'),
-      'description' => t('Perfom manager approval related tasks for CiviHR.'),
-    ),
-    'access private file download' => array(
-      'title' => t('Access CiviHR absence attached files'),
-      'description' => t('Availability to access the files attached for Absence.'),
-    ),
     'can create and edit tasks' => array(
       'title' => t('Create and edit Tasks'),
       'description' => t('Availability to create and edit Tasks.'),
@@ -562,14 +554,6 @@ function civihr_employee_portal_permission() {
     'view appraisals' => array(
       'title' => t('View Appraisals'),
       'description' => t('Availability for the user to view appraisals block and page')
-    ),
-    'view my leave block' => array(
-      'title' => t('View My Leave Block'),
-      'description' => t('Availability for the user to view my leave block')
-    ),
-    'view my sickness report block' => array(
-      'title' => t('View My Sickness Report Block'),
-      'description' => t('Availability for the user to view my sickness report block')
     ),
     'view staff directory' => array(
       'title' => t('View Staff Directory'),
@@ -5658,19 +5642,6 @@ function _checkRequestedDay($public_holidays, $date) {
         'default_value' => 480,
         'exclude_type' => ''
     );
-
-}
-
-// Check if the user can access the private file
-function civihr_employee_portal_file_download_access_alter(&$grants, $file_item, $entity_type, $entity) {
-
-    if ($entity_type == 'civicrm_activity') {
-
-        // Check if the user has the permissions to see the attachments
-        if (user_access('access private file download')) {
-            $grants = array(TRUE);
-        }
-    }
 
 }
 
