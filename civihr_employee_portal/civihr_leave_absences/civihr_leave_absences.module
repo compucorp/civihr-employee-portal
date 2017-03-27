@@ -74,8 +74,11 @@ function civihr_leave_absences_init() {
  *    Custom markup from template file.
  */
 function civihr_leave_absences_get_markup($resource = '') {
-
-  civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
+  $scripts = drupal_get_js('footer');
+  // Adding js file only if its not loaded already.
+  if (!strpos($scripts, 'reqangular.min.js')) {
+    civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
+  }
   civicrm_resources_load('uk.co.compucorp.civicrm.hrleaveandabsences', ["$resource.min.js"]);
 
   return civihr_leave_absences_load_file(str_replace('-', '_', $resource));
