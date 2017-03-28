@@ -428,7 +428,6 @@ function civihr_employee_portal_init() {
 
     _add_script_to_page([
       '/js/scripts.js',
-      '/js/filters.js',
       '/js/plupload/plupload.full.min.js',
       '/js/plupload-init.js',
       '/js/chart.min.js',
