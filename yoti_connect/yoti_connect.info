@@ -1,0 +1,9 @@
+name = Yoti Connect
+description = "A simple module to allow users to login/singup with their Yoti account"
+package = Yoti
+project = "yoti_connect"
+version = "1.1"
+core = 7.x
+configure = admin/config/people/yoti-connect
+datestamp = "1459503240"
+
