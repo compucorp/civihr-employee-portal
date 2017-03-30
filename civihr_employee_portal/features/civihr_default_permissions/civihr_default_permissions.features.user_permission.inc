@@ -26,6 +26,7 @@ function civihr_default_permissions_user_default_permissions() {
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
       'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
     ),
     'module' => 'civicrm',
   );
@@ -229,6 +230,17 @@ function civihr_default_permissions_user_default_permissions() {
       'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'civihr_employee_portal',
+  );
+
+  // Exported permission: 'access leave and absences'.
+  $permissions['access leave and absences'] = array(
+    'name' => 'access leave and absences',
+    'roles' => array(
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
+    ),
+    'module' => 'civicrm',
   );
 
   // Exported permission: 'access leave and absences in ssp'.
@@ -538,6 +550,15 @@ function civihr_default_permissions_user_default_permissions() {
       'administrator' => 'administrator',
     ),
     'module' => 'locale',
+  );
+
+  // Exported permission: 'administer leave and absences'.
+  $permissions['administer leave and absences'] = array(
+    'name' => 'administer leave and absences',
+    'roles' => array(
+      'civihr_admin' => 'civihr_admin',
+    ),
+    'module' => 'civicrm',
   );
 
   // Exported permission: 'administer mailsystem'.
@@ -1597,6 +1618,8 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'manage leave and absences in ssp',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
     ),
     'module' => 'civihr_employee_portal',
   );
