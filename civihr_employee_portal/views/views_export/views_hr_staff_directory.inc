@@ -316,8 +316,6 @@ $handler->display->display_options['fields']['work_email']['table'] = 'hrjc_cont
 $handler->display->display_options['fields']['work_email']['field'] = 'work_email';
 $handler->display->display_options['fields']['work_email']['relationship'] = 'hrjc_contact_details';
 $handler->display->display_options['fields']['work_email']['label'] = 'Email';
-// $handler->display->display_options['fields']['work_email']['alter']['make_link'] = TRUE;
-// $handler->display->display_options['fields']['work_email']['alter']['path'] = 'mailto:[work_email]';
 /* Field: HRJobContract Role entity: Role_location */
 $handler->display->display_options['fields']['role_location']['id'] = 'role_location';
 $handler->display->display_options['fields']['role_location']['table'] = 'hrjc_role';
