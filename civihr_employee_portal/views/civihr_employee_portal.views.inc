@@ -182,12 +182,6 @@ function civihr_employee_portal_views_data_alter(&$data) {
     ),
   );
 
-  $data['absence_list']['absence_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
-  $data['absence_list']['absence_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
-
-  $data['absence_approval_list']['absence_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
-  $data['absence_approval_list']['absence_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
-
   $data['absence_activity']['absence_date'] = array(
     'title' => t('Absence date'),
     'real field' => 'absence_date',
@@ -831,175 +825,6 @@ function civihr_employee_portal_views_data_alter(&$data) {
 //    $data['absence_activity']['absence_date']['filter']['handler'] = 'views_handler_filter_date';
 //    $data['absence_activity']['absence_date']['argument']['handler'] = 'views_handler_argument_date';
 
-  $data['absence_list']['absence_start_date_timestamp']['field']['handler'] = 'views_handler_field_date';
-  $data['absence_list']['absence_start_date_timestamp']['sort']['handler'] = 'views_handler_sort_date';
-  $data['absence_list']['absence_start_date_timestamp']['filter']['handler'] = 'views_handler_filter_date';
-  $data['absence_list']['absence_start_date_timestamp']['argument']['handler'] = 'views_handler_argument_date';
-
-  $data['absence_list']['absence_end_date_timestamp']['field']['handler'] = 'views_handler_field_date';
-  $data['absence_list']['absence_end_date_timestamp']['sort']['handler'] = 'views_handler_sort_date';
-  $data['absence_list']['absence_end_date_timestamp']['filter']['handler'] = 'views_handler_filter_date';
-  $data['absence_list']['absence_end_date_timestamp']['argument']['handler'] = 'views_handler_argument_date';
-
-  $data['absence_list']['absence_start_date_period_filter'] = array(
-    'title' => t('Absence date filter based on Civi date periods'),
-    'help' => t('Absence date filter based on Civi date periods.'),
-    'real field' => 'absence_start_date_timestamp',
-    'field' => array(
-      'handler' => 'views_handler_field_date',
-      'click sortable' => TRUE,
-    ),
-    'argument' => array(
-      'handler' => 'views_handler_argument_date',
-      'name_field' => 'title',
-      'string' => TRUE
-    ),
-    'filter' => array(
-      'handler' => 'civihr_employee_portal_filter_absence_period',
-      'help' => t('Filter absence list result based on Civi date periods'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort_date'),
-  );
-
-  $data['absence_list']['duration'] = array(
-    'title' => t('Absence type row value (Duration)'),
-    'help' => t('Row value for each absence type (Duration)'),
-    'real field' => 'duration',
-    'field' => array(
-      'handler' => 'civihr_employee_portal_handler_absence_duration',
-      'click sortable' => TRUE,
-    ),
-    'argument' => array(
-      'handler' => 'views_handler_argument_numeric',
-      'name_field' => 'title',
-      'string' => TRUE
-    ),
-    'filter' => array(
-      'handler' => 'views_handler_filter_numeric',
-      'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
-
-  $data['absence_list']['absence_status'] = array(
-    'title' => t('Absence status'),
-    'help' => t('Absence status field value'),
-    'real field' => 'absence_status',
-    'field' => array(
-      'handler' => 'civihr_employee_portal_handler_absence_status',
-      'click sortable' => TRUE,
-    ),
-    'argument' => array(
-      'handler' => 'views_handler_argument_string',
-      'name_field' => 'title',
-      'string' => TRUE
-    ),
-    'filter' => array(
-      'handler' => 'views_handler_filter_string',
-      'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
-
-  $data['absence_list']['absence_table_header'] = array(
-    'title' => t('Absence table header block area'),
-    'help' => t('Absence table header block area.'),
-    'area' => array(
-      'handler' => 'civihr_employee_portal_handler_absence_table_header_block_area',
-    ),
-  );
-
-  $data['absence_approval_list']['civi_target_contact_name'] = array(
-    'title' => t('Civi contact name - absence target contact'),
-    'help' => t('Civi contact name for the assigned absence/activity target contact'),
-    'real field' => 'employee_id',
-    'field' => array(
-      'handler' => 'civihr_employee_portal_handler_employee_id',
-      'click sortable' => TRUE,
-    ),
-    'argument' => array(
-      'handler' => 'views_handler_argument_string',
-      'name_field' => 'title',
-      'string' => TRUE
-    ),
-    'filter' => array(
-      'handler' => 'views_handler_filter_string',
-      'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
-
-  $data['absence_approval_list']['duration'] = array(
-    'title' => t('Absence type row value (Duration)'),
-    'help' => t('Row value for each absence type (Duration)'),
-    'real field' => 'duration',
-    'field' => array(
-      'handler' => 'civihr_employee_portal_handler_absence_duration',
-      'click sortable' => TRUE,
-    ),
-    'argument' => array(
-      'handler' => 'views_handler_argument_numeric',
-      'name_field' => 'title',
-      'string' => TRUE
-    ),
-    'filter' => array(
-      'handler' => 'views_handler_filter_numeric',
-      'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
-
-  $data['absence_approval_list']['absence_status'] = array(
-    'title' => t('Absence status'),
-    'help' => t('Absence status field value'),
-    'real field' => 'absence_status',
-    'field' => array(
-      'handler' => 'civihr_employee_portal_handler_absence_status',
-      'click sortable' => TRUE,
-    ),
-    'argument' => array(
-      'handler' => 'views_handler_argument_string',
-      'name_field' => 'title',
-      'string' => TRUE
-    ),
-    'filter' => array(
-      'handler' => 'views_handler_filter_string',
-      'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
-
-  $data['absence_approval_list']['manager_id'] = array(
-    'title' => t('Manager ID'),
-    'help' => t('Manager ID field value'),
-    'real field' => 'manager_id',
-    'field' => array(
-      'handler' => 'civihr_employee_portal_handler_manager_id',
-      'click sortable' => TRUE,
-    ),
-    'argument' => array(
-      'handler' => 'views_handler_argument_string',
-      'name_field' => 'title',
-      'string' => TRUE
-    ),
-    'filter' => array(
-      'handler' => 'views_handler_filter_string',
-      'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
-
-  // Add custom date handler
-  $data['absence_approval_list']['absence_start_date_timestamp']['field']['handler'] = 'views_handler_field_date';
-  $data['absence_approval_list']['absence_start_date_timestamp']['sort']['handler'] = 'views_handler_sort_date';
-  $data['absence_approval_list']['absence_start_date_timestamp']['filter']['handler'] = 'views_handler_filter_date';
-  $data['absence_approval_list']['absence_start_date_timestamp']['argument']['handler'] = 'views_handler_argument_date';
-
-  $data['absence_approval_list']['absence_end_date_timestamp']['field']['handler'] = 'views_handler_field_date';
-  $data['absence_approval_list']['absence_end_date_timestamp']['sort']['handler'] = 'views_handler_sort_date';
-  $data['absence_approval_list']['absence_end_date_timestamp']['filter']['handler'] = 'views_handler_filter_date';
-  $data['absence_approval_list']['absence_end_date_timestamp']['argument']['handler'] = 'views_handler_argument_date';
-
   return $data;
 }
 
@@ -1014,7 +839,7 @@ function civihr_employee_portal_views_pre_render(&$view) {
       ctools_modal_add_js();
     }
   }
-  if (in_array($view->name, array('appraisals', 'approvals'))) {
+  if ($view->name == 'appraisals') {
     ctools_include('modal');
     ctools_modal_add_js();
   }
@@ -1022,10 +847,7 @@ function civihr_employee_portal_views_pre_render(&$view) {
     $view->result = removeInactiveManagers($view->result);
     $view->result = removeInactiveDepartments($view->result);
   }
-  if ($view->name == "approvals") {
-    $view->result = removeAbsencesForOtherManagers($view->result);
-  }
-  
+
   if ($view->name == "civihr_report_people" || $view->name == "civihr_report_leave_and_absence") {
     formatLengthsOfService($view->result);
   }
@@ -1034,7 +856,7 @@ function civihr_employee_portal_views_pre_render(&$view) {
 /**
  * Processes results in people report view to format length of service for each
  * contact in a human readable form.
- * 
+ *
  * @param array $results
  *   Array of objects (stdClass) that hold data for each contact in people report.
  */
@@ -1063,24 +885,6 @@ function formatLengthsOfService($results) {
       $currentRecord->civicrm_value_length_of_service_11_length_of_service = implode(' ', $length);
     }
   }
-}
-
-/**
- * Remove absences of contacts that belong to managers other than the currently logged in manager
- *
- */
-function removeAbsencesForOtherManagers($results) {
-  global $user;
-  $managerData = get_civihr_uf_match_data($user->uid);
-  $managerId = $managerData['contact_id'];
-
-  foreach ($results as $key => $value) {
-    $managers = _getManagerContacts($value->absence_approval_list_employee_id);
-    if (!in_array($managerId, $managers)) {
-      unset($results[$key]);
-    }
-  }
-  return $results;
 }
 
 /**
