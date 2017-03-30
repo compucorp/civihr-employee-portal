@@ -116,7 +116,7 @@ $handler->display->display_options['style_options']['info'] = array(
     'separator' => '',
     'empty_column' => 0,
   ),
-  'email_1' => array(
+  'work_email' => array(
     'sortable' => 1,
     'default_sort_order' => 'asc',
     'align' => '',
@@ -310,14 +310,14 @@ $handler->display->display_options['fields']['title']['table'] = 'hrjc_role';
 $handler->display->display_options['fields']['title']['field'] = 'role_title';
 $handler->display->display_options['fields']['title']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['fields']['title']['label'] = 'Job Title';
-/* Field: CiviCRM Email: Email Address */
-$handler->display->display_options['fields']['email_1']['id'] = 'email_1';
-$handler->display->display_options['fields']['email_1']['table'] = 'civicrm_email';
-$handler->display->display_options['fields']['email_1']['field'] = 'email';
-$handler->display->display_options['fields']['email_1']['relationship'] = 'id';
-$handler->display->display_options['fields']['email_1']['location_type'] = '0';
-$handler->display->display_options['fields']['email_1']['location_op'] = '0';
-$handler->display->display_options['fields']['email_1']['is_primary'] = 0;
+/* Field: HRJobContract Contact Work/Home Phone and E-mail Entity: Work_email */
+$handler->display->display_options['fields']['work_email']['id'] = 'work_email';
+$handler->display->display_options['fields']['work_email']['table'] = 'hrjc_contact_details';
+$handler->display->display_options['fields']['work_email']['field'] = 'work_email';
+$handler->display->display_options['fields']['work_email']['relationship'] = 'hrjc_contact_details';
+$handler->display->display_options['fields']['work_email']['label'] = 'Email';
+// $handler->display->display_options['fields']['work_email']['alter']['make_link'] = TRUE;
+// $handler->display->display_options['fields']['work_email']['alter']['path'] = 'mailto:[work_email]';
 /* Field: HRJobContract Role entity: Role_location */
 $handler->display->display_options['fields']['role_location']['id'] = 'role_location';
 $handler->display->display_options['fields']['role_location']['table'] = 'hrjc_role';
@@ -458,6 +458,33 @@ $handler->display->display_options['filters']['role_title']['expose']['autocompl
 $handler->display->display_options['filters']['role_title']['expose']['autocomplete_raw_suggestion'] = 1;
 $handler->display->display_options['filters']['role_title']['expose']['autocomplete_raw_dropdown'] = 1;
 $handler->display->display_options['filters']['role_title']['expose']['autocomplete_dependent'] = 0;
+/* Filter criterion: HRJobContract Contact Work/Home Phone and E-mail Entity: Work_email */
+$handler->display->display_options['filters']['work_email']['id'] = 'work_email';
+$handler->display->display_options['filters']['work_email']['table'] = 'hrjc_contact_details';
+$handler->display->display_options['filters']['work_email']['field'] = 'work_email';
+$handler->display->display_options['filters']['work_email']['relationship'] = 'hrjc_contact_details';
+$handler->display->display_options['filters']['work_email']['operator'] = 'contains';
+$handler->display->display_options['filters']['work_email']['group'] = 1;
+$handler->display->display_options['filters']['work_email']['exposed'] = TRUE;
+$handler->display->display_options['filters']['work_email']['expose']['operator_id'] = 'work_email_op';
+$handler->display->display_options['filters']['work_email']['expose']['label'] = 'Email';
+$handler->display->display_options['filters']['work_email']['expose']['operator'] = 'work_email_op';
+$handler->display->display_options['filters']['work_email']['expose']['identifier'] = 'work_email';
+$handler->display->display_options['filters']['work_email']['expose']['remember_roles'] = array(
+  2 => '2',
+  1 => 0,
+  3 => 0,
+  55120974 => 0,
+  17087012 => 0,
+  57573969 => 0,
+);
+$handler->display->display_options['filters']['work_email']['expose']['autocomplete_filter'] = 1;
+$handler->display->display_options['filters']['work_email']['expose']['autocomplete_items'] = '10';
+$handler->display->display_options['filters']['work_email']['expose']['autocomplete_min_chars'] = '0';
+$handler->display->display_options['filters']['work_email']['expose']['autocomplete_field'] = 'work_email';
+$handler->display->display_options['filters']['work_email']['expose']['autocomplete_raw_suggestion'] = 1;
+$handler->display->display_options['filters']['work_email']['expose']['autocomplete_raw_dropdown'] = 1;
+$handler->display->display_options['filters']['work_email']['expose']['autocomplete_dependent'] = 0;
 /* Filter criterion: HRJobContract Contact Work/Home Phone and E-mail Entity: Work_phone */
 $handler->display->display_options['filters']['work_phone']['id'] = 'work_phone';
 $handler->display->display_options['filters']['work_phone']['table'] = 'hrjc_contact_details';
@@ -484,33 +511,6 @@ $handler->display->display_options['filters']['work_phone']['expose']['autocompl
 $handler->display->display_options['filters']['work_phone']['expose']['autocomplete_raw_suggestion'] = 1;
 $handler->display->display_options['filters']['work_phone']['expose']['autocomplete_raw_dropdown'] = 1;
 $handler->display->display_options['filters']['work_phone']['expose']['autocomplete_dependent'] = 0;
-/* Filter criterion: CiviCRM Email: Email Address */
-$handler->display->display_options['filters']['email']['id'] = 'email';
-$handler->display->display_options['filters']['email']['table'] = 'civicrm_email';
-$handler->display->display_options['filters']['email']['field'] = 'email';
-$handler->display->display_options['filters']['email']['relationship'] = 'id';
-$handler->display->display_options['filters']['email']['operator'] = 'contains';
-$handler->display->display_options['filters']['email']['group'] = 1;
-$handler->display->display_options['filters']['email']['exposed'] = TRUE;
-$handler->display->display_options['filters']['email']['expose']['operator_id'] = 'email_op';
-$handler->display->display_options['filters']['email']['expose']['label'] = 'Email';
-$handler->display->display_options['filters']['email']['expose']['operator'] = 'email_op';
-$handler->display->display_options['filters']['email']['expose']['identifier'] = 'email';
-$handler->display->display_options['filters']['email']['expose']['remember_roles'] = array(
-  2 => '2',
-  1 => 0,
-  3 => 0,
-  55120974 => 0,
-  17087012 => 0,
-  57573969 => 0,
-);
-$handler->display->display_options['filters']['email']['expose']['autocomplete_filter'] = 1;
-$handler->display->display_options['filters']['email']['expose']['autocomplete_items'] = '10';
-$handler->display->display_options['filters']['email']['expose']['autocomplete_min_chars'] = '0';
-$handler->display->display_options['filters']['email']['expose']['autocomplete_field'] = 'email_1';
-$handler->display->display_options['filters']['email']['expose']['autocomplete_raw_suggestion'] = 1;
-$handler->display->display_options['filters']['email']['expose']['autocomplete_raw_dropdown'] = 1;
-$handler->display->display_options['filters']['email']['expose']['autocomplete_dependent'] = 0;
 /* Filter criterion: HRJobContract Role entity: Role_department */
 $handler->display->display_options['filters']['department']['id'] = 'department';
 $handler->display->display_options['filters']['department']['table'] = 'hrjc_role';
