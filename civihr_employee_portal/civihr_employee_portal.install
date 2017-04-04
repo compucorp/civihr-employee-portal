@@ -91,3 +91,16 @@ function civihr_employee_portal_update_7005() {
   $schema = module_invoke('civihr_employee_portal', 'schema');
   db_create_table('reports_configuration', $schema['reports_configuration']);
 }
+
+/**
+ * Create civihr_admin_local Role for existing sites.
+ */
+function civihr_employee_portal_update_7006() {
+  if (!array_search('civihr_admin_local', user_roles())) {
+    $role = new stdClass();
+    $role->name = 'civihr_admin_local';
+    $role->machine_name = 'civihr_admin_local';
+    user_role_save($role);
+  }
+}
+
