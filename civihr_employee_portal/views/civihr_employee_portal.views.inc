@@ -1118,13 +1118,14 @@ function removeAdditionalCommas($view) {
 }
 
 /**
- * Sets the name to NULL for relationships starting in future or ending in past
+ * Removes results for relationships starting in future or ending in past
  *
- * @param array $results
+ * @param \stdClass[] $results
+ *
  * @return array
  */
 function removeInactiveManagers($results = []) {
-  $endField = 'civicrm_relationship_end_date';
+  $endField = 'civicrm_relationship_civicrm_contact_1_end_date';
   $startField = 'civicrm_relationship_civicrm_contact_1_start_date';
   $startOfToday = new \DateTime('today 00:00:00');
   $endOfToday = new \DateTime('today 23:59:59');
@@ -1148,6 +1149,8 @@ function removeInactiveManagers($results = []) {
 }
 
 /**
+ * Removes titles and locations from inactive roles for the result
+ *
  * @param \stdClass[] $results
  *
  * @return array

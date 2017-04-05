@@ -348,6 +348,7 @@ $handler->display->display_options['fields']['department_list']['label'] = 'Depa
 $handler->display->display_options['fields']['end_date']['id'] = 'end_date';
 $handler->display->display_options['fields']['end_date']['table'] = 'civicrm_relationship';
 $handler->display->display_options['fields']['end_date']['field'] = 'end_date';
+$handler->display->display_options['fields']['end_date']['relationship'] = 'relationship_id_a_1';
 $handler->display->display_options['fields']['end_date']['exclude'] = TRUE;
 $handler->display->display_options['fields']['end_date']['date_format'] = 'long';
 $handler->display->display_options['fields']['end_date']['second_date_format'] = 'long';
