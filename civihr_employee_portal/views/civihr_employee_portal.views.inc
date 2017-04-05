@@ -1144,13 +1144,36 @@ function removeInactiveManagers($results = array()) {
 }
 
 /**
+ * Implements hook_views_query_alter
+ *
+ * @param view $view
+ * @param views_plugin_query_default $query
+ */
+function civihr_employee_portal_views_query_alter(&$view, &$query) {
+  if ($view->name !== 'civihr_staff_directory') {
+    return;
+  }
+
+  $queryParts = array();
+  get_where_fields($query->where, $queryParts);
+  $departmentField = 'hrjc_role_hrjc_revision.role_department';
+  $roleEndField = 'hrjc_role_hrjc_revision.role_end_date';
+
+  // if department is set we must limit to only current roles
+  if (!empty($queryParts[$departmentField])) {
+    $group = $query->set_where_group('OR'); // add a new WHERE group
+    $query->add_where($group, $roleEndField, date('Y-m-d'), '>=');
+    $query->add_where($group, $roleEndField, NULL, 'IS');
+  }
+}
+
+/**
  * Implements hook_views_pre_view().
  * @param $view
  * @param $display_id
  * @param $args
  */
 function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
-
   // Custom configuration start for items per page
   if (($view->name == 'civihr_staff_directory' && $display_id == 'page') ||
           ($view->name == 'hr_documents' && $display_id == 'hr_resources')) {
@@ -1166,3 +1189,23 @@ function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
     );
   }
 }
+
+/**
+ * @param mixed $part The $query->where part
+ * @param array $fields An array to store the fields
+ */
+function get_where_fields($part, &$fields) {
+  if (isset($part['conditions'])) {
+    $part = $part['conditions'];
+  }
+  if (isset($part['field']) && $part['field'] instanceof DatabaseCondition){
+    $part = $part['field']->conditions();
+  }
+  if (isset($part['field'])) {
+    $fields[$part['field']] = $part['value'];
+  } elseif (is_array($part)) {
+    foreach ($part as $item) {
+      get_where_fields($item, $fields);
+    }
+  }
+};
