@@ -1020,12 +1020,12 @@ function civihr_employee_portal_views_pre_render(&$view) {
   }
   if ($view->name == "civihr_staff_directory") {
     $view->result = removeInactiveManagers($view->result);
-    $view->result = removeInactiveDepartments($view->result);
+    $view->result = removeInactiveRoleDetails($view->result);
   }
   if ($view->name == "approvals") {
     $view->result = removeAbsencesForOtherManagers($view->result);
   }
-  
+
   if ($view->name == "civihr_report_people" || $view->name == "civihr_report_leave_and_absence") {
     formatLengthsOfService($view->result);
   }
@@ -1034,7 +1034,7 @@ function civihr_employee_portal_views_pre_render(&$view) {
 /**
  * Processes results in people report view to format length of service for each
  * contact in a human readable form.
- * 
+ *
  * @param array $results
  *   Array of objects (stdClass) that hold data for each contact in people report.
  */
@@ -1117,29 +1117,61 @@ function removeAdditionalCommas($view) {
   return $fieldsToClean;
 }
 
-function removeInactiveDepartments($results = array()) {
-  foreach ($results as $key => $value) {
-    $startDate = !empty($value->hrjc_role_civicrm_contact_start_date) ? $value->hrjc_role_civicrm_contact_start_date : NULL;
-    $endDate = !empty($value->hrjc_role_civicrm_contact_end_date) ? $value->hrjc_role_civicrm_contact_end_date : NULL;
+/**
+ * Sets the name to NULL for relationships starting in future or ending in past
+ *
+ * @param array $results
+ * @return array
+ */
+function removeInactiveManagers($results = []) {
+  $endField = 'civicrm_relationship_end_date';
+  $startField = 'civicrm_relationship_civicrm_contact_1_start_date';
+  $startOfToday = new \DateTime('today 00:00:00');
+  $endOfToday = new \DateTime('today 23:59:59');
 
-    if (($endDate && $endDate < date('Y-m-d h:i:s') && $endDate != "0000-00-00 00:00:00") ||
-            ($startDate && $startDate > date('Y-m-d h:i:s'))
-    ) {
-      $value->hrjc_role_civicrm_contact_department = NULL;
+  $startDates = [];
+
+  foreach ($results as $key => $value) {
+    $end = $value->$endField ? new \DateTime($value->$endField) : NULL;
+    $start = $value->$startField ? new \DateTime($value->$startField) : NULL;
+    $startDates[] = $start;
+    $isActive = $value->civicrm_relationship_is_active == 1;
+    $isPast = $end && $end < $startOfToday;
+    $isFuture = $start > $endOfToday;
+
+    if (!$isActive || $isPast || $isFuture) {
+      unset($results[$key]);
     }
   }
+
   return $results;
 }
 
-function removeInactiveManagers($results = array()) {
-  foreach ($results as $key => $value) {
-    if ($value->civicrm_relationship_is_active == 0 ||
-            ($value->civicrm_relationship_end_date < date('Y-m-d') && $value->civicrm_relationship_end_date != NULL) ||
-            $value->civicrm_relationship_start_date > date('Y-m-d')) {
-      $value->civicrm_contact_civicrm_relationship_first_name = NULL;
-      $value->civicrm_contact_civicrm_relationship_last_name = NULL;
+/**
+ * @param \stdClass[] $results
+ *
+ * @return array
+ */
+function removeInactiveRoleDetails($results = []) {
+  $endField = 'hrjc_role_hrjc_revision_role_end_date';
+  $startField = 'hrjc_role_hrjc_revision_role_start_date';
+  $titleField = 'hrjc_role_hrjc_revision_role_title';
+  $locationField = 'hrjc_role_hrjc_revision_role_location';
+  $startOfToday = new \DateTime('today 00:00:00');
+  $endOfToday = new \DateTime('today 23:59:59');
+
+  foreach ($results as $key => $row) {
+    $roleEnd = $row->$endField ? new \DateTime($row->$endField) : NULL;
+    $roleStart = $row->$startField ? new \DateTime($row->$startField) : NULL;
+    $isPastRole = $roleEnd && $roleEnd < $startOfToday;
+    $isFutureRole = $roleStart && $roleStart > $endOfToday;
+
+    if ($isPastRole || $isFutureRole) {
+      $row->$titleField = NULL;
+      $row->$locationField = NULL;
     }
   }
+
   return $results;
 }
 
