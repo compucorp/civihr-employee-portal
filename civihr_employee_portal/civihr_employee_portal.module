@@ -544,7 +544,7 @@ function civihr_employee_portal_init() {
 
     // Add our additional css libraries
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/custom.css");
-    drupal_add_css(getModuleUrl('org.civicrm.bootstrapcivicrm') . 'css/bootstrap.css');
+    drupal_add_css(getModuleUrl('org.civicrm.shoreditch') . 'css/bootstrap.css');
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweetalert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
 
@@ -839,7 +839,7 @@ function civihr_employee_portal_views_default_views() {
 }
 
 /**
- * Function for caching date periods returned from CiviCRM (avoiding expensive 
+ * Function for caching date periods returned from CiviCRM (avoiding expensive
  * DB calls for each dashboard page hit)
  */
 function get_civihr_date_periods() {
@@ -850,7 +850,7 @@ function get_civihr_date_periods() {
     if ($cache = cache_get('civihr_date_periods')) {
       $periods_data = $cache->data;
       watchdog(
-        'CiviHR Period Cache', 
+        'CiviHR Period Cache',
         'Periods found in cache: <br/><pre>' . print_r($periods_data, true) . '</pre>'
       );
     }
@@ -866,7 +866,7 @@ function get_civihr_date_periods() {
       catch (CiviCRM_API3_Exception $e) {
           $error = $e->getMessage();
           watchdog(
-            'CiviHR Period Cache', 
+            'CiviHR Period Cache',
             "Error obtaining periods from DB: $error ",
             array(),
             WATCHDOG_ALERT
@@ -875,7 +875,7 @@ function get_civihr_date_periods() {
 
       cache_set('civihr_date_periods', $periods_data, 'cache', strtotime('+6 minutes'));
       watchdog(
-        'CiviHR Period Cache', 
+        'CiviHR Period Cache',
         'Periods obtained from DB and stored in cache: <br/><pre>' . print_r($periods_data, true) . '</pre>'
       );
     }
@@ -6960,7 +6960,7 @@ function civihr_employee_portal_is_sick_absence($absenceName) {
 
 /**
  * Return an ID of 'sick' Absence Type or NULL if 'sick' type is not found.
- * 
+ *
  * @return int|NULL
  */
 function civihr_employee_portal_get_absence_sick_type_id() {
