@@ -1178,6 +1178,7 @@ function civihr_hrjobcontract_entities_entity_property_info_alter(&$info) {
 
     // Add relationship to CiviCRM contact for the Absence Entity
     $info['civihr_length_of_service']['properties']['entity_id']['type'] = 'civicrm_contact';
+    $info['civihr_absence_activity']['properties']['absence_contact_id']['type'] = 'civicrm_contact';
 
     // Properties for phone
     $info['hrjobcontract_contact_info']['properties']['contact_id']['type'] = 'civicrm_contact';
