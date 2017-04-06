@@ -1118,7 +1118,8 @@ function removeAdditionalCommas($view) {
 }
 
 /**
- * Removes results for relationships starting in future or ending in past
+ * Sets the manager display name to NULL for contacts with manager relationships
+ * starting in the future or ending in the past to hide them from the view
  *
  * @param \stdClass[] $results
  *
