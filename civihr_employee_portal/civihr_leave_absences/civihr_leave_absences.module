@@ -79,7 +79,12 @@ function civihr_leave_absences_get_markup($resource = '') {
   if (!strpos($scripts, 'reqangular.min.js')) {
     civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
   }
-  civicrm_resources_load('uk.co.compucorp.civicrm.hrleaveandabsences', ["$resource.min.js"]);
+
+  if(CRM_Core_Config::singleton()->debug) {
+    civicrm_resources_load('uk.co.compucorp.civicrm.hrleaveandabsences', ["$resource.js"]);
+  } else {
+    civicrm_resources_load('uk.co.compucorp.civicrm.hrleaveandabsences', ["$resource.min.js"]);
+  }
 
   return civihr_leave_absences_load_file(str_replace('-', '_', $resource));
 }
