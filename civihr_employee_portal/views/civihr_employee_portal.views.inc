@@ -697,7 +697,6 @@ function civihr_employee_portal_views_data_alter(&$data) {
     'title' => t('Absence duration in days'),
     'real field' => 'absence_duration',
     'field' => array(
-      'handler' => 'civihr_employee_portal_handler_absence_duration_in_days',
       'click sortable' => TRUE,
     ),
     'argument' => array(
@@ -715,7 +714,6 @@ function civihr_employee_portal_views_data_alter(&$data) {
     'title' => t('Absence amount taken'),
     'real field' => 'absence_amount_taken',
     'field' => array(
-      'handler' => 'civihr_employee_portal_handler_absence_duration_in_days',
       'click sortable' => TRUE,
     ),
     'argument' => array(
@@ -733,7 +731,6 @@ function civihr_employee_portal_views_data_alter(&$data) {
     'title' => t('Absence amount accrued'),
     'real field' => 'absence_amount_accrued',
     'field' => array(
-      'handler' => 'civihr_employee_portal_handler_absence_duration_in_days',
       'click sortable' => TRUE,
     ),
     'argument' => array(
@@ -751,7 +748,6 @@ function civihr_employee_portal_views_data_alter(&$data) {
     'title' => t('Absence absolute duration'),
     'real field' => 'absence_absolute_amount',
     'field' => array(
-      'handler' => 'civihr_employee_portal_handler_absence_duration_in_days',
       'click sortable' => TRUE,
     ),
     'argument' => array(
