@@ -1127,6 +1127,7 @@ function removeAdditionalCommas($view) {
 function removeInactiveManagers($results = []) {
   $endField = 'civicrm_relationship_civicrm_contact_1_end_date';
   $startField = 'civicrm_relationship_civicrm_contact_1_start_date';
+  $managerField = 'civicrm_contact_civicrm_relationship_1_display_name';
   $startOfToday = new \DateTime('today 00:00:00');
   $endOfToday = new \DateTime('today 23:59:59');
 
@@ -1141,7 +1142,7 @@ function removeInactiveManagers($results = []) {
     $isFuture = $start > $endOfToday;
 
     if (!$isActive || $isPast || $isFuture) {
-      unset($results[$key]);
+      $value->$managerField = NULL;
     }
   }
 
