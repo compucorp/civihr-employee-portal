@@ -68,6 +68,5 @@ files[] = views/includes/civihr_employee_portal_handler_jobcontract_pay_scale.in
 files[] = views/includes/civihr_employee_portal_handler_jobcontract_pension_is_enrolled.inc
 files[] = views/includes/civihr_employee_portal_handler_contact_age_group.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_day_of_week.inc
-files[] = views/includes/civihr_employee_portal_handler_absence_duration_in_days.inc
 files[] = views/includes/civihr_employee_portal_handler_yes_no.inc
 files[] = views/includes/civihr_employee_portal_handler_pipe.inc
