@@ -4,6 +4,7 @@ use Drupal\civihr_employee_portal\Blocks\Base;
 use Drupal\civihr_employee_portal\Blocks\Leave;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
+use Drupal\civihr_employee_portal\Security\PublicFirewall;
 
 /**
  * Implements hook_css_alter().
@@ -348,7 +349,7 @@ function _rebuild_absence_list_view() {
                         ON request.activity_type_id = absence_type_debit.debit_activity_type_id
                         LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_credit
                         ON request.activity_type_id = absence_type_credit.credit_activity_type_id
-                        INNER JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
+                        LEFT JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
                         ON tgt.contact_id = drupal_contact.contact_id
                         WHERE (request.activity_type_id IN (" . rtrim($options, ',') . "))
                         GROUP BY request.id");
@@ -373,7 +374,7 @@ function _rebuild_absence_list_view() {
                         ON request.activity_type_id = absence_type_debit.debit_activity_type_id
                         LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_credit
                         ON request.activity_type_id = absence_type_credit.credit_activity_type_id
-                        INNER JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
+                        LEFT JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
                         ON tgt.contact_id = drupal_contact.contact_id
                         WHERE (request.activity_type_id IN (" . rtrim($options, ',') . "))
                         GROUP BY request.id");
@@ -544,7 +545,7 @@ function civihr_employee_portal_init() {
 
     // Add our additional css libraries
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/custom.css");
-    drupal_add_css(getModuleUrl('org.civicrm.bootstrapcivicrm') . 'css/bootstrap.css');
+    drupal_add_css(getModuleUrl('org.civicrm.shoreditch') . 'css/bootstrap.css');
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweetalert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
 
@@ -839,7 +840,7 @@ function civihr_employee_portal_views_default_views() {
 }
 
 /**
- * Function for caching date periods returned from CiviCRM (avoiding expensive 
+ * Function for caching date periods returned from CiviCRM (avoiding expensive
  * DB calls for each dashboard page hit)
  */
 function get_civihr_date_periods() {
@@ -850,7 +851,7 @@ function get_civihr_date_periods() {
     if ($cache = cache_get('civihr_date_periods')) {
       $periods_data = $cache->data;
       watchdog(
-        'CiviHR Period Cache', 
+        'CiviHR Period Cache',
         'Periods found in cache: <br/><pre>' . print_r($periods_data, true) . '</pre>'
       );
     }
@@ -866,7 +867,7 @@ function get_civihr_date_periods() {
       catch (CiviCRM_API3_Exception $e) {
           $error = $e->getMessage();
           watchdog(
-            'CiviHR Period Cache', 
+            'CiviHR Period Cache',
             "Error obtaining periods from DB: $error ",
             array(),
             WATCHDOG_ALERT
@@ -875,7 +876,7 @@ function get_civihr_date_periods() {
 
       cache_set('civihr_date_periods', $periods_data, 'cache', strtotime('+6 minutes'));
       watchdog(
-        'CiviHR Period Cache', 
+        'CiviHR Period Cache',
         'Periods obtained from DB and stored in cache: <br/><pre>' . print_r($periods_data, true) . '</pre>'
       );
     }
@@ -6960,7 +6961,7 @@ function civihr_employee_portal_is_sick_absence($absenceName) {
 
 /**
  * Return an ID of 'sick' Absence Type or NULL if 'sick' type is not found.
- * 
+ *
  * @return int|NULL
  */
 function civihr_employee_portal_get_absence_sick_type_id() {
@@ -7228,41 +7229,25 @@ function _get_task_filter_by_date($date, $normalize = false) {
  * drupal_goto() and current_path() cannot be used).
  */
 function _user_redirection() {
+  $publicFirewall = new PublicFirewall();
   global $user, $base_url;
 
-  // This function should only be executed in a
-  // non-cli environment. It calls the exit()
-  // function, which causes errors when running
-  // drush commands
+  // This function should only be executed in a non-cli environment.
+  // It calls exit() function, which causes errors when running drush commands
   if (drupal_is_cli()) {
     return;
   }
 
   $current_path = request_path();
   $requestURI = rawurlencode(request_uri());
-  $user_is_anonymous = $user->uid == 0;
 
-  $allowed_paths = [
-    'welcome-page',
-    // If the logo file is missing, the request might hit index.php
-    // and this will avoid one useless redirect
-    'sites/default/files/logo.jpg',
-    // This is the URL for the modal that is displayed when the user
-    // clicks on "Click here to request one from your HR administrator"
-    'request_new_account/ajax',
-  ];
-
-  if ($user_is_anonymous) {
-    if ((!in_array($current_path, $allowed_paths) && substr($current_path, 0, 4) !== 'user') ||
-      $current_path == 'user/register') {
-      $redirect_path = 'welcome-page';
-      if ($current_path) {
-        $redirect_path .= "?destination={$requestURI}";
-      }
-    }
+  if (!$publicFirewall->canAccess($user, $current_path)) {
+    $query = $current_path ? sprintf('?destination=%s', $requestURI) : '';
+    $redirect_path = 'welcome-page' . $query;
   }
-  else if (in_array($current_path, ['', 'civicrm', 'civicrm/dashboard'])) {
-    $redirect_path = user_access('access CiviCRM') ?  'civicrm/tasksassignments/dashboard#/tasks' : 'dashboard';
+  elseif (in_array($current_path, ['', 'civicrm', 'civicrm/dashboard'])) {
+    $tasksDashboard = 'civicrm/tasksassignments/dashboard#/tasks';
+    $redirect_path = user_access('access CiviCRM') ? $tasksDashboard : 'dashboard';
   }
 
   if (!empty($redirect_path)) {

@@ -9,6 +9,7 @@ class AbsenceRequestForm {
     protected $form_state;
 
     const CANCELLED_LEAVE_TYPE_ID = 3;
+    const REJECTED_LEAVE_TYPE_ID = 9;
 
     /**
      * Constructor
@@ -418,7 +419,7 @@ class AbsenceRequestForm {
         $absencesDataQuery = db_select('absence_list', 'al')
             ->condition('contact_id', $_SESSION['CiviCRM']['userID'])
             ->condition('absence_status', self::CANCELLED_LEAVE_TYPE_ID, '<>')
-            //->condition('absence_end_date_timestamp', strtotime('today'), '>')
+            ->condition('absence_status', self::REJECTED_LEAVE_TYPE_ID, '<>')
             ->fields('al', array('absence_start_date_timestamp', 'absence_end_date_timestamp'));
 
         $absencesData = $absencesDataQuery->execute()->fetchAll();
@@ -546,7 +547,7 @@ class AbsenceRequestForm {
 
         if ($period_id == null) {
           watchdog(
-            'CiviHR Period Cache', 
+            'CiviHR Period Cache',
             'Period for ' . implode('-', $start_date) . ' not found in period cache.  Cache data: <br/><pre>' . print_r(get_civihr_date_periods(), true) . '</pre>',
             array(),
             WATCHDOG_ALERT
