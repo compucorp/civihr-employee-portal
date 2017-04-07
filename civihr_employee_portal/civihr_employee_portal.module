@@ -720,7 +720,7 @@ function get_civihr_absence_statuses($status_id = NULL) {
                 civicrm_initialize();
 
                 // Activity absence statuses array
-                $absenceStatuses = CRM_Core_OptionGroup::values('activity_status', FALSE, FALSE, FALSE, NULL, 'name');
+                $absenceStatuses = CRM_Core_OptionGroup::values('hrleaveandabsences_leave_request_status', FALSE, FALSE, FALSE, NULL, 'label');
 
                 watchdog('DB hit absence statuses', 'DB');
 
@@ -740,16 +740,7 @@ function get_civihr_absence_statuses($status_id = NULL) {
     // Get the status values based on the status_id
     $status_id_value = CRM_Utils_Array::value($status_id, $absenceStatuses);
 
-    // How we want to display the approved absences?
-    if ($status_id_value == 'Completed') {
-        $status_id_value = 'Approved';
-    }
-    if ($status_id_value == 'Scheduled') {
-        $status_id_value = 'Awaiting approval';
-    }
-
     return $status_id_value;
-
 }
 
 function get_document_statuses($status_id = NULL) {
