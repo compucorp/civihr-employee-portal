@@ -720,7 +720,7 @@ function get_civihr_absence_statuses($status_id = NULL) {
                 civicrm_initialize();
 
                 // Activity absence statuses array
-                $absenceStatuses = CRM_Core_OptionGroup::values('activity_status', FALSE, FALSE, FALSE, NULL, 'name');
+                $absenceStatuses = CRM_Core_OptionGroup::values('hrleaveandabsences_leave_request_status', FALSE, FALSE, FALSE, NULL, 'label');
 
                 watchdog('DB hit absence statuses', 'DB');
 
