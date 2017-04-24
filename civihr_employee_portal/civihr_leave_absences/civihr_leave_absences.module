@@ -74,12 +74,14 @@ function civihr_leave_absences_init() {
  *    Custom markup from template file.
  */
 function civihr_leave_absences_get_markup($resource = '') {
-  $scripts = drupal_get_js('footer');
-  // Adding js file only if its not loaded already.
-  if (!strpos($scripts, 'reqangular.min.js')) {
+  $script = CRM_Core_Config::singleton()->debug ? "{$resource}.js" : "{$resource}.min.js";
+
+  // Adds RequireJS + AngularJS dependencies only once
+  if (!strpos(drupal_get_js('footer'), 'reqangular.min.js')) {
     civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
   }
-  civicrm_resources_load('uk.co.compucorp.civicrm.hrleaveandabsences', ["$resource.min.js"]);
+
+  civicrm_resources_load('uk.co.compucorp.civicrm.hrleaveandabsences', [$script]);
 
   return civihr_leave_absences_load_file(str_replace('-', '_', $resource));
 }
