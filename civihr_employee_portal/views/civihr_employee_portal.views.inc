@@ -821,6 +821,8 @@ function civihr_employee_portal_views_data_alter(&$data) {
 //    $data['absence_activity']['absence_date']['filter']['handler'] = 'views_handler_filter_date';
 //    $data['absence_activity']['absence_date']['argument']['handler'] = 'views_handler_argument_date';
 
+  $data['hrjc_contact_details']['work_email']['field']['handler'] = 'civihr_employee_portal_handler_email';
+
   return $data;
 }
 
@@ -841,7 +843,7 @@ function civihr_employee_portal_views_pre_render(&$view) {
   }
   if ($view->name == "civihr_staff_directory") {
     $view->result = removeInactiveManagers($view->result);
-    $view->result = removeInactiveDepartments($view->result);
+    $view->result = removeInactiveRoleDetails($view->result);
   }
 
   if ($view->name == "civihr_report_people" || $view->name == "civihr_report_leave_and_absence") {
@@ -917,30 +919,91 @@ function removeAdditionalCommas($view) {
   return $fieldsToClean;
 }
 
-function removeInactiveDepartments($results = array()) {
-  foreach ($results as $key => $value) {
-    $startDate = !empty($value->hrjc_role_civicrm_contact_start_date) ? $value->hrjc_role_civicrm_contact_start_date : NULL;
-    $endDate = !empty($value->hrjc_role_civicrm_contact_end_date) ? $value->hrjc_role_civicrm_contact_end_date : NULL;
+/**
+ * Sets the manager display name to NULL for contacts with manager relationships
+ * starting in the future or ending in the past to hide them from the view
+ *
+ * @param \stdClass[] $results
+ *
+ * @return array
+ */
+function removeInactiveManagers($results = []) {
+  $endField = 'civicrm_relationship_civicrm_contact_1_end_date';
+  $startField = 'civicrm_relationship_civicrm_contact_1_start_date';
+  $managerField = 'civicrm_contact_civicrm_relationship_1_display_name';
+  $startOfToday = new \DateTime('today 00:00:00');
+  $endOfToday = new \DateTime('today 23:59:59');
 
-    if (($endDate && $endDate < date('Y-m-d h:i:s') && $endDate != "0000-00-00 00:00:00") ||
-            ($startDate && $startDate > date('Y-m-d h:i:s'))
-    ) {
-      $value->hrjc_role_civicrm_contact_department = NULL;
+  $startDates = [];
+
+  foreach ($results as $key => $value) {
+    $end = $value->$endField ? new \DateTime($value->$endField) : NULL;
+    $start = $value->$startField ? new \DateTime($value->$startField) : NULL;
+    $startDates[] = $start;
+    $isActive = $value->civicrm_relationship_is_active == 1;
+    $isPast = $end && $end < $startOfToday;
+    $isFuture = $start > $endOfToday;
+
+    if (!$isActive || $isPast || $isFuture) {
+      $value->$managerField = NULL;
     }
   }
+
   return $results;
 }
 
-function removeInactiveManagers($results = array()) {
-  foreach ($results as $key => $value) {
-    if ($value->civicrm_relationship_is_active == 0 ||
-            ($value->civicrm_relationship_end_date < date('Y-m-d') && $value->civicrm_relationship_end_date != NULL) ||
-            $value->civicrm_relationship_start_date > date('Y-m-d')) {
-      $value->civicrm_contact_civicrm_relationship_first_name = NULL;
-      $value->civicrm_contact_civicrm_relationship_last_name = NULL;
+/**
+ * Removes titles and locations from inactive roles for the result
+ *
+ * @param \stdClass[] $results
+ *
+ * @return array
+ */
+function removeInactiveRoleDetails($results = []) {
+  $endField = 'hrjc_role_hrjc_revision_role_end_date';
+  $startField = 'hrjc_role_hrjc_revision_role_start_date';
+  $titleField = 'hrjc_role_hrjc_revision_role_title';
+  $locationField = 'hrjc_role_hrjc_revision_role_location';
+  $startOfToday = new \DateTime('today 00:00:00');
+  $endOfToday = new \DateTime('today 23:59:59');
+
+  foreach ($results as $key => $row) {
+    $roleEnd = $row->$endField ? new \DateTime($row->$endField) : NULL;
+    $roleStart = $row->$startField ? new \DateTime($row->$startField) : NULL;
+    $isPastRole = $roleEnd && $roleEnd < $startOfToday;
+    $isFutureRole = $roleStart && $roleStart > $endOfToday;
+
+    if ($isPastRole || $isFutureRole) {
+      $row->$titleField = NULL;
+      $row->$locationField = NULL;
     }
   }
+
   return $results;
+}
+
+/**
+ * Implements hook_views_query_alter().
+ *
+ * @param view $view
+ * @param views_plugin_query_default $query
+ */
+function civihr_employee_portal_views_query_alter(&$view, &$query) {
+  if ($view->name !== 'civihr_staff_directory') {
+    return;
+  }
+
+  $queryParts = [];
+  getWhereFields($query->where, $queryParts);
+  $departmentField = 'hrjc_role_hrjc_revision.role_department';
+  $roleEndField = 'hrjc_role_hrjc_revision.role_end_date';
+
+  // if department is set we must limit to only current roles
+  if (!empty($queryParts[$departmentField])) {
+    $group = $query->set_where_group('OR'); // add a new WHERE group
+    $query->add_where($group, $roleEndField, date('Y-m-d'), '>=');
+    $query->add_where($group, $roleEndField, NULL, 'IS');
+  }
 }
 
 /**
@@ -950,7 +1013,6 @@ function removeInactiveManagers($results = array()) {
  * @param $args
  */
 function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
-
   // Custom configuration start for items per page
   if (($view->name == 'civihr_staff_directory' && $display_id == 'page') ||
           ($view->name == 'hr_documents' && $display_id == 'hr_resources')) {
@@ -966,3 +1028,29 @@ function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
     );
   }
 }
+
+/**
+ * Takes the where part of a query and returns an array of fields => values
+ *
+ * @param mixed $part
+ *  The $query->where part
+ * @param array $fields
+ *  An array to store the fields
+ */
+function getWhereFields($part, &$fields) {
+  if (isset($part['conditions'])) {
+    $part = $part['conditions'];
+  }
+  if (isset($part['field']) && $part['field'] instanceof DatabaseCondition) {
+    $part = $part['field']->conditions();
+  }
+
+  if (isset($part['field'])) {
+    $fields[$part['field']] = $part['value'];
+  }
+  elseif (is_array($part)) {
+    foreach ($part as $item) {
+      getWhereFields($item, $fields);
+    }
+  }
+};

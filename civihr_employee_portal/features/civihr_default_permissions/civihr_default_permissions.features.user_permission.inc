@@ -25,6 +25,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
       'civihr_staff' => 'civihr_staff',
     ),
@@ -37,6 +38,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -63,6 +65,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -73,6 +76,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -90,6 +94,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -100,6 +105,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -109,6 +115,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access administration pages',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'system',
   );
@@ -139,6 +146,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access all views',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'views',
   );
@@ -148,6 +156,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access all webform results',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'webform',
   );
@@ -169,6 +178,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -190,6 +200,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -218,6 +229,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -249,6 +261,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
       'civihr_staff' => 'civihr_staff',
     ),
@@ -270,6 +283,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -279,6 +293,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access own webform results',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'webform',
   );
@@ -288,6 +303,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access own webform submissions',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'webform',
   );
@@ -297,6 +313,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access rules debug',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'rules',
   );
@@ -307,6 +324,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'system',
   );
@@ -316,6 +334,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access site reports',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'system',
   );
@@ -325,6 +344,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access subpermission form',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'subpermissions',
   );
@@ -334,6 +354,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access toolbar',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'toolbar',
   );
@@ -344,6 +365,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -353,6 +375,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access user profiles',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'user',
   );
@@ -363,6 +386,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'administerusersbyrole',
   );
@@ -382,6 +406,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -392,6 +417,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -401,6 +427,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer CiviCRM Entity',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm_entity',
   );
@@ -429,6 +456,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -439,6 +467,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -448,6 +477,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer actions',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'system',
   );
@@ -457,6 +487,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer advanced pane settings',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'panels',
   );
@@ -466,6 +497,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer blocks',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'block',
   );
@@ -475,6 +507,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer browser class',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'browserclass',
   );
@@ -484,6 +517,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer comments',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'comment',
   );
@@ -493,6 +527,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer content types',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -503,6 +538,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -512,6 +548,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer features',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'features',
   );
@@ -521,6 +558,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer fields',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'field',
   );
@@ -530,6 +568,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer filters',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'filter',
   );
@@ -539,6 +578,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer image styles',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'image',
   );
@@ -548,6 +588,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer languages',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'locale',
   );
@@ -566,6 +607,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer mailsystem',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'mailsystem',
   );
@@ -584,6 +626,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer modules',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'system',
   );
@@ -593,6 +636,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer nodes',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -602,6 +646,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer page manager',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'page_manager',
   );
@@ -611,6 +656,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer pane access',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'panels',
   );
@@ -620,6 +666,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer panels layouts',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'panels',
   );
@@ -629,6 +676,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer panels styles',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'panels',
   );
@@ -645,6 +693,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer permissions',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'user',
   );
@@ -662,6 +711,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -686,6 +736,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -695,6 +746,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer rules',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'rules',
   );
@@ -704,6 +756,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer search',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'search',
   );
@@ -713,6 +766,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer site configuration',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'system',
   );
@@ -722,6 +776,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer software updates',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'system',
   );
@@ -731,6 +786,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer subpermission',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'subpermissions',
   );
@@ -740,6 +796,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer taxonomy',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'taxonomy',
   );
@@ -749,6 +806,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer themes',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'system',
   );
@@ -758,6 +816,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer tipsy',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'tipsy',
   );
@@ -767,6 +826,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer url aliases',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'path',
   );
@@ -776,6 +836,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer userprotect',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'userprotect',
   );
@@ -786,6 +847,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'user',
   );
@@ -795,6 +857,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer uuid',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'uuid',
   );
@@ -804,6 +867,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer views',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'views',
   );
@@ -813,6 +877,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'assign all roles',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'role_delegation',
   );
@@ -833,6 +898,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'role_delegation',
   );
@@ -843,6 +909,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'role_delegation',
   );
@@ -852,6 +919,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'block IP addresses',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'system',
   );
@@ -861,6 +929,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'bypass node access',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -870,6 +939,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'bypass rules access',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'rules',
   );
@@ -879,6 +949,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'can create and edit tasks',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civihr_employee_portal',
   );
@@ -888,6 +959,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'cancel account',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'user',
   );
@@ -898,6 +970,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'administerusersbyrole',
   );
@@ -908,6 +981,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'administerusersbyrole',
   );
@@ -928,6 +1002,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'administerusersbyrole',
   );
@@ -937,6 +1012,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'change document status',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civihr_employee_portal',
   );
@@ -946,6 +1022,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'change layouts in place editing',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'panels',
   );
@@ -955,6 +1032,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'change own e-mail',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'userprotect',
   );
@@ -964,6 +1042,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'change own openid',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'userprotect',
   );
@@ -974,6 +1053,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
       'civihr_staff' => 'civihr_staff',
     ),
@@ -985,6 +1065,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'change own username',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'user',
   );
@@ -994,6 +1075,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'civicrm_entity.rules.administer',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm_entity',
   );
@@ -1003,6 +1085,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'create article content',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1013,6 +1096,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1029,6 +1113,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'create page content',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1038,6 +1123,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'create url aliases',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'path',
   );
@@ -1048,6 +1134,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'administerusersbyrole',
   );
@@ -1065,6 +1152,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1075,6 +1163,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1085,6 +1174,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1101,6 +1191,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'delete all webform submissions',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'webform',
   );
@@ -1110,6 +1201,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'delete any article content',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1120,6 +1212,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1129,6 +1222,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'delete any page content',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1146,6 +1240,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1164,6 +1259,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'delete own article content',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1174,6 +1270,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1190,6 +1287,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'delete own page content',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1206,6 +1304,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'delete own webform submissions',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'webform',
   );
@@ -1215,6 +1314,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'delete revisions',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1225,6 +1325,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'taxonomy',
   );
@@ -1234,6 +1335,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'delete terms in tags',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'taxonomy',
   );
@@ -1244,6 +1346,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1270,6 +1373,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit all webform submissions',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'webform',
   );
@@ -1279,6 +1383,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit any article content',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1289,6 +1394,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1298,6 +1404,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit any page content',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1314,6 +1421,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit api keys',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1324,6 +1432,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1333,6 +1442,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit message templates',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1353,6 +1463,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1372,6 +1483,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit own api keys',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1381,6 +1493,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit own article content',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1390,6 +1503,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit own comments',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'comment',
   );
@@ -1400,6 +1514,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1416,6 +1531,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit own page content',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1432,6 +1548,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit own webform submissions',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'webform',
   );
@@ -1442,6 +1559,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'taxonomy',
   );
@@ -1451,6 +1569,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit terms in tags',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'taxonomy',
   );
@@ -1461,6 +1580,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'administerusersbyrole',
   );
@@ -1471,6 +1591,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'administerusersbyrole',
   );
@@ -1491,6 +1612,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'administerusersbyrole',
   );
@@ -1500,6 +1622,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit webform components',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'webform',
   );
@@ -1510,6 +1633,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1526,6 +1650,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'export nodes',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node_export',
   );
@@ -1542,6 +1667,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'export own nodes',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node_export',
   );
@@ -1560,6 +1686,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'generate features',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'features',
   );
@@ -1570,6 +1697,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1580,6 +1708,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1589,6 +1718,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'manage features',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'features',
   );
@@ -1618,6 +1748,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'manage leave and absences in ssp',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
       'civihr_admin' => 'civihr_admin',
       'civihr_manager' => 'civihr_manager',
     ),
@@ -1630,6 +1761,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1650,6 +1782,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1660,6 +1793,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1670,6 +1804,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1694,6 +1829,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1703,6 +1839,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'rename features',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'features',
   );
@@ -1712,6 +1849,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'revert revisions',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -1721,6 +1859,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'search content',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'search',
   );
@@ -1731,6 +1870,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
       'civihr_staff' => 'civihr_staff',
     ),
@@ -1742,6 +1882,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'select account cancellation method',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'user',
   );
@@ -1761,6 +1902,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1787,6 +1929,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'translate interface',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'locale',
   );
@@ -1796,6 +1939,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'use PHP to import nodes',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node_export',
   );
@@ -1805,6 +1949,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'use advanced search',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'search',
   );
@@ -1814,6 +1959,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'use ctools import',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'ctools',
   );
@@ -1823,6 +1969,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'use ipe with page manager',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'panels',
   );
@@ -1832,6 +1979,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'use page manager',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'page_manager',
   );
@@ -1841,6 +1989,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'use panels caching features',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'panels',
   );
@@ -1850,6 +1999,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'use panels dashboard',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'panels',
   );
@@ -1859,6 +2009,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'use panels in place editing',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'panels',
   );
@@ -1868,6 +2019,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'use panels locks',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'panels',
   );
@@ -1888,6 +2040,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'use text format full_html',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'filter',
   );
@@ -1898,6 +2051,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1908,6 +2062,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
     ),
     'module' => 'civicrm',
@@ -1936,6 +2091,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1946,6 +2102,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
       'civihr_staff' => 'civihr_staff',
     ),
@@ -1958,6 +2115,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'civicrm',
   );
@@ -1968,6 +2126,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
       'civihr_staff' => 'civihr_staff',
     ),
@@ -1977,7 +2136,9 @@ function civihr_default_permissions_user_default_permissions() {
   // Exported permission: 'view my contact'.
   $permissions['view my contact'] = array(
     'name' => 'view my contact',
-    'roles' => array(),
+    'roles' => array(
+      'civihr_admin_local' => 'civihr_admin_local',
+    ),
     'module' => 'civicrm',
   );
 
@@ -1987,6 +2148,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
       'civihr_staff' => 'civihr_staff',
     ),
@@ -2006,6 +2168,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
       'civihr_staff' => 'civihr_staff',
     ),
@@ -2024,6 +2187,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'view own unpublished content',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -2033,6 +2197,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'view pane admin links',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'panels',
   );
@@ -2049,6 +2214,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'view revisions',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'node',
   );
@@ -2059,6 +2225,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
       'civihr_staff' => 'civihr_staff',
     ),
@@ -2070,6 +2237,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'view the administration theme',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'system',
   );
@@ -2080,6 +2248,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
       'civihr_staff' => 'civihr_staff',
     ),

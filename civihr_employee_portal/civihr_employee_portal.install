@@ -154,6 +154,18 @@ function civihr_employee_portal_update_7007() {
 }
 
 /**
+ * Create civihr_admin_local Role for existing sites.
+ */
+function civihr_employee_portal_update_7008() {
+  if (!array_search('civihr_admin_local', user_roles())) {
+    $role = new stdClass();
+    $role->name = 'civihr_admin_local';
+    $role->machine_name = 'civihr_admin_local';
+    user_role_save($role);
+  }
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string

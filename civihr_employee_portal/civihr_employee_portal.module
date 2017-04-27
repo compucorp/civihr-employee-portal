@@ -2,6 +2,7 @@
 
 use Drupal\civihr_employee_portal\Blocks\Base;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
+use Drupal\civihr_employee_portal\Security\PublicFirewall;
 
 /**
  * Implements hook_css_alter().
@@ -402,7 +403,7 @@ function civihr_employee_portal_init() {
 
     // Add our additional css libraries
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/custom.css");
-    drupal_add_css(getModuleUrl('org.civicrm.bootstrapcivicrm') . 'css/bootstrap.css');
+    drupal_add_css(getModuleUrl('org.civicrm.shoreditch') . 'css/bootstrap.css');
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweetalert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
 
@@ -5352,19 +5353,10 @@ function civihr_employee_portal_token_info() {
         'description' => t('CiviCRM Contact Phone from the contact record.'),
     );
 
-    $info['tokens']['user']['assigned_manager_name'] = array(
-        'name' => t('Assigned manager name'),
-        'description' => t('Full Name of the assigned manager.'),
-    );
-
-    $info['tokens']['user']['assigned_manager_phone'] = array(
-        'name' => t('Assigned manager phone'),
-        'description' => t('Phone of the assigned manager.'),
-    );
 
     $info['tokens']['user']['assigned_manager_email'] = array(
-        'name' => t('Assigned manager email address'),
-        'description' => t('Email Address of the assigned manager.'),
+        'name' => t('Assigned managers email addresses'),
+        'description' => t('Comma separated list of email addresses for the contact\'s assigned managers.'),
     );
 
     return $info;
@@ -5374,94 +5366,97 @@ function civihr_employee_portal_token_info() {
  * Implements hook_tokens().
  */
 function civihr_employee_portal_tokens($type, $tokens, array $data = array(), array $options = array()) {
-    $replacements = array();
+  $replacements = array();
 
-    if ($type == 'user') {
+  if ($type == 'user') {
 
-        // Get the assigned manager contact IDs for the passed USER object
-        if (isset($data['user']) && $data['user']->uid != '') {
+    // Get the assigned manager contact IDs for the passed USER object
+    if (isset($data['user']) && $data['user']->uid != '') {
+      $user_contact_data = get_civihr_contact_data(NULL, $data['user']->uid);
 
-            $managers = HelperClass::_get_contact_manager_contact_id($data['user']->uid);
-            $user_contact_data = get_civihr_contact_data(NULL, $data['user']->uid);
-
-        }
-
-        // Get the details for the manager
-        $assigned_manager_contact_data = get_civihr_contact_data($managers[0]);
-
-        // Loop through the available tokens.
-        foreach ($tokens as $name => $original) {
-            // Find our custom tokens by name.
-            switch ($name) {
-
-                case 'contact_display_name':
-
-                    // Find the contact display name.
-                    $value = '';
-
-                    if (isset($user_contact_data) && $user_contact_data['display_name'] != '') {
-                        $value = $user_contact_data['display_name'];
-                    }
-
-                    // Set the token values!
-                    $replacements[$original] = $value;
-                    break;
-                case 'contact_phone':
-
-                    // Find the contact phone number.
-                    $value = '';
-
-                    if (isset($user_contact_data) && $user_contact_data['phone'] != '') {
-                        $value = $user_contact_data['phone'];
-                    }
-
-                    // Set the token values!
-                    $replacements[$original] = $value;
-                    break;
-
-                case 'assigned_manager_name':
-
-                    // Find the assigned manager name.
-                    $value = '';
-
-                    if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['display_name'] != '') {
-                        $value = $assigned_manager_contact_data['display_name'];
-                    }
-
-                    // Set the token values!
-                    $replacements[$original] = $value;
-                    break;
-
-                case 'assigned_manager_phone':
-
-                    // Find the assigned manager phone.
-                    $value = '';
-
-                    if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['phone'] != '') {
-                        $value = $assigned_manager_contact_data['phone'];
-                    }
-
-                    // Set the token values!
-                    $replacements[$original] = $value;
-                    break;
-
-                case 'assigned_manager_email':
-
-                    // Find the assigned manager email address.
-                    $value = '';
-
-                    if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['email'] != '') {
-                        $value = $assigned_manager_contact_data['email'];
-                    }
-
-                    // Set the token values!
-                    $replacements[$original] = $value;
-                    break;
-            }
-        }
+      // Get the details for the manager
+      $managers = HelperClass::_get_contact_manager_contact_id($data['user']->uid);
+      $assigned_manager_contact_data = get_civihr_contact_data($managers[0]);
     }
 
-    return $replacements;
+    // Loop through the available tokens.
+    foreach ($tokens as $name => $original) {
+      // Find our custom tokens by name.
+      switch ($name) {
+
+        case 'contact_display_name':
+
+          // Find the contact display name.
+          $value = '';
+
+          if (isset($user_contact_data) && $user_contact_data['display_name'] != '') {
+            $value = $user_contact_data['display_name'];
+          }
+
+          // Set the token values!
+          $replacements[$original] = $value;
+          break;
+
+        case 'contact_phone':
+
+          // Find the contact phone number.
+          $value = '';
+
+          if (isset($user_contact_data) && $user_contact_data['phone'] != '') {
+            $value = $user_contact_data['phone'];
+          }
+
+          // Set the token values!
+          $replacements[$original] = $value;
+          break;
+
+        case 'assigned_manager_name':
+
+          // Find the assigned manager name.
+          $value = '';
+
+          if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['display_name'] != '') {
+            $value = $assigned_manager_contact_data['display_name'];
+          }
+
+          // Set the token values!
+          $replacements[$original] = $value;
+          break;
+
+        case 'assigned_manager_phone':
+
+          // Find the assigned manager phone.
+          $value = '';
+
+          if (isset($assigned_manager_contact_data) && $assigned_manager_contact_data['phone'] != '') {
+            $value = $assigned_manager_contact_data['phone'];
+          }
+
+          // Set the token values!
+          $replacements[$original] = $value;
+          break;
+
+        case 'assigned_manager_email':
+
+          // Build list of assigned managers e-mails
+          $managerEmails = [];
+
+          foreach ($managers as $currentManagerID) {
+            $managerData = get_civihr_contact_data($currentManagerID);
+
+            if (isset($managerData) && !empty($managerData['email'])) {
+              $managerEmails[] = $managerData['email'];
+            }
+          }
+
+          // Set the token values!
+          $replacements[$original] = implode(',', $managerEmails);
+          break;
+      }
+    }
+  }
+
+  return $replacements;
 }
 
 /**
@@ -5753,41 +5748,25 @@ function _get_task_filter_by_date($date, $normalize = false) {
  * drupal_goto() and current_path() cannot be used).
  */
 function _user_redirection() {
+  $publicFirewall = new PublicFirewall();
   global $user, $base_url;
 
-  // This function should only be executed in a
-  // non-cli environment. It calls the exit()
-  // function, which causes errors when running
-  // drush commands
+  // This function should only be executed in a non-cli environment.
+  // It calls exit() function, which causes errors when running drush commands
   if (drupal_is_cli()) {
     return;
   }
 
   $current_path = request_path();
   $requestURI = rawurlencode(request_uri());
-  $user_is_anonymous = $user->uid == 0;
 
-  $allowed_paths = [
-    'welcome-page',
-    // If the logo file is missing, the request might hit index.php
-    // and this will avoid one useless redirect
-    'sites/default/files/logo.jpg',
-    // This is the URL for the modal that is displayed when the user
-    // clicks on "Click here to request one from your HR administrator"
-    'request_new_account/ajax',
-  ];
-
-  if ($user_is_anonymous) {
-    if ((!in_array($current_path, $allowed_paths) && substr($current_path, 0, 4) !== 'user') ||
-      $current_path == 'user/register') {
-      $redirect_path = 'welcome-page';
-      if ($current_path) {
-        $redirect_path .= "?destination={$requestURI}";
-      }
-    }
+  if (!$publicFirewall->canAccess($user, $current_path)) {
+    $query = $current_path ? sprintf('?destination=%s', $requestURI) : '';
+    $redirect_path = 'welcome-page' . $query;
   }
-  else if (in_array($current_path, ['', 'civicrm', 'civicrm/dashboard'])) {
-    $redirect_path = user_access('access CiviCRM') ?  'civicrm/tasksassignments/dashboard#/tasks' : 'dashboard';
+  elseif (in_array($current_path, ['', 'civicrm', 'civicrm/dashboard'])) {
+    $tasksDashboard = 'civicrm/tasksassignments/dashboard#/tasks';
+    $redirect_path = user_access('access CiviCRM') ? $tasksDashboard : 'dashboard';
   }
 
   if (!empty($redirect_path)) {
