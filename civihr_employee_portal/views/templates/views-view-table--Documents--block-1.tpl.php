@@ -45,8 +45,12 @@ $statuses = array(
     </thead>
     <?php endif; ?>
   <tbody>
-    <?php foreach ($rows as $row_count => $row): ?>
-        <?php $class = 'document-row status-id-' . strip_tags($row['status_id']); ?>
+    <?php foreach ($rows as $row_count => $row):
+      if (!isset($row['id'])) {
+        printf('<tr class = "document-row no-results"><td colspan="4">%s</td></tr>', $row[0]);
+        continue;
+      }
+      $class = 'document-row status-id-' . strip_tags($row['status_id']); ?>
       <tr <?php if ($row_classes[$row_count] || $class) {
           print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';
         } ?>>
