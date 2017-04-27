@@ -28,7 +28,7 @@ class civihr_employee_portal_handler_absence_table_header_block_area extends vie
 
   /**
    * Return an array containing header row.
-   * 
+   *
    * @return array
    */
   private function getHeaderRow() {
@@ -122,7 +122,7 @@ class civihr_employee_portal_handler_absence_table_header_block_area extends vie
       '',
     );
     foreach ($activityAbsenceTypeIds as $activityId => $typeId) {
-      $row['type_' . $typeId] = $balance[$typeId];
+      $row['type_' . $typeId] = CRM_Utils_Array::value($typeId, $balance);
     }
 
     return $row;
