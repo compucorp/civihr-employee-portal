@@ -5787,6 +5787,37 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function civihr_employee_portal_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
+
+  // Adding Yoti Login fieldset with button.
+  if (module_exists('yoti_connect')) {
+
+    // Fetching block id from block description.
+    $query = db_select('block_custom', 'b')
+              ->fields('b', array('bid'))
+              ->condition('b.info', 'User Profile Yoti Login');
+    $block_id = $query->execute()->fetchField();
+
+    if ($block_id) {
+      $form['login_with_yoti'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Login with Yoti'),
+        '#weight' => 10,
+        '#collapsible' => TRUE,
+        '#collapsed' => FALSE,
+      );
+      $yoti_block_view = module_invoke('block', 'block_view', $block_id);
+      $form['login_with_yoti']['login_with_yoti_button'] = array(
+        '#type' => 'item',
+        '#markup' => render($yoti_block_view['content']),
+      );
+    }
+  }
+}
+
+/**
  * Get a recalculated State/Province form field for Emergency Contact 1.
  *
  * @param array $form
