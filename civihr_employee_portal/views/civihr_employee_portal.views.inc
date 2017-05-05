@@ -1000,6 +1000,9 @@ function civihr_employee_portal_views_data_alter(&$data) {
   $data['absence_approval_list']['absence_end_date_timestamp']['filter']['handler'] = 'views_handler_filter_date';
   $data['absence_approval_list']['absence_end_date_timestamp']['argument']['handler'] = 'views_handler_argument_date';
 
+  // custom handler to add links to emails
+  $data['hrjc_contact_details']['work_email']['field']['handler'] = 'civihr_employee_portal_handler_email';
+
   return $data;
 }
 
