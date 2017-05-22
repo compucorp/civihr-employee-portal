@@ -5904,7 +5904,7 @@ function civihr_employee_portal_preprocess_user_login(&$vars) {
     if (!empty($vars['form']['#block'])) {
         $vars['form']['#block']->subject = null;
     }
-    $vars['form']['name']['#attributes']['placeholder'] = 'Username';
+    $vars['form']['name']['#attributes']['placeholder'] = 'Username or email';
     $vars['form']['name']['#required'] = false;
     $vars['form']['pass']['#attributes']['placeholder'] = 'Password';
     $vars['form']['pass']['#required'] = false;
