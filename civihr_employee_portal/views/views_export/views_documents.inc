@@ -1,5 +1,3 @@
-<?php
-
 $view = new view();
 $view->name = 'Documents';
 $view->description = '';
@@ -14,10 +12,8 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 $handler = $view->new_display('default', 'Master', 'default');
 $handler->display->display_options['title'] = 'Documents';
 $handler->display->display_options['use_more_always'] = FALSE;
-$handler->display->display_options['access']['type'] = 'role';
-$handler->display->display_options['access']['role'] = array(
-  57573969 => '57573969',
-);
+$handler->display->display_options['access']['type'] = 'perm';
+$handler->display->display_options['access']['perm'] = 'view my details';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
 $handler->display->display_options['exposed_form']['type'] = 'basic';
@@ -464,7 +460,7 @@ $handler->display->display_options['arguments']['assignee_contact_id']['default_
 $handler->display->display_options['arguments']['assignee_contact_id']['summary']['number_of_records'] = '0';
 $handler->display->display_options['arguments']['assignee_contact_id']['summary']['format'] = 'default_summary';
 $handler->display->display_options['arguments']['assignee_contact_id']['summary_options']['items_per_page'] = '25';
-$translatables['documents'] = array(
+$translatables['Documents'] = array(
   t('Master'),
   t('Documents'),
   t('more'),
@@ -473,6 +469,8 @@ $translatables['documents'] = array(
   t('Sort by'),
   t('Asc'),
   t('Desc'),
+  t('No Document Results'),
+  t('There are no documents to display.'),
   t('Document ID'),
   t('.'),
   t('Type'),
