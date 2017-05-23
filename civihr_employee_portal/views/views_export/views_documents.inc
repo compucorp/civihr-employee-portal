@@ -1,3 +1,5 @@
+<?php
+
 $view = new view();
 $view->name = 'Documents';
 $view->description = '';
