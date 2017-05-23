@@ -682,9 +682,9 @@ function civihr_employee_portal_permission() {
       'title' => t('View My Details'),
       'description' => t('Availability for the user to view my details block and page')
     ),
-    'view my tasks block' => array(
-      'title' => t('View My Tasks Block'),
-      'description' => t('Availability for the user to view my tasks block')
+    'view my tasks and documents blocks' => array(
+      'title' => t('View My Tasks and Documents Blocks'),
+      'description' => t('Availability for the user to view my tasks and documents blocks')
     ),
     'view appraisals' => array(
       'title' => t('View Appraisals'),

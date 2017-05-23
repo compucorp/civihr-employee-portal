@@ -2223,18 +2223,18 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civihr_employee_portal',
   );
 
-  // Exported permission: 'view my tasks block'.
-  $permissions['view my tasks block'] = array(
-    'name' => 'view my tasks block',
-    'roles' => array(
+  // Exported permission: 'view my tasks and documents blocks'.
+  $permissions['view my tasks and documents blocks'] = [
+    'name' => 'view my tasks and documents blocks',
+    'roles' => [
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
       'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
       'civihr_staff' => 'civihr_staff',
-    ),
+    ],
     'module' => 'civihr_employee_portal',
-  );
+  ];
 
   // Exported permission: 'view own manual batches'.
   $permissions['view own manual batches'] = array(
