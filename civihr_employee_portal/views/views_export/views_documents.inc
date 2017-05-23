@@ -351,6 +351,13 @@ $handler->display->display_options['arguments']['target_contact_id']['summary_op
 $handler = $view->new_display('block', 'Documents Dashboard Manager block', 'block_1');
 $handler->display->display_options['defaults']['title'] = FALSE;
 $handler->display->display_options['title'] = 'Documents Manager';
+$handler->display->display_options['defaults']['access'] = FALSE;
+$handler->display->display_options['access']['type'] = 'role';
+$handler->display->display_options['access']['role'] = array(
+  55120974 => '55120974',
+  37588037 => '37588037',
+  57573969 => '57573969',
+);
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Document entity: Document entity ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
