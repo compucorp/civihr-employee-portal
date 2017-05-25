@@ -17,6 +17,9 @@
  *   field id, then row number. This matches the index in $rows.
  * @ingroup views_templates
  */
+// loading required resources
+civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
+
 $statuses = array(
   0 => t('All'),
   'awaiting-upload' => t('Awaiting upload'),
@@ -155,5 +158,29 @@ endforeach;
     $filtersDropdown.on('change', function (e) {
       filterTable($(this).val());
     });
+
+    // Trigger event to trigger appDocuments forom T&A
+    function taInit() {
+      var detail = {
+        'app': 'appDocuments',
+        'module': 'tnadocuments'
+      };
+
+      document.dispatchEvent(typeof window.CustomEvent == "function" ? new CustomEvent('taInit', {
+        'detail': detail
+      }) : (function(){
+        var e = document.createEvent('CustomEvent');
+        e.initCustomEvent('taInit', true, true, detail);
+        return e;
+      })());
+    };
+
+    taInit();
+
+    document.addEventListener('taReady', function(){
+      taInit();
+    });
   }(CRM.$));
 </script>
+
+<script src="<?php echo getModuleUrl('uk.co.compucorp.civicrm.tasksassignments').'js/dist/tasks-assignments.min.js';?>"></script>
