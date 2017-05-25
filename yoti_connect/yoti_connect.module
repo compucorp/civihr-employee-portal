@@ -58,7 +58,7 @@ class YotiStreamWrapper extends DrupalLocalStreamWrapper
      */
     function getExternalUrl()
     {
-        return FALSE;
+        return false;
 
         //        $path = str_replace('\\', '/', $this->getTarget());
         //        return url('sites/all/yoti/' . $path, array('absolute' => true));
@@ -88,9 +88,9 @@ function yoti_connect_menu_alter(&$items)
         'title' => 'List Yoti Users',
         'description' => 'Manage Yoti users.',
         'access arguments' => array('administer users'),
-//        'access arguments' => array('administer yoti connect'),
-//        'page arguments' => array('list'),
-//        'page callback' => 'yoti_connect_list',
+        //        'access arguments' => array('administer yoti connect'),
+        //        'page arguments' => array('list'),
+        //        'page callback' => 'yoti_connect_list',
         'page callback' => 'yoti_connect_list_view',
         'type' => MENU_LOCAL_TASK,
         'weight' => -11,
@@ -100,20 +100,99 @@ function yoti_connect_menu_alter(&$items)
     return $items;
 }
 
-function yoti_connect_button()
+/**
+ * Implements hook_block_info().
+ */
+function yoti_connect_block_info()
+{
+    $blocks = array();
+    $blocks['yoti_connect_link'] = array(
+        'info' => t('Yoti Connect Button'),
+    );
+
+    return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ * @param string $delta
+ * @return array
+ */
+function yoti_connect_block_view($delta = '')
 {
     global $user;
 
-    // check if user already has account
-    if ($user) {
+    $block = array();
+
+    // add sdk url
+    drupal_add_js('https://sdk.yoti.com/clients/browser.js');
+
+    /*switch ($delta) {
+        case 'yoti_connect_link' :
+            $block['content'] = my_block_view();
+            break;
+    }*/
+
+    $testToken = null;
+    if (YotiConnectHelper::mockRequests())
+    {
+        $testToken = file_get_contents(__DIR__ . '/sdk/sample-data/connect-token.txt');
+    }
+
+    // no config? no button
+    $config = YotiConnectHelper::getConfig();
+    if (!$config && !$testToken)
+    {
+        return $block;
+    }
+
+    $script = [];
+
+    // if connect url starts with 'https://staging' then we are in staging mode
+    $isStaging = strpos(\Yoti\YotiClient::CONNECT_BASE_URL, 'https://staging') === 0;
+    if ($isStaging)
+    {
+        // base url for connect
+        $baseUrl = preg_replace('/^(.+)\/connect$/', '$1', \Yoti\YotiClient::CONNECT_BASE_URL);
+
+        $script[] = sprintf('_ybg.config.qr = "%s/qr/";', $baseUrl);
+        $script[] = sprintf('_ybg.config.service = "%s/connect/";', $baseUrl);
+    }
+
+    // add init()
+    $script[] = '_ybg.init();';
+    $linkButton = '<span
+            data-yoti-application-id="' . $config['yoti_app_id'] . '"
+            data-yoti-type="inline"
+            data-yoti-scenario-id="' . $config['yoti_scenario_id'] . '"
+            data-size="small">
+            %s
+        </span>
+        <script>' . implode("\r\n", $script) . '</script>';
+
+    if (!$user->uid)
+    {
+        $button = sprintf($linkButton, 'Login with Yoti');
+    }
+    else
+    {
         $tableName = YotiConnectHelper::tableName();
         $dbProfile = db_query("SELECT * from `{$tableName}` WHERE uid=$user->uid")->fetchAssoc();
-        if ($dbProfile) {
-            return "Unlink Yoti";
+        if (!$dbProfile)
+        {
+            $button = sprintf($linkButton, 'Link Yoti account');
+        }
+        else
+        {
+            $url = url('yoti-connect/unlink');
+            $label = 'Unlink Yoti account';
+            $button = '<a class="yoti-connect-button" href="' . $url . '">' . $label . '</a>';
         }
     }
 
-    return "Yoti Connect";
+    $block['content'] = '<div class="yoti-connect">' . $button . '</div>';
+
+    return $block;
 }
 
 /**
@@ -141,30 +220,39 @@ function yoti_connect_menu()
     );*/
 
     $items['yoti-connect/link'] = array(
-        'title' => t('Yoti Connect'),
-//        'title callback' => 'yoti_connect_button',
+        //        'title' => t('Yoti Connect'),
+        //        'title callback' => 'yoti_connect_button',
         'page callback' => 'yoti_connect_link',
         'access callback' => 'no_yoti_login', //'user_is_anonymous user_is_logged_in',
-//    'type' => MENU_NORMAL_ITEM,//MENU_CALLBACK,
+        //    'type' => MENU_NORMAL_ITEM,//MENU_CALLBACK,
+        'type' => MENU_CALLBACK,
+        'file' => 'yoti_connect.pages.inc',
+    );
+
+    $items['yoti-connect/register'] = array(
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('yoti_connect_register'),
+        'access callback' => 'user_is_anonymous',
+        'type' => MENU_CALLBACK,
         'file' => 'yoti_connect.pages.inc',
     );
 
     $items['yoti-connect/unlink'] = array(
         'href' => 'yoti-connect/unlink',
         'title' => t('Unlink Yoti Connect'),
-//        'title callback' => 'yoti_connect_button',
+        //        'title callback' => 'yoti_connect_button',
         'page callback' => 'yoti_connect_unlink',
         'access callback' => 'has_yoti_login', //'user_is_anonymous user_is_logged_in',
-//    'type' => MENU_NORMAL_ITEM,//MENU_CALLBACK,
+        'type' => MENU_CALLBACK,//MENU_CALLBACK,
         'file' => 'yoti_connect.pages.inc',
     );
 
-//    $items['yoti-connect/unlink'] = array(
-//        'page callback' => 'yoti_connect_unlink',
-//        'access callback' => 'user_is_logged_in',
-//        'type' => MENU_CALLBACK,
-//        'file' => 'yoti_connect.pages.inc',
-//    );
+    //    $items['yoti-connect/unlink'] = array(
+    //        'page callback' => 'yoti_connect_unlink',
+    //        'access callback' => 'user_is_logged_in',
+    //        'type' => MENU_CALLBACK,
+    //        'file' => 'yoti_connect.pages.inc',
+    //    );
 
     $items['yoti-connect/bin-file'] = array(
         'page callback' => 'yoti_connect_binFile',
@@ -195,10 +283,12 @@ function has_yoti_login()
     global $user;
 
     // check if user already has account
-    if ($user) {
+    if ($user)
+    {
         $tableName = YotiConnectHelper::tableName();
         $dbProfile = db_query("SELECT * from `{$tableName}` WHERE uid=$user->uid")->fetchAssoc();
-        if ($dbProfile) {
+        if ($dbProfile)
+        {
             return true;
         }
     }
@@ -211,13 +301,15 @@ function no_yoti_login()
     global $user;
 
     // check if user already has account
-    if (!$user) {
+    if (!$user)
+    {
         return true;
     }
 
     $tableName = YotiConnectHelper::tableName();
     $dbProfile = db_query("SELECT * from `{$tableName}` WHERE uid=$user->uid")->fetchAssoc();
-    if ($dbProfile) {
+    if ($dbProfile)
+    {
         return false;
     }
 
@@ -253,7 +345,7 @@ function yoti_connect_rules_event_info()
             'variables' => array(
                 'user' => array(
                     'type' => 'user',
-                    'label' => t('The user logging in with Yoti')
+                    'label' => t('The user logging in with Yoti'),
                 ),
             ),
         ),
@@ -264,7 +356,7 @@ function yoti_connect_rules_event_info()
             'variables' => array(
                 'user' => array(
                     'type' => 'user',
-                    'label' => t('The user registering the account')
+                    'label' => t('The user registering the account'),
                 ),
             ),
         ),
@@ -280,7 +372,8 @@ function yoti_connect_rules_event_info()
 function yoti_connect_initialize()
 {
     // Check that PHP version is 5.4 or higher
-    if (version_compare(phpversion(), '5.4.0', '<')) {
+    if (version_compare(phpversion(), '5.4.0', '<'))
+    {
         drupal_set_message(t('Yoti Connect not configured properly.'), 'error');
         watchdog(
             'yoti_connect',
@@ -288,14 +381,16 @@ function yoti_connect_initialize()
             array('@version' => phpversion()),
             WATCHDOG_ERROR
         );
-        return FALSE;
+        return false;
     }
 
     // Check that the module is configured properly
     $app_id = variable_get('yoti_app_id', 0);
+    //    $scenario_id = variable_get('yoti_scenario_id', 0);
     $app_secret = variable_get('yoti_sdk_id', 0);
 
-    if (!$app_id || !$app_secret) {
+    if (!$app_id || !$app_secret)
+    {
         drupal_set_message(t('Yoti Connect not configured properly.'), 'error');
         watchdog(
             'yoti_connect',
@@ -303,12 +398,12 @@ function yoti_connect_initialize()
             array(),
             WATCHDOG_ERROR
         );
-        return FALSE;
+        return false;
     }
 
     // If we have not returned FALSE, SDK is found and module has been configured
     //  FacebookSession::setDefaultApplication($app_id, $app_secret);
-    return TRUE;
+    return true;
 }
 
 
@@ -326,28 +421,33 @@ function yoti_connect_user_view($account, $view_mode, $langcode)
     $isAdmin = in_array('administrator', $current->roles);
     $tableName = YotiConnectHelper::tableName();
     $dbProfile = db_query("SELECT * from `{$tableName}` WHERE uid=$account->uid")->fetchAssoc();
-    if (!$dbProfile) {
-//    $account->content['summary']['yoti_connect_link'] = array(
-//      '#type' => 'item',
-//      '#markup' => '<a href="' . url('/user/yoti-connect/link') . '">' . t('Link Yoti Account') . '</a>',
-//    );
+    if (!$dbProfile)
+    {
+        //    $account->content['summary']['yoti_connect_link'] = array(
+        //      '#type' => 'item',
+        //      '#markup' => '<a href="' . url('/user/yoti-connect/link') . '">' . t('Link Yoti Account') . '</a>',
+        //    );
         return;
     }
 
     // set up profile
     $userId = $dbProfile['identifier'];
     unset($dbProfile['identifier']);
-//    exit(print_r($dbProfile,1));
+    //    exit(print_r($dbProfile,1));
     $dbProfile = unserialize($dbProfile['data']);
     $profile = new ActivityDetails($dbProfile, $userId);
 
-    foreach ($map as $param => $label) {
+    foreach ($map as $param => $label)
+    {
         $value = $profile->getProfileAttribute($param);
-        if ($param == ActivityDetails::ATTR_SELFIE) {
+        if ($param == ActivityDetails::ATTR_SELFIE)
+        {
             $selfieFullPath = YotiConnectHelper::uploadDir() . "/{$dbProfile['selfie_filename']}";
-            if ($dbProfile['selfie_filename'] && file_exists($selfieFullPath)) {
+            if ($dbProfile['selfie_filename'] && file_exists($selfieFullPath))
+            {
                 $params = ['field' => 'selfie'];
-                if ($isAdmin) {
+                if ($isAdmin)
+                {
                     $params['user_id'] = $account->uid;
                 }
                 $selfieUrl = url('/yoti-connect/bin-file', ['query' => $params]);
@@ -355,12 +455,14 @@ function yoti_connect_user_view($account, $view_mode, $langcode)
                 //                $selfieUrl = YotiConnectHelper::uploadUrl() . "/{$dbProfile['selfie_filename']}";
                 $value = '<img src="' . $selfieUrl . '" width="100" />';
             }
-            else {
+            else
+            {
                 $value = '';
             }
         }
 
-        if (!$value) {
+        if (!$value)
+        {
             $value = '<i>(empty)</i>';
         }
 
@@ -370,7 +472,8 @@ function yoti_connect_user_view($account, $view_mode, $langcode)
         );
     }
 
-    if ($current->uid == $account->uid) {
+    if ($current->uid == $account->uid)
+    {
         $account->content['summary']['yoti_connect_unlink'] = array(
             '#type' => 'item',
             '#markup' => '<a href="' . url('/yoti-connect/unlink') . '">' . t('Unlink Yoti') . '</a>',
