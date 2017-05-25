@@ -130,6 +130,15 @@ endforeach;
   (function ($) {
     'use strict';
 
+    CRM.contactId = Drupal.settings.contactId;
+    CRM.adminId = Drupal.settings.adminId;
+    CRM.Tasksassignments = {
+      extensionPath: Drupal.settings.Tasksassignments.extensionPath,
+      case_extension: Drupal.settings.Tasksassignments.case_extension,
+      settings: Drupal.settings.Tasksassignments.settings,
+      permissions: Drupal.settings.Tasksassignments.permissions
+    };
+
     function filterTable(statusId) {
       if (parseInt(statusId, 10) === 0) {
         $tableDocStaffRows.show();
