@@ -569,6 +569,32 @@ function civihr_employee_portal_init() {
     _rebuild_view('appraisal');
     _rebuild_view('tasks');
     _rebuild_view('documents');
+
+    $extensionPath = CRM_Extension_System::singleton()->getMapper()->keyToUrl('uk.co.compucorp.civicrm.tasksassignments');
+
+    $allSettings = array();
+    $taSettings = civicrm_api3('TASettings', 'get');
+    foreach ($taSettings['values'] as $key => $value) {
+      $allSettings[$key] = $value['value'];
+    }
+    if (!empty($allSettings['days_to_create_a_document_clone'])) {
+      $allSettings['days_to_create_a_document_clone'] = (int)$allSettings['days_to_create_a_document_clone'];
+    }
+
+    $settings = [
+      'Tasksassignments' => array(
+        'extensionPath' => CRM_Core_Resources::singleton()->getUrl('uk.co.compucorp.civicrm.tasksassignments'),
+        'case_extension' => !empty(CRM_Core_Component::get('CiviCase')),
+        'settings' => $allSettings,
+        'permissions' => array(
+          'delete_tasks_and_documents' => CRM_Core_Permission::check('delete Tasks and Documents'),
+        ),
+      ),
+      'adminId' => CRM_Core_Session::getLoggedInContactID(),
+      'contactId' => _get_civicrm_contact_id_by_drupal_uid($user->uid),
+      'debug' => $config->debug
+    ];
+    drupal_add_js($settings, 'setting');
   }
 }
 
