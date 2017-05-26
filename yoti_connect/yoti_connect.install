@@ -73,6 +73,7 @@ function yoti_connect_install()
 function yoti_connect_uninstall()
 {
     variable_del('yoti_app_id');
+    variable_del('yoti_scenario_id');
     variable_del('yoti_sdk_id');
     variable_del('yoti_pem');
     //    $table_name = YotiConnectHelper::tableName();
