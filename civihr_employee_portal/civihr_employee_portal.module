@@ -549,6 +549,7 @@ function civihr_employee_portal_init() {
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweetalert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
 
+
     _add_script_to_page('/js/tasks.js', 'dashboard');
 
     _add_script_to_page([
@@ -570,32 +571,34 @@ function civihr_employee_portal_init() {
     _rebuild_view('tasks');
     _rebuild_view('documents');
 
-    $extensionPath = CRM_Extension_System::singleton()->getMapper()->keyToUrl('uk.co.compucorp.civicrm.tasksassignments');
+    _load_ta_settings();
 
-    $allSettings = array();
-    $taSettings = civicrm_api3('TASettings', 'get');
-    foreach ($taSettings['values'] as $key => $value) {
-      $allSettings[$key] = $value['value'];
-    }
-    if (!empty($allSettings['days_to_create_a_document_clone'])) {
-      $allSettings['days_to_create_a_document_clone'] = (int)$allSettings['days_to_create_a_document_clone'];
-    }
-
-    $settings = [
-      'Tasksassignments' => array(
-        'extensionPath' => CRM_Core_Resources::singleton()->getUrl('uk.co.compucorp.civicrm.tasksassignments'),
-        'case_extension' => !empty(CRM_Core_Component::get('CiviCase')),
-        'settings' => $allSettings,
-        'permissions' => array(
-          'delete_tasks_and_documents' => CRM_Core_Permission::check('delete Tasks and Documents'),
-        ),
-      ),
-      'adminId' => CRM_Core_Session::getLoggedInContactID(),
-      'contactId' => _get_civicrm_contact_id_by_drupal_uid($user->uid),
-      'debug' => $config->debug
-    ];
-    drupal_add_js($settings, 'setting');
+    // Page load scripts
+    civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
+    _add_script_to_page('/js/ta-documents-app.js', 'dashboard');
   }
+}
+
+function _load_ta_settings() {
+  $taSettings = civicrm_api3('TASettings', 'get')['values'];
+
+  if (!empty($taSettings['days_to_create_a_document_clone'])) {
+    $taSettings['days_to_create_a_document_clone'] = (int)$taSettings['days_to_create_a_document_clone'];
+  }
+
+  drupal_add_js([
+    'Tasksassignments' => array(
+      'extensionPath' => CRM_Core_Resources::singleton()->getUrl('uk.co.compucorp.civicrm.tasksassignments'),
+      'case_extension' => !empty(CRM_Core_Component::get('CiviCase')),
+      'settings' => $taSettings,
+      'permissions' => array(
+        'delete_tasks_and_documents' => CRM_Core_Permission::check('delete Tasks and Documents'),
+      ),
+      'debug' => $config->debug
+    ),
+    'adminId' => CRM_Core_Session::getLoggedInContactID(),
+    'contactId' => CRM_Utils_Request::retrieve('cid', 'Integer')
+  ], 'setting');
 }
 
 function _rebuild_reports_views() {
