@@ -17,9 +17,6 @@
  *   field id, then row number. This matches the index in $rows.
  * @ingroup views_templates
  */
-// loading required resources
-civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
-
 $statuses = array(
   0 => t('All'),
   'awaiting-upload' => t('Awaiting upload'),
@@ -37,7 +34,7 @@ foreach ($rows as $row):
   $statusesCount[0] ++;
 endforeach;
 ?>
-<div id="tnadocuments" ng-controller="MainCtrl" class="chr_table-w-filters chr_table-w-filters--documents row">
+<div data-ta-documents ng-controller="myController" class="chr_table-w-filters chr_table-w-filters--documents row">
   <div class="chr_table-w-filters__filters col-md-3">
     <div class="chr_table-w-filters__filters__dropdown-wrapper">
       <div class="chr_custom-select chr_custom-select--full">
@@ -132,12 +129,8 @@ endforeach;
 
     CRM.contactId = Drupal.settings.contactId;
     CRM.adminId = Drupal.settings.adminId;
-    CRM.Tasksassignments = {
-      extensionPath: Drupal.settings.Tasksassignments.extensionPath,
-      case_extension: Drupal.settings.Tasksassignments.case_extension,
-      settings: Drupal.settings.Tasksassignments.settings,
-      permissions: Drupal.settings.Tasksassignments.permissions
-    };
+    CRM.Tasksassignments = Drupal.settings.Tasksassignments;
+    CRM.debug = Drupal.settings.Tasksassignments.debug;
 
     function filterTable(statusId) {
       if (parseInt(statusId, 10) === 0) {
@@ -149,11 +142,11 @@ endforeach;
       $tableDocStaff.find('.status-id-' + statusId).show();
     }
 
-    var $tableFilters = $('.chr_table-w-filters--documents'),
-      $filtersDropdown = $tableFilters.find('.chr_table-w-filters__filters__dropdown'),
-      $filtersNav = $tableFilters.find('.chr_table-w-filters__filters__nav'),
-      $tableDocStaff = $tableFilters.find('.chr_table-w-filters__table'),
-      $tableDocStaffRows = $tableDocStaff.find('.document-row');
+    var $tableFilters = $('.chr_table-w-filters--documents');
+    var $filtersDropdown = $tableFilters.find('.chr_table-w-filters__filters__dropdown');
+    var $filtersNav = $tableFilters.find('.chr_table-w-filters__filters__nav');
+    var $tableDocStaff = $tableFilters.find('.chr_table-w-filters__table');
+    var $tableDocStaffRows = $tableDocStaff.find('.document-row');
 
     $filtersNav.find('a').bind('click', function (e) {
       e.preventDefault();
@@ -170,27 +163,11 @@ endforeach;
       filterTable($(this).val());
     });
 
-    // Trigger event to trigger appDocuments forom T&A
-    function taInit() {
-      var detail = {
-        'app': 'appDocuments',
-        'module': 'tnadocuments'
-      };
-
-      document.dispatchEvent(typeof window.CustomEvent == "function" ? new CustomEvent('taInit', {
-        'detail': detail
-      }) : (function(){
-        var e = document.createEvent('CustomEvent');
-        e.initCustomEvent('taInit', true, true, detail);
-        return e;
-      })());
-    };
-
-    taInit();
-
-    document.addEventListener('taReady', function(){
-      taInit();
+    // Listen for ready event when T&A finishes loading all modules
+    document.addEventListener('taReady', function (e) {
+      angular.bootstrap(angular.element("[data-ta-documents]"), ['taDocuments']);
     });
+
   }(CRM.$));
 </script>
 
