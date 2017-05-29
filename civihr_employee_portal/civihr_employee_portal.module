@@ -549,7 +549,6 @@ function civihr_employee_portal_init() {
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweetalert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
 
-
     _add_script_to_page('/js/tasks.js', 'dashboard');
 
     _add_script_to_page([
@@ -563,6 +562,9 @@ function civihr_employee_portal_init() {
       '/lib/sweetalert/sweetalert.min.js'
     ]);
 
+    civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
+    _add_script_to_page('/js/ta-documents-app.js', 'dashboard');
+
     _rebuild_view('absence_list');
     _rebuild_view('length_of_service');
     _rebuild_view('absence_activity');
@@ -572,13 +574,12 @@ function civihr_employee_portal_init() {
     _rebuild_view('documents');
 
     _load_ta_settings();
-
-    // Page load scripts
-    civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
-    _add_script_to_page('/js/ta-documents-app.js', 'dashboard');
   }
 }
 
+/**
+ * Pass tasksAssignments data to Global Drupal.settings object
+ */
 function _load_ta_settings() {
   $taSettings = civicrm_api3('TASettings', 'get')['values'];
 
@@ -587,15 +588,15 @@ function _load_ta_settings() {
   }
 
   drupal_add_js([
-    'Tasksassignments' => array(
+    'tasksAssignments' => [
       'extensionPath' => CRM_Core_Resources::singleton()->getUrl('uk.co.compucorp.civicrm.tasksassignments'),
       'case_extension' => !empty(CRM_Core_Component::get('CiviCase')),
       'settings' => $taSettings,
-      'permissions' => array(
+      'permissions' => [
         'delete_tasks_and_documents' => CRM_Core_Permission::check('delete Tasks and Documents'),
-      ),
+      ],
       'debug' => $config->debug
-    ),
+    ],
     'adminId' => CRM_Core_Session::getLoggedInContactID(),
     'contactId' => CRM_Utils_Request::retrieve('cid', 'Integer')
   ], 'setting');

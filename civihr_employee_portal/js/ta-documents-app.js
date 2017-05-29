@@ -1,13 +1,11 @@
-angular.module('taDocuments', ['civitasks.appDocuments']).controller('myController', ['$scope', '$rootScope', '$rootElement', '$log', '$uibModal', 'DocumentService', 'FileService', 'config',
+angular.module('taDocuments', ['civitasks.appDocuments']).controller('ModalController', ['$scope', '$rootScope', '$rootElement', '$log', '$uibModal', 'DocumentService', 'FileService', 'config',
   function($scope, $rootScope, $rootElement, $log, $modal, DocumentService, FileService, config) {
     $scope.modalDocument = function(data, e) {
       e && e.preventDefault();
-      var DocumentData = DocumentService.get({
+      DocumentService.get({
         'id': data.id
-      });
-
-      DocumentData.then(function(data) {
-        // Function to display the modal
+      }).then(function(data) {
+        // Display the modal
         openModalDocument(data[0]);
       });
     }

@@ -34,7 +34,7 @@ foreach ($rows as $row):
   $statusesCount[0] ++;
 endforeach;
 ?>
-<div data-ta-documents ng-controller="myController" class="chr_table-w-filters chr_table-w-filters--documents row">
+<div data-ta-documents ng-controller="ModalController" class="chr_table-w-filters chr_table-w-filters--documents row">
   <div class="chr_table-w-filters__filters col-md-3">
     <div class="chr_table-w-filters__filters__dropdown-wrapper">
       <div class="chr_custom-select chr_custom-select--full">
@@ -107,9 +107,7 @@ endforeach;
                   </button>
                 <?php else: ?>
                   <button
-                    ng-click="modalDocument({
-                      id: <?php print strip_tags($row['id']); ?>
-                    })"
+                    ng-click="modalDocument({ id: <?php print strip_tags($row['id']); ?> })"
                     class="btn btn-sm btn-default">
                     <i class="fa fa-upload"></i> Open
                   </button>
@@ -129,8 +127,8 @@ endforeach;
 
     CRM.contactId = Drupal.settings.contactId;
     CRM.adminId = Drupal.settings.adminId;
-    CRM.Tasksassignments = Drupal.settings.Tasksassignments;
-    CRM.debug = Drupal.settings.Tasksassignments.debug;
+    CRM.tasksAssignments = Drupal.settings.tasksAssignments;
+    CRM.debug = Drupal.settings.tasksAssignments.debug;
 
     function filterTable(statusId) {
       if (parseInt(statusId, 10) === 0) {
