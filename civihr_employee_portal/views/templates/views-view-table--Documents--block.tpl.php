@@ -34,7 +34,7 @@ foreach ($rows as $row):
   $statusesCount[0] ++;
 endforeach;
 ?>
-<div data-ta-documents ng-controller="ModalController" class="chr_table-w-filters chr_table-w-filters--documents row">
+<div data-ta-documents ng-controller="ModalController as document" class="chr_table-w-filters chr_table-w-filters--documents row">
   <div class="chr_table-w-filters__filters col-md-3">
     <div class="chr_table-w-filters__filters__dropdown-wrapper">
       <div class="chr_custom-select chr_custom-select--full">
@@ -107,7 +107,7 @@ endforeach;
                   </button>
                 <?php else: ?>
                   <button
-                    ng-click="modalDocument({ id: <?php print strip_tags($row['id']); ?> })"
+                    ng-click="document.modalDocument(<?php print strip_tags($row['id']); ?> , 'staff')"
                     class="btn btn-sm btn-default">
                     <i class="fa fa-upload"></i> Open
                   </button>
