@@ -581,6 +581,7 @@ function civihr_employee_portal_init() {
  * Pass tasksAssignments data to Global Drupal.settings object
  */
 function _load_ta_settings() {
+  $config = CRM_Core_Config::singleton();
   $taSettings = civicrm_api3('TASettings', 'get')['values'];
 
   if (!empty($taSettings['days_to_create_a_document_clone'])) {
