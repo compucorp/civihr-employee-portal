@@ -1,12 +1,13 @@
 angular.module('taDocuments', ['civitasks.appDocuments']).controller('ModalController', ['$scope', '$rootScope', '$rootElement', '$log', '$uibModal', 'DocumentService', 'FileService', 'config',
-  function($scope, $rootScope, $rootElement, $log, $modal, DocumentService, FileService, config) {
-    $scope.modalDocument = function(data, e) {
-      e && e.preventDefault();
-      DocumentService.get({
-        'id': data.id
-      }).then(function(data) {
+  function ($scope, $rootScope, $rootElement, $log, $modal, DocumentService, FileService, config) {
+    this.modalDocument = function (id, role) {
+
+      DocumentService.get({'id': id})
+      .then(function (data) {
         // Display the modal
-        openModalDocument(data[0]);
+        !!data && openModalDocument(data[0], role);
+      }, function (reason) {
+        CRM.alert(reason, 'Error', 'error');
       });
     }
 
@@ -15,16 +16,19 @@ angular.module('taDocuments', ['civitasks.appDocuments']).controller('ModalContr
      *
      * @param {object} data
      */
-    function openModalDocument(data) {
+    function openModalDocument (data, role) {
       var modalInstance = $modal.open({
         appendTo: $rootElement.find('div').eq(0),
         templateUrl: config.path.TPL + 'modal/document.html?v=3',
         controller: 'ModalDocumentCtrl',
         resolve: {
-          data: function() {
+          role: function () {
+            return [role];
+          },
+          data: function () {
             return data;
           },
-          files: function() {
+          files: function () {
             if (!data.id || !+data.file_count) {
               return [];
             }
@@ -34,13 +38,13 @@ angular.module('taDocuments', ['civitasks.appDocuments']).controller('ModalContr
         }
       });
 
-      modalInstance.result.then(function(results) {
+      modalInstance.result.then(function (results) {
         $scope.$broadcast('documentFormSuccess', results, data);
 
         if (results.open) {
           $rootScope.modalDocument(data);
         }
-      }, function() {
+      }, function () {
         $log.info('Modal dismissed');
       });
     }
