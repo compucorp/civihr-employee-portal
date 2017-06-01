@@ -130,6 +130,25 @@ function _setup_modals() {
 }
 
 /**
+ * Adds a script to a specific page form other extensions
+ *
+ * @param array $resources (key as Module and value as array of scripts)
+ * @param string $page
+ */
+function _add_module_script_to_page($resources, $page = NULL) {
+
+  if (!is_null($page) && arg(0) != $page) {
+    return;
+  }
+
+  if (is_array($resources)) {
+    foreach ($resources as $key => $value) {
+      civicrm_resources_load($key, $value);
+    }
+  }
+}
+
+/**
  * Adds a script to a specific page.
  *
  * @param string $scriptFile the name of the script file (extension included)
@@ -140,6 +159,7 @@ function _add_script_to_page($scriptFile, $page = NULL) {
   if (!is_null($page) && arg(0) != $page) {
     return;
   }
+
   if (is_array($scriptFile)) {
     foreach ($scriptFile as $value) {
       drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $value, 'file');
@@ -562,7 +582,12 @@ function civihr_employee_portal_init() {
       '/lib/sweetalert/sweetalert.min.js'
     ]);
 
-    civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
+    _add_module_script_to_page([
+      'org.civicrm.reqangular' => [
+        'reqangular.min.js'
+        ]
+      ], 'dashboard');
+
     _add_script_to_page('/js/ta-documents-app.js', 'dashboard');
 
     _rebuild_view('absence_list');
@@ -598,8 +623,7 @@ function _load_ta_settings() {
       ],
       'debug' => $config->debug
     ],
-    'adminId' => CRM_Core_Session::getLoggedInContactID(),
-    'contactId' => CRM_Utils_Request::retrieve('cid', 'Integer')
+    'adminId' => CRM_Core_Session::getLoggedInContactID()
   ], 'setting');
 }
 
