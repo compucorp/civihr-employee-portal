@@ -130,43 +130,30 @@ function _setup_modals() {
 }
 
 /**
- * Adds a script to a specific page form other extensions
- *
- * @param array $resources (key as Module and value as array of scripts)
- * @param string $page
- */
-function _add_module_script_to_page($resources, $page = NULL) {
-
-  if (!is_null($page) && arg(0) != $page) {
-    return;
-  }
-
-  if (is_array($resources)) {
-    foreach ($resources as $key => $value) {
-      civicrm_resources_load($key, $value);
-    }
-  }
-}
-
-/**
  * Adds a script to a specific page.
  *
- * @param string $scriptFile the name of the script file (extension included)
+ * @param string $resources the name of the script file (extension included)
+ * @param string $extension
  * @param string $page
  */
-function _add_script_to_page($scriptFile, $page = NULL) {
+function _add_script_to_page($resources, $extension = NULL, $page = NULL) {
 
   if (!is_null($page) && arg(0) != $page) {
     return;
   }
 
-  if (is_array($scriptFile)) {
-    foreach ($scriptFile as $value) {
-      drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $value, 'file');
-    }
+  if ($extension) {
+    civicrm_resources_load($extension, $resources);
   }
   else {
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $scriptFile, 'file');
+    if (is_array($resources)) {
+      foreach ($resources as $value) {
+        drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $value, 'file');
+      }
+    }
+    else {
+      drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $resources, 'file');
+    }
   }
 }
 
@@ -569,8 +556,6 @@ function civihr_employee_portal_init() {
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweetalert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
 
-    _add_script_to_page('/js/tasks.js', 'dashboard');
-
     _add_script_to_page([
       '/js/scripts.js',
       '/js/filters.js',
@@ -582,13 +567,8 @@ function civihr_employee_portal_init() {
       '/lib/sweetalert/sweetalert.min.js'
     ]);
 
-    _add_module_script_to_page([
-      'org.civicrm.reqangular' => [
-        'reqangular.min.js'
-        ]
-      ], 'dashboard');
-
-    _add_script_to_page('/js/ta-documents-app.js', 'dashboard');
+    _add_script_to_page(['reqangular.min.js'], 'org.civicrm.reqangular', 'dashboard');
+    _add_script_to_page(['/js/tasks.js', '/js/ta-documents-app.js'], NULL, 'dashboard');
 
     _rebuild_view('absence_list');
     _rebuild_view('length_of_service');
