@@ -5943,7 +5943,7 @@ function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
 
     $requiredValidate = true;
     if (!$form_state['values']['name']) {
-        form_set_error('name', t('Username field is required.'));
+        form_set_error('name', t('Username or email field is required.'));
         $requiredValidate = false;
     }
     if (!$form_state['values']['pass']) {
