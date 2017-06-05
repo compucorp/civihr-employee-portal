@@ -26,10 +26,12 @@
           });
       }
 
-      // Reloads page on 'document-saved' event
-      $rootScope.$on('document-saved', function () {
-        $window.location.reload();
-      });
+      (function init ($window) {
+        // Reloads page on 'document-saved' event
+        $rootScope.$on('document-saved', function () {
+          $window.location.reload();
+        });
+      })($window);
 
       /**
        * Opens Document Modal
