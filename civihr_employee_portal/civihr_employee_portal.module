@@ -5957,6 +5957,15 @@ function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
     user_login_name_validate($form, $form_state);
     user_login_authenticate_validate($form, $form_state);
     user_login_final_validate($form, $form_state);
+
+    $nameError = form_get_error($form['name']);
+    if ($nameError) {
+      $nameError = str_replace('username', 'username, email', $nameError);
+      form_clear_error();
+      form_set_error('name', $nameError);
+      drupal_get_messages('error'); // clear existing
+      drupal_set_message($nameError, 'error');
+    }
 }
 
 function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
