@@ -1,8 +1,8 @@
 /* globals angular */
 
 (function (angular) {
-  angular.module('taDocuments', ['civitasks.appDocuments']).controller('ModalController', ['$scope', '$rootScope', '$rootElement', '$log', '$uibModal', 'DocumentService', 'FileService', 'config',
-    function ($scope, $rootScope, $rootElement, $log, $modal, DocumentService, FileService, config) {
+  angular.module('taDocuments', ['civitasks.appDocuments']).controller('ModalController', ['$scope', '$rootScope', '$window', '$rootElement', '$log', '$uibModal', 'DocumentService', 'FileService', 'config',
+    function ($scope, $rootScope, $window, $rootElement, $log, $modal, DocumentService, FileService, config) {
       var vm = {};
 
       /**
@@ -25,6 +25,11 @@
             CRM.alert(reason, 'Error', 'error');
           });
       }
+
+      // Reloads page on 'document-saved' event
+      $rootScope.$on('document-saved', function () {
+        $window.location.reload();
+      });
 
       /**
        * Opens Document Modal
