@@ -24,14 +24,14 @@
           .catch(function (reason) {
             CRM.alert(reason, 'Error', 'error');
           });
-      }
+      };
 
-      (function init ($window) {
+      (function init () {
         // Reloads page on 'document-saved' event
         $rootScope.$on('document-saved', function () {
           $window.location.reload();
         });
-      })($window);
+      })();
 
       /**
        * Opens Document Modal
