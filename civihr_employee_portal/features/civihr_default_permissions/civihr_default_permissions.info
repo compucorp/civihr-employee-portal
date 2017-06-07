@@ -51,6 +51,7 @@ features[user_permission][] = access HRJobs
 features[user_permission][] = access HRReport
 features[user_permission][] = access Report Criteria
 features[user_permission][] = access Tasks and Assignments
+features[user_permission][] = access Tasks and Assignments Files
 features[user_permission][] = access Vacancy
 features[user_permission][] = access administration pages
 features[user_permission][] = access all cases and activities
