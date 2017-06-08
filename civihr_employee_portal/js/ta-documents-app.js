@@ -3,13 +3,9 @@
 (function(angular) {
   angular.module('taDocuments', ['civitasks.appDocuments'])
     .controller('ModalController', ['$scope', '$rootScope', '$window', '$rootElement', '$log', '$uibModal',
-      'DocumentService', 'FileService', 'ContactService', 'AssignmentService', 'config', 'settings',
-      function($scope, $rootScope, $window, $rootElement, $log, $modal, DocumentService, FileService,
-        ContactService, AssignmentService, config, settings) {
+      'DocumentService', 'FileService', 'config', 'settings',
+      function($scope, $rootScope, $window, $rootElement, $log, $modal, DocumentService, FileService, config, settings) {
         var vm = {};
-
-        vm.contactIds = [];
-        vm.assignmentIds = [];
 
         /**
          * Gets Document for the given document id and
@@ -44,74 +40,10 @@
               'NOT IN': config.status.resolve.DOCUMENT
             }
           }).then(function (documents) {
-            fetchContactsAssignments (documents);
+            // Getting and caching only the contacts
+            DocumentService.CacheContactsAndAssignments(documents, ['contacts']);
           });
         })();
-
-        /**
-         * Fetches the details of contacts and assignments and caches it for
-         * future reference.
-         *
-         * @param  {array} documentList
-         */
-        function fetchContactsAssignments (documentList) {
-
-          collectIds(documentList);
-
-          if (vm.contactIds && vm.contactIds.length) {
-            ContactService.get({
-              'IN': vm.contactIds
-            }).then(function (data) {
-              ContactService.updateCache(data);
-            });
-          }
-
-          if (vm.assignmentIds && vm.assignmentIds.length && settings.extEnabled.assignments) {
-            AssignmentService.get({
-              'IN': vm.assignmentIds
-            }).then(function (data) {
-              AssignmentService.updateCache(data);
-            });
-          }
-        };
-
-        /**
-         * Makes collection of list of contactIds and assignmentIds from the
-         * list of available documents
-         *
-         * @param  {array} documentList
-         */
-        function collectIds (documentList) {
-
-          vm.contactIds.push(config.LOGGED_IN_CONTACT_ID);
-
-          if (config.CONTACT_ID) {
-            vm.contactIds.push(config.CONTACT_ID);
-          }
-
-          function collectCId(document) {
-            vm.contactIds.push(document.source_contact_id);
-
-            if (document.assignee_contact_id && document.assignee_contact_id.length) {
-              vm.contactIds.push(document.assignee_contact_id[0]);
-            }
-
-            if (document.target_contact_id && document.target_contact_id.length) {
-              vm.contactIds.push(document.target_contact_id[0]);
-            }
-          }
-
-          function collectAId(document) {
-            if (document.case_id) {
-              vm.assignmentIds.push(document.case_id);
-            }
-          }
-
-          angular.forEach(documentList, function (document) {
-            collectCId(document);
-            collectAId(document);
-          });
-        };
 
         /**
          * Opens Document Modal
