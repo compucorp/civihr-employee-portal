@@ -517,14 +517,6 @@ function civihr_employee_portal_permission() {
       'title' => t('Create and edit Tasks'),
       'description' => t('Availability to create and edit Tasks.'),
     ),
-    'access leave and absences in ssp' => array(
-      'title' => t('Access CiviHR Leave and Absences'),
-      'description' => t('Availability for the Staff to access leave block and calendar')
-    ),
-    'manage leave and absences in ssp' => array(
-      'title' => t('Manage CiviHR Leave and Absences'),
-      'description' => t('Availability for the Manager to access leave block and calendar and manage leave requests')
-    ),
     'view my details' => array(
       'title' => t('View My Details'),
       'description' => t('Availability for the user to view my details block and page')
