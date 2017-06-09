@@ -1082,7 +1082,10 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'change own username',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
       'civihr_admin_local' => 'civihr_admin_local',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
     ),
     'module' => 'user',
   );
