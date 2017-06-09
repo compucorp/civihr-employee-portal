@@ -5939,7 +5939,7 @@ function civihr_employee_portal_preprocess_user_login(&$vars) {
     if (!empty($vars['form']['#block'])) {
         $vars['form']['#block']->subject = null;
     }
-    $vars['form']['name']['#attributes']['placeholder'] = 'Username';
+    $vars['form']['name']['#attributes']['placeholder'] = 'Username or email';
     $vars['form']['name']['#required'] = false;
     $vars['form']['pass']['#attributes']['placeholder'] = 'Password';
     $vars['form']['pass']['#required'] = false;
@@ -5978,7 +5978,7 @@ function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
 
     $requiredValidate = true;
     if (!$form_state['values']['name']) {
-        form_set_error('name', t('Username field is required.'));
+        form_set_error('name', t('Username or email field is required.'));
         $requiredValidate = false;
     }
     if (!$form_state['values']['pass']) {
@@ -5992,6 +5992,15 @@ function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
     user_login_name_validate($form, $form_state);
     user_login_authenticate_validate($form, $form_state);
     user_login_final_validate($form, $form_state);
+
+    $nameError = form_get_error($form['name']);
+    if ($nameError) {
+      $nameError = str_replace('username', 'username, email', $nameError);
+      form_clear_error();
+      form_set_error('name', $nameError);
+      drupal_get_messages('error'); // clear existing
+      drupal_set_message($nameError, 'error');
+    }
 }
 
 function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
