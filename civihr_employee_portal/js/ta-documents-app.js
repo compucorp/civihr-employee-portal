@@ -41,7 +41,7 @@
             }
           }).then(function (documents) {
             // Getting and caching only the contacts
-            DocumentService.CacheContactsAndAssignments(documents, ['contacts']);
+            DocumentService.cacheContactsAndAssignments(documents, 'contacts');
           });
         })();
 
