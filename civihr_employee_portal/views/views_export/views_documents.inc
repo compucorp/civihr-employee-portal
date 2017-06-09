@@ -14,10 +14,8 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 $handler = $view->new_display('default', 'Master', 'default');
 $handler->display->display_options['title'] = 'Documents';
 $handler->display->display_options['use_more_always'] = FALSE;
-$handler->display->display_options['access']['type'] = 'role';
-$handler->display->display_options['access']['role'] = array(
-  57573969 => '57573969',
-);
+$handler->display->display_options['access']['type'] = 'perm';
+$handler->display->display_options['access']['perm'] = 'view my tasks and documents blocks';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
 $handler->display->display_options['exposed_form']['type'] = 'basic';
@@ -118,6 +116,14 @@ $handler->display->display_options['style_options']['info'] = array(
     'empty_column' => 0,
   ),
 );
+$handler->display->display_options['style_options']['empty_table'] = TRUE;
+/* No results behavior: Global: Unfiltered text */
+$handler->display->display_options['empty']['area_text_custom']['id'] = 'area_text_custom';
+$handler->display->display_options['empty']['area_text_custom']['table'] = 'views';
+$handler->display->display_options['empty']['area_text_custom']['field'] = 'area_text_custom';
+$handler->display->display_options['empty']['area_text_custom']['label'] = 'No Document Results';
+$handler->display->display_options['empty']['area_text_custom']['empty'] = TRUE;
+$handler->display->display_options['empty']['area_text_custom']['content'] = 'There are no documents to display.';
 /* Field: Document entity: Document entity ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'documents';
@@ -345,6 +351,13 @@ $handler->display->display_options['arguments']['target_contact_id']['summary_op
 $handler = $view->new_display('block', 'Documents Dashboard Manager block', 'block_1');
 $handler->display->display_options['defaults']['title'] = FALSE;
 $handler->display->display_options['title'] = 'Documents Manager';
+$handler->display->display_options['defaults']['access'] = FALSE;
+$handler->display->display_options['access']['type'] = 'role';
+$handler->display->display_options['access']['role'] = array(
+  55120974 => '55120974',
+  37588037 => '37588037',
+  57573969 => '57573969',
+);
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Document entity: Document entity ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
@@ -456,7 +469,7 @@ $handler->display->display_options['arguments']['assignee_contact_id']['default_
 $handler->display->display_options['arguments']['assignee_contact_id']['summary']['number_of_records'] = '0';
 $handler->display->display_options['arguments']['assignee_contact_id']['summary']['format'] = 'default_summary';
 $handler->display->display_options['arguments']['assignee_contact_id']['summary_options']['items_per_page'] = '25';
-$translatables['documents'] = array(
+$translatables['Documents'] = array(
   t('Master'),
   t('Documents'),
   t('more'),
@@ -465,6 +478,8 @@ $translatables['documents'] = array(
   t('Sort by'),
   t('Asc'),
   t('Desc'),
+  t('No Document Results'),
+  t('There are no documents to display.'),
   t('Document ID'),
   t('.'),
   t('Type'),
