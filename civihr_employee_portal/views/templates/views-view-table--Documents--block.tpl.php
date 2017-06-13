@@ -34,20 +34,20 @@ foreach ($rows as $row):
   $statusesCount[0] ++;
 endforeach;
 ?>
-<div class="chr_table-w-filters chr_table-w-filters--documents row">
+<div data-ta-documents ng-controller="ModalController as document" class="chr_table-w-filters chr_table-w-filters--documents row">
   <div class="chr_table-w-filters__filters col-md-3">
     <div class="chr_table-w-filters__filters__dropdown-wrapper">
       <div class="chr_custom-select chr_custom-select--full">
         <select class="chr_table-w-filters__filters__dropdown skip-js-custom-select">
-<?php foreach ($statuses as $key => $value): ?>
+          <?php foreach ($statuses as $key => $value): ?>
             <option value="<?php print $key; ?>"><?php print $value; ?> (<?php print $statusesCount[$key]; ?>)</option>
           <?php endforeach; ?>
         </select>
       </div>
     </div>
     <ul class="chr_table-w-filters__filters__nav">
-<?php $classActive = ' class="active"'; ?>
-<?php foreach ($statuses as $key => $value): ?>
+      <?php $classActive = ' class="active"'; ?>
+      <?php foreach ($statuses as $key => $value): ?>
         <li<?php print $classActive; ?>><a href data-document-status="<?php print $key; ?>"><?php print $value; ?> <span class="badge badge-primary pull-right"><?php print $statusesCount[$key]; ?></span></a></li>
         <?php $classActive = ''; ?>
       <?php endforeach; ?>
@@ -70,7 +70,7 @@ endforeach;
                 } ?>>
                 <?php print $label; ?>
                 </th>
-  <?php endforeach; ?>
+                <?php endforeach; ?>
               <th></th>
             </tr>
           </thead>
@@ -95,26 +95,26 @@ endforeach;
                   continue;
                 endif;
                 ?>
-    <?php print $content; ?>
+                <?php print $content; ?>
                 </td>
                 <?php endforeach; ?>
               <td>
-  <?php if (strip_tags($row['status_id']) == 3): ?>
+                <?php if (strip_tags($row['status_id']) == 3): ?>
                   <button
                     class="btn btn-sm btn-default ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"
                     disabled="disabled">
-                    <i class="fa fa-upload"></i> Upload
+                    <i class="fa fa-upload"></i> Open
                   </button>
-  <?php else: ?>
-                  <a
-                    href="/civi_documents/nojs/edit/<?php print strip_tags($row['id']); ?>"
-                    class="btn btn-sm btn-default ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed">
-                    <i class="fa fa-upload"></i> Upload
-                  </a>
-  <?php endif; ?>
+                <?php else: ?>
+                  <button
+                    ng-click="document.modalDocument(<?php print strip_tags($row['id']); ?> , 'staff')"
+                    class="btn btn-sm btn-default">
+                    <i class="fa fa-upload"></i> Open
+                  </button>
+                <?php endif; ?>
               </td>
             </tr>
-<?php endforeach; ?>
+          <?php endforeach; ?>
         </tbody>
       </table>
     </div>
@@ -124,6 +124,11 @@ endforeach;
 <script>
   (function ($) {
     'use strict';
+
+    CRM.contactId = Drupal.settings.contactId;
+    CRM.adminId = Drupal.settings.adminId;
+    CRM.tasksAssignments = Drupal.settings.tasksAssignments;
+    CRM.debug = Drupal.settings.tasksAssignments.debug;
 
     function filterTable(statusId) {
       if (parseInt(statusId, 10) === 0) {
@@ -135,11 +140,11 @@ endforeach;
       $tableDocStaff.find('.status-id-' + statusId).show();
     }
 
-    var $tableFilters = $('.chr_table-w-filters--documents'),
-            $filtersDropdown = $tableFilters.find('.chr_table-w-filters__filters__dropdown'),
-            $filtersNav = $tableFilters.find('.chr_table-w-filters__filters__nav'),
-            $tableDocStaff = $tableFilters.find('.chr_table-w-filters__table'),
-            $tableDocStaffRows = $tableDocStaff.find('.document-row');
+    var $tableFilters = $('.chr_table-w-filters--documents');
+    var $filtersDropdown = $tableFilters.find('.chr_table-w-filters__filters__dropdown');
+    var $filtersNav = $tableFilters.find('.chr_table-w-filters__filters__nav');
+    var $tableDocStaff = $tableFilters.find('.chr_table-w-filters__table');
+    var $tableDocStaffRows = $tableDocStaff.find('.document-row');
 
     $filtersNav.find('a').bind('click', function (e) {
       e.preventDefault();
@@ -155,5 +160,13 @@ endforeach;
     $filtersDropdown.on('change', function (e) {
       filterTable($(this).val());
     });
+
+    // Listen for ready event when T&A finishes loading all modules
+    document.addEventListener('taReady', function (e) {
+      angular.bootstrap(angular.element("[data-ta-documents]"), ['taDocuments']);
+    });
+
   }(CRM.$));
 </script>
+
+<script src="<?php echo getModuleUrl('uk.co.compucorp.civicrm.tasksassignments').'js/dist/tasks-assignments.min.js';?>"></script>

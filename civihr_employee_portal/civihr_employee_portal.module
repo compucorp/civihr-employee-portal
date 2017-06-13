@@ -130,21 +130,28 @@ function _setup_modals() {
 /**
  * Adds a script to a specific page.
  *
- * @param string $scriptFile the name of the script file (extension included)
+ * @param string $resources the name of the script file (extension included)
+ * @param string $extension
  * @param string $page
  */
-function _add_script_to_page($scriptFile, $page = NULL) {
+function _add_script_to_page($resources, $extension = NULL, $page = NULL) {
 
   if (!is_null($page) && arg(0) != $page) {
     return;
   }
-  if (is_array($scriptFile)) {
-    foreach ($scriptFile as $value) {
-      drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $value, 'file');
-    }
+
+  if ($extension) {
+    civicrm_resources_load($extension, $resources);
   }
   else {
-    drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $scriptFile, 'file');
+    if (is_array($resources)) {
+      foreach ($resources as $value) {
+        drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $value, 'file');
+      }
+    }
+    else {
+      drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $resources, 'file');
+    }
   }
 }
 
@@ -407,8 +414,6 @@ function civihr_employee_portal_init() {
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweetalert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
 
-    _add_script_to_page('/js/tasks.js', 'dashboard');
-
     _add_script_to_page([
       '/js/scripts.js',
       '/js/plupload/plupload.full.min.js',
@@ -419,13 +424,43 @@ function civihr_employee_portal_init() {
       '/lib/sweetalert/sweetalert.min.js'
     ]);
 
+    _add_script_to_page(['reqangular.min.js'], 'org.civicrm.reqangular', 'dashboard');
+    _add_script_to_page(['/js/tasks.js', '/js/ta-documents-app.js'], NULL, 'dashboard');
+
     _rebuild_view('length_of_service');
     _rebuild_view('absence_activity');
     _rebuild_view('hrvacancy');
     _rebuild_view('appraisal');
     _rebuild_view('tasks');
     _rebuild_view('documents');
+
+    _load_ta_settings();
   }
+}
+
+/**
+ * Pass tasksAssignments data to Global Drupal.settings object
+ */
+function _load_ta_settings() {
+  $config = CRM_Core_Config::singleton();
+  $taSettings = civicrm_api3('TASettings', 'get')['values'];
+
+  if (!empty($taSettings['days_to_create_a_document_clone'])) {
+    $taSettings['days_to_create_a_document_clone'] = (int)$taSettings['days_to_create_a_document_clone'];
+  }
+
+  drupal_add_js([
+    'tasksAssignments' => [
+      'extensionPath' => CRM_Core_Resources::singleton()->getUrl('uk.co.compucorp.civicrm.tasksassignments'),
+      'case_extension' => !empty(CRM_Core_Component::get('CiviCase')),
+      'settings' => $taSettings,
+      'permissions' => [
+        'delete_tasks_and_documents' => CRM_Core_Permission::check('delete Tasks and Documents'),
+      ],
+      'debug' => $config->debug
+    ],
+    'adminId' => CRM_Core_Session::getLoggedInContactID()
+  ], 'setting');
 }
 
 function _rebuild_reports_views() {
@@ -4590,7 +4625,7 @@ function civihr_employee_portal_preprocess_user_login(&$vars) {
     if (!empty($vars['form']['#block'])) {
         $vars['form']['#block']->subject = null;
     }
-    $vars['form']['name']['#attributes']['placeholder'] = 'Username';
+    $vars['form']['name']['#attributes']['placeholder'] = 'Username or email';
     $vars['form']['name']['#required'] = false;
     $vars['form']['pass']['#attributes']['placeholder'] = 'Password';
     $vars['form']['pass']['#required'] = false;
@@ -4629,7 +4664,7 @@ function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
 
     $requiredValidate = true;
     if (!$form_state['values']['name']) {
-        form_set_error('name', t('Username field is required.'));
+        form_set_error('name', t('Username or email field is required.'));
         $requiredValidate = false;
     }
     if (!$form_state['values']['pass']) {
@@ -4643,6 +4678,15 @@ function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
     user_login_name_validate($form, $form_state);
     user_login_authenticate_validate($form, $form_state);
     user_login_final_validate($form, $form_state);
+
+    $nameError = form_get_error($form['name']);
+    if ($nameError) {
+      $nameError = str_replace('username', 'username, email', $nameError);
+      form_clear_error();
+      form_set_error('name', $nameError);
+      drupal_get_messages('error'); // clear existing
+      drupal_set_message($nameError, 'error');
+    }
 }
 
 function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
