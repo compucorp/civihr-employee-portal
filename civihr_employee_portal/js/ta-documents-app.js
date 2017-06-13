@@ -53,7 +53,7 @@
          */
         function openModalDocument(data, role) {
           var modalInstance = $modal.open({
-            appendTo: $rootElement.find('div').eq(0),
+            appendTo: $rootElement,
             templateUrl: config.path.TPL + 'modal/document.html?v=3',
             controller: 'ModalDocumentCtrl',
             resolve: {
