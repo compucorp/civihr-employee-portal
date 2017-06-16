@@ -1,11 +1,14 @@
 /* globals angular */
 
 (function(angular) {
-  angular.module('taDocuments', ['civitasks.appDocuments'])
+  angular.module('taDocuments', ['civitasks.appDocuments', 'civitasks.directives'])
     .controller('ModalController', ['$scope', '$rootScope', '$window', '$rootElement', '$log', '$uibModal',
       'DocumentService', 'FileService', 'config', 'settings',
       function($scope, $rootScope, $window, $rootElement, $log, $modal, DocumentService, FileService, config, settings) {
         var vm = {};
+        var isContactsCached = {};
+
+        vm.showOpenBtn = true;
 
         /**
          * Gets Document for the given document id and
@@ -21,6 +24,9 @@
                 throw new Error('Requested Document is not available');
               }
 
+              $rootScope.$broadcast('ct-spinner-show');
+              vm.showOpenBtn = false;
+
               openModalDocument(data[0], role);
             })
             .catch(function(reason) {
@@ -33,15 +39,13 @@
           $rootScope.$on('document-saved', function () {
             $window.location.reload();
           });
-
           // Get list of documents
           DocumentService.get({
             'status_id': {
               'NOT IN': config.status.resolve.DOCUMENT
             }
           }).then(function (documents) {
-            // Getting and caching only the contacts
-            DocumentService.cacheContactsAndAssignments(documents, 'contacts');
+            isContactsCached = DocumentService.cacheContactsAndAssignments(documents, 'contacts');
           });
         })();
 
@@ -66,6 +70,7 @@
               data: function () {
                 return data;
               },
+              isCachedContacts: isContactsCached,
               files: function () {
                 if (!data.id || !+data.file_count) {
                   return [];
@@ -74,6 +79,11 @@
                 return FileService.get(data.id, 'civicrm_activity');
               }
             }
+          });
+
+          modalInstance.opened.then(function () {
+            $rootScope.$broadcast('ct-spinner-hide');
+            vm.showOpenBtn = true;
           });
         };
 
