@@ -95,18 +95,21 @@ endforeach;
                   continue;
                 endif;
                 ?>
+
                 <?php print $content; ?>
                 </td>
                 <?php endforeach; ?>
-              <td>
+              <td ct-spinner>
                 <?php if (strip_tags($row['status_id']) == 3): ?>
                   <button
+                    ng-show='document.showOpenBtn'
                     class="btn btn-sm btn-default ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"
                     disabled="disabled">
                     <i class="fa fa-upload"></i> Open
                   </button>
                 <?php else: ?>
                   <button
+                    ng-show='document.showOpenBtn'
                     ng-click="document.modalDocument(<?php print strip_tags($row['id']); ?> , 'staff')"
                     class="btn btn-sm btn-default">
                     <i class="fa fa-upload"></i> Open

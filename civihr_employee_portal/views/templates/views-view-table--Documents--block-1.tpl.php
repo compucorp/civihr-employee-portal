@@ -94,8 +94,9 @@ $statuses = array(
                 <?php print strip_tags(html_entity_decode($content)); ?>
               </td>
             <?php endforeach; ?>
-            <td>
+            <td ct-spinner>
               <button
+              ng-show='document.showOpenBtn'
               ng-click="document.modalDocument(<?php print strip_tags($row['id']); ?>, 'manager')"
               class="btn btn-sm btn-default">
                 <i class="fa fa-upload"></i> Open
