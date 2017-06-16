@@ -96,7 +96,7 @@ $statuses = array(
             <?php endforeach; ?>
             <td ct-spinner>
               <button
-              ng-show='document.showOpenBtn'
+              ng-show='!document.loadingModalData'
               ng-click="document.modalDocument(<?php print strip_tags($row['id']); ?>, 'manager')"
               class="btn btn-sm btn-default">
                 <i class="fa fa-upload"></i> Open

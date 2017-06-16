@@ -8,7 +8,7 @@
         var vm = {};
         var isContactsCached = {};
 
-        vm.showOpenBtn = true;
+        vm.loadingModalData = false;
 
         /**
          * Gets Document for the given document id and
@@ -25,7 +25,7 @@
               }
 
               $rootScope.$broadcast('ct-spinner-show');
-              vm.showOpenBtn = false;
+              vm.loadingModalData = true;
 
               openModalDocument(data[0], role);
             })
@@ -70,7 +70,7 @@
               data: function () {
                 return data;
               },
-              isCachedContacts: isContactsCached,
+              isContactsCached: isContactsCached,
               files: function () {
                 if (!data.id || !+data.file_count) {
                   return [];
@@ -83,7 +83,7 @@
 
           modalInstance.opened.then(function () {
             $rootScope.$broadcast('ct-spinner-hide');
-            vm.showOpenBtn = true;
+            vm.loadingModalData = false;
           });
         };
 
