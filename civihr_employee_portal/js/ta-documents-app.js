@@ -40,11 +40,7 @@
             $window.location.reload();
           });
           // Get list of documents
-          DocumentService.get({
-            'status_id': {
-              'NOT IN': config.status.resolve.DOCUMENT
-            }
-          }).then(function (documents) {
+          DocumentService.get().then(function (documents) {
             isContactsCached = DocumentService.cacheContactsAndAssignments(documents, 'contacts');
           });
         })();
