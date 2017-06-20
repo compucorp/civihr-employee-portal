@@ -57,6 +57,9 @@
             templateUrl: config.path.TPL + 'modal/document.html?v=3',
             controller: 'ModalDocumentCtrl',
             resolve: {
+              modalMode: function () {
+                return '';
+              },
               role: function () {
                 return role;
               },
