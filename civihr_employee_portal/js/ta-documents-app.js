@@ -2,6 +2,10 @@
 
 (function(angular) {
   angular.module('taDocuments', ['civitasks.appDocuments', 'civitasks.directives'])
+    .config(function ($urlRouterProvider, $locationProvider) {
+      $locationProvider.html5Mode(true); // This is required to remove # for the URL
+      $urlRouterProvider.otherwise('/dashboard');
+    })
     .controller('ModalController', ['$scope', '$rootScope', '$window', '$rootElement', '$log', '$uibModal',
       'DocumentService', 'FileService', 'config', 'settings',
       function($scope, $rootScope, $window, $rootElement, $log, $modal, DocumentService, FileService, config, settings) {
