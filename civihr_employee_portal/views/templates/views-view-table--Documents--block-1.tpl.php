@@ -65,11 +65,11 @@ $statuses = array(
                     <?php foreach ($statuses as $statusKey => $statusValue): ?>
                       <?php
                         $selected = '';
-                        if ($statusKey == (int) strip_tags($content)):
+                        if (strtolower($statusValue) == strip_tags($content)):
                           $selected = ' selected="selected"';
                         endif;
                         ?>
-                      <option value="<?php print $statusKey; ?>"<?php print $selected; ?>><?php print $statusValue; ?></option>
+                      <option value="<?php print $statusKey; ?>"<?php print $selected; ?>><?php print ucwords($statusValue);?></option>
                     <?php endforeach; ?>
                   </select>
                   <?php continue; ?>
