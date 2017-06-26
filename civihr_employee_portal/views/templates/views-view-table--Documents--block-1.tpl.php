@@ -69,7 +69,7 @@ $statuses = array(
                           $selected = ' selected="selected"';
                         endif;
                         ?>
-                      <option value="<?php print $statusKey; ?>"<?php print $selected; ?>><?php print ucwords($statusValue);?></option>
+                      <?php printf('<option value="%s" %s>%s</option>', $statusKey, $selected, ucwords($statusValue)); ?>
                     <?php endforeach; ?>
                   </select>
                   <?php continue; ?>
