@@ -1114,8 +1114,16 @@ function get_activity_type_value($type_id = NULL) {
 
                 // Task types array
                 $activityTypes = civicrm_api3('Activity', 'getoptions', array(
+                  'field' => "activity_type_id",
+                ));
+
+                // Document types array
+                $documentTypes = civicrm_api3('Document', 'getoptions', array(
                     'field' => "activity_type_id",
                 ));
+
+                $activityTypes['values'] += $documentTypes['values'];
+                $activityTypes['count'] = count($activityTypes['values']);
             }
 
             catch (CiviCRM_API3_Exception $e) {
