@@ -1100,49 +1100,47 @@ function get_task_statuses($status_id = NULL) {
  */
 function get_activity_type_value($type_id = NULL) {
 
-    $activityTypes = &drupal_static(__FUNCTION__);
+  $activityTypes = &drupal_static(__FUNCTION__);
 
-    if (!isset($activityTypes)) {
+  if (!isset($activityTypes)) {
 
-        if ($cache = cache_get('civihr_activity_types')) {
-            $activityTypes = $cache->data;
-        }
-        else {
-            try {
-                // Civi init
-                civicrm_initialize();
-
-                // Task types array
-                $activityTypes = civicrm_api3('Activity', 'getoptions', array(
-                  'field' => "activity_type_id",
-                ));
-
-                // Document types array
-                $documentTypes = civicrm_api3('Document', 'getoptions', array(
-                    'field' => "activity_type_id",
-                ));
-
-                $activityTypes['values'] += $documentTypes['values'];
-                $activityTypes['count'] = count($activityTypes['values']);
-            }
-
-            catch (CiviCRM_API3_Exception $e) {
-                $error = $e->getMessage();
-            }
-
-            // Cache the task types for 5 minutes
-            cache_set('civihr_activity_types', $activityTypes, 'cache', time() + 360);
-        }
+    if ($cache = cache_get('civihr_activity_types')) {
+      $activityTypes = $cache->data;
     }
+    else {
+      try {
+        // Civi init
+        civicrm_initialize();
 
-    if ($type_id === null) {
-        return $activityTypes['values'];
+        // Task types array
+        $activityTypes = civicrm_api3('Activity', 'getoptions', [
+          'field' => "activity_type_id",
+        ]);
+
+        // Document types array
+        $documentTypes = civicrm_api3('Document', 'getoptions', [
+          'field' => "activity_type_id",
+        ]);
+
+        $activityTypes['values'] += $documentTypes['values'];
+        $activityTypes['count'] = count($activityTypes['values']);
+      } catch (CiviCRM_API3_Exception $e) {
+        $error = $e->getMessage();
+      }
+
+      // Cache the task types for 5 minutes
+      cache_set('civihr_activity_types', $activityTypes, 'cache', time() + 360);
     }
+  }
 
-    // Get the type values based on the type_id
-    $type_id_value = CRM_Utils_Array::value($type_id, $activityTypes['values']);
+  if ($type_id === NULL) {
+    return $activityTypes['values'];
+  }
 
-    return $type_id_value;
+  // Get the type values based on the type_id
+  $type_id_value = CRM_Utils_Array::value($type_id, $activityTypes['values']);
+
+  return $type_id_value;
 }
 
 function get_appraisal_cycle_type($type_id = NULL) {
