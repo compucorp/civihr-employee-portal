@@ -287,7 +287,13 @@ function _get_activity_type_ids_by_component($component) {
 function _get_tasks_documents_sql_query(array $activityTypes) {
   $civi_settings = parse_url(CIVICRM_DSN);
   $civi_db_name = trim($civi_settings['path'], '/');
-  return "SELECT a.id, a.activity_type_id, a.subject, a.activity_date_time, acustom.expire_date, a.details, a.status_id, a.is_deleted, ca.case_id, COUNT(ef.id) AS file_count, acs.contact_id AS source_contact_id, contact_source.sort_name AS source_contact_name, act.contact_id AS target_contact_id, contact_target.sort_name AS target_contact_name, aca.contact_id AS assignee_contact_id, contact_assignee.sort_name AS assignee_contact_name
+
+  return "SELECT a.id, a.activity_type_id, a.subject, a.activity_date_time,
+            acustom.expire_date, a.details, a.status_id, a.is_deleted, ca.case_id,
+            COUNT(ef.id) AS file_count, acs.contact_id AS source_contact_id,
+            contact_source.sort_name AS source_contact_name, act.contact_id AS target_contact_id,
+            contact_target.sort_name AS target_contact_name, aca.contact_id AS assignee_contact_id,
+            contact_assignee.sort_name AS assignee_contact_name
             FROM {$civi_db_name}.civicrm_activity a
             LEFT JOIN {$civi_db_name}.civicrm_value_activity_custom_fields_11 acustom ON acustom.entity_id = a.id
             LEFT JOIN {$civi_db_name}.civicrm_case_activity ca ON ca.activity_id = a.id
@@ -299,7 +305,7 @@ function _get_tasks_documents_sql_query(array $activityTypes) {
             LEFT JOIN {$civi_db_name}.civicrm_activity_contact aca ON aca.activity_id = a.id AND aca.record_type_id = 1
             LEFT JOIN {$civi_db_name}.civicrm_contact contact_assignee ON contact_assignee.id = aca.contact_id
             WHERE a.is_deleted = 0 AND a.is_current_revision = 1 AND a.activity_type_id IN (" . implode(',', $activityTypes) . ")
-            GROUP BY a.id";
+            GROUP BY a.id, aca.contact_id";
 }
 
 /**
