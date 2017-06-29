@@ -36,6 +36,7 @@ dependencies[] = views_json
 dependencies[] = views_bulk_operations
 dependencies[] = browserclass
 dependencies[] = conditional_styles
+dependencies[] = civicrm_resources
 
 ; Views Handlers
 files[] = views/includes/civihr_employee_portal_argument_date_range.inc
