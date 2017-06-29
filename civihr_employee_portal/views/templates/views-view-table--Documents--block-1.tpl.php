@@ -24,93 +24,98 @@ $statuses = array(
   4 => 'Rejected',
 );
 ?>
-<table id="documents-dashboard-table-manager" <?php if ($classes) {
-  print 'class="' . $classes . '" ';
-} ?><?php print $attributes; ?>>
-  <?php if (!empty($title) || !empty($caption)) : ?>
-    <caption><?php print $caption . $title; ?></caption>
-  <?php endif; ?>
-  <?php if (!empty($header)) : ?>
-    <thead>
-      <tr>
-        <?php foreach ($header as $field => $label): ?>
-          <th <?php if ($header_classes[$field]) {
-            print 'class="' . $header_classes[$field] . '" ';
-          } ?>>
-          <?php print $label; ?>
-          </th>
-  <?php endforeach; ?>
-        <th></th>
-      </tr>
-    </thead>
-    <?php endif; ?>
-  <tbody>
-    <?php foreach ($rows as $row_count => $row): ?>
-        <?php $class = 'document-row status-id-' . strip_tags($row['status_id']); ?>
-      <tr <?php if ($row_classes[$row_count] || $class) {
-          print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';
-        } ?>>
+<div data-ta-documents-manager ng-controller="ModalController as document">
+  <div> <!-- This div is mandatory, to append Modal -->
+    <table id="documents-dashboard-table-manager" <?php if ($classes) {
+      print 'class="' . $classes . '" ';
+    } ?><?php print $attributes; ?>>
+      <?php if (!empty($title) || !empty($caption)) : ?>
+        <caption><?php print $caption . $title; ?></caption>
+      <?php endif; ?>
+      <?php if (!empty($header)) : ?>
+        <thead>
+          <tr>
+            <?php foreach ($header as $field => $label): ?>
+              <th <?php if ($header_classes[$field]) {
+                print 'class="' . $header_classes[$field] . '" ';
+              } ?>>
+              <?php print $label; ?>
+              </th>
+            <?php endforeach; ?>
+            <th></th>
+          </tr>
+        </thead>
+        <?php endif; ?>
+      <tbody>
+        <?php foreach ($rows as $row_count => $row):
+          if (!isset($row['id'])) {
+            printf('<tr class = "document-row no-results"><td colspan="4">%s</td></tr>', $row[0]);
+            continue;
+          }
+          $class = 'document-row status-id-' . strip_tags($row['status_id']); ?>
+          <tr <?php if ($row_classes[$row_count] || $class) {
+              print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';
+            } ?>>
             <?php foreach ($row as $field => $content): ?>
-          <td <?php if ($field_classes[$field][$row_count]) {
-                print 'class="' . $field_classes[$field][$row_count] . '" ';
-              } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
-              <?php if ($field === 'status_id'): ?>
-              <select class="document-status" name="document-<?php print strip_tags($row['id']); ?>-select-status" data-id="<?php print strip_tags($row['id']); ?>" data-original-value="<?php print (int) strip_tags($content); ?>">
-                <?php foreach ($statuses as $statusKey => $statusValue): ?>
+              <td <?php if ($field_classes[$field][$row_count]) {
+                  print 'class="' . $field_classes[$field][$row_count] . '" ';
+                } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
+                <?php if ($field === 'status_id'): ?>
+                  <select class="document-status" name="document-<?php print strip_tags($row['id']); ?>-select-status" data-id="<?php print strip_tags($row['id']); ?>" data-original-value="<?php print (int) strip_tags($content); ?>">
+                    <?php foreach ($statuses as $statusKey => $statusValue): ?>
+                      <?php
+                        $selected = '';
+                        if (strtolower($statusValue) == strip_tags($content)):
+                          $selected = ' selected="selected"';
+                        endif;
+                        ?>
+                      <?php printf('<option value="%s" %s>%s</option>', $statusKey, $selected, ucwords($statusValue)); ?>
+                    <?php endforeach; ?>
+                  </select>
+                  <?php continue; ?>
+                <?php endif; ?>
+                <?php if ($field === 'case_id'): ?>
                   <?php
-                  $selected = '';
-                  if ($statusKey == (int) strip_tags($content)):
-                    $selected = ' selected="selected"';
-                  endif;
-                  ?>
-                  <option value="<?php print $statusKey; ?>"<?php print $selected; ?>><?php print $statusValue; ?></option>
-              <?php endforeach; ?>
-              </select>
-              <?php continue; ?>
-            <?php endif; ?>
-            <?php if ($field === 'case_id'): ?>
-              <?php
-              $caseId = (int) strip_tags($content);
-              if ($caseId):
-                $case = civicrm_api3('Case', 'get', array(
-                  'sequential' => 1,
-                  'id' => $caseId,
-                ));
-                $caseType = civicrm_api3('CaseType', 'get', array(
-                  'sequential' => 1,
-                  'id' => $case['values'][0]['case_type_id'],
-                ));
-                print $caseType['values'][0]['title'];
-              endif;
-              ?>
-      <?php continue; ?>
-    <?php endif; ?>
-    <?php print strip_tags(html_entity_decode($content)); ?>
-          </td>
-              <?php endforeach; ?>
-        <td>
-          <div class="btn-group">
-            <a href class="dropdown-toggle context-menu-toggle" data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i></a>
-            <ul class="dropdown-menu pull-right">
-  <?php if ((int) strip_tags($row['file_count'])): ?><li><a href="/civicrm/tasksassignments/file/zip?entityID=<?php print $row['id']; ?>&entityTable=civicrm_activity" target="_blank"><i class="fa fa-download"></i> Download</a></li><?php endif; ?>
-              <li><a href="/civi_documents/nojs/edit/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"><i class="fa fa-pencil"></i> Edit</a></li>
-              <li><a href="/civi_documents/nojs/reminder/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"><i class="fa fa-envelope-o"></i> Send reminder</a></li>
-              <li><a href="/civi_documents/nojs/delete/<?php print $row['id']; ?>" class="ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"><i class="fa fa-trash-o"></i> Delete</a></li>
-            </ul>
-          </div>
-        </td>
-      </tr>
-<?php endforeach; ?>
-  </tbody>
-</table>
+                    $caseId = (int) strip_tags($content);
+                    if ($caseId):
+                      $case = civicrm_api3('Case', 'get', array(
+                        'sequential' => 1,
+                        'id' => $caseId,
+                      ));
+                      $caseType = civicrm_api3('CaseType', 'get', array(
+                        'sequential' => 1,
+                        'id' => $case['values'][0]['case_type_id'],
+                      ));
+                      print $caseType['values'][0]['title'];
+                    endif;
+                    ?>
+                    <?php continue; ?>
+                <?php endif; ?>
+                <?php print strip_tags(html_entity_decode($content)); ?>
+              </td>
+            <?php endforeach; ?>
+            <td ct-spinner>
+              <button
+              ng-show='!document.loadingModalData'
+              ng-click="document.modalDocument(<?php print strip_tags($row['id']); ?>, 'manager')"
+              class="btn btn-sm btn-default">
+                <i class="fa fa-upload"></i> Open
+              </button>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+</div>
 
 <script>
   (function ($, CRM) {
     var $tableDocManager = $('#documents-dashboard-table-manager');
 
     $tableDocManager.find('.document-status').change(function (e) {
-      var selectEl = e.delegateTarget,
-              $select = $(selectEl);
+      var selectEl = e.delegateTarget;
+      var $select = $(selectEl);
 
       $select.attr('disabled', 'disabled');
 
@@ -126,9 +131,13 @@ $statuses = array(
           }
 
           $select.data('originalValue', selectEl.value);
-
         }
       });
+    });
+
+    // Listen for ready event when T&A finishes loading all modules
+    document.addEventListener('taReady', function (e) {
+      angular.bootstrap(angular.element("[data-ta-documents-manager]"), ['taDocuments']);
     });
   }(CRM.$, CRM));
 </script>

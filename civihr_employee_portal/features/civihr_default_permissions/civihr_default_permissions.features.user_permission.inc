@@ -27,6 +27,7 @@ function civihr_default_permissions_user_default_permissions() {
       'civihr_admin' => 'civihr_admin',
       'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
     ),
     'module' => 'civicrm',
   );
@@ -94,6 +95,18 @@ function civihr_default_permissions_user_default_permissions() {
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
       'civihr_admin_local' => 'civihr_admin_local',
+    ),
+    'module' => 'civicrm',
+  );
+
+  // Exported permission: 'access Tasks and Assignments Files'.
+  $permissions['access Tasks and Assignments Files'] = array(
+    'name' => 'access Tasks and Assignments Files',
+    'roles' => array(
+      'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
     ),
     'module' => 'civicrm',
   );
@@ -379,6 +392,8 @@ function civihr_default_permissions_user_default_permissions() {
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
       'civihr_admin_local' => 'civihr_admin_local',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
     ),
     'module' => 'civicrm',
   );
@@ -1069,7 +1084,10 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'change own username',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
       'civihr_admin_local' => 'civihr_admin_local',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
     ),
     'module' => 'user',
   );
@@ -2099,6 +2117,7 @@ function civihr_default_permissions_user_default_permissions() {
       'civihr_admin' => 'civihr_admin',
       'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
     ),
     'module' => 'civicrm',
   );
@@ -2223,9 +2242,9 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civihr_employee_portal',
   );
 
-  // Exported permission: 'view my tasks block'.
-  $permissions['view my tasks block'] = array(
-    'name' => 'view my tasks block',
+  // Exported permission: 'view my tasks and documents blocks'.
+  $permissions['view my tasks and documents blocks'] = array(
+    'name' => 'view my tasks and documents blocks',
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
