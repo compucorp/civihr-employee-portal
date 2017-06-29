@@ -34,6 +34,7 @@ foreach ($rows as $row):
   $statusesCount[0] ++;
 endforeach;
 ?>
+<base href="/"> <!-- This is required to remove # for the URL-->
 <div data-ta-documents ng-controller="ModalController as document" class="chr_table-w-filters chr_table-w-filters--documents row">
   <div class="chr_table-w-filters__filters col-md-3">
     <div class="chr_table-w-filters__filters__dropdown-wrapper">
