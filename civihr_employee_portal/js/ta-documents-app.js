@@ -7,11 +7,13 @@
       $urlRouterProvider.otherwise('/dashboard');
     })
     .controller('ModalController', ['$scope', '$rootScope', '$window', '$rootElement', '$log', '$uibModal',
-      'DocumentService', 'FileService', 'config', 'settings',
-      function($scope, $rootScope, $window, $rootElement, $log, $modal, DocumentService, FileService, config, settings) {
+      'DocumentService', 'FileService', 'config', 'settings', 'HR_settings',
+      function($scope, $rootScope, $window, $rootElement, $log, $modal, DocumentService, FileService, config,
+        settings, HR_settings) {
         var vm = {};
         var isContactsCached = {};
 
+        HR_settings.DATE_FORMAT = "dd/MM/yyyy";
         vm.loadingModalData = false;
 
         /**
