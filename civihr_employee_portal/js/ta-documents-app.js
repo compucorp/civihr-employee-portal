@@ -7,13 +7,12 @@
       $urlRouterProvider.otherwise('/dashboard');
     })
     .controller('ModalController', ['$scope', '$rootScope', '$window', '$rootElement', '$log', '$uibModal',
-      'DocumentService', 'FileService', 'config', 'settings', 'HR_settings',
+      'DocumentService', 'FileService', 'config', 'settings', 'DateFormat',
       function($scope, $rootScope, $window, $rootElement, $log, $modal, DocumentService, FileService, config,
-        settings, HR_settings) {
+        settings, DateFormat) {
         var vm = {};
         var isContactsCached = {};
 
-        HR_settings.DATE_FORMAT = "dd/MM/yyyy";
         vm.loadingModalData = false;
 
         /**
@@ -41,12 +40,15 @@
         };
 
         (function init() {
+
           // Reloads page on 'document-saved' event
           $rootScope.$on('document-saved', function () {
             $window.location.reload();
           });
           // Get list of documents
           DocumentService.get().then(function (documents) {
+            //sets the date format for HR_settings.DATE_FORMAT
+            DateFormat.getDateFormat();
             isContactsCached = DocumentService.cacheContactsAndAssignments(documents, 'contacts');
           });
         })();
