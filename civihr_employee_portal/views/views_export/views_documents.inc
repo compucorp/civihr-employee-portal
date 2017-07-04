@@ -346,6 +346,61 @@ $handler->display->display_options['arguments']['target_contact_id']['default_ar
 $handler->display->display_options['arguments']['target_contact_id']['summary']['number_of_records'] = '0';
 $handler->display->display_options['arguments']['target_contact_id']['summary']['format'] = 'default_summary';
 $handler->display->display_options['arguments']['target_contact_id']['summary_options']['items_per_page'] = '25';
+$handler->display->display_options['merge_rows'] = TRUE;
+$handler->display->display_options['field_config'] = array(
+  'id' => array(
+    'merge_option' => 'merge_unique',
+    'separator' => ', ',
+  ),
+  'activity_type_id' => array(
+    'merge_option' => 'merge_unique',
+    'separator' => ', ',
+  ),
+  'case_id' => array(
+    'merge_option' => 'merge_unique',
+    'separator' => ', ',
+  ),
+  'subject' => array(
+    'merge_option' => 'merge_unique',
+    'separator' => ', ',
+  ),
+  'activity_date_time' => array(
+    'merge_option' => 'merge_unique',
+    'separator' => ', ',
+  ),
+  'expire_date' => array(
+    'merge_option' => 'merge_unique',
+    'separator' => ', ',
+  ),
+  'details' => array(
+    'merge_option' => 'merge_unique',
+    'separator' => ', ',
+  ),
+  'file_count' => array(
+    'merge_option' => 'merge_unique',
+    'separator' => ', ',
+  ),
+  'status_id' => array(
+    'merge_option' => 'merge_unique',
+    'separator' => ', ',
+  ),
+  'target_contact_id' => array(
+    'merge_option' => 'merge_unique',
+    'separator' => ', ',
+  ),
+  'assignee_contact_id' => array(
+    'merge_option' => 'merge_unique',
+    'separator' => ', ',
+  ),
+  'target_contact_name' => array(
+    'merge_option' => 'merge_unique',
+    'separator' => ', ',
+  ),
+  'assignee_contact_name' => array(
+    'merge_option' => 'merge_unique',
+    'separator' => ', ',
+  ),
+);
 
 /* Display: Documents Dashboard Manager block */
 $handler = $view->new_display('block', 'Documents Dashboard Manager block', 'block_1');
