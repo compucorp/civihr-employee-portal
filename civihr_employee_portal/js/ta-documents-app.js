@@ -28,7 +28,7 @@
                 throw new Error('Requested Document is not available');
               }
 
-              $rootScope.$broadcast('ct-spinner-show');
+              $rootScope.$broadcast('ct-spinner-show', 'document-' + id);
               vm.loadingModalData = true;
 
               openModalDocument(data[0], role);
