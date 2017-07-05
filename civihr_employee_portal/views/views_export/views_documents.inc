@@ -349,7 +349,7 @@ $handler->display->display_options['arguments']['target_contact_id']['summary_op
 $handler->display->display_options['merge_rows'] = TRUE;
 $handler->display->display_options['field_config'] = array(
   'id' => array(
-    'merge_option' => 'merge_unique',
+    'merge_option' => 'filter',
     'separator' => ', ',
   ),
   'activity_type_id' => array(
