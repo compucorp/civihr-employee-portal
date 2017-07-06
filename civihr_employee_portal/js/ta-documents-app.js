@@ -11,7 +11,7 @@
       function($scope, $rootScope, $window, $rootElement, $log, $modal, DocumentService, FileService, config,
         settings, DateFormat) {
         var vm = {};
-        var isContactsCached = {};
+        var availableContacts = false;
 
         vm.loadingModalData = false;
 
@@ -49,7 +49,7 @@
           DocumentService.get().then(function (documents) {
             //sets the date format for HR_settings.DATE_FORMAT
             DateFormat.getDateFormat();
-            isContactsCached = DocumentService.cacheContactsAndAssignments(documents, 'contacts');
+            DocumentService.cacheContactsAndAssignments(documents, 'contacts');
           });
         })();
 
@@ -74,7 +74,6 @@
               data: function () {
                 return data;
               },
-              isContactsCached: isContactsCached,
               files: function () {
                 if (!data.id || !+data.file_count) {
                   return [];
@@ -90,6 +89,25 @@
             vm.loadingModalData = false;
           });
         };
+
+        /**
+         * Watch for the changes in the list of $rootScope.cache.contact.arrSearch
+         * Display spinner and hide "open" button until the arrSearch is filled with contacts
+         *
+         * Note: $rootScope.cache.contact.arrSearch will always contain a
+         * contact data (curently logged in contact). So if there are documents,
+         * there must be more that one contacts conidering at aleast a target contact in a document
+         */
+        $rootScope.$watch('cache.contact', function () {
+          availableContacts = $rootScope.cache.contact.arrSearch.length > 1;
+          if (!availableContacts) {
+            $rootScope.$broadcast('ct-spinner-show');
+            vm.loadingModalData = true;
+          } else {
+            $rootScope.$broadcast('ct-spinner-hide');
+            vm.loadingModalData = false;
+          }
+        });
 
         return vm;
       }
