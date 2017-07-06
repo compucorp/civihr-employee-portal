@@ -94,11 +94,11 @@ $statuses = array(
                 <?php print strip_tags(html_entity_decode($content)); ?>
               </td>
             <?php endforeach; ?>
-            <td ct-spinner>
+            <td ct-spinner ct-spinner-id="document-<?php print strip_tags($row['id']); ?>">
               <button
-              ng-show='!document.loadingModalData'
-              ng-click="document.modalDocument(<?php print strip_tags($row['id']); ?>, 'manager')"
-              class="btn btn-sm btn-default">
+                ng-show='!document.loadingModalData'
+                ng-click="document.modalDocument(<?php print strip_tags($row['id']); ?>, 'manager')"
+                class="btn btn-sm btn-default">
                 <i class="fa fa-upload"></i> Open
               </button>
             </td>
