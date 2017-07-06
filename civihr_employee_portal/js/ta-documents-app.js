@@ -40,11 +40,11 @@
         };
 
         (function init() {
-
           // Reloads page on 'document-saved' event
           $rootScope.$on('document-saved', function () {
             $window.location.reload();
           });
+
           // Get list of documents
           DocumentService.get().then(function (documents) {
             //sets the date format for HR_settings.DATE_FORMAT
@@ -100,13 +100,8 @@
          */
         $rootScope.$watch('cache.contact', function () {
           availableContacts = $rootScope.cache.contact.arrSearch.length > 1;
-          if (!availableContacts) {
-            $rootScope.$broadcast('ct-spinner-show');
-            vm.loadingModalData = true;
-          } else {
-            $rootScope.$broadcast('ct-spinner-hide');
-            vm.loadingModalData = false;
-          }
+          $rootScope.$broadcast('ct-spinner-' + (availableContacts ? 'hide' : 'show'));
+          vm.loadingModalData = !availableContacts;
         });
 
         return vm;
