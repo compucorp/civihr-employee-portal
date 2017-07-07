@@ -65,11 +65,11 @@ $statuses = array(
                     <?php foreach ($statuses as $statusKey => $statusValue): ?>
                       <?php
                         $selected = '';
-                        if ($statusKey == (int) strip_tags($content)):
+                        if (strtolower($statusValue) == strip_tags($content)):
                           $selected = ' selected="selected"';
                         endif;
                         ?>
-                      <option value="<?php print $statusKey; ?>"<?php print $selected; ?>><?php print $statusValue; ?></option>
+                      <?php printf('<option value="%s" %s>%s</option>', $statusKey, $selected, ucwords($statusValue)); ?>
                     <?php endforeach; ?>
                   </select>
                   <?php continue; ?>
@@ -94,10 +94,11 @@ $statuses = array(
                 <?php print strip_tags(html_entity_decode($content)); ?>
               </td>
             <?php endforeach; ?>
-            <td>
+            <td ct-spinner ct-spinner-id="document-<?php print strip_tags($row['id']); ?>">
               <button
-              ng-click="document.modalDocument(<?php print strip_tags($row['id']); ?>, 'manager')"
-              class="btn btn-sm btn-default">
+                ng-show='!document.loadingModalData'
+                ng-click="document.modalDocument(<?php print strip_tags($row['id']); ?>, 'manager')"
+                class="btn btn-sm btn-default">
                 <i class="fa fa-upload"></i> Open
               </button>
             </td>

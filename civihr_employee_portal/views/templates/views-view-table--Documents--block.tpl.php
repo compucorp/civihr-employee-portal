@@ -34,6 +34,7 @@ foreach ($rows as $row):
   $statusesCount[0] ++;
 endforeach;
 ?>
+<base href="/"> <!-- This is required to remove # for the URL-->
 <div data-ta-documents ng-controller="ModalController as document" class="chr_table-w-filters chr_table-w-filters--documents row">
   <div class="chr_table-w-filters__filters col-md-3">
     <div class="chr_table-w-filters__filters__dropdown-wrapper">
@@ -95,18 +96,21 @@ endforeach;
                   continue;
                 endif;
                 ?>
+
                 <?php print $content; ?>
                 </td>
                 <?php endforeach; ?>
-              <td>
+              <td ct-spinner ct-spinner-id="document-<?php print strip_tags($row['id']); ?>">
                 <?php if (strip_tags($row['status_id']) == 3): ?>
                   <button
+                    ng-show='!document.loadingModalData'
                     class="btn btn-sm btn-default ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"
                     disabled="disabled">
                     <i class="fa fa-upload"></i> Open
                   </button>
                 <?php else: ?>
                   <button
+                    ng-show='!document.loadingModalData'
                     ng-click="document.modalDocument(<?php print strip_tags($row['id']); ?> , 'staff')"
                     class="btn btn-sm btn-default">
                     <i class="fa fa-upload"></i> Open
