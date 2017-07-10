@@ -1027,6 +1027,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin_local' => 'civihr_admin_local',
+      'civihr_manager' => 'civihr_manager',
     ),
     'module' => 'civihr_employee_portal',
   );

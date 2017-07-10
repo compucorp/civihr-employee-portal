@@ -100,7 +100,7 @@ endforeach;
                 <?php print $content; ?>
                 </td>
                 <?php endforeach; ?>
-              <td ct-spinner>
+              <td ct-spinner ct-spinner-id="document-<?php print strip_tags($row['id']); ?>">
                 <?php if (strip_tags($row['status_id']) == 3): ?>
                   <button
                     ng-show='!document.loadingModalData'
