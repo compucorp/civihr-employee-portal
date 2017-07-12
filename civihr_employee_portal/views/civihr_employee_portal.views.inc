@@ -1107,8 +1107,8 @@ function civihr_employee_portal_views_post_render(&$view, &$output, &$cache) {
  * Decodes html entities in description for each vacancy so HTML tags are sent
  * to the browser.
  *
- * @param $view
- * @param $output
+ * @param object $view
+ * @param string $output
  */
 function _civihr_employee_portal_decode_vacancy_description_html(&$view, &$output) {
   $replacements = [];
