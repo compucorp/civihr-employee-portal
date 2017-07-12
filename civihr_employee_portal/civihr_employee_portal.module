@@ -6768,14 +6768,12 @@ function civihr_employee_portal_preprocess_page(&$vars) {
     $display_name = t('Anonymus');
     $edit_account_link = '';
     $logout_link = '';
-    $user_guide_link = '';
+    $user_guide_link = l('<i class="fa fa-book"></i>' . t('User guide'), 'http://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/', array('html' => true));
     $image_url = $base_url . '/' . drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
 
     if (isset($_SESSION['CiviCRM']) && $user->uid) {
         $edit_account_link = l('<i class="fa fa-edit"></i>' . t('Edit Account'), 'user/' . $user->uid . '/edit', array('html' => true));
         $logout_link = l('<i class="fa fa-sign-out"></i>' . t('Log Out'), 'user/logout', array('html' => true));
-        $user_guide_link = l('<i class="fa fa-book"></i>' . t('User guide'), 'http://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/', array('html' => true));
-        $user_guide_link = l('<i class="fa fa-book"></i>' . t('User guide'), 'http://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/', array('html' => true));
 
         // Get the contact data
         $contact_data = get_civihr_contact_data($_SESSION['CiviCRM']['userID']);
