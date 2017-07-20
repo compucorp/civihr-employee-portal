@@ -6,7 +6,7 @@
         <span class="chr_search-result__total__count"><?php echo count($rows); ?></span>
       </div>
     </div>
-
+    <?php $classes .= ' table '; ?>
     <table <?php if ($classes) { print 'class="'. $classes . '" '; } ?><?php print $attributes; ?>>
       <?php if (!empty($title) || !empty($caption)) : ?>
         <caption><?php print $caption . $title; ?></caption>
