@@ -1017,7 +1017,7 @@ function civihr_employee_portal_views_pre_render(&$view) {
       ctools_modal_add_js();
     }
   }
-  if (in_array($view->name, array('appraisals', 'approvals'))) {
+  if (in_array($view->name, array('appraisals', 'approvals', 'Tasks'))) {
     ctools_include('modal');
     ctools_modal_add_js();
   }

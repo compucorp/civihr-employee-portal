@@ -574,7 +574,8 @@ function civihr_employee_portal_init() {
     ]);
 
     _add_script_to_page(['reqangular.min.js'], 'org.civicrm.reqangular', 'dashboard');
-    _add_script_to_page(['/js/tasks.js', '/js/ta-documents-app.js'], NULL, 'dashboard');
+    _add_script_to_page(['reqangular.min.js'], 'org.civicrm.reqangular', 'tasks-and-documents');
+    _add_script_to_page(['/js/tasks.js', '/js/ta-documents-app.js'], NULL, 'tasks-and-documents');
 
     _rebuild_view('absence_list');
     _rebuild_view('length_of_service');
