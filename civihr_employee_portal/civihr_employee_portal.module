@@ -6768,7 +6768,7 @@ function civihr_employee_portal_preprocess_page(&$vars) {
     $display_name = t('Anonymus');
     $edit_account_link = '';
     $logout_link = '';
-    $user_guide_link = l('<i class="fa fa-book"></i>' . t('User guide'), 'http://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/', array('html' => true));
+    $user_guide_link = l('<i class="fa fa-book"></i>' . t('User guide'), 'http://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/', array('html' => true, 'attributes' => array('target' => '_blank')));
     $image_url = $base_url . '/' . drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
 
     if (isset($_SESSION['CiviCRM']) && $user->uid) {
