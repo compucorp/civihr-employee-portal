@@ -334,6 +334,7 @@ function _rebuild_absence_activity_view() {
             SELECT lr.contact_id AS absence_contact_id,
               lr.id AS absence_activity_id,
               at.title as absence_type,
+              lr.sickness_reason as sickness_reason,
               lrd.date AS absence_date,
               DATE_FORMAT(DATE(lrd.date), '%Y-%m') AS absence_month,
               lr.from_date AS absence_start_date,
@@ -775,6 +776,45 @@ function get_civihr_absence_statuses($status_id = NULL) {
     $status_id_value = CRM_Utils_Array::value($status_id, $absenceStatuses);
 
     return $status_id_value;
+}
+
+/**
+ * This function returns the sickness reason label for the sickness reason
+ * option value passed to it.
+ * The sickness reason option group is cached to avoid hitting the Db on
+ * every call.
+ *
+ * @param int $sickness_reason_value
+ *
+ * @return string
+ */
+function get_civihr_absence_sickness_reason_label($sickness_reason_value) {
+    $sicknessReasons = &drupal_static(__FUNCTION__);
+
+    if (!isset($sicknessReasons)) {
+        if ($cache = cache_get('civihr_absence_sickness_reasons')) {
+            $sicknessReasons = $cache->data;
+        }
+        else {
+            try {
+                // Civi init
+                civicrm_initialize();
+                $sicknessReasons = CRM_Core_OptionGroup::values('hrleaveandabsences_sickness_reason', FALSE, FALSE, FALSE, NULL, 'label');
+
+                watchdog('DB hit absence sickness reasons', 'DB');
+            }
+
+            catch (CiviCRM_API3_Exception $e) {
+                $error = $e->getMessage();
+            }
+
+            // Cache the absence sickness reasons for 5 minutes
+            cache_set('civihr_absence_sickness_reasons', $sicknessReasons, 'cache', time() + 360);
+        }
+    }
+    $sickness_reason_label = CRM_Utils_Array::value($sickness_reason_value, $sicknessReasons);
+
+    return $sickness_reason_label;
 }
 
 function get_document_statuses($status_id = NULL) {
@@ -3664,6 +3704,12 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'length' => 256,
         'not null' => FALSE,
         'description' => 'Absence Type.',
+    );
+    $schema['absence_activity']['fields']['sickness_reason'] = array(
+        'type' => 'varchar',
+        'length' => 512,
+        'not null' => FALSE,
+        'description' => 'Sickness Reason.',
     );
     $schema['absence_activity']['fields']['absence_date'] = array(
         'type' => 'varchar',
