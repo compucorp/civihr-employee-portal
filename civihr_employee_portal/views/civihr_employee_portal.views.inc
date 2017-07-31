@@ -800,6 +800,26 @@ function civihr_employee_portal_views_data_alter(&$data) {
     'sort' => array('handler' => 'views_handler_sort'),
   );
 
+  $data['absence_activity']['sickness_reason'] = array(
+    'title' => t('Sickness reason'),
+    'help' => t('Sickness reason field value'),
+    'real field' => 'sickness_reason',
+    'field' => array(
+      'handler' => 'civihr_employee_portal_handler_sickness_reason',
+      'click sortable' => TRUE,
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+      'name_field' => 'title',
+      'string' => TRUE
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+      'help' => t('Filter results to a particular result set'),
+    ),
+    'sort' => array('handler' => 'views_handler_sort'),
+  );
+
   $data['civicrm_value_emergency_contacts_21']['id'] = array(
     'title' => t('Emergency Contact ID'),
     'help' => t('Emergency Contact ID field value'),

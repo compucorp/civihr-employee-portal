@@ -48,6 +48,7 @@ files[] = views/includes/civihr_employee_portal_handler_absence_duration.inc
 files[] = views/includes/civihr_employee_portal_handler_activity_type.inc
 files[] = views/includes/civihr_employee_portal_handler_employee_id.inc
 files[] = views/includes/civihr_employee_portal_handler_absence_status.inc
+files[] = views/includes/civihr_employee_portal_handler_sickness_reason.inc
 files[] = views/includes/civihr_employee_portal_handler_document_status.inc
 files[] = views/includes/civihr_employee_portal_handler_task_status.inc
 files[] = views/includes/civihr_employee_portal_handler_appraisal_cycle_type.inc
