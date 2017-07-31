@@ -779,42 +779,45 @@ function get_civihr_absence_statuses($status_id = NULL) {
 }
 
 /**
- * This function returns the sickness reason label for the sickness reason
+ * Returns the sickness reason label for the sickness reason
  * option value passed to it.
  * The sickness reason option group is cached to avoid hitting the Db on
  * every call.
  *
- * @param int $sickness_reason_value
+ * @param int $sicknessReasonValue
  *
  * @return string
  */
-function get_civihr_absence_sickness_reason_label($sickness_reason_value) {
+
+function get_civihr_absence_sickness_reason_label($sicknessReasonValue) {
     $sicknessReasons = &drupal_static(__FUNCTION__);
+    $SICKNESS_REASONS_CACHE_KEY = 'civihr_absence_sickness_reasons';
 
     if (!isset($sicknessReasons)) {
-        if ($cache = cache_get('civihr_absence_sickness_reasons')) {
-            $sicknessReasons = $cache->data;
+    	  $cachedSicknessReasons = cache_get($SICKNESS_REASONS_CACHE_KEY);
+        if ($cachedSicknessReasons) {
+            $sicknessReasons = $cachedSicknessReasons->data;
         }
         else {
-            try {
-                // Civi init
-                civicrm_initialize();
-                $sicknessReasons = CRM_Core_OptionGroup::values('hrleaveandabsences_sickness_reason', FALSE, FALSE, FALSE, NULL, 'label');
+            civicrm_initialize();
+            $sicknessReasons = [];
+            $result = civicrm_api3('OptionValue', 'get', ['option_group_id' => 'hrleaveandabsences_sickness_reason']);
 
-                watchdog('DB hit absence sickness reasons', 'DB');
+            if ($result['count'] > 0) {
+                $sicknessReasons = array_column($result['values'], 'label', 'value');
             }
-
-            catch (CiviCRM_API3_Exception $e) {
-                $error = $e->getMessage();
-            }
-
             // Cache the absence sickness reasons for 5 minutes
-            cache_set('civihr_absence_sickness_reasons', $sicknessReasons, 'cache', time() + 360);
+            $SECONDS_IN_FIVE_MINUTES = 300;
+            cache_set($SICKNESS_REASONS_CACHE_KEY, $sicknessReasons, 'cache', time() + $SECONDS_IN_FIVE_MINUTES);
         }
     }
-    $sickness_reason_label = CRM_Utils_Array::value($sickness_reason_value, $sicknessReasons);
 
-    return $sickness_reason_label;
+    $sicknessReasonLabel = '';
+    if (!empty($sicknessReasons[$sicknessReasonValue])) {
+        $sicknessReasonLabel = $sicknessReasons[$sicknessReasonValue];
+    }
+
+    return $sicknessReasonLabel;
 }
 
 function get_document_statuses($status_id = NULL) {
