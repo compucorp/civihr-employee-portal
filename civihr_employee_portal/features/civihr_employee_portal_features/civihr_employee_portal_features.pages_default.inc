@@ -8,214 +8,6 @@
  * Implements hook_default_page_manager_pages().
  */
 function civihr_employee_portal_features_default_page_manager_pages() {
-  $pages['dashboard'] = _employee_portal_features_build_default_dashboard_page();
-  $pages['manager_absence_approval'] = _employee_portal_features_build_default_absence_approval_page();
-  $pages['welcome_page'] = _employee_portal_features_build_default_welcome_page();
-  $pages['tasks_and_documents'] = _employee_portal_features_build_default_tasks_and_documents_page();
-
-  return $pages;
-}
-
-function _employee_portal_features_build_default_tasks_and_documents_page() {
-  $page = new stdClass();
-  $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
-  $page->api_version = 1;
-  $page->name = 'tasks_and_documents';
-  $page->task = 'page';
-  $page->admin_title = 'Tasks and Documents';
-  $page->admin_description = '';
-  $page->path = 'tasks-and-documents';
-  $page->access = array(
-    'plugins' => array(
-      0 => array(
-        'name' => 'role',
-        'settings' => array(
-          'rids' => array(
-            0 => 2,
-          ),
-        ),
-        'context' => 'logged-in-user',
-        'not' => FALSE,
-      ),
-    ),
-    'logic' => 'and',
-  );
-  $page->menu = array(
-    'type' => 'normal',
-    'title' => 'Tasks and Documents',
-    'name' => 'main-menu',
-    'weight' => '10',
-    'parent' => array(
-      'type' => 'none',
-      'title' => '',
-      'name' => 'navigation',
-      'weight' => '0',
-    ),
-  );
-  $page->arguments = array();
-  $page->conf = array();
-  $page->default_handlers = array();
-  $handler = new stdClass();
-  $handler->disabled = FALSE; /* Edit this to true to make a default handler disabled initially */
-  $handler->api_version = 1;
-  $handler->name = 'page_tasks_and_documents__panel_context_eb7dd441-1a8d-414e-96d8-77255ce14124';
-  $handler->task = 'page';
-  $handler->subtask = 'tasks_and_documents';
-  $handler->handler = 'panel_context';
-  $handler->weight = 0;
-  $handler->conf = array(
-    'title' => 'Landing page',
-    'no_blocks' => FALSE,
-    'pipeline' => 'ipe',
-    'body_classes_to_remove' => '',
-    'body_classes_to_add' => '',
-    'css_id' => '',
-    'css' => '',
-    'contexts' => array(),
-    'relationships' => array(),
-    'name' => '',
-  );
-  $display = new panels_display();
-  $display->layout = 'radix_sutro_double';
-  $display->layout_settings = array();
-  $display->panel_settings = array(
-    'style_settings' => array(
-      'default' => NULL,
-      'top' => NULL,
-      'left_above' => NULL,
-      'right_above' => NULL,
-      'middle' => NULL,
-      'left_below' => NULL,
-      'right_below' => NULL,
-      'bottom' => NULL,
-      'header' => NULL,
-      'column1' => NULL,
-      'column2' => NULL,
-      'secondcolumn1' => NULL,
-      'secondcolumn2' => NULL,
-      'footer' => array(
-        'list_type' => 'ul',
-      ),
-    ),
-    'footer' => array(
-      'style' => 'list',
-    ),
-  );
-  $display->cache = array();
-  $display->title = 'Tasks and Documents';
-  $display->uuid = '091af8a4-cb6d-45b4-8946-1016cd5fb4d8';
-  $display->storage_type = 'page_manager';
-  $display->storage_id = 'page_dashboard_panel_context';
-  $display->content = array();
-  $display->panels = array();
-  $pane = new stdClass();
-  $pane->pid = 'new-0f962e7d-947f-4064-b545-efdf7262a50f';
-  $pane->panel = 'header';
-  $pane->type = 'block';
-  $pane->subtype = 'views-Tasks-block';
-  $pane->shown = TRUE;
-  $pane->access = array();
-  $pane->configuration = array(
-    'override_title' => 0,
-    'override_title_text' => '',
-    'override_title_heading' => 'h2',
-  );
-  $pane->cache = array();
-  $pane->style = array(
-    'settings' => NULL,
-  );
-  $pane->css = array(
-    'css_id' => '',
-    'css_class' => 'chr_panel chr_panel--no-padding chr_panel--tasks',
-  );
-  $pane->extras = array();
-  $pane->position = 0;
-  $pane->locks = array();
-  $pane->uuid = '0f962e7d-947f-4064-b545-efdf7262a50f';
-  $display->content['new-0f962e7d-947f-4064-b545-efdf7262a50f'] = $pane;
-  $display->panels['header'][0] = 'new-0f962e7d-947f-4064-b545-efdf7262a50f';
-  $pane = new stdClass();
-  $pane->pid = 'new-7bc09b07-84d8-44a5-9f7b-1ac1e4cfcd0a';
-  $pane->panel = 'middle';
-  $pane->type = 'block';
-  $pane->subtype = 'views-hr_documents-block';
-  $pane->shown = TRUE;
-  $pane->access = array();
-  $pane->configuration = array(
-    'override_title' => 0,
-    'override_title_text' => '',
-    'override_title_heading' => 'h2',
-  );
-  $pane->cache = array();
-  $pane->style = array(
-    'settings' => NULL,
-  );
-  $pane->css = array();
-  $pane->extras = array();
-  $pane->position = 0;
-  $pane->locks = array();
-  $pane->uuid = '7bc09b07-84d8-44a5-9f7b-1ac1e4cfcd0a';
-  $display->content['new-7bc09b07-84d8-44a5-9f7b-1ac1e4cfcd0a'] = $pane;
-  $display->panels['middle'][0] = 'new-7bc09b07-84d8-44a5-9f7b-1ac1e4cfcd0a';
-  $pane = new stdClass();
-  $pane->pid = 'new-691f553c-d36d-474b-b89b-c75974eb3eb4';
-  $pane->panel = 'middle';
-  $pane->type = 'block';
-  $pane->subtype = 'views-Documents-block';
-  $pane->shown = TRUE;
-  $pane->access = array();
-  $pane->configuration = array(
-    'override_title' => 0,
-    'override_title_text' => '',
-  );
-  $pane->cache = array();
-  $pane->style = array(
-    'settings' => NULL,
-  );
-  $pane->css = array(
-    'css_id' => '',
-    'css_class' => 'chr_panel chr_panel--no-padding',
-  );
-  $pane->extras = array();
-  $pane->position = 1;
-  $pane->locks = array();
-  $pane->uuid = '691f553c-d36d-474b-b89b-c75974eb3eb4';
-  $display->content['new-691f553c-d36d-474b-b89b-c75974eb3eb4'] = $pane;
-  $display->panels['middle'][1] = 'new-691f553c-d36d-474b-b89b-c75974eb3eb4';
-  $pane = new stdClass();
-  $pane->pid = 'new-691f553c-d36d-474b-b89b-c75974eb3eb5';
-  $pane->panel = 'middle';
-  $pane->type = 'block';
-  $pane->subtype = 'views-Documents-block_1';
-  $pane->shown = TRUE;
-  $pane->access = array();
-  $pane->configuration = array(
-    'override_title' => 0,
-    'override_title_text' => '',
-  );
-  $pane->cache = array();
-  $pane->style = array(
-    'settings' => NULL,
-  );
-  $pane->css = array(
-    'css_id' => '',
-    'css_class' => 'footer-slider-block',
-  );
-  $pane->extras = array();
-  $pane->position = 2;
-  $pane->locks = array();
-  $pane->uuid = '691f553c-d36d-474b-b89b-c75974eb3eb5';
-  $display->content['new-691f553c-d36d-474b-b89b-c75974eb3eb5'] = $pane;
-  $display->panels['middle'][2] = 'new-691f553c-d36d-474b-b89b-c75974eb3eb5';
-  $display->hide_title = PANELS_TITLE_FIXED;
-  $display->title_pane = '0';
-  $handler->conf['display'] = $display;
-  $page->default_handlers[$handler->name] = $handler;
-
-  return $page;
-}
-
-function _employee_portal_features_build_default_dashboard_page() {
   $page = new stdClass();
   $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
   $page->api_version = 1;
@@ -566,11 +358,8 @@ function _employee_portal_features_build_default_dashboard_page() {
   $display->title_pane = 'new-ea7ad282-bc5e-4de0-876e-d856b3803460';
   $handler->conf['display'] = $display;
   $page->default_handlers[$handler->name] = $handler;
+  $pages['dashboard'] = $page;
 
-  return $page;
-}
-
-function _employee_portal_features_build_default_absence_approval_page() {
   $page = new stdClass();
   $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
   $page->api_version = 1;
@@ -643,6 +432,8 @@ function _employee_portal_features_build_default_absence_approval_page() {
   $display->cache = array();
   $display->title = '';
   $display->uuid = '1d65d481-33ec-46fe-9f4c-a2dd99e7b2eb';
+  $display->storage_type = 'page_manager';
+  $display->storage_id = 'page_manager_absence_approval__panel_context_20fb9bcb-9a86-41c8-ba3b-ffe986c811cc';
   $display->content = array();
   $display->panels = array();
   $pane = new stdClass();
@@ -695,11 +486,204 @@ function _employee_portal_features_build_default_absence_approval_page() {
   $display->title_pane = 'new-1647dd09-dad7-4648-b088-0c4ef71c085e';
   $handler->conf['display'] = $display;
   $page->default_handlers[$handler->name] = $handler;
+  $pages['manager_absence_approval'] = $page;
 
-  return $page;
-}
+  $page = new stdClass();
+  $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
+  $page->api_version = 1;
+  $page->name = 'tasks_and_documents';
+  $page->task = 'page';
+  $page->admin_title = 'Tasks and Documents';
+  $page->admin_description = '';
+  $page->path = 'tasks-and-documents';
+  $page->access = array(
+    'plugins' => array(
+      0 => array(
+        'name' => 'role',
+        'settings' => array(
+          'rids' => array(
+            0 => 2,
+          ),
+        ),
+        'context' => 'logged-in-user',
+        'not' => FALSE,
+      ),
+    ),
+    'logic' => 'and',
+  );
+  $page->menu = array(
+    'type' => 'normal',
+    'title' => 'Tasks and Documents',
+    'name' => 'main-menu',
+    'weight' => '10',
+    'parent' => array(
+      'type' => 'none',
+      'title' => '',
+      'name' => 'navigation',
+      'weight' => '0',
+    ),
+  );
+  $page->arguments = array();
+  $page->conf = array();
+  $page->default_handlers = array();
+  $handler = new stdClass();
+  $handler->disabled = FALSE; /* Edit this to true to make a default handler disabled initially */
+  $handler->api_version = 1;
+  $handler->name = 'page_tasks_and_documents__panel_context_eb7dd441-1a8d-414e-96d8-77255ce14124';
+  $handler->task = 'page';
+  $handler->subtask = 'tasks_and_documents';
+  $handler->handler = 'panel_context';
+  $handler->weight = 0;
+  $handler->conf = array(
+    'title' => 'Landing page',
+    'no_blocks' => FALSE,
+    'pipeline' => 'ipe',
+    'body_classes_to_remove' => '',
+    'body_classes_to_add' => '',
+    'css_id' => '',
+    'css' => '',
+    'contexts' => array(),
+    'relationships' => array(),
+    'name' => '',
+  );
+  $display = new panels_display();
+  $display->layout = 'radix_sutro_double';
+  $display->layout_settings = array();
+  $display->panel_settings = array(
+    'style_settings' => array(
+      'default' => NULL,
+      'top' => NULL,
+      'left_above' => NULL,
+      'right_above' => NULL,
+      'middle' => NULL,
+      'left_below' => NULL,
+      'right_below' => NULL,
+      'bottom' => NULL,
+      'header' => NULL,
+      'column1' => NULL,
+      'column2' => NULL,
+      'secondcolumn1' => NULL,
+      'secondcolumn2' => NULL,
+      'footer' => array(
+        'list_type' => 'ul',
+      ),
+    ),
+    'footer' => array(
+      'style' => 'list',
+    ),
+  );
+  $display->cache = array();
+  $display->title = 'Tasks and Documents';
+  $display->uuid = '091af8a4-cb6d-45b4-8946-1016cd5fb4d8';
+  $display->storage_type = 'page_manager';
+  $display->storage_id = 'page_dashboard_panel_context';
+  $display->content = array();
+  $display->panels = array();
+  $pane = new stdClass();
+  $pane->pid = 'new-0f962e7d-947f-4064-b545-efdf7262a50f';
+  $pane->panel = 'header';
+  $pane->type = 'block';
+  $pane->subtype = 'views-Tasks-block';
+  $pane->shown = TRUE;
+  $pane->access = array();
+  $pane->configuration = array(
+    'override_title' => 0,
+    'override_title_text' => '',
+    'override_title_heading' => 'h2',
+  );
+  $pane->cache = array();
+  $pane->style = array(
+    'settings' => NULL,
+  );
+  $pane->css = array(
+    'css_id' => '',
+    'css_class' => 'chr_panel chr_panel--no-padding chr_panel--tasks',
+  );
+  $pane->extras = array();
+  $pane->position = 0;
+  $pane->locks = array();
+  $pane->uuid = '0f962e7d-947f-4064-b545-efdf7262a50f';
+  $display->content['new-0f962e7d-947f-4064-b545-efdf7262a50f'] = $pane;
+  $display->panels['header'][0] = 'new-0f962e7d-947f-4064-b545-efdf7262a50f';
+  $pane = new stdClass();
+  $pane->pid = 'new-7bc09b07-84d8-44a5-9f7b-1ac1e4cfcd0a';
+  $pane->panel = 'middle';
+  $pane->type = 'block';
+  $pane->subtype = 'views-hr_documents-block';
+  $pane->shown = TRUE;
+  $pane->access = array();
+  $pane->configuration = array(
+    'override_title' => 0,
+    'override_title_text' => '',
+    'override_title_heading' => 'h2',
+  );
+  $pane->cache = array();
+  $pane->style = array(
+    'settings' => NULL,
+  );
+  $pane->css = array();
+  $pane->extras = array();
+  $pane->position = 0;
+  $pane->locks = array();
+  $pane->uuid = '7bc09b07-84d8-44a5-9f7b-1ac1e4cfcd0a';
+  $display->content['new-7bc09b07-84d8-44a5-9f7b-1ac1e4cfcd0a'] = $pane;
+  $display->panels['middle'][0] = 'new-7bc09b07-84d8-44a5-9f7b-1ac1e4cfcd0a';
+  $pane = new stdClass();
+  $pane->pid = 'new-691f553c-d36d-474b-b89b-c75974eb3eb4';
+  $pane->panel = 'middle';
+  $pane->type = 'block';
+  $pane->subtype = 'views-Documents-block';
+  $pane->shown = TRUE;
+  $pane->access = array();
+  $pane->configuration = array(
+    'override_title' => 0,
+    'override_title_text' => '',
+  );
+  $pane->cache = array();
+  $pane->style = array(
+    'settings' => NULL,
+  );
+  $pane->css = array(
+    'css_id' => '',
+    'css_class' => 'chr_panel chr_panel--no-padding',
+  );
+  $pane->extras = array();
+  $pane->position = 1;
+  $pane->locks = array();
+  $pane->uuid = '691f553c-d36d-474b-b89b-c75974eb3eb4';
+  $display->content['new-691f553c-d36d-474b-b89b-c75974eb3eb4'] = $pane;
+  $display->panels['middle'][1] = 'new-691f553c-d36d-474b-b89b-c75974eb3eb4';
+  $pane = new stdClass();
+  $pane->pid = 'new-691f553c-d36d-474b-b89b-c75974eb3eb5';
+  $pane->panel = 'middle';
+  $pane->type = 'block';
+  $pane->subtype = 'views-Documents-block_1';
+  $pane->shown = TRUE;
+  $pane->access = array();
+  $pane->configuration = array(
+    'override_title' => 0,
+    'override_title_text' => '',
+  );
+  $pane->cache = array();
+  $pane->style = array(
+    'settings' => NULL,
+  );
+  $pane->css = array(
+    'css_id' => '',
+    'css_class' => 'footer-slider-block',
+  );
+  $pane->extras = array();
+  $pane->position = 2;
+  $pane->locks = array();
+  $pane->uuid = '691f553c-d36d-474b-b89b-c75974eb3eb5';
+  $display->content['new-691f553c-d36d-474b-b89b-c75974eb3eb5'] = $pane;
+  $display->panels['middle'][2] = 'new-691f553c-d36d-474b-b89b-c75974eb3eb5';
+  $display->hide_title = PANELS_TITLE_FIXED;
+  $display->title_pane = '0';
+  $handler->conf['display'] = $display;
+  $page->default_handlers[$handler->name] = $handler;
+  $pages['tasks_and_documents'] = $page;
 
-function _employee_portal_features_build_default_welcome_page() {
   $page = new stdClass();
   $page->disabled = FALSE; /* Edit this to true to make a default page disabled initially */
   $page->api_version = 1;
@@ -938,6 +922,8 @@ function _employee_portal_features_build_default_welcome_page() {
   $display->title_pane = '0';
   $handler->conf['display'] = $display;
   $page->default_handlers[$handler->name] = $handler;
+  $pages['welcome_page'] = $page;
 
-  return $page;
+  return $pages;
+
 }
