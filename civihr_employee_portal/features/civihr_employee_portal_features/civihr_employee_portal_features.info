@@ -58,6 +58,7 @@ features[menu_links][] = main-menu_my-details:hr-details
 features[menu_links][] = main-menu_reports:reports
 features[node][] = hr_documents
 features[page_manager_pages][] = dashboard
+features[page_manager_pages][] = tasks_and_documents
 features[page_manager_pages][] = welcome_page
 features[rules_config][] = rules_employee_access_request
 features[taxonomy][] = hr_resource_type
