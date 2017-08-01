@@ -1,0 +1,10 @@
+<span data-leave-absences-waiting-approval-notification>
+  <waiting-approval-notification></waiting-approval-notification>
+</span>
+<script>
+  // Transfers the Drupal.settings data into
+  // the expected (by the app) CRM.vars.leaveAndAbsences object
+  CRM.vars.leaveAndAbsences = {
+    baseURL: Drupal.settings.civihr_leave_absences.baseURL
+  };
+</script>
