@@ -1,0 +1,10 @@
+<span data-leave-absences-manager-notification-badge>
+  <manager-notification-badge></manager-notification-badge>
+</span>
+<script>
+  // Transfers the Drupal.settings data into
+  // the expected (by the app) CRM.vars.leaveAndAbsences object
+  CRM.vars.leaveAndAbsences = {
+    baseURL: Drupal.settings.civihr_leave_absences.baseURL
+  };
+</script>
