@@ -163,18 +163,19 @@
    */
   HRReport.prototype.updateDropdown = function() {
     $('.pvtUi select').each(function () {
-      var selectClass = 'chr_custom-select chr_custom-select--full';
+      var selectClass = 'crm_custom-select crm_custom-select--full';
 
-      if (!$(this).parent().hasClass('chr_custom-select')) {
+      if (!$(this).parent().hasClass('crm_custom-select')) {
         if ($(this).hasClass('pvtAggregator')) {
-          selectClass += ' chr_custom-select--transparent';
+          selectClass += ' crm_custom-select--transparent';
         }
 
         $(this).wrap('<div class="' + selectClass + '"></div>');
+        $(this).parent().append('<span class="crm_custom-select__arrow"></span>');
       }
     });
 
-    $('.pvtVals .chr_custom-select').each(function () {
+    $('.pvtVals .crm_custom-select').each(function () {
       if ($(this).find('select').length === 0) {
         $(this).remove();
       }
@@ -247,7 +248,7 @@
       $(filter_selector).find('span:first').text(that.formatLengthsOfService(employee_length_service));
     }
   }
-  
+
   /**
    * Processes results in people report view to format length of service for each
    * contact in a human readable form using moment lib.
