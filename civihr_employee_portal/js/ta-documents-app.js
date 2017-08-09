@@ -6,29 +6,39 @@
       $locationProvider.html5Mode(true); // This is required to remove # for the URL
       $urlRouterProvider.otherwise('/tasks-and-documents');
     })
-    .controller('ModalController', ['$scope', '$rootScope', '$window', '$rootElement', '$log', '$uibModal',
-      'DocumentService', 'FileService', 'config', 'settings', 'DateFormat',
-      function($scope, $rootScope, $window, $rootElement, $log, $modal, DocumentService, FileService, config,
-        settings, DateFormat) {
+    .controller('ModalController', ModalController);
+
+    ModalController.$inject = ['$scope', '$rootScope', '$window', '$rootElement', '$log', '$uibModal',
+      'DocumentService', 'FileService', 'config', 'settings', 'DateFormat'];
+
+    function ModalController ($scope, $rootScope, $window, $rootElement, $log, $modal, DocumentService, FileService, config,
+      settings, DateFormat) {
         var availableContacts = false;
-        var vm = {};
+        var vm = this;
 
         vm.loadingModalData = false;
 
         vm.modalDocument = modalDocument;
+        vm.openModalDocument = openModalDocument;
 
         (function init() {
-          // Reloads page on 'document-saved' event
-          $rootScope.$on('document-saved', function () {
-            $window.location.reload();
-          });
+          subscribeForEvents();
+          watchForChanges();
+          collectRequiredData();
+        })();
 
+        /**
+         * Collect required data for document modal
+         */
+        function collectRequiredData () {
+          // Sets the date format for HR_settings.DATE_FORMAT
+          DateFormat.getDateFormat();
+
+          // Fetch and cache contacts and addignments
           DocumentService.get().then(function (documents) {
-            //sets the date format for HR_settings.DATE_FORMAT
-            DateFormat.getDateFormat();
             DocumentService.cacheContactsAndAssignments(documents, 'contacts');
           });
-        })();
+        };
 
         /**
          * Gets Document for the given document id and
@@ -47,7 +57,7 @@
                 throw new Error('Requested Document is not available');
               }
 
-              openModalDocument(data[0], role);
+              vm.openModalDocument(data[0], role);
             })
             .catch(function(reason) {
               CRM.alert(reason, 'Error', 'error');
@@ -93,20 +103,31 @@
         };
 
         /**
-         * Watch for the changes in the list of $rootScope.cache.contact.arrSearch
-         * Display spinner and hide "open" button until the arrSearch is filled with contacts
-         *
-         * Note: $rootScope.cache.contact.arrSearch will always contain a
-         * contact data (curently logged in contact). So if there are documents,
-         * there must be more that one contacts conidering at aleast a target contact in a document
+         * All event subscribers
          */
-        $rootScope.$watch('cache.contact', function () {
-          availableContacts = $rootScope.cache.contact.arrSearch.length > 1;
-          $rootScope.$broadcast('ct-spinner-' + (availableContacts ? 'hide' : 'show'));
-          vm.loadingModalData = !availableContacts;
-        });
+        function subscribeForEvents () {
+          $rootScope.$on('document-saved', function () {
+            $window.location.reload();
+          });
+        };
 
-        return vm;
-      }
-    ]);
+        /**
+         * All watchers for changes
+         */
+        function watchForChanges () {
+          /**
+           * Watch for the changes in the list of $rootScope.cache.contact.arrSearch
+           * Display spinner and hide "open" button until the arrSearch is filled with contacts
+           *
+           * Note: $rootScope.cache.contact.arrSearch will always contain a
+           * contact data (curently logged in contact). So if there are documents,
+           * there must be more that one contacts conidering at aleast a target contact in a document
+           */
+          $rootScope.$watch('cache.contact', function () {
+            availableContacts = $rootScope.cache.contact.arrSearch.length > 1;
+            $rootScope.$broadcast('ct-spinner-' + (availableContacts ? 'hide' : 'show'));
+            vm.loadingModalData = !availableContacts;
+          });
+        };
+    }
 })(angular);
