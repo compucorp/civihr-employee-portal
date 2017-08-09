@@ -10,10 +10,25 @@
       'DocumentService', 'FileService', 'config', 'settings', 'DateFormat',
       function($scope, $rootScope, $window, $rootElement, $log, $modal, DocumentService, FileService, config,
         settings, DateFormat) {
-        var vm = {};
         var availableContacts = false;
+        var vm = {};
 
         vm.loadingModalData = false;
+
+        vm.modalDocument = modalDocument;
+
+        (function init() {
+          // Reloads page on 'document-saved' event
+          $rootScope.$on('document-saved', function () {
+            $window.location.reload();
+          });
+
+          DocumentService.get().then(function (documents) {
+            //sets the date format for HR_settings.DATE_FORMAT
+            DateFormat.getDateFormat();
+            DocumentService.cacheContactsAndAssignments(documents, 'contacts');
+          });
+        })();
 
         /**
          * Gets Document for the given document id and
@@ -22,7 +37,7 @@
          * @param {integer} id
          * @param {string} role
          */
-        vm.modalDocument = function (id, role) {
+        function modalDocument (id, role) {
           $rootScope.$broadcast('ct-spinner-show', 'document-' + id);
           vm.loadingModalData = true;
 
@@ -39,20 +54,6 @@
             });
         };
 
-        (function init() {
-          // Reloads page on 'document-saved' event
-          $rootScope.$on('document-saved', function () {
-            $window.location.reload();
-          });
-
-          // Get list of documents
-          DocumentService.get().then(function (documents) {
-            //sets the date format for HR_settings.DATE_FORMAT
-            DateFormat.getDateFormat();
-            DocumentService.cacheContactsAndAssignments(documents, 'contacts');
-          });
-        })();
-
         /**
          * Opens Document Modal
          *
@@ -64,6 +65,7 @@
             appendTo: $rootElement,
             templateUrl: config.path.TPL + 'modal/document.html?v=3',
             controller: 'ModalDocumentCtrl',
+            controllerAs: 'documentModal',
             resolve: {
               modalMode: function () {
                 return '';
