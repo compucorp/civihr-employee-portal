@@ -30,22 +30,30 @@
  * @ingroup views_templates
  */
 $statuses = [
-  0 => t('All'),
   'awaiting-upload' => t('Awaiting upload'),
   'awaiting-approval' => t('Awaiting approval'),
   'approved' => t('Approved'),
   'rejected' => t('Rejected'),
+  0 => t('All'),
 ];
 $statusesCount = array_combine(array_keys($statuses), array_fill(0, count($statuses), 0));
 
+$documentIds = [];
 foreach ($rows as $row):
   if (!isset($row['status_id'])) {
     continue;
   }
   $statusesCount[strtolower(str_replace(' ', '-', $row['status_id']))] ++;
   $statusesCount[0] ++;
+  $documentIds[] = $row['id'];
 endforeach;
 
+// used to decide whether to show download button
+$documentFileCount = [];
+if (!empty($documentIds)) {
+  $documentFileCount = civicrm_api3('Document', 'get', ['id' => ['IN' => $documentIds]]);
+  $documentFileCount = array_column($documentFileCount['values'], 'file_count', 'id');
+}
 ?>
 
 <base href="/"> <!-- This is required to remove # for the URL-->
@@ -96,11 +104,12 @@ endforeach;
           <?php endif; ?>
         <tbody>
           <?php foreach ($rows as $row_count => $row):
-              if (!isset($row['id'])) {
-                printf('<tr class = "document-row no-results"><td colspan="4">%s</td></tr>', $row[0]);
-                continue;
-              }
-              $class = 'document-row status-id-' . strtolower(str_replace(' ', '-', $row['status_id'])); ?>
+            $rowID = strip_tags(CRM_Utils_Array::value('id', $row));
+            if (!$rowID) {
+              printf('<tr class = "document-row no-results"><td colspan="4">%s</td></tr>', $row[0]);
+              continue;
+            }
+            $class = 'document-row status-id-' . strtolower(str_replace(' ', '-', $row['status_id'])); ?>
             <tr <?php if ($row_classes[$row_count] || $class) {
                 print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';
               } ?>>
@@ -117,21 +126,32 @@ endforeach;
 
                   printf('<td %s %s>%s</td>', $class, $attribute, $content);
                 endforeach; ?>
-              <td data-ct-spinner data-ct-spinner-id="document-<?php print strip_tags($row['id']); ?>">
-                <?php if (strip_tags($row['status_id']) == 3): ?>
+              <td data-ct-spinner data-ct-spinner-id="document-<?php print $rowID; ?>">
+                <?php if ($row['status_id'] === 'awaiting upload'): ?>
                   <button
                     ng-show='!document.loadingModalData'
-                    class="btn btn-sm btn-default ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"
-                    disabled>
-                    <i class="fa fa-upload"></i> Open
+                    <?php printf('ng-click="document.modalDocument(%s , \'staff\')"', $rowID); ?>
+                    class="btn btn-sm btn-default">
+                    <i class="fa fa-upload"></i>
+                    Upload
                   </button>
                 <?php else: ?>
                   <button
                     ng-show='!document.loadingModalData'
-                    ng-click="document.modalDocument(<?php print strip_tags($row['id']); ?> , 'staff')"
+                    <?php printf('ng-click="document.modalDocument(%d , \'staff\')"', $rowID); ?>
                     class="btn btn-sm btn-default">
-                    <i class="fa fa-upload"></i> Open
+                    <i class="fa fa-eye"></i>
+                    View
                   </button>
+                  <?php $showDownload = CRM_Utils_Array::value($rowID, $documentFileCount, 0) > 0 ? 'true' : 'false'; ?>
+                  <a class="btn btn-sm btn-default"
+                    <?php printf("ng-show='!document.loadingModalData && %s'", $showDownload); ?>
+                    target="_blank"
+                    ng-href="/civicrm/tasksassignments/file/zip?entityID=<?php print $rowID; ?>&entityTable=civicrm_activity"
+                  >
+                    <i class="fa fa-download"></i>
+                    Download
+                  </a>
                 <?php endif; ?>
               </td>
             </tr>
@@ -167,7 +187,6 @@ endforeach;
     var $tableDocStaff = $tableFilters.find('.chr_table-w-filters__table');
     var $tableDocStaffRows = $tableDocStaff.find('.document-row');
 
-    $tableFilters.find('.chr_table-w-filters__filters__nav :first').addClass('active');
 
     $filtersNav.find('a').bind('click', function (e) {
       e.preventDefault();
@@ -180,16 +199,16 @@ endforeach;
       filterTable($this.data('documentStatus'));
     });
 
-    $filtersDropdown.on('change', function (e) {
+    $filtersDropdown.on('change', function () {
       filterTable($(this).val());
     });
 
     // Listen for ready event when T&A finishes loading all modules
-    document.addEventListener('taReady', function (e) {
+    document.addEventListener('taReady', function () {
       angular.bootstrap(angular.element("[data-ta-documents]"), ['taDocuments']);
+      // select first filter as default
+      $tableFilters.find('.chr_table-w-filters__filters__nav :first a').click();
     });
-
-
 
   }(CRM.$));
 </script>
