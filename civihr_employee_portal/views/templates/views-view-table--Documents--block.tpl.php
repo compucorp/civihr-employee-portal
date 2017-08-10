@@ -178,7 +178,12 @@ if (!empty($documentIds)) {
       }
 
       $tableDocStaffRows.hide();
-      $tableDocStaff.find('.status-id-' + statusId).show();
+      var matchingRows = $tableDocStaff.find('.status-id-' + statusId);
+      if (matchingRows.count > 0) {
+        matchingRows.show();
+      } else {
+        $('.document-row.no-results').show();
+      }
     }
 
     var $tableFilters = $('.chr_table-w-filters--documents');
