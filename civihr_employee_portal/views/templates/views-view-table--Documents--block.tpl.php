@@ -38,17 +38,14 @@ $statuses = [
 ];
 $statusesCount = array_combine(array_keys($statuses), array_fill(0, count($statuses), 0));
 
-$targetIds = [];
 foreach ($rows as $row):
   if (!isset($row['status_id'])) {
     continue;
   }
   $statusesCount[strtolower(str_replace(' ', '-', $row['status_id']))] ++;
   $statusesCount[0] ++;
-  $targetIds[] = CRM_Utils_Array::value('target_contact_id', $row);
 endforeach;
 
-$allTargets = civicrm_api3('Contact', 'get', [['id', 'IN', $targetIds]])['values'];
 ?>
 
 <base href="/"> <!-- This is required to remove # for the URL-->
@@ -79,12 +76,18 @@ $allTargets = civicrm_api3('Contact', 'get', [['id', 'IN', $targetIds]])['values
         <?php if (!empty($header)) : ?>
           <thead>
             <tr>
-              <?php $header = array_merge(['staff' => 'Staff'], $header) ?>
               <?php foreach ($header as $field => $label): ?>
                 <th <?php if (!empty($header_classes[$field])) {
                   print 'class="' . $header_classes[$field] . '" ';
                 } ?>>
-                <?php print $label; ?>
+                <?php
+                // This is in angular scope and html5 mode is enabled, so
+                // need to set target or sort links will not work
+                if (strpos($label, '<a href') !== FALSE) {
+                  $label = str_replace('<a href', '<a target="_self" href', $label);
+                }
+                print $label;
+                ?>
                 </th>
                 <?php endforeach; ?>
               <th></th>
@@ -102,24 +105,14 @@ $allTargets = civicrm_api3('Contact', 'get', [['id', 'IN', $targetIds]])['values
                 print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';
               } ?>>
                 <?php
-                $targetID = CRM_Utils_Array::value('target_contact_id', $row);
-                $targetDetails = CRM_Utils_Array::value($targetID, $allTargets);
-                $targetContactColumn = $targetDetails['display_name'];
-                $row = array_merge(['target' => $targetContactColumn], $row);
-
-                // row content
                 foreach ($row as $field => $content):
                   $class = '';
                   $attribute = '';
-                  $decodeFields = ['document_contacts' || 'document_contacts_1'];
                   if (!empty($field_classes[$field][$row_count])) {
                     $class = sprintf('class = "%s"', $field_classes[$field][$row_count]);
                   }
                   if (!empty($field_attributes[$field][$row_count])) {
                     $attribute = drupal_attributes($field_attributes[$field][$row_count]);
-                  }
-                  if (in_array($field, $decodeFields)) {
-                    $content = strip_tags(html_entity_decode($content));
                   }
 
                   printf('<td %s %s>%s</td>', $class, $attribute, $content);
