@@ -1112,8 +1112,12 @@ function civihr_employee_portal_views_post_render(&$view, &$output, &$cache) {
  */
 function _civihr_employee_portal_decode_vacancy_description_html(&$view, &$output) {
   $replacements = [];
+  $renderedFields = [];
 
-  foreach ($view->style_plugin->rendered_fields as $vacancy) {
+  if (isset($view->style_plugin->rendered_fields)) {
+    $renderedFields = $view->style_plugin->rendered_fields;
+  }
+  foreach ($renderedFields as $vacancy) {
     $replacements[$vacancy['description']] = html_entity_decode($vacancy['description']);
   }
 
