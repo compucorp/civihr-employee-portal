@@ -1,5 +1,4 @@
 <?php
-
 $view = new view();
 $view->name = 'Documents';
 $view->description = '';
@@ -401,129 +400,6 @@ $handler->display->display_options['field_config'] = array(
     'separator' => ', ',
   ),
 );
-
-/* Display: Documents Dashboard Manager block */
-$handler = $view->new_display('block', 'Documents Dashboard Manager block', 'block_1');
-$handler->display->display_options['defaults']['title'] = FALSE;
-$handler->display->display_options['title'] = 'Documents Manager';
-$handler->display->display_options['defaults']['access'] = FALSE;
-$handler->display->display_options['access']['type'] = 'role';
-$handler->display->display_options['access']['role'] = array(
-  55120974 => '55120974',
-  37588037 => '37588037',
-  57573969 => '57573969',
-);
-$handler->display->display_options['defaults']['fields'] = FALSE;
-/* Field: Document entity: Document entity ID */
-$handler->display->display_options['fields']['id']['id'] = 'id';
-$handler->display->display_options['fields']['id']['table'] = 'documents';
-$handler->display->display_options['fields']['id']['field'] = 'id';
-$handler->display->display_options['fields']['id']['label'] = 'Document ID';
-$handler->display->display_options['fields']['id']['element_class'] = 'hidden';
-$handler->display->display_options['fields']['id']['element_label_class'] = 'hidden';
-$handler->display->display_options['fields']['id']['separator'] = '';
-/* Field: Document entity: Target_contact_name */
-$handler->display->display_options['fields']['target_contact_name']['id'] = 'target_contact_name';
-$handler->display->display_options['fields']['target_contact_name']['table'] = 'documents';
-$handler->display->display_options['fields']['target_contact_name']['field'] = 'target_contact_name';
-$handler->display->display_options['fields']['target_contact_name']['label'] = 'Target contact';
-$handler->display->display_options['fields']['target_contact_name']['element_type'] = 'div';
-$handler->display->display_options['fields']['target_contact_name']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['target_contact_name']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['target_contact_name']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['target_contact_name']['element_wrapper_class'] = 'document-wrapper';
-/* Field: Document entity: Document type */
-$handler->display->display_options['fields']['activity_type_id']['id'] = 'activity_type_id';
-$handler->display->display_options['fields']['activity_type_id']['table'] = 'documents';
-$handler->display->display_options['fields']['activity_type_id']['field'] = 'activity_type_id';
-$handler->display->display_options['fields']['activity_type_id']['label'] = 'Type';
-$handler->display->display_options['fields']['activity_type_id']['element_type'] = 'div';
-$handler->display->display_options['fields']['activity_type_id']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['activity_type_id']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['activity_type_id']['element_wrapper_class'] = 'document-wrapper';
-/* Field: Document entity: Case_id */
-$handler->display->display_options['fields']['case_id']['id'] = 'case_id';
-$handler->display->display_options['fields']['case_id']['table'] = 'documents';
-$handler->display->display_options['fields']['case_id']['field'] = 'case_id';
-$handler->display->display_options['fields']['case_id']['label'] = 'Assignment';
-$handler->display->display_options['fields']['case_id']['alter']['trim_whitespace'] = TRUE;
-$handler->display->display_options['fields']['case_id']['element_type'] = 'div';
-$handler->display->display_options['fields']['case_id']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['case_id']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['case_id']['element_wrapper_class'] = 'document-wrapper';
-$handler->display->display_options['fields']['case_id']['empty'] = '-';
-$handler->display->display_options['fields']['case_id']['separator'] = '';
-/* Field: Document entity: Subject */
-$handler->display->display_options['fields']['subject']['id'] = 'subject';
-$handler->display->display_options['fields']['subject']['table'] = 'documents';
-$handler->display->display_options['fields']['subject']['field'] = 'subject';
-$handler->display->display_options['fields']['subject']['exclude'] = TRUE;
-$handler->display->display_options['fields']['subject']['element_type'] = 'div';
-$handler->display->display_options['fields']['subject']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['subject']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['subject']['element_wrapper_class'] = 'document-wrapper';
-/* Field: Document entity: Document due date */
-$handler->display->display_options['fields']['activity_date_time']['id'] = 'activity_date_time';
-$handler->display->display_options['fields']['activity_date_time']['table'] = 'documents';
-$handler->display->display_options['fields']['activity_date_time']['field'] = 'activity_date_time';
-$handler->display->display_options['fields']['activity_date_time']['label'] = 'Due Date';
-$handler->display->display_options['fields']['activity_date_time']['element_type'] = 'div';
-$handler->display->display_options['fields']['activity_date_time']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['activity_date_time']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['activity_date_time']['element_wrapper_class'] = 'document-wrapper';
-/* Field: Document entity: Document expire date */
-$handler->display->display_options['fields']['expire_date']['id'] = 'expire_date';
-$handler->display->display_options['fields']['expire_date']['table'] = 'documents';
-$handler->display->display_options['fields']['expire_date']['field'] = 'expire_date';
-$handler->display->display_options['fields']['expire_date']['label'] = 'Expire Date';
-$handler->display->display_options['fields']['expire_date']['element_type'] = 'div';
-$handler->display->display_options['fields']['expire_date']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['expire_date']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['expire_date']['element_wrapper_class'] = 'document-wrapper';
-/* Field: Document entity: Details */
-$handler->display->display_options['fields']['details']['id'] = 'details';
-$handler->display->display_options['fields']['details']['table'] = 'documents';
-$handler->display->display_options['fields']['details']['field'] = 'details';
-$handler->display->display_options['fields']['details']['alter']['strip_tags'] = TRUE;
-$handler->display->display_options['fields']['details']['element_type'] = 'div';
-$handler->display->display_options['fields']['details']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['details']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['details']['element_wrapper_class'] = 'document-wrapper';
-/* Field: Document entity: File_count */
-$handler->display->display_options['fields']['file_count']['id'] = 'file_count';
-$handler->display->display_options['fields']['file_count']['table'] = 'documents';
-$handler->display->display_options['fields']['file_count']['field'] = 'file_count';
-$handler->display->display_options['fields']['file_count']['label'] = 'File Count';
-$handler->display->display_options['fields']['file_count']['element_type'] = 'div';
-$handler->display->display_options['fields']['file_count']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['file_count']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['file_count']['element_wrapper_class'] = 'document-wrapper';
-$handler->display->display_options['fields']['file_count']['separator'] = '';
-/* Field: Document entity: Document status */
-$handler->display->display_options['fields']['status_id']['id'] = 'status_id';
-$handler->display->display_options['fields']['status_id']['table'] = 'documents';
-$handler->display->display_options['fields']['status_id']['field'] = 'status_id';
-$handler->display->display_options['fields']['status_id']['label'] = 'Status';
-$handler->display->display_options['fields']['status_id']['alter']['strip_tags'] = TRUE;
-$handler->display->display_options['fields']['status_id']['element_type'] = '0';
-$handler->display->display_options['fields']['status_id']['element_label_type'] = 'strong';
-$handler->display->display_options['fields']['status_id']['element_wrapper_type'] = 'div';
-$handler->display->display_options['fields']['status_id']['element_wrapper_class'] = 'document-wrapper';
-/* Field: Document entity: Assignee contact */
-$handler->display->display_options['fields']['assignee_contact_id']['id'] = 'assignee_contact_id';
-$handler->display->display_options['fields']['assignee_contact_id']['table'] = 'documents';
-$handler->display->display_options['fields']['assignee_contact_id']['field'] = 'assignee_contact_id';
-$handler->display->display_options['fields']['assignee_contact_id']['exclude'] = TRUE;
-$handler->display->display_options['defaults']['arguments'] = FALSE;
-/* Contextual filter: Document entity: Assignee contact */
-$handler->display->display_options['arguments']['assignee_contact_id']['id'] = 'assignee_contact_id';
-$handler->display->display_options['arguments']['assignee_contact_id']['table'] = 'documents';
-$handler->display->display_options['arguments']['assignee_contact_id']['field'] = 'assignee_contact_id';
-$handler->display->display_options['arguments']['assignee_contact_id']['default_action'] = 'default';
-$handler->display->display_options['arguments']['assignee_contact_id']['default_argument_type'] = 'current_user';
-$handler->display->display_options['arguments']['assignee_contact_id']['summary']['number_of_records'] = '0';
-$handler->display->display_options['arguments']['assignee_contact_id']['summary']['format'] = 'default_summary';
-$handler->display->display_options['arguments']['assignee_contact_id']['summary_options']['items_per_page'] = '25';
 $translatables['Documents'] = array(
   t('Master'),
   t('Documents'),
@@ -549,7 +425,5 @@ $translatables['Documents'] = array(
   t('Assignee contact'),
   t('Documents Dashboard block'),
   t('All'),
-  t('Documents Dashboard Manager block'),
-  t('Documents Manager'),
-  t('-'),
 );
+
