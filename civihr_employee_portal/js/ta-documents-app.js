@@ -41,8 +41,9 @@
          *
          * @param {integer} id
          * @param {string} role
+         * @param {string} mode
          */
-        function modalDocument (id, role) {
+        function modalDocument (id, role, mode) {
           $rootScope.$broadcast('ct-spinner-show', 'document-' + id);
           vm.loadingModalData = true;
 
@@ -65,8 +66,9 @@
          *
          * @param {object} data
          * @param {string} role
+         * @param {string} mode
          */
-        function openModalDocument(data, role) {
+        function openModalDocument(data, role, mode) {
           var modalInstance = $modal.open({
             appendTo: $rootElement,
             templateUrl: config.path.TPL + 'modal/document.html?v=3',
@@ -74,7 +76,7 @@
             controllerAs: 'documentModal',
             resolve: {
               modalMode: function () {
-                return '';
+                return mode;
               },
               role: function () {
                 return role;
@@ -96,7 +98,7 @@
             $rootScope.$broadcast('ct-spinner-hide');
             vm.loadingModalData = false;
           });
-        };
+        }
 
         /**
          * All event subscribers
