@@ -179,7 +179,7 @@ if (!empty($documentIds)) {
 
       $tableDocStaffRows.hide();
       var matchingRows = $tableDocStaff.find('.status-id-' + statusId);
-      if (matchingRows.count > 0) {
+      if (matchingRows.length > 0) {
         matchingRows.show();
       } else {
         $('.document-row.no-results').show();
