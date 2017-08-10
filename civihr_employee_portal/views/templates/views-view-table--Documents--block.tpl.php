@@ -130,7 +130,7 @@ if (!empty($documentIds)) {
                 <?php if ($row['status_id'] === 'awaiting upload'): ?>
                   <button
                     ng-show='!document.loadingModalData'
-                    <?php printf('ng-click="document.modalDocument(%s , \'staff\')"', $rowID); ?>
+                    ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', 'edit')"
                     class="btn btn-sm btn-default">
                     <i class="fa fa-upload"></i>
                     Upload
@@ -138,7 +138,7 @@ if (!empty($documentIds)) {
                 <?php else: ?>
                   <button
                     ng-show='!document.loadingModalData'
-                    <?php printf('ng-click="document.modalDocument(%d , \'staff\')"', $rowID); ?>
+                    ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', 'view')"
                     class="btn btn-sm btn-default">
                     <i class="fa fa-eye"></i>
                     View
