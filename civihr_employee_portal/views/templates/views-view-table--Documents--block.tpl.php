@@ -3,18 +3,28 @@
  * @file
  * Template to display a view as a table.
  *
- * - $title : The title of this group of rows.  May be empty.
- * - $header: An array of header labels keyed by field id.
- * - $caption: The caption for this table. May be empty.
- * - $header_classes: An array of header classes keyed by field id.
- * - $fields: An array of CSS IDs to use for each field id.
- * - $classes: A class or classes to apply to the table, based on settings.
- * - $row_classes: An array of classes to apply to each row, indexed by row
+ * @var string $title
+ *   The title of this group of rows.  May be empty.
+ * @var array $header
+ *   An array of header labels keyed by field id.
+ * @var string $caption
+ *   The caption for this table. May be empty.
+ * @var array $header_classes
+ *   An array of header classes keyed by field id.
+ * @var array $fields
+ *   An array of CSS IDs to use for each field id.
+ * @var string $classes
+ *   A class or classes to apply to the table, based on settings.
+ * @var array $row_classes
+ *   An array of classes to apply to each row, indexed by row number.
+ *   This matches the index in $rows.
+ * @var array $rows
+ *   An array of row items. Each row is an array of content. $rows are keyed by
+ *   row number, fields within rows are keyed by field ID.
+ * @var array $field_classes
+ *   An array of classes to apply to each field, indexed by field id, then row
  *   number. This matches the index in $rows.
- * - $rows: An array of row items. Each row is an array of content.
- *   $rows are keyed by row number, fields within rows are keyed by field ID.
- * - $field_classes: An array of classes to apply to each field, indexed by
- *   field id, then row number. This matches the index in $rows.
+ *
  * @ingroup views_templates
  */
 $statuses = array(
@@ -34,6 +44,7 @@ foreach ($rows as $row):
   $statusesCount[0] ++;
 endforeach;
 ?>
+
 <base href="/"> <!-- This is required to remove # for the URL-->
 <div data-ta-documents ng-controller="ModalController as document" class="chr_table-w-filters chr_table-w-filters--documents row">
   <div class="chr_table-w-filters__filters col-md-3">
