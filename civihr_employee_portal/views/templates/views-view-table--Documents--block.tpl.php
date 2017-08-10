@@ -17,23 +17,25 @@
  *   A class or classes to apply to the table, based on settings.
  * @var array $row_classes
  *   An array of classes to apply to each row, indexed by row number.
- *   This matches the index in $rows.
  * @var array $rows
  *   An array of row items. Each row is an array of content. $rows are keyed by
  *   row number, fields within rows are keyed by field ID.
  * @var array $field_classes
- *   An array of classes to apply to each field, indexed by field id, then row
- *   number. This matches the index in $rows.
+ *   An array of classes to apply to each field, indexed by field id, then row.
+ * @var array $field_attributes
+ *   Array of arrays of attributes indexed by field id and then row.
+ * @var string $attributes
+ *   Empty
  *
  * @ingroup views_templates
  */
-$statuses = array(
+$statuses = [
   0 => t('All'),
   'awaiting-upload' => t('Awaiting upload'),
   'awaiting-approval' => t('Awaiting approval'),
   'approved' => t('Approved'),
   'rejected' => t('Rejected'),
-);
+];
 $statusesCount = array_combine(array_keys($statuses), array_fill(0, count($statuses), 0));
 
 foreach ($rows as $row):
@@ -111,12 +113,12 @@ endforeach;
                 <?php print $content; ?>
                 </td>
                 <?php endforeach; ?>
-              <td ct-spinner ct-spinner-id="document-<?php print strip_tags($row['id']); ?>">
+              <td data-ct-spinner data-ct-spinner-id="document-<?php print strip_tags($row['id']); ?>">
                 <?php if (strip_tags($row['status_id']) == 3): ?>
                   <button
                     ng-show='!document.loadingModalData'
                     class="btn btn-sm btn-default ctools-use-modal ctools-modal-civihr-default-style ctools-use-modal-processed"
-                    disabled="disabled">
+                    disabled>
                     <i class="fa fa-upload"></i> Open
                   </button>
                 <?php else: ?>
