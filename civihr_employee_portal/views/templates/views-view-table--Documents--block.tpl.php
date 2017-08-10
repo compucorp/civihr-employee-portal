@@ -38,35 +38,36 @@ $statuses = [
 ];
 $statusesCount = array_combine(array_keys($statuses), array_fill(0, count($statuses), 0));
 
+$targetIds = [];
 foreach ($rows as $row):
   if (!isset($row['status_id'])) {
     continue;
   }
   $statusesCount[strtolower(str_replace(' ', '-', $row['status_id']))] ++;
   $statusesCount[0] ++;
+  $targetIds[] = CRM_Utils_Array::value('target_contact_id', $row);
 endforeach;
+
+$allTargets = civicrm_api3('Contact', 'get', [['id', 'IN', $targetIds]])['values'];
 ?>
 
 <base href="/"> <!-- This is required to remove # for the URL-->
 <div data-ta-documents ng-controller="ModalController as document" class="chr_table-w-filters chr_table-w-filters--documents row">
   <div class="chr_table-w-filters__filters col-md-3">
-    <div class="chr_table-w-filters__filters__dropdown-wrapper">
-      <div class="chr_custom-select chr_custom-select--full">
-        <select class="chr_table-w-filters__filters__dropdown skip-js-custom-select">
-          <?php foreach ($statuses as $key => $value): ?>
-            <option value="<?php print $key; ?>"><?php print $value; ?> (<?php print $statusesCount[$key]; ?>)</option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-    </div>
     <ul class="chr_table-w-filters__filters__nav">
-      <?php $classActive = ' class="active"'; ?>
       <?php foreach ($statuses as $key => $value): ?>
-        <li<?php print $classActive; ?>><a href data-document-status="<?php print $key; ?>"><?php print $value; ?> <span class="badge badge-primary pull-right"><?php print $statusesCount[$key]; ?></span></a></li>
-        <?php $classActive = ''; ?>
+        <li>
+          <a href data-document-status="<?php print $key; ?>">
+            <?php print $value; ?>
+            <span class="badge badge-primary pull-right">
+              <?php print $statusesCount[$key]; ?>
+            </span>
+          </a>
+        </li>
       <?php endforeach; ?>
     </ul>
   </div>
+
   <div class="chr_table-w-filters__table-wrapper col-md-9">
     <div class="chr_table-w-filters__table">
       <table id="documents-dashboard-table-staff" <?php if ($classes) {
@@ -78,8 +79,9 @@ endforeach;
         <?php if (!empty($header)) : ?>
           <thead>
             <tr>
+              <?php $header = array_merge(['staff' => 'Staff'], $header) ?>
               <?php foreach ($header as $field => $label): ?>
-                <th <?php if ($header_classes[$field]) {
+                <th <?php if (!empty($header_classes[$field])) {
                   print 'class="' . $header_classes[$field] . '" ';
                 } ?>>
                 <?php print $label; ?>
@@ -99,20 +101,29 @@ endforeach;
             <tr <?php if ($row_classes[$row_count] || $class) {
                 print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';
               } ?>>
-                <?php foreach ($row as $field => $content): ?>
-                <td <?php if ($field_classes[$field][$row_count]) {
-                print 'class="' . $field_classes[$field][$row_count] . '" ';
-              } ?><?php print drupal_attributes($field_attributes[$field][$row_count]); ?>>
                 <?php
-                if ($field === 'document_contacts' || $field === 'document_contacts_1'):
-                  print strip_tags(html_entity_decode($content));
-                  continue;
-                endif;
-                ?>
+                $targetID = CRM_Utils_Array::value('target_contact_id', $row);
+                $targetDetails = CRM_Utils_Array::value($targetID, $allTargets);
+                $targetContactColumn = $targetDetails['display_name'];
+                $row = array_merge(['target' => $targetContactColumn], $row);
 
-                <?php print $content; ?>
-                </td>
-                <?php endforeach; ?>
+                // row content
+                foreach ($row as $field => $content):
+                  $class = '';
+                  $attribute = '';
+                  $decodeFields = ['document_contacts' || 'document_contacts_1'];
+                  if (!empty($field_classes[$field][$row_count])) {
+                    $class = sprintf('class = "%s"', $field_classes[$field][$row_count]);
+                  }
+                  if (!empty($field_attributes[$field][$row_count])) {
+                    $attribute = drupal_attributes($field_attributes[$field][$row_count]);
+                  }
+                  if (in_array($field, $decodeFields)) {
+                    $content = strip_tags(html_entity_decode($content));
+                  }
+
+                  printf('<td %s %s>%s</td>', $class, $attribute, $content);
+                endforeach; ?>
               <td data-ct-spinner data-ct-spinner-id="document-<?php print strip_tags($row['id']); ?>">
                 <?php if (strip_tags($row['status_id']) == 3): ?>
                   <button
@@ -163,6 +174,8 @@ endforeach;
     var $tableDocStaff = $tableFilters.find('.chr_table-w-filters__table');
     var $tableDocStaffRows = $tableDocStaff.find('.document-row');
 
+    $tableFilters.find('.chr_table-w-filters__filters__nav :first').addClass('active');
+
     $filtersNav.find('a').bind('click', function (e) {
       e.preventDefault();
 
@@ -182,6 +195,8 @@ endforeach;
     document.addEventListener('taReady', function (e) {
       angular.bootstrap(angular.element("[data-ta-documents]"), ['taDocuments']);
     });
+
+
 
   }(CRM.$));
 </script>
