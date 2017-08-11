@@ -47,8 +47,8 @@ class PublicFirewallTest extends \PHPUnit_Framework_TestCase {
       ['welcome-page/protected'],
       ['request_new_accountajax'],
       ['home/user'],
-      ['yoti_connect'],
-      ['something/yoti-connect'],
+      ['yoti-connect'],
+      ['something/yoti'],
       [''],
     ];
   }
@@ -62,8 +62,8 @@ class PublicFirewallTest extends \PHPUnit_Framework_TestCase {
       ['sites/default/files/logo.jpg'],
       ['request_new_account/ajax'],
       ['user/some/other/path'],
-      ['yoti-connect'],
-      ['yoti-connect/anything'],
+      ['yoti'],
+      ['yoti/anything'],
     ];
   }
 
