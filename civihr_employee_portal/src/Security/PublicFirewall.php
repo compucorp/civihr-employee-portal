@@ -20,7 +20,8 @@ class PublicFirewall {
     'request_new_account/ajax', // from login page
     '@^user((?!\/register).)*$@', // user* except user/register
     'yoti', // yoti login plugin
-    '@^yoti\/.*@' // anything under yoti
+    '@^yoti\/.*@', // anything under yoti
+    '@^yoti-connect*@' // also yoti login plugin, where the user is redirected after login
   ];
 
   /**
