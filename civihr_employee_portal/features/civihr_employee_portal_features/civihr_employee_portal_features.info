@@ -57,6 +57,7 @@ features[menu_links][] = main-menu_reports:reports
 features[node][] = hr_documents
 features[page_manager_pages][] = dashboard
 features[page_manager_pages][] = manager_absence_approval
+features[page_manager_pages][] = tasks_and_documents
 features[page_manager_pages][] = welcome_page
 features[rules_config][] = rules_absent_request_submit
 features[rules_config][] = rules_approve_all_absence

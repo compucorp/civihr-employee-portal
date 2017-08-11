@@ -543,6 +543,33 @@ function getModuleUrl($moduleName) {
 }
 
 /**
+ * Implements hook_coreResourceList
+ *
+ * @param array $list
+ * @param string $region
+ */
+function civihr_employee_portal_civicrm_coreResourceList(&$list, $region) {
+  // To maintain the dependency remove the js files that are dependent on
+  // jquery.notify.js
+  $jsToRemove[] = array_search('js/Common.js', $list);
+  $jsToRemove[] = array_search('js/crm.ajax.js', $list);
+  $jsToRemove[] = array_search('js/wysiwyg/crm.wysiwyg.js', $list);
+  $jsToRemove[] = array_search('js/crm.drupal.js', $list);
+
+  foreach ($jsToRemove as $filepath) {
+    unset($list[$filepath]);
+  }
+
+  // Add the previously unlisted files to the list once the
+  // jquery.notify.js is added
+  $list[] = "packages/jquery/plugins/jquery.notify.js";
+  $list[] = "js/Common.js";
+  $list[] = "js/crm.ajax.js";
+  $list[] = "js/wysiwyg/crm.wysiwyg.js";
+  $list[] = "js/crm.drupal.js";
+}
+
+/**
  * Implements hook_init().
  */
 function civihr_employee_portal_init() {
@@ -574,7 +601,8 @@ function civihr_employee_portal_init() {
     ]);
 
     _add_script_to_page(['reqangular.min.js'], 'org.civicrm.reqangular', 'dashboard');
-    _add_script_to_page(['/js/tasks.js', '/js/ta-documents-app.js'], NULL, 'dashboard');
+    _add_script_to_page(['reqangular.min.js'], 'org.civicrm.reqangular', 'tasks-and-documents');
+    _add_script_to_page(['/js/tasks.js', '/js/ta-documents-app.js'], NULL, 'tasks-and-documents');
 
     _rebuild_view('absence_list');
     _rebuild_view('length_of_service');
@@ -6768,6 +6796,7 @@ function civihr_employee_portal_preprocess_page(&$vars) {
     $display_name = t('Anonymus');
     $edit_account_link = '';
     $logout_link = '';
+    $user_guide_link = l('<i class="fa fa-book"></i>' . t('User guide'), 'http://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/', array('html' => true, 'attributes' => array('target' => '_blank')));
     $image_url = $base_url . '/' . drupal_get_path('module', 'civihr_employee_portal') . '/images/profile-default.png';
 
     if (isset($_SESSION['CiviCRM']) && $user->uid) {
@@ -6789,6 +6818,7 @@ function civihr_employee_portal_preprocess_page(&$vars) {
     $vars['image_url'] = $image_url;
     $vars['edit_account'] = $edit_account_link;
     $vars['logout_link'] = $logout_link;
+    $vars['user_guide_link'] = $user_guide_link;
 
 }
 
