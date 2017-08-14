@@ -47,6 +47,7 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access CiviReport'] = array(
     'name' => 'access CiviReport',
     'roles' => array(
+      'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'civicrm',
@@ -84,7 +85,9 @@ function civihr_default_permissions_user_default_permissions() {
   // Exported permission: 'access Report Criteria'.
   $permissions['access Report Criteria'] = array(
     'name' => 'access Report Criteria',
-    'roles' => array(),
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
     'module' => 'civicrm',
   );
 
@@ -473,6 +476,7 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer Reports'] = array(
     'name' => 'administer Reports',
     'roles' => array(
+      'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'civicrm',
