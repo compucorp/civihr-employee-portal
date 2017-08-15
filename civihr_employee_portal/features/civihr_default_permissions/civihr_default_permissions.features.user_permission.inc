@@ -106,6 +106,7 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access Tasks and Assignments Files'] = array(
     'name' => 'access Tasks and Assignments Files',
     'roles' => array(
+      'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
       'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
@@ -139,6 +140,7 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access all cases and activities'] = array(
     'name' => 'access all cases and activities',
     'roles' => array(
+      'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'civicrm',
@@ -288,6 +290,7 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access my cases and activities'] = array(
     'name' => 'access my cases and activities',
     'roles' => array(
+      'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'civicrm',
@@ -426,6 +429,7 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['add cases'] = array(
     'name' => 'add cases',
     'roles' => array(
+      'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'civicrm',
@@ -467,6 +471,7 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer CiviCase'] = array(
     'name' => 'administer CiviCase',
     'roles' => array(
+      'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'civicrm',
@@ -1276,6 +1281,7 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['delete in CiviCase'] = array(
     'name' => 'delete in CiviCase',
     'roles' => array(
+      'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'civicrm',
