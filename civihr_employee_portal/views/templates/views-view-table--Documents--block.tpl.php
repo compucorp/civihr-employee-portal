@@ -25,7 +25,7 @@
  * @var array $field_attributes
  *   Array of arrays of attributes indexed by field id and then row.
  * @var string $attributes
- *   Empty
+ *   List of table HTML attributes such as summary
  *
  * @ingroup views_templates
  */
@@ -114,7 +114,7 @@ if (!empty($documentIds)) {
                 print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';
               } ?>>
                 <?php
-                foreach ($row as $field => $content):
+                foreach ($row as $field => $content) {
                   $class = '';
                   $attribute = '';
                   if (!empty($field_classes[$field][$row_count])) {
@@ -125,7 +125,7 @@ if (!empty($documentIds)) {
                   }
 
                   printf('<td %s %s>%s</td>', $class, $attribute, $content);
-                endforeach; ?>
+                } ?>
               <td data-ct-spinner data-ct-spinner-id="document-<?php print $rowID; ?>">
                 <?php if ($row['status_id'] === 'awaiting upload'): ?>
                   <button
