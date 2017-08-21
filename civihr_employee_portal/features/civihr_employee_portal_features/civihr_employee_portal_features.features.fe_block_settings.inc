@@ -40,7 +40,7 @@ function civihr_employee_portal_features_default_fe_block_settings() {
         'weight' => 0,
       ),
     ),
-    'title' => 'join civihr',
+    'title' => '',
     'visibility' => 0,
   );
 
