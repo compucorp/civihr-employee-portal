@@ -26,6 +26,10 @@ function civihr_employee_portal_features_default_fe_block_boxes() {
   background: #fff; 
 }
 
+#civihr-signup-tab p {
+  padding: 5px;
+}
+
 #civihr-signup-tab .btn {
   color: #fff;
   background-color: #2f91aa;
@@ -34,6 +38,7 @@ function civihr_employee_portal_features_default_fe_block_boxes() {
   float: none;
   border: none;
   padding: 10px;
+  cursor: pointer;
 }
 
 #civihr-signup-tab .vertical-text {
