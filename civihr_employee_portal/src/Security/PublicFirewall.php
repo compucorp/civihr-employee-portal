@@ -19,7 +19,9 @@ class PublicFirewall {
     'sites/default/files/logo.jpg', // if logo is missing
     'request_new_account/ajax', // from login page
     '@^user((?!\/register).)*$@', // user* except user/register
-    '@^yoti-connect*@' // yoti login plugin
+    'yoti', // yoti login plugin
+    '@^yoti\/.*@', // anything under yoti
+    '@^yoti-connect*@' // also yoti login plugin, where the user is redirected after login
   ];
 
   /**
