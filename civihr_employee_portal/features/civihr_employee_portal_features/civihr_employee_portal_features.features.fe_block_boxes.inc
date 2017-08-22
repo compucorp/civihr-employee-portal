@@ -29,6 +29,7 @@ function civihr_employee_portal_features_default_fe_block_boxes() {
     box-sizing: initial;
     color: rgb(118, 123, 142);
     padding: 10px 30px;
+    box-shadow: 0px 4px 15px #888888;
 }
 
 #civihr-signup-tab h3 {
