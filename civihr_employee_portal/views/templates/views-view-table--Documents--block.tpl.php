@@ -83,11 +83,11 @@ if (!empty($documentIds)) {
         <?php endif; ?>
         <?php if (!empty($header)) : ?>
           <thead>
-            <tr>
-              <?php foreach ($header as $field => $label): ?>
-                <th <?php if (!empty($header_classes[$field])) {
-                  print 'class="' . $header_classes[$field] . '" ';
-                } ?>>
+          <tr>
+            <?php foreach ($header as $field => $label): ?>
+              <th <?php if (!empty($header_classes[$field])) {
+                print 'class="' . $header_classes[$field] . '" ';
+              } ?>>
                 <?php
                 // This is in angular scope and html5 mode is enabled, so
                 // need to set target or sort links will not work
@@ -96,73 +96,79 @@ if (!empty($documentIds)) {
                 }
                 print $label;
                 ?>
-                </th>
-                <?php endforeach; ?>
-              <th></th>
-            </tr>
+              </th>
+            <?php endforeach; ?>
+            <th></th>
+          </tr>
           </thead>
-          <?php endif; ?>
+        <?php endif; ?>
         <tbody>
-          <?php foreach ($rows as $row_count => $row):
-            $mode = 'view';
-            $faIcon = 'fa-eye';
-            $label = 'View';
-            $rowID = strip_tags(CRM_Utils_Array::value('id', $row));
-            $status = CRM_Utils_Array::value('status_id', $row);
+        <?php foreach ($rows as $row_count => $row):
+          $mode = 'view';
+          $faIcon = 'fa-eye';
+          $label = 'View';
+          $rowID = strip_tags(CRM_Utils_Array::value('id', $row));
+          $status = CRM_Utils_Array::value('status_id', $row);
 
-            if($status === 'awaiting upload') {
-              $mode = 'edit';
-              $label = 'Upload';
-              $faIcon = 'fa-upload';
-            }
+          if($status === 'awaiting upload') {
+            $mode = 'edit';
+            $label = 'Upload';
+            $faIcon = 'fa-upload';
+          }
 
-            if (!$rowID) {
-              printf('<tr class = "document-row no-results"><td colspan="4">%s</td></tr>', $row[0]);
-              continue;
-            }
-            $class = 'document-row status-id-' . strtolower(str_replace(' ', '-', $row['status_id'])); ?>
-            <tr <?php if ($row_classes[$row_count] || $class) {
-                print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';
-              } ?>>
-                <?php
-                foreach ($row as $field => $content) {
-                  $class = '';
-                  $attribute = '';
-                  if (!empty($field_classes[$field][$row_count])) {
-                    $class = sprintf('class = "%s"', $field_classes[$field][$row_count]);
-                  }
-                  if (!empty($field_attributes[$field][$row_count])) {
-                    $attribute = drupal_attributes($field_attributes[$field][$row_count]);
-                  }
+          ?>
+          <!-- no results row -->
+          <tr id = "no-results-row" style="display:none;">
+            <td colspan="100%">There are no documents to display.</td>
+          </tr>
+          <?php
 
-                  if($field == 'activity_type_id') {
-                    printf('<td %s %s><a href="javascript:;" ng-click="document.modalDocument(' . $rowID .', \'staff\',\'' . $mode . '\')">%s</a></td>', $class, $attribute, $content);
-                  } else {
-                    printf('<td %s %s>%s</td>', $class, $attribute, $content);
-                  }
+          if (!$rowID) {
+            continue;
+          }
+          $class = 'document-row status-id-' . strtolower(str_replace(' ', '-', $row['status_id'])); ?>
+          <tr <?php if ($row_classes[$row_count] || $class) {
+            print 'class="' . implode(' ', $row_classes[$row_count]) . ' ' . $class . '"';
+          } ?>>
+            <?php
+            foreach ($row as $field => $content) {
+              $class = '';
+              $attribute = '';
+              if (!empty($field_classes[$field][$row_count])) {
+                $class = sprintf('class = "%s"', $field_classes[$field][$row_count]);
+              }
+              if (!empty($field_attributes[$field][$row_count])) {
+                $attribute = drupal_attributes($field_attributes[$field][$row_count]);
+              }
 
-                } ?>
-              <td data-ct-spinner data-ct-spinner-id="document-<?php print $rowID; ?>">
-                <button
-                  ng-show='!document.loadingModalData'
-                  ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', '<?php print $mode ?>')"
-                  class="btn btn-sm btn-default">
-                  <i class="fa <?php print $faIcon ?>"></i>
-                  <?php print $label ?>
-                </button>
-                <?php if ($row['status_id'] !== 'awaiting upload'): ?>
-                  <?php $showDownload = CRM_Utils_Array::value($rowID, $documentFileCount, 0) > 0 ? 'true' : 'false'; ?>
-                  <a class="btn btn-sm btn-default"
-                    <?php printf("ng-show='!document.loadingModalData && %s'", $showDownload); ?>
-                    target="_blank"
-                    ng-href="/civicrm/tasksassignments/file/zip?entityID=<?php print $rowID; ?>&entityTable=civicrm_activity">
-                    <i class="fa fa-download"></i>
-                    Download
-                  </a>
-                <?php endif; ?>
-              </td>
-            </tr>
-          <?php endforeach; ?>
+              if($field == 'activity_type_id') {
+                printf('<td %s %s><a href="javascript:;" ng-click="document.modalDocument(' . $rowID .', \'staff\',\'' . $mode . '\')">%s</a></td>', $class, $attribute, $content);
+              } else {
+                printf('<td %s %s>%s</td>', $class, $attribute, $content);
+              }
+
+            } ?>
+            <td data-ct-spinner data-ct-spinner-id="document-<?php print $rowID; ?>">
+              <button
+                ng-show='!document.loadingModalData'
+                ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', '<?php print $mode ?>')"
+                class="btn btn-sm btn-default">
+                <i class="fa <?php print $faIcon ?>"></i>
+                <?php print $label ?>
+              </button>
+              <?php if ($row['status_id'] !== 'awaiting upload'): ?>
+                <?php $showDownload = CRM_Utils_Array::value($rowID, $documentFileCount, 0) > 0 ? 'true' : 'false'; ?>
+                <a class="btn btn-sm btn-default"
+                  <?php printf("ng-show='!document.loadingModalData && %s'", $showDownload); ?>
+                   target="_blank"
+                   ng-href="/civicrm/tasksassignments/file/zip?entityID=<?php print $rowID; ?>&entityTable=civicrm_activity">
+                  <i class="fa fa-download"></i>
+                  Download
+                </a>
+              <?php endif; ?>
+            </td>
+          </tr>
+        <?php endforeach; ?>
         </tbody>
       </table>
     </div>
@@ -179,17 +185,18 @@ if (!empty($documentIds)) {
     CRM.debug = Drupal.settings.tasksAssignments.debug;
 
     function filterTable(statusId) {
-      if (parseInt(statusId, 10) === 0) {
-        $tableDocStaffRows.show();
-        return;
+      $tableDocStaffRows.hide();
+      var matchingRows = $tableDocStaffRows;
+      if (parseInt(statusId, 10) !== 0) {
+        matchingRows = $tableDocStaff.find('.status-id-' + statusId);
       }
 
-      $tableDocStaffRows.hide();
-      var matchingRows = $tableDocStaff.find('.status-id-' + statusId);
       if (matchingRows.length > 0) {
+        $noResultsRow.hide();
         matchingRows.show();
       } else {
-        $('.document-row.no-results').show();
+        $tableDocStaffRows.hide();
+        $noResultsRow.show();
       }
     }
 
@@ -198,7 +205,7 @@ if (!empty($documentIds)) {
     var $filtersNav = $tableFilters.find('.chr_table-w-filters__filters__nav');
     var $tableDocStaff = $tableFilters.find('.chr_table-w-filters__table');
     var $tableDocStaffRows = $tableDocStaff.find('.document-row');
-
+    var $noResultsRow = $('#no-results-row');
 
     $filtersNav.find('a').bind('click', function (e) {
       e.preventDefault();
