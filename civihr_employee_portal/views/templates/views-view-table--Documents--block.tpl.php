@@ -104,7 +104,17 @@ if (!empty($documentIds)) {
           <?php endif; ?>
         <tbody>
           <?php foreach ($rows as $row_count => $row):
+            $mode = 'view';
+            $faIcon = 'fa-eye';
+            $label = 'View';
             $rowID = strip_tags(CRM_Utils_Array::value('id', $row));
+
+            if($row['status_id'] === 'awaiting upload') {
+              $mode = 'edit';
+              $label = 'Upload';
+              $faIcon = 'fa-upload';
+            }
+
             if (!$rowID) {
               printf('<tr class = "document-row no-results"><td colspan="4">%s</td></tr>', $row[0]);
               continue;
@@ -124,31 +134,27 @@ if (!empty($documentIds)) {
                     $attribute = drupal_attributes($field_attributes[$field][$row_count]);
                   }
 
-                  printf('<td %s %s>%s</td>', $class, $attribute, $content);
+                  if($field == 'activity_type_id') {
+                    printf('<td %s %s><a href="javascript:;" ng-click="document.modalDocument(' . $rowID .', \'staff\',\'' . $mode . '\')">%s</a></td>', $class, $attribute, $content);
+                  } else {
+                    printf('<td %s %s>%s</td>', $class, $attribute, $content);
+                  }
+
                 } ?>
               <td data-ct-spinner data-ct-spinner-id="document-<?php print $rowID; ?>">
-                <?php if ($row['status_id'] === 'awaiting upload'): ?>
-                  <button
-                    ng-show='!document.loadingModalData'
-                    ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', 'edit')"
-                    class="btn btn-sm btn-default">
-                    <i class="fa fa-upload"></i>
-                    Upload
-                  </button>
-                <?php else: ?>
-                  <button
-                    ng-show='!document.loadingModalData'
-                    ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', 'view')"
-                    class="btn btn-sm btn-default">
-                    <i class="fa fa-eye"></i>
-                    View
-                  </button>
+                <button
+                  ng-show='!document.loadingModalData'
+                  ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', '<?php print $mode ?>')"
+                  class="btn btn-sm btn-default">
+                  <i class="fa <?php print $faIcon ?>"></i>
+                  <?php print $label ?>
+                </button>
+                <?php if ($row['status_id'] !== 'awaiting upload'): ?>
                   <?php $showDownload = CRM_Utils_Array::value($rowID, $documentFileCount, 0) > 0 ? 'true' : 'false'; ?>
                   <a class="btn btn-sm btn-default"
                     <?php printf("ng-show='!document.loadingModalData && %s'", $showDownload); ?>
                     target="_blank"
-                    ng-href="/civicrm/tasksassignments/file/zip?entityID=<?php print $rowID; ?>&entityTable=civicrm_activity"
-                  >
+                    ng-href="/civicrm/tasksassignments/file/zip?entityID=<?php print $rowID; ?>&entityTable=civicrm_activity">
                     <i class="fa fa-download"></i>
                     Download
                   </a>
