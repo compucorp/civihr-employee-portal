@@ -224,9 +224,18 @@ if (!empty($documentIds)) {
 
     // Listen for ready event when T&A finishes loading all modules
     document.addEventListener('taReady', function () {
+      var selectedFilter = window.location.hash.substring(1);
       angular.bootstrap(angular.element("[data-ta-documents]"), ['taDocuments']);
-      // select first filter as default
-      $tableFilters.find('.chr_table-w-filters__filters__nav :first a').click();
+      if (!selectedFilter) {
+        selectedFilter = 'awaiting-upload'; // default
+      }
+      $("a[data-document-status='" + selectedFilter + "']" ).click();
+    });
+
+    $('.views-field a').bind('click', function (e) {
+      var originalLink = e.originalEvent.currentTarget.href;
+      var selectedStatus = $filtersNav.find('.active a').attr('data-document-status');
+      e.originalEvent.currentTarget.href = originalLink + '#' + selectedStatus;
     });
 
   }(CRM.$));
