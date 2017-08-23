@@ -108,8 +108,9 @@ if (!empty($documentIds)) {
             $faIcon = 'fa-eye';
             $label = 'View';
             $rowID = strip_tags(CRM_Utils_Array::value('id', $row));
+            $status = CRM_Utils_Array::value('status_id', $row);
 
-            if($row['status_id'] === 'awaiting upload') {
+            if($status === 'awaiting upload') {
               $mode = 'edit';
               $label = 'Upload';
               $faIcon = 'fa-upload';
