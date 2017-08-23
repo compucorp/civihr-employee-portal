@@ -87,6 +87,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access Report Criteria',
     'roles' => array(
       'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'civicrm',
   );
