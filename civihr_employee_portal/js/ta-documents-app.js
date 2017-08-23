@@ -123,10 +123,10 @@
            *
            * Note: $rootScope.cache.contact.arrSearch will always contain a
            * contact data (curently logged in contact). So if there are documents,
-           * there must be more that one contacts conidering at aleast a target contact in a document
+           * there must be at aleast one or more that one contacts conidering a target contact in a document
            */
           $rootScope.$watch('cache.contact', function () {
-            availableContacts = $rootScope.cache.contact.arrSearch.length > 1;
+            availableContacts = $rootScope.cache.contact.arrSearch.length >= 1;
             $rootScope.$broadcast('ct-spinner-' + (availableContacts ? 'hide' : 'show'));
             vm.loadingModalData = !availableContacts;
           });
