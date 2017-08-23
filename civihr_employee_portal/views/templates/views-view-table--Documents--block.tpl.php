@@ -103,6 +103,10 @@ if (!empty($documentIds)) {
           </thead>
         <?php endif; ?>
         <tbody>
+          <tr id = "no-results-row" style="display:none;">
+            <td colspan="100%">There are no documents to display.</td>
+          </tr>
+
         <?php foreach ($rows as $row_count => $row):
           $mode = 'view';
           $faIcon = 'fa-eye';
@@ -115,13 +119,6 @@ if (!empty($documentIds)) {
             $label = 'Upload';
             $faIcon = 'fa-upload';
           }
-
-          ?>
-          <!-- no results row -->
-          <tr id = "no-results-row" style="display:none;">
-            <td colspan="100%">There are no documents to display.</td>
-          </tr>
-          <?php
 
           if (!$rowID) {
             continue;
