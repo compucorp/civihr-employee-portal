@@ -266,6 +266,7 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access leave and absences'] = array(
     'name' => 'access leave and absences',
     'roles' => array(
+      'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
       'civihr_manager' => 'civihr_manager',
       'civihr_staff' => 'civihr_staff',
@@ -283,7 +284,7 @@ function civihr_default_permissions_user_default_permissions() {
       'civihr_manager' => 'civihr_manager',
       'civihr_staff' => 'civihr_staff',
     ),
-    'module' => 'civihr_employee_portal',
+    'module' => 'civicrm',
   );
 
   // Exported permission: 'access my cases and activities'.
@@ -621,6 +622,7 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer leave and absences'] = array(
     'name' => 'administer leave and absences',
     'roles' => array(
+      'administrator' => 'administrator',
       'civihr_admin' => 'civihr_admin',
     ),
     'module' => 'civicrm',
@@ -1777,11 +1779,11 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'manage leave and absences in ssp',
     'roles' => array(
       'administrator' => 'administrator',
-      'civihr_admin_local' => 'civihr_admin_local',
       'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
     ),
-    'module' => 'civihr_employee_portal',
+    'module' => 'civicrm',
   );
 
   // Exported permission: 'merge duplicate contacts'.

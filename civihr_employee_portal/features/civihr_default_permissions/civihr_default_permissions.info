@@ -100,6 +100,7 @@ features[user_permission][] = administer fields
 features[user_permission][] = administer filters
 features[user_permission][] = administer image styles
 features[user_permission][] = administer languages
+features[user_permission][] = administer leave and absences
 features[user_permission][] = administer mailsystem
 features[user_permission][] = administer menu
 features[user_permission][] = administer modules
