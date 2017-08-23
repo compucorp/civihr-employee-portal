@@ -76,7 +76,7 @@
           var modalInstance = $modal.open({
             appendTo: $rootElement,
             templateUrl: config.path.TPL + 'modal/document.html?v=3',
-            controller: 'ModalDocumentCtrl',
+            controller: 'ModalDocumentController',
             controllerAs: 'documentModal',
             resolve: {
               modalMode: function () {
