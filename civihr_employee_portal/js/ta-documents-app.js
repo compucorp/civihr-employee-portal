@@ -25,7 +25,6 @@
         (function init() {
           // Sets the date format for HR_settings.DATE_FORMAT
           DateFormat.getDateFormat();
-
           subscribeForEvents();
           watchForChanges();
         })();
@@ -122,7 +121,7 @@
            * there must be more that one contacts conidering at aleast a target contact in a document
            */
           $rootScope.$watch('cache.contact', function () {
-            availableContacts = $rootScope.cache.contact.arrSearch.length >= 1;
+            availableContacts = !!$rootScope.cache.contact.arrSearch.length;
             $rootScope.$broadcast('ct-spinner-' + (availableContacts ? 'hide' : 'show'));
             vm.loadingModalData = !availableContacts;
           });
