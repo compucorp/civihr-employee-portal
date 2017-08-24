@@ -20,24 +20,21 @@
 
         vm.modalDocument = modalDocument;
         vm.openModalDocument = openModalDocument;
+        vm.cacheContacts = cacheContacts;
 
         (function init() {
-          subscribeForEvents();
-          watchForChanges();
-          collectRequiredData();
-        })();
-
-        /**
-         * Collect required data for document modal
-         */
-        function collectRequiredData () {
           // Sets the date format for HR_settings.DATE_FORMAT
           DateFormat.getDateFormat();
 
-          // Fetch and cache contacts and addignments
-          DocumentService.get().then(function (documents) {
-            DocumentService.cacheContactsAndAssignments(documents, 'contacts');
-          });
+          subscribeForEvents();
+          watchForChanges();
+        })();
+
+        /**
+         * Collect required contact  and cache them for document modal
+         */
+        function cacheContacts (documents) {
+          DocumentService.cacheContactsAndAssignments(documents, 'contacts');
         };
 
         /**
@@ -57,6 +54,7 @@
                 throw new Error('Requested Document is not available');
               }
 
+              vm.cacheContacts([data]);
               vm.openModalDocument(data[0], role);
             })
             .catch(function(reason) {
