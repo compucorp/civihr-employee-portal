@@ -2,9 +2,6 @@
 
 use Drupal\civihr_employee_portal\Security\PublicFirewall;
 
-// required as we have no autoloader inside this extension
-require_once __DIR__ . '/../src/Security/PublicFirewall.php';
-
 class PublicFirewallTest extends \PHPUnit_Framework_TestCase {
 
   public function testAuthenticatedUserIsAllowed() {
