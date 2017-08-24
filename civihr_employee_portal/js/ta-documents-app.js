@@ -31,7 +31,7 @@
         })();
 
         /**
-         * Collect required contact  and cache them for document modal
+         * Collect required contact and cache them for document modal
          */
         function cacheContacts (documents) {
           DocumentService.cacheContactsAndAssignments(documents, 'contacts');
@@ -122,7 +122,7 @@
            * there must be more that one contacts conidering at aleast a target contact in a document
            */
           $rootScope.$watch('cache.contact', function () {
-            availableContacts = $rootScope.cache.contact.arrSearch.length > 1;
+            availableContacts = $rootScope.cache.contact.arrSearch.length >= 1;
             $rootScope.$broadcast('ct-spinner-' + (availableContacts ? 'hide' : 'show'));
             vm.loadingModalData = !availableContacts;
           });
