@@ -5867,7 +5867,7 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 function civihr_employee_portal_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
 
   // Adding Yoti Login fieldset with button.
-  if (module_exists('yoti_connect')) {
+  if (module_exists('yoti')) {
 
     // Fetching block id from block description.
     $query = db_select('block_custom', 'b')
