@@ -7,11 +7,12 @@ if (false === getenv('CIVICRM_SETTINGS')) {
 }
 
 $civicrmSettings = getenv('CIVICRM_SETTINGS');
-require_once $civicrmSettings;
 
 if (!file_exists($civicrmSettings)) {
   throw new \Exception(sprintf('Settings file not found at "%s"', $civicrmSettings));
 }
+
+require_once $civicrmSettings;
 
 if (!defined('DRUPAL_ROOT')) {
   define('DRUPAL_ROOT', realpath(dirname($civicrmSettings) . '/../../'));
