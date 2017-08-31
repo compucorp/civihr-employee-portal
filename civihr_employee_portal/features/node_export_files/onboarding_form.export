@@ -15,11 +15,11 @@ array(
     'type' => 'webform',
     'language' => 'en',
     'created' => '1504102673',
-    'changed' => '1504110771',
+    'changed' => '1504187818',
     'tnid' => '0',
     'translate' => '0',
     'uuid' => '4f38dc1d-54d9-4236-893f-bcf1595c823f',
-    'revision_timestamp' => '1504110771',
+    'revision_timestamp' => '1504187818',
     'revision_uid' => '1',
     'rdf_mapping' => array(
       'rdftype' => array(
@@ -78,7 +78,7 @@ array(
     ),
     'webform' => array(
       'nid' => '4',
-      'next_serial' => '7',
+      'next_serial' => '10',
       'confirmation' => '',
       'confirmation_format' => 'plain_text',
       'redirect_url' => '/civicrm/what-you-can-do',
@@ -109,7 +109,9 @@ array(
       'preview_excluded_components' => array(),
       'record_exists' => TRUE,
       'roles' => array(
-        '2',
+        '17087012',
+        '55120974',
+        '57573969',
       ),
       'emails' => array(),
       'components' => array(
