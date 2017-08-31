@@ -2395,17 +2395,19 @@ function _invoke_rules_on_absence_decision($main_activity, $type, $absence_detai
  * @param \stdClass $submission
  */
 function civihr_employee_portal_webform_submission_presave($node, &$submission) {
+  $nodeTitle = property_exists($node, 'title') ? $node->title : NULL;
+  $isOnboardingForm = $nodeTitle === 'Welcome to CiviHR';
   $passwordComponent = NodeHelper::getWebformComponentsByName($node, 'Password');
   $uid = property_exists($submission, 'uid') ? $submission->uid : NULL;
 
-  if (count($passwordComponent) !== 1 || NULL === $uid) {
+  if (!$isOnboardingForm || count($passwordComponent) !== 1 || NULL === $uid) {
     return;
   }
 
   $passwordComponent = array_shift($passwordComponent);
-  $nid = CRM_Utils_Array::value('nid', $passwordComponent);
+  $cid = CRM_Utils_Array::value('cid', $passwordComponent);
   $values = property_exists($submission, 'data') ? $submission->data : NULL;
-  $passwordSubmission = CRM_Utils_Array::value($nid, $values);
+  $passwordSubmission = array_shift(CRM_Utils_Array::value($cid, $values, []));
 
   if (!$passwordSubmission) {
     return;
