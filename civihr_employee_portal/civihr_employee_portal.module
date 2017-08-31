@@ -1,7 +1,7 @@
 <?php
 
 use Drupal\civihr_employee_portal\Blocks\Base;
-use Drupal\civihr_employee_portal\Blocks\Leave;
+use Drupal\civihr_employee_portal\Helpers\NodeHelper;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 use Drupal\civihr_employee_portal\Security\PublicFirewall;
@@ -2388,6 +2388,32 @@ function _invoke_rules_on_absence_decision($main_activity, $type, $absence_detai
 
   $event = ($type == 'approve' ? 'approve_all_post_event' : 'reject_all_post_event');
   rules_invoke_event($event, $user, $target_user, '', $leave_type, $leave_date);
+}
+
+/**
+ * @param \stdClass $node
+ * @param \stdClass $submission
+ */
+function civihr_employee_portal_webform_submission_presave($node, &$submission) {
+  $passwordComponent = NodeHelper::getWebformComponentsByName($node, 'Password');
+  $uid = property_exists($submission, 'uid') ? $submission->uid : NULL;
+
+  if (count($passwordComponent) !== 1 || NULL === $uid) {
+    return;
+  }
+
+  $passwordComponent = array_shift($passwordComponent);
+  $nid = CRM_Utils_Array::value('nid', $passwordComponent);
+  $values = property_exists($submission, 'data') ? $submission->data : NULL;
+  $passwordSubmission = CRM_Utils_Array::value($nid, $values);
+
+  if (!$passwordSubmission) {
+    return;
+  }
+
+  $account = user_load($uid);
+  $params['pass'] = $passwordSubmission;
+  user_save($account, $params);
 }
 
 /**
