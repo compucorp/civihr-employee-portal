@@ -1,7 +1,7 @@
 <?php
 
 use Drupal\civihr_employee_portal\Blocks\Base;
-use Drupal\civihr_employee_portal\Helpers\NodeHelper;
+use Drupal\civihr_employee_portal\Helpers\WebformHelper;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 use Drupal\civihr_employee_portal\Security\PublicFirewall;
@@ -2440,7 +2440,7 @@ function _invoke_rules_on_absence_decision($main_activity, $type, $absence_detai
 function civihr_employee_portal_webform_submission_presave($node, &$submission) {
   $nodeTitle = property_exists($node, 'title') ? $node->title : NULL;
   $isOnboardingForm = $nodeTitle === 'Welcome to CiviHR';
-  $passwordComponent = NodeHelper::getWebformComponentsByName($node, 'Password');
+  $passwordComponent = WebformHelper::getWebformComponentsByName($node, 'Password');
   $uid = property_exists($submission, 'uid') ? $submission->uid : NULL;
 
   if (!$isOnboardingForm || count($passwordComponent) !== 1 || NULL === $uid) {
@@ -5965,6 +5965,19 @@ function civihr_employee_portal_form_user_profile_form_alter(&$form, &$form_stat
       );
     }
   }
+
+  $form['#submit'][] = 'civihr_employee_portal_form_user_profile_form_submit';
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function civihr_employee_portal_form_user_profile_form_submit(&$form, &$form_state) {
+  global $user;
+  $shouldDoOnboarding = _civihr_employee_portal_should_do_onboarding($user);
+  $onboardingPath = '/onboarding-form';
+  $original = CRM_Utils_Array::value('redirect', $form_state);
+  $form_state['redirect'] = $shouldDoOnboarding ? $onboardingPath : $original;
 }
 
 /**
@@ -6137,11 +6150,31 @@ function civihr_employee_portal_user_login(&$edit, $account) {
   if (!isset($_POST['form_id']) || $_POST['form_id'] != 'user_pass_reset') {
     $sspEntryPath = 'dashboard';
     $civicrmEntryPath = 'civicrm/tasksassignments/dashboard#/tasks';
+    $onboardingFormPath = 'onboarding-form';
 
     if (current_path() == drupal_get_destination()['destination']) {
       $_GET['destination'] = user_access('access CiviCRM') ? $civicrmEntryPath : $sspEntryPath;
     }
+
+    if (_civihr_employee_portal_should_do_onboarding($account)) {
+      $_GET['destination'] = $onboardingFormPath;
+    }
   }
+}
+
+/**
+ * @param \stdClass $account
+ *
+ * @return bool
+ */
+function _civihr_employee_portal_should_do_onboarding($account) {
+  $welcomeFormName = 'Welcome to CiviHR';
+  $nodes = node_load_multiple(NULL, ["title" => 'Welcome to CiviHR']);
+  $node = current($nodes);
+  $canViewOnboardingForm = node_access('view', $node, $account);
+  $submissions = WebformHelper::getUserSubmissionsByName($account, $welcomeFormName);
+
+  return  $canViewOnboardingForm && empty($submissions);
 }
 
 function webform_client_form_ajax_callback($form, &$form_state) {
