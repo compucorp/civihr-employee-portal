@@ -86,6 +86,27 @@ function _remove_resources(&$resourcesList, $blacklist = []) {
 }
 
 /**
+ * Implements hook_menu_alter().
+ *
+ * @param array $items
+ */
+function civihr_employee_portal_menu_alter(&$items) {
+  if (isset($items['user/%user/edit'])) {
+    $items['user/%user/edit']['theme callback'] = '_user_edit_theme_callback';
+  }
+}
+
+/**
+ * The user edit page theme is overridden to use the admin them if the user is
+ * an admin. It should appear to be part of CiviHR regardless of roles.
+ *
+ * @return string
+ */
+function _user_edit_theme_callback() {
+  return 'civihr_default_theme';
+}
+
+/**
  * Checks if the current page is an CiviCRM loaded page.
  *
  * @return bool
