@@ -13,13 +13,6 @@ function civihr_employee_portal_features_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'calendar_legend_view_calendar_legend';
-  $strongarm->value = 'calendar_absence_list:page_1';
-  $export['calendar_legend_view_calendar_legend'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
   $strongarm->name = 'comment_anonymous_hr_documents';
   $strongarm->value = 0;
   $export['comment_anonymous_hr_documents'] = $strongarm;

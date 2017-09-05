@@ -370,6 +370,12 @@ $handler->display->display_options['fields']['absence_type']['table'] = 'absence
 $handler->display->display_options['fields']['absence_type']['field'] = 'absence_type';
 $handler->display->display_options['fields']['absence_type']['relationship'] = 'absence_activity';
 $handler->display->display_options['fields']['absence_type']['label'] = 'Absence type';
+/* Field: Absence Activity entity: Sickness Reason */
+$handler->display->display_options['fields']['sickness_reason']['id'] = 'absence_type';
+$handler->display->display_options['fields']['sickness_reason']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['sickness_reason']['field'] = 'sickness_reason';
+$handler->display->display_options['fields']['sickness_reason']['relationship'] = 'absence_activity';
+$handler->display->display_options['fields']['sickness_reason']['label'] = 'Sickness reason';
 /* Field: Absence Activity entity: Absence_status */
 $handler->display->display_options['fields']['absence_status']['id'] = 'absence_status';
 $handler->display->display_options['fields']['absence_status']['table'] = 'absence_activity';
@@ -983,6 +989,7 @@ $translatables['civihr_report_leave_and_absence'] = array(
   t('Absence end month'),
   t('Absence duration in days'),
   t('Absence type'),
+  t('Sickness reason'),
   t('Absence status'),
   t('Absence amount taken'),
   t('Absence amount accrued'),

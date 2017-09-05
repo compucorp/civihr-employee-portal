@@ -93,10 +93,6 @@ function civihr_contact_summary_callback($user, $render = 'drupal') {
         return;
     }
 
-    // Generate the absence views block (example)
-    //$view = views_get_view('absence_list');
-    //$output2 =  $view->execute_display('page', array($user->uid));
-
     // Include panels
     module_load_include("inc", "page_manager", "plugins/tasks/page");
 
