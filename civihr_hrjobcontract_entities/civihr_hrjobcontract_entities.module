@@ -134,14 +134,14 @@ function civihr_hrjobcontract_entities_init() {
 #                    c.contact_id,
 #                    r.jobcontract_id,
 #                    t.id,
-                    at.name AS leave_type,
+                    at.title AS leave_type,
                     t.leave_amount,
                     t.jobcontract_revision_id AS leave_entity_revision_id
                     FROM {$civi_db_name}.civicrm_hrjobcontract_leave AS t
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_revision r ON t.jobcontract_revision_id = r.leave_revision_id
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
 
-                    LEFT JOIN {$civi_db_name}.civicrm_hrabsence_type at ON t.leave_type = at.id
+                    LEFT JOIN {$civi_db_name}.civicrm_hrleaveandabsences_absence_type at ON t.leave_type = at.id
 
 #                    LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract_details d ON r.details_revision_id = d.jobcontract_revision_id
 
@@ -1177,10 +1177,8 @@ function civihr_hrjobcontract_entities_entity_property_info_alter(&$info) {
     $info['hrjobcontract_role']['properties']['jobcontract_id']['type'] = 'hrjobcontract_details';*/
 
     // Add relationship to CiviCRM contact for the Absence Entity
-    $info['civihr_absences']['properties']['contact_id']['type'] = 'civicrm_contact';
-    $info['civihr_absence_approvals']['properties']['employee_id']['type'] = 'civicrm_contact';
-    $info['civihr_absence_activity']['properties']['absence_contact_id']['type'] = 'civicrm_contact';
     $info['civihr_length_of_service']['properties']['entity_id']['type'] = 'civicrm_contact';
+    $info['civihr_absence_activity']['properties']['absence_contact_id']['type'] = 'civicrm_contact';
 
     // Properties for phone
     $info['hrjobcontract_contact_info']['properties']['contact_id']['type'] = 'civicrm_contact';

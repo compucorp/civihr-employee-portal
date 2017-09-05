@@ -4,7 +4,6 @@
  * Implements hook_install().
  */
 function civihr_employee_portal_features_install() {
-
   // Init civi
   civicrm_initialize();
 

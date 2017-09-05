@@ -29,10 +29,10 @@
 
 <ul class="nav nav-tabs nav-justified nav-tabs-header report-tabs">
   <?php if (!empty($tableUrl)): ?>
-    <li role="presentation" class="active"><a class="btn btn-default" data-tab="data">Data</a></li>
+    <li role="presentation" class="active"><a data-tab="data">Data</a></li>
   <?php endif; ?>
   <?php if (!empty($jsonUrl)): ?>
-    <li role="presentation"><a class="btn btn-default" data-tab="pivot-table">Pivot Table</a></li>
+    <li role="presentation"><a data-tab="pivot-table">Pivot Table</a></li>
   <?php endif; ?>
 </ul>
 
@@ -43,7 +43,7 @@
       <?php if (!empty($exportUrl)): ?>
         <div class="chr_panel__footer">
           <div class="chr_actions-wrapper">
-            <a href="<?php print $exportUrl; ?>" id="export-report" class="btn btn-primary btn-default">Export</a>
+            <a href="<?php print $exportUrl; ?>" id="export-report" class="btn btn-primary">Export</a>
           </div>
         </div>
       <?php endif; ?>

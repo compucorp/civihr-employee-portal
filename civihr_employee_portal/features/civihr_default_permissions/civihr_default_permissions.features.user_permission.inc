@@ -262,6 +262,17 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civihr_employee_portal',
   );
 
+  // Exported permission: 'access leave and absences'.
+  $permissions['access leave and absences'] = array(
+    'name' => 'access leave and absences',
+    'roles' => array(
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
+      'civihr_staff' => 'civihr_staff',
+    ),
+    'module' => 'civicrm',
+  );
+
   // Exported permission: 'access leave and absences in ssp'.
   $permissions['access leave and absences in ssp'] = array(
     'name' => 'access leave and absences in ssp',
@@ -271,18 +282,6 @@ function civihr_default_permissions_user_default_permissions() {
       'civihr_admin_local' => 'civihr_admin_local',
       'civihr_manager' => 'civihr_manager',
       'civihr_staff' => 'civihr_staff',
-    ),
-    'module' => 'civihr_employee_portal',
-  );
-
-  // Exported permission: 'access manager approval screen'.
-  $permissions['access manager approval screen'] = array(
-    'name' => 'access manager approval screen',
-    'roles' => array(
-      'administrator' => 'administrator',
-      'civihr_admin' => 'civihr_admin',
-      'civihr_admin_local' => 'civihr_admin_local',
-      'civihr_manager' => 'civihr_manager',
     ),
     'module' => 'civihr_employee_portal',
   );
@@ -326,19 +325,6 @@ function civihr_default_permissions_user_default_permissions() {
       'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'webform',
-  );
-
-  // Exported permission: 'access private file download'.
-  $permissions['access private file download'] = array(
-    'name' => 'access private file download',
-    'roles' => array(
-      'administrator' => 'administrator',
-      'civihr_admin' => 'civihr_admin',
-      'civihr_admin_local' => 'civihr_admin_local',
-      'civihr_manager' => 'civihr_manager',
-      'civihr_staff' => 'civihr_staff',
-    ),
-    'module' => 'civihr_employee_portal',
   );
 
   // Exported permission: 'access rules debug'.
@@ -629,6 +615,15 @@ function civihr_default_permissions_user_default_permissions() {
       'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'locale',
+  );
+
+  // Exported permission: 'administer leave and absences'.
+  $permissions['administer leave and absences'] = array(
+    'name' => 'administer leave and absences',
+    'roles' => array(
+      'civihr_admin' => 'civihr_admin',
+    ),
+    'module' => 'civicrm',
   );
 
   // Exported permission: 'administer mailsystem'.
@@ -1374,17 +1369,6 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'taxonomy',
   );
 
-  // Exported permission: 'edit HRAbsences'.
-  $permissions['edit HRAbsences'] = array(
-    'name' => 'edit HRAbsences',
-    'roles' => array(
-      'administrator' => 'administrator',
-      'civihr_admin' => 'civihr_admin',
-      'civihr_admin_local' => 'civihr_admin_local',
-    ),
-    'module' => 'civicrm',
-  );
-
   // Exported permission: 'edit HRJobs'.
   $permissions['edit HRJobs'] = array(
     'name' => 'edit HRJobs',
@@ -1794,19 +1778,10 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'civihr_admin_local' => 'civihr_admin_local',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_manager' => 'civihr_manager',
     ),
     'module' => 'civihr_employee_portal',
-  );
-
-  // Exported permission: 'manage own HRAbsences'.
-  $permissions['manage own HRAbsences'] = array(
-    'name' => 'manage own HRAbsences',
-    'roles' => array(
-      'administrator' => 'administrator',
-      'civihr_admin' => 'civihr_admin',
-      'civihr_admin_local' => 'civihr_admin_local',
-    ),
-    'module' => 'civicrm',
   );
 
   // Exported permission: 'merge duplicate contacts'.
@@ -2110,17 +2085,6 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civicrm',
   );
 
-  // Exported permission: 'view HRAbsences'.
-  $permissions['view HRAbsences'] = array(
-    'name' => 'view HRAbsences',
-    'roles' => array(
-      'administrator' => 'administrator',
-      'civihr_admin' => 'civihr_admin',
-      'civihr_admin_local' => 'civihr_admin_local',
-    ),
-    'module' => 'civicrm',
-  );
-
   // Exported permission: 'view all activities'.
   $permissions['view all activities'] = array(
     'name' => 'view all activities',
@@ -2226,32 +2190,6 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'view my invoices',
     'roles' => array(),
     'module' => 'civicrm',
-  );
-
-  // Exported permission: 'view my leave block'.
-  $permissions['view my leave block'] = array(
-    'name' => 'view my leave block',
-    'roles' => array(
-      'administrator' => 'administrator',
-      'civihr_admin' => 'civihr_admin',
-      'civihr_admin_local' => 'civihr_admin_local',
-      'civihr_manager' => 'civihr_manager',
-      'civihr_staff' => 'civihr_staff',
-    ),
-    'module' => 'civihr_employee_portal',
-  );
-
-  // Exported permission: 'view my sickness report block'.
-  $permissions['view my sickness report block'] = array(
-    'name' => 'view my sickness report block',
-    'roles' => array(
-      'administrator' => 'administrator',
-      'civihr_admin' => 'civihr_admin',
-      'civihr_admin_local' => 'civihr_admin_local',
-      'civihr_manager' => 'civihr_manager',
-      'civihr_staff' => 'civihr_staff',
-    ),
-    'module' => 'civihr_employee_portal',
   );
 
   // Exported permission: 'view my tasks and documents blocks'.

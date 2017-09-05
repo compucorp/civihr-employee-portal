@@ -29,6 +29,5 @@ function civihr_employee_portal_features_menu_default_menu_custom() {
   t('Reports');
   t('Reports settings');
 
-
   return $menus;
 }
