@@ -139,7 +139,7 @@ if (!empty($documentIds)) {
               }
 
               if($field == 'activity_type_id') {
-                printf('<td %s %s><a href="javascript:;" ng-click="document.modalDocument(' . $rowID .', \'staff\',\'' . $mode . '\')">%s</a></td>', $class, $attribute, $content);
+                printf('<td %s %s><a href="" ng-click="document.modalDocument(' . $rowID .', \'staff\',\'' . $mode . '\')">%s</a></td>', $class, $attribute, $content);
               } else {
                 printf('<td %s %s>%s</td>', $class, $attribute, $content);
               }
