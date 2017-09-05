@@ -2455,34 +2455,6 @@ function _invoke_rules_on_absence_decision($main_activity, $type, $absence_detai
 }
 
 /**
- * @param \stdClass $node
- * @param \stdClass $submission
- */
-function civihr_employee_portal_webform_submission_presave($node, &$submission) {
-  $nodeTitle = property_exists($node, 'title') ? $node->title : NULL;
-  $isOnboardingForm = $nodeTitle === 'Welcome to CiviHR';
-  $passwordComponent = WebformHelper::getWebformComponentsByName($node, 'Password');
-  $uid = property_exists($submission, 'uid') ? $submission->uid : NULL;
-
-  if (!$isOnboardingForm || count($passwordComponent) !== 1 || NULL === $uid) {
-    return;
-  }
-
-  $passwordComponent = array_shift($passwordComponent);
-  $cid = CRM_Utils_Array::value('cid', $passwordComponent);
-  $values = property_exists($submission, 'data') ? $submission->data : NULL;
-  $passwordSubmission = array_shift(CRM_Utils_Array::value($cid, $values, []));
-
-  if (!$passwordSubmission) {
-    return;
-  }
-
-  $account = user_load($uid);
-  $params['pass'] = $passwordSubmission;
-  user_save($account, $params);
-}
-
-/**
  * Drupal form to be put in a modal (manager approval pick days form).
  */
 function civihr_employee_portal_manager_approval_pick_days_form($form, $form_state) {
@@ -6195,7 +6167,7 @@ function _civihr_employee_portal_should_do_onboarding($account) {
   $canViewOnboardingForm = node_access('view', $node, $account);
   $submissions = WebformHelper::getUserSubmissionsByName($account, $welcomeFormName);
 
-  return  $canViewOnboardingForm && empty($submissions);
+  return $canViewOnboardingForm && empty($submissions);
 }
 
 function webform_client_form_ajax_callback($form, &$form_state) {
