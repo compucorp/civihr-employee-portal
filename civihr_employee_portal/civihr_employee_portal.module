@@ -5,6 +5,7 @@ use Drupal\civihr_employee_portal\Helpers\WebformHelper;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 use Drupal\civihr_employee_portal\Security\PublicFirewall;
+use Drupal\civihr_employee_portal\Service\TaskCreationService;
 
 /**
  * Implements hook_css_alter().
@@ -6125,6 +6126,48 @@ function _civihr_employee_portal_should_do_onboarding($account) {
   $submissions = WebformHelper::getUserSubmissionsByName($account, $welcomeFormName);
 
   return $canViewOnboardingForm && empty($submissions);
+}
+
+/**
+ * Implements hook_webform_submission_insert().
+ *
+ * @param \stdClass $node
+ * @param array $submission
+ */
+function civihr_employee_portal_webform_submission_insert($node, $submission) {
+  $nodeTitle = property_exists($node, 'title') ? $node->title : NULL;
+  $onboardingTitle = 'Welcome to CiviHR';
+  $isOnboardingForm = $nodeTitle === $onboardingTitle;
+
+  if (!$isOnboardingForm) {
+    return;
+  }
+
+  $ssnFieldName = 'I am currently applying for a NI/ SSN';
+  $applicationStatusField = WebformHelper::getWebformComponentsByName($node, $ssnFieldName);
+  $uid = property_exists($submission, 'uid') ? $submission->uid : NULL;
+
+  if (count($applicationStatusField) !== 1 || NULL === $uid) {
+    return;
+  }
+
+  $applicationStatusField = array_shift($applicationStatusField);
+
+  $cid = CRM_Utils_Array::value('cid', $applicationStatusField);
+  $values = property_exists($submission, 'data') ? $submission->data : NULL;
+  $applicationStatus = CRM_Utils_Array::value($cid, $values, []);
+  $applicationStatus = array_shift($applicationStatus);
+  $isApplying = $applicationStatus == '1';
+
+  if (!$isApplying) {
+    return;
+  }
+
+  $contactId = CRM_Core_Session::singleton()->getLoggedInContactID();
+  $taskTypeName = 'Check on contact for NI/SSN';
+  $date = date('d-m-Y', strtotime('+1 months'));
+
+  TaskCreationService::createForAllManagers($contactId, $taskTypeName, $date);
 }
 
 function webform_client_form_ajax_callback($form, &$form_state) {
