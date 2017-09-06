@@ -6851,7 +6851,7 @@ function civihr_employee_portal_preprocess_page(&$vars) {
     global $user;
     global $base_url;
 
-    $display_name = t('Anonymus');
+    $display_name = t('Anonymous');
     $edit_account_link = '';
     $logout_link = '';
     $user_guide_link = l('<i class="fa fa-book"></i>' . t('User guide'), 'http://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/', array('html' => true, 'attributes' => array('target' => '_blank')));
