@@ -1688,16 +1688,6 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
-    /**
-     * Not used currently
-    $items['civihr_contacts'] = array(
-        'title' => 'Vacancy list',
-        'page callback' => 'civihr_employee_portal_get_contact_list',
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-     */
-
     $items['absence_request/%ctools_js/debit'] = array(
         'page callback' => 'civihr_employee_portal_absence_request_callback',
         'page arguments' => array(1, 2),
@@ -1875,7 +1865,59 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
-    return $items;
+  $items['civicrm/customize-webform'] = [
+    'title' => 'Customize Welcome Wizard',
+    'description' => 'Customize Welcome Wizard',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['customize_welcome_wizard_callback'],
+    'access arguments' => ['administer CiviCRM'],
+    'theme callback' => 'customize_welcome_wizard_theme_callback',
+    'type' => MENU_NORMAL_ITEM,
+  ];
+
+  return $items;
+}
+
+/**
+ * Override default admin theme
+ *
+ * @return string
+ */
+function customize_welcome_wizard_theme_callback() {
+  return 'civihr_default_theme';
+}
+
+/**
+ * Create the welcome wizard form
+ *
+ * @return mixed
+ */
+function customize_welcome_wizard_callback() {
+  $form = [];
+
+  $form['organization_logo'] = [
+    '#type' => 'file',
+    '#title' => t('Organization Logo'),
+    '#description' => t("Upload organization logo for welcome screen")
+  ];
+
+  $form['welcome_text'] = [
+    '#type' => 'text_format',
+    '#title' => t('Welcome Text'),
+    '#description' => t("Personalize your welcome text"),
+    '#pre_render' => ['ckeditor_pre_render_text_format'],
+  ];
+
+  $successDescription = "Customize the welcome introduction when a user lands "
+    . "on tasks and documents page at end of wizard";
+
+  $form['success_text'] = [
+    '#type' => 'text_format',
+    '#title' => t('Introduction'),
+    '#description' => t($successDescription),
+  ];
+
+  return system_settings_form($form);
 }
 
 /**
