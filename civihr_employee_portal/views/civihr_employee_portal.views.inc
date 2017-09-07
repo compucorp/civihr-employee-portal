@@ -1114,10 +1114,11 @@ function _civihr_employee_portal_decode_vacancy_description_html(&$view, &$outpu
   $replacements = [];
   $renderedFields = [];
 
-  if (isset($view->style_plugin->rendered_fields)) {
-    $renderedFields = $view->style_plugin->rendered_fields;
+  if (!property_exists($view->style_plugin, 'rendered_fields')) {
+    return;
   }
-  foreach ($renderedFields as $vacancy) {
+
+  foreach ($view->style_plugin->rendered_fields as $vacancy) {
     $replacements[$vacancy['description']] = html_entity_decode($vacancy['description']);
   }
 
