@@ -25,17 +25,23 @@ function civihr_employee_portal_features_default_fe_block_boxes() {
     width: 280px; 
     background: #fff; 
     font-family: Lato, sans-serif;
-    font-size: 16px;
+    border-radius: 2px;
+    font-size: 14px;
     box-sizing: initial;
-    color: rgb(118, 123, 142);
+    color: #475568;
     padding: 10px 30px;
     box-shadow: 0px 5px 20px rgba(136, 136, 136, 0.27);
 }
 
+#civihr-signup-tab #signup-hide-button {
+    box-shadow: -3px -3px 20px rgba(136, 136, 136, 0.27);
+}
+
 #civihr-signup-tab h3 {
-    font-size: 28px;
+    font-size: 26px;
     line-height: normal;
     margin: 5px;
+    font-weight: 300;
 }
 
 #civihr-signup-tab a {
@@ -51,6 +57,7 @@ function civihr_employee_portal_features_default_fe_block_boxes() {
     border: none;
     padding: 10px;
     cursor: pointer;
+    font-weight: 500;
     box-sizing: initial;
 }
 
@@ -67,9 +74,13 @@ function civihr_employee_portal_features_default_fe_block_boxes() {
 }
 
 #civihr-signup-tab .big-and-bold {
-    font-weight: bold;
-    font-size: 16px;
+    font-size: 14px;
+    font-weight: 700;
     text-transform: uppercase;
+}
+
+#civihr-signup-tab .rounded {
+    border-radius: 2px;
 }
 
 .slide-in-right {
@@ -78,11 +89,11 @@ function civihr_employee_portal_features_default_fe_block_boxes() {
 </style>
 
 <div id="civihr-signup-tab">
-<h3 id="signup-hide-button" class="vertical-text signup-button big-and-bold">JOIN CIVIHR</h3>
+<h3 id="signup-hide-button" class="vertical-text signup-button big-and-bold rounded">JOIN CIVIHR</h3>
 <form target="_blank" action="https://civihr.org/signup">
   <h3>Become an early adopter</h3>
   <p>Sign up for the public beta phase before the end of September. We\'ll provide free hosting and support till the end of March 2018, and you\'ll get to help shape the future of CiviHR.</p>
-  <button class="signup-button big-and-bold">SIGN ME UP!</button>
+  <button class="signup-button big-and-bold rounded">SIGN ME UP!</button>
   <p>or <a href="https://civihr.org">return to civihr.org</a></p>
 </form>
 </div>
