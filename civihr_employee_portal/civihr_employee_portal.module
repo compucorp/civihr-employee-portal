@@ -1908,7 +1908,7 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
-  $items['civicrm/customize-webform'] = [
+  $items['customize-webform'] = [
     'title' => 'Customize Welcome Wizard',
     'description' => 'Customize Welcome Wizard',
     'page callback' => 'drupal_get_form',
