@@ -271,6 +271,7 @@ features[user_permission][] = view revisions
 features[user_permission][] = view staff directory
 features[user_permission][] = view the administration theme
 features[user_permission][] = view vacancies
+features[user_permission][] = customize welcome wizard
 features[user_role][] = civihr_admin
 features[user_role][] = civihr_admin_local
 features[user_role][] = civihr_manager
