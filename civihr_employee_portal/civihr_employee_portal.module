@@ -1937,30 +1937,69 @@ function customize_welcome_wizard_theme_callback() {
  */
 function customize_welcome_wizard_callback() {
   $form = [];
+  $prefix = 'civihr_onboarding_';
+  $logoKey = $prefix . 'organization_logo_fid';
+  $welcomeTextKey = $prefix . 'welcome_text';
+  $successKey = $prefix . 'success_text';
+  $formattedValueDefaults = ['value' => '', 'format' => NULL];
 
-  $form['organization_logo'] = [
-    '#type' => 'file',
+  $form[$logoKey] = [
+    '#type' => 'managed_file',
     '#title' => t('Organization Logo'),
-    '#description' => t("Upload organization logo for welcome screen")
+    '#description' => t("Upload organization logo for welcome screen"),
+    '#default_value' => variable_get($logoKey),
+    '#upload_location' => 'public://',
+    '#upload_validators' => ['file_validate_extensions' => ['gif png jpg jpeg']]
   ];
 
-  $form['welcome_text'] = [
+  $welcomeText = variable_get($welcomeTextKey, $formattedValueDefaults);
+  $form[$welcomeTextKey] = [
     '#type' => 'text_format',
     '#title' => t('Welcome Text'),
     '#description' => t("Personalize your welcome text"),
-    '#pre_render' => ['ckeditor_pre_render_text_format'],
+    '#format' => $welcomeText['format'],
+    '#default_value' => $welcomeText['value'],
   ];
 
   $successDescription = "Customize the welcome introduction when a user lands "
-    . "on tasks and documents page at end of wizard";
+    . "on tasks and documents page at end of wizard.";
 
-  $form['success_text'] = [
+  $successText = variable_get($successKey, $formattedValueDefaults);
+  $form[$successKey] = [
     '#type' => 'text_format',
     '#title' => t('Introduction'),
     '#description' => t($successDescription),
+    '#format' => $successText['format'],
+    '#default_value' => $successText['value'],
   ];
 
+  $form['#submit'][] = 'welcome_wizard_customization_form_submit';
+
   return system_settings_form($form);
+}
+
+/**
+ * This callback is required as Drupal does not handle saving of files from a
+ * system form
+ * @see https://drupal.stackexchange.com/a/187043/75186
+ *
+ * @param $form
+ * @param $form_state
+ */
+function welcome_wizard_customization_form_submit($form, &$form_state) {
+  global $user;
+  $logoKey = 'civihr_onboarding_organization_logo_fid';
+  $file = file_load($form_state['values'][$logoKey]);
+  if (!$file) {
+    return;
+  }
+
+  $file->status = FILE_STATUS_PERMANENT;
+  file_save($file);
+  variable_set($logoKey, $file->fid);
+  file_usage_add($file, 'user', 'user', $user->uid);
+  // value not required for system_settings_form
+  unset($form_state['values'][$logoKey]);
 }
 
 /**
