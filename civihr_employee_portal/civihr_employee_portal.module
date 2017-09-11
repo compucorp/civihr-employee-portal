@@ -852,6 +852,10 @@ function civihr_employee_portal_permission() {
       'title' => t('View Vacancies'),
       'description' => t('Availability for the user to view vacancies block and page')
     ),
+    'customize welcome wizard' => array(
+      'title' => t('Customize Welcome Wizard'),
+      'description' => t('Set the company logo and text to be displayed in the onboarding wizard')
+    ),
     'access hrreports' => array(
       'title' => t('Access HR Reports'),
       'description' => t('Availability to access HR Report pages'),
@@ -1913,7 +1917,7 @@ function civihr_employee_portal_menu() {
     'description' => 'Customize Welcome Wizard',
     'page callback' => 'drupal_get_form',
     'page arguments' => ['customize_welcome_wizard_callback'],
-    'access arguments' => ['administer CiviCRM'],
+    'access arguments' => ['customize welcome wizard'],
     'theme callback' => 'customize_welcome_wizard_theme_callback',
     'type' => MENU_NORMAL_ITEM,
   ];
