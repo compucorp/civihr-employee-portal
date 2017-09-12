@@ -26,7 +26,6 @@
           // Sets the date format for HR_settings.DATE_FORMAT
           DateFormat.getDateFormat();
           subscribeForEvents();
-          watchForChanges();
         })();
 
         /**
@@ -105,25 +104,6 @@
         function subscribeForEvents () {
           $rootScope.$on('document-saved', function () {
             $window.location.reload();
-          });
-        };
-
-        /**
-         * All watchers for changes
-         */
-        function watchForChanges () {
-          /**
-           * Watch for the changes in the list of $rootScope.cache.contact.arrSearch
-           * Display spinner and hide "open" button until the arrSearch is filled with contacts
-           *
-           * Note: $rootScope.cache.contact.arrSearch will always contain a
-           * contact data (curently logged in contact). So if there are documents,
-           * there must be more that one contacts conidering at aleast a target contact in a document
-           */
-          $rootScope.$watch('cache.contact', function () {
-            availableContacts = !!$rootScope.cache.contact.arrSearch.length;
-            $rootScope.$broadcast('ct-spinner-' + (availableContacts ? 'hide' : 'show'));
-            vm.loadingModalData = !availableContacts;
           });
         };
     }
