@@ -1,6 +1,7 @@
 <?php
 
 use Drupal\civihr_employee_portal\Blocks\Base;
+use Drupal\civihr_employee_portal\Mail\AccountActivatedSystemMail;
 use Drupal\civihr_employee_portal\Helpers\WebformHelper;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
@@ -836,6 +837,37 @@ function civihr_employee_portal_permission() {
       'description' => t('Availability to manage HR Reports configuration'),
     ),
   );
+}
+
+
+/**
+ * Implements hook_mail_alter().
+ *
+ * @param $message
+ */
+function civihr_employee_portal_mail_alter(&$message) {
+  $replacementMail = NULL;
+
+  switch ($message['key']) {
+    case 'status_activated':
+      $replacementMail = new AccountActivatedSystemMail();
+      break;
+  }
+
+  if (!$replacementMail) {
+    return;
+  }
+
+  $smarty = CRM_Core_Smarty::singleton();
+  $smarty->addTemplateDir(__DIR__ . '/templates/smarty');
+
+  $variables = $replacementMail->getVariables($message);
+  $headers = $replacementMail->getHeaders();
+  $templateName = $replacementMail->getTemplateName();
+  $body = $smarty->fetchWith($templateName, $variables);
+
+  $message['headers'] = array_merge($message['headers'], $headers);
+  $message['body'] = [$body];
 }
 
 /**
