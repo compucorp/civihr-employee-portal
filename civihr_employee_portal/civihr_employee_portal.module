@@ -6251,6 +6251,9 @@ function civihr_employee_portal_webform_submission_insert($node, $submission) {
   $date = date('d-m-Y', strtotime('+1 months'));
 
   TaskCreationService::createForAllManagers($contactId, $taskTypeName, $date);
+
+  // clear contact data cache used in get_civihr_contact_data()
+  cache_clear_all('civihr_contact_data_' . $contactId, 'cache');
 }
 
 function webform_client_form_ajax_callback($form, &$form_state) {
