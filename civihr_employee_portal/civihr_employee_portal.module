@@ -6,6 +6,7 @@ use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 use Drupal\civihr_employee_portal\Security\PublicFirewall;
 use Drupal\civihr_employee_portal\Service\TaskCreationService;
+use Drupal\civihr_employee_portal\Service\ContactService;
 
 /**
  * Implements hook_css_alter().
@@ -6246,14 +6247,22 @@ function civihr_employee_portal_webform_submission_insert($node, $submission) {
     return;
   }
 
-  $contactId = CRM_Core_Session::singleton()->getLoggedInContactID();
+  $contactID = CRM_Core_Session::singleton()->getLoggedInContactID();
   $taskTypeName = 'Check on contact for NI/SSN';
   $date = date('d-m-Y', strtotime('+1 months'));
 
-  TaskCreationService::createForAllManagers($contactId, $taskTypeName, $date);
+  $assigneeIDs = ContactService::getLineManagerIDs($contactID);
+  if (empty($assigneeIDs)) {
+    $assigneeIDs = ContactService::getContactsWithRole('CIVIHR_ADMIN');
+  }
+  $assigneeID = current($assigneeIDs); // only one assignee, first in line
+
+  if ($assigneeID && $assigneeID != $contactID) {
+    TaskCreationService::create($contactID, [$assigneeID], $taskTypeName, $date);
+  }
 
   // clear contact data cache used in get_civihr_contact_data()
-  cache_clear_all('civihr_contact_data_' . $contactId, 'cache');
+  cache_clear_all('civihr_contact_data_' . $contactID, 'cache');
 }
 
 function webform_client_form_ajax_callback($form, &$form_state) {
