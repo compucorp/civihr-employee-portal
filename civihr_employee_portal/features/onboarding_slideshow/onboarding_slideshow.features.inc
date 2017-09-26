@@ -26,9 +26,9 @@ function onboarding_slideshow_views_api($module = NULL, $api = NULL) {
 function onboarding_slideshow_node_info() {
   $items = array(
     'welcome_slideshow' => array(
-      'name' => t('Welcome Slideshow'),
+      'name' => t('Slideshow Image'),
       'base' => 'node_content',
-      'description' => t('Slideshow images for the end of the onboarding form.'),
+      'description' => t('Slideshow images for the Views Slideshow module.'),
       'has_title' => '1',
       'title_label' => t('Title'),
       'help' => '',
