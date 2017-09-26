@@ -602,6 +602,11 @@ function civihr_employee_portal_init() {
   // some drupal functions such as user_access
   _user_redirection();
 
+  $queryParams = drupal_get_query_parameters();
+  if (isset($queryParams['message'])) {
+    drupal_set_message($queryParams['message']);
+  }
+
   // Loads all the resources only for non-civicrm pages.
   if (!_isCiviCRM()) {
     // Civi init + load the singleton needed for the AJAX calls
