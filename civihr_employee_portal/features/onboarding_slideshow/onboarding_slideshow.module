@@ -1,0 +1,3 @@
+<?php
+
+include_once 'onboarding_slideshow.features.inc';

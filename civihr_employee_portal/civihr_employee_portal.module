@@ -6192,7 +6192,7 @@ function civihr_employee_portal_user_login(&$edit, $account) {
     }
 
     if (_civihr_employee_portal_should_do_onboarding($account)) {
-      $_GET['destination'] = $onboardingFormPath;
+      // $_GET['destination'] = $onboardingFormPath;
     }
   }
 }
