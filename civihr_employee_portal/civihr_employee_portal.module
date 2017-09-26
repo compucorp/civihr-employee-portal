@@ -603,7 +603,7 @@ function civihr_employee_portal_init() {
   _user_redirection();
 
   $queryParams = drupal_get_query_parameters();
-  if (isset($queryParams['message'])) {
+  if (!empty($queryParams['message'])) {
     drupal_set_message($queryParams['message']);
   }
 
