@@ -1,13 +1,14 @@
 <?php
 
+use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
+
 include_once 'onboarding_slideshow.features.inc';
 
 /**
  * Implements hook_enable().
  */
 function onboarding_slideshow_enable() {
-  $prefix = 'civihr_onboarding_';
-  $introKey = $prefix . 'intro_text';
+  $introKey = OnboardingWizardCustomizationForm::INTRODUCTION_TEXT_KEY;
   $existing = variable_get($introKey);
 
   if (!$existing) {

@@ -7,6 +7,7 @@ use Drupal\civihr_employee_portal\Helpers\HelperClass;
 use Drupal\civihr_employee_portal\Security\PublicFirewall;
 use Drupal\civihr_employee_portal\Service\TaskCreationService;
 use Drupal\civihr_employee_portal\Service\ContactService;
+use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
 
 /**
  * Implements hook_css_alter().
@@ -647,7 +648,8 @@ function civihr_employee_portal_init() {
 
   $query = drupal_get_query_parameters();
   if (isset($query['source']) && $query['source'] == 'onboarding') {
-    $welcomeMessage = variable_get('civihr_onboarding_intro_text');
+    $key = OnboardingWizardCustomizationForm::INTRODUCTION_TEXT_KEY;
+    $welcomeMessage = variable_get($key);
     if ($welcomeMessage) {
       drupal_set_message($welcomeMessage);
     }
@@ -1944,49 +1946,12 @@ function customize_welcome_wizard_theme_callback() {
 }
 
 /**
- * Create the welcome wizard form
+ * Create the form to customize the onboarding form
  *
- * @return mixed
+ * @return array
  */
 function customize_welcome_wizard_callback() {
-  $form = [];
-  $prefix = 'civihr_onboarding_';
-  $logoKey = $prefix . 'organization_logo_fid';
-  $welcomeTextKey = $prefix . 'welcome_text';
-  $introKey = $prefix . 'intro_text';
-  $formattedValueDefaults = ['value' => '', 'format' => NULL];
-
-  $form[$logoKey] = [
-    '#type' => 'managed_file',
-    '#title' => t('Organization Logo'),
-    '#description' => t("Upload organization logo for welcome screen"),
-    '#default_value' => variable_get($logoKey),
-    '#upload_location' => 'public://',
-    '#upload_validators' => ['file_validate_extensions' => ['gif png jpg jpeg']]
-  ];
-
-  $welcomeText = variable_get($welcomeTextKey, $formattedValueDefaults);
-  $form[$welcomeTextKey] = [
-    '#type' => 'text_format',
-    '#title' => t('Welcome Text'),
-    '#description' => t("Personalize your welcome text"),
-    '#format' => $welcomeText['format'],
-    '#default_value' => $welcomeText['value'],
-  ];
-
-  $introDescription = "Customize the welcome introduction when a user lands "
-    . "on tasks and documents page at end of wizard.";
-
-  $form[$introKey] = [
-    '#type' => 'textfield',
-    '#title' => t('Introduction'),
-    '#description' => t($introDescription),
-    '#default_value' => variable_get($introKey),
-  ];
-
-  $form['#submit'][] = 'welcome_wizard_customization_form_submit';
-
-  return system_settings_form($form);
+  return (new OnboardingWizardCustomizationForm())->build();
 }
 
 /**
@@ -1999,7 +1964,7 @@ function customize_welcome_wizard_callback() {
  */
 function welcome_wizard_customization_form_submit($form, &$form_state) {
   global $user;
-  $logoKey = 'civihr_onboarding_organization_logo_fid';
+  $logoKey = OnboardingWizardCustomizationForm::LOGO_KEY;
   $file = file_load($form_state['values'][$logoKey]);
   if (!$file) {
     return;
@@ -2011,6 +1976,8 @@ function welcome_wizard_customization_form_submit($form, &$form_state) {
   file_usage_add($file, 'user', 'user', $user->uid);
   // value not required for system_settings_form
   unset($form_state['values'][$logoKey]);
+
+
 }
 
 /**
