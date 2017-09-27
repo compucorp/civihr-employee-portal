@@ -119,7 +119,7 @@ function onboarding_slideshow_views_default_views() {
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
-  $handler->display->display_options['path'] = 'onboarding-slideshow';
+  $handler->display->display_options['path'] = 'features-in-civihr';
   $translatables['onboarding_slideshow'] = array(
     t('Master'),
     t('What you can do in CiviHR'),
