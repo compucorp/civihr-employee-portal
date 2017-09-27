@@ -26,6 +26,14 @@ $handler->display->display_options['exposed_form']['type'] = 'basic';
 $handler->display->display_options['pager']['type'] = 'none';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['style_plugin'] = 'table';
+/* Header: Global: Text area */
+$handler->display->display_options['header']['area']['id'] = 'area';
+$handler->display->display_options['header']['area']['table'] = 'views';
+$handler->display->display_options['header']['area']['field'] = 'area';
+$handler->display->display_options['header']['area']['label'] = 'Add HR Resource Type';
+$handler->display->display_options['header']['area']['empty'] = TRUE;
+$handler->display->display_options['header']['area']['content'] = '<a class="btn btn-default btn-primary" href="/admin/structure/taxonomy/hr_resource_type/add"><span class="fa fa-plus"></span> Add HR Resource Type</a>';
+$handler->display->display_options['header']['area']['format'] = 'full_html';
 /* No results behavior: Global: Text area */
 $handler->display->display_options['empty']['area']['id'] = 'area';
 $handler->display->display_options['empty']['area']['table'] = 'views';
@@ -73,6 +81,8 @@ $translatables['hr_resource_types_list'] = array(
   t('Sort by'),
   t('Asc'),
   t('Desc'),
+  t('Add HR Resource Type'),
+  t('<a class="btn btn-default btn-primary" href="/admin/structure/taxonomy/hr_resource_type/add"><span class="fa fa-plus"></span> Add HR Resource Type</a>'),
   t('No terms available.'),
   t('Name'),
   t('OPERATIONS'),
