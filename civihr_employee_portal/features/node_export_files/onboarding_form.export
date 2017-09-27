@@ -79,7 +79,7 @@ array(
         'next_serial' => '26',
         'confirmation' => '',
         'confirmation_format' => 'plain_text',
-        'redirect_url' => '/civicrm/what-you-can-do',
+        'redirect_url' => '/features-in-civihr',
         'status' => '1',
         'block' => '0',
         'allow_draft' => '0',
