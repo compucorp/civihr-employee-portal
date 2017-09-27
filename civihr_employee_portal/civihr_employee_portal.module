@@ -647,7 +647,7 @@ function civihr_employee_portal_init() {
 
   $query = drupal_get_query_parameters();
   if (isset($query['source']) && $query['source'] == 'onboarding') {
-    $welcomeMessage = variable_get('civihr_onboarding_success_text');
+    $welcomeMessage = variable_get('civihr_onboarding_intro_text');
     if ($welcomeMessage) {
       drupal_set_message($welcomeMessage);
     }
@@ -1953,7 +1953,7 @@ function customize_welcome_wizard_callback() {
   $prefix = 'civihr_onboarding_';
   $logoKey = $prefix . 'organization_logo_fid';
   $welcomeTextKey = $prefix . 'welcome_text';
-  $successKey = $prefix . 'success_text';
+  $introKey = $prefix . 'intro_text';
   $formattedValueDefaults = ['value' => '', 'format' => NULL];
 
   $form[$logoKey] = [
@@ -1974,14 +1974,14 @@ function customize_welcome_wizard_callback() {
     '#default_value' => $welcomeText['value'],
   ];
 
-  $successDescription = "Customize the welcome introduction when a user lands "
+  $introDescription = "Customize the welcome introduction when a user lands "
     . "on tasks and documents page at end of wizard.";
 
-  $form[$successKey] = [
+  $form[$introKey] = [
     '#type' => 'textfield',
     '#title' => t('Introduction'),
-    '#description' => t($successDescription),
-    '#default_value' => variable_get($successKey),
+    '#description' => t($introDescription),
+    '#default_value' => variable_get($introKey),
   ];
 
   $form['#submit'][] = 'welcome_wizard_customization_form_submit';
