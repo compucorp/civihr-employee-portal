@@ -602,9 +602,12 @@ function civihr_employee_portal_init() {
   // some drupal functions such as user_access
   _user_redirection();
 
-  $queryParams = drupal_get_query_parameters();
-  if (!empty($queryParams['message'])) {
-    drupal_set_message($queryParams['message']);
+  $query = drupal_get_query_parameters();
+  if (isset($query['source']) && $query['source'] == 'onboarding') {
+    $welcomeMessage = variable_get('civihr_onboarding_success_text');
+    if ($welcomeMessage) {
+      drupal_set_message($welcomeMessage);
+    }
   }
 
   // Loads all the resources only for non-civicrm pages.
@@ -1875,7 +1878,7 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
-  $items['customize-webform'] = [
+  $items['customize-onboarding-wizard'] = [
     'title' => 'Customize Welcome Wizard',
     'description' => 'Customize Welcome Wizard',
     'page callback' => 'drupal_get_form',
