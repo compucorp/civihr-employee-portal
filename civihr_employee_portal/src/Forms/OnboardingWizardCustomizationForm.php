@@ -51,15 +51,14 @@ class OnboardingWizardCustomizationForm {
    * @return array
    */
   private function getWelcomeTextElement() {
-    $default = ['value' => '', 'format' => NULL];
-    $welcomeText = variable_get(self::WELCOME_TEXT_KEY, $default);
+    $welcomeText = variable_get(self::WELCOME_TEXT_KEY);
 
     return [
       '#type' => 'textarea',
       '#title' => t('Welcome Text'),
       '#weight' => 2,
       '#description' => t("Personalize your welcome text"),
-      '#default_value' => $welcomeText['value'],
+      '#default_value' => $welcomeText,
     ];
   }
 
