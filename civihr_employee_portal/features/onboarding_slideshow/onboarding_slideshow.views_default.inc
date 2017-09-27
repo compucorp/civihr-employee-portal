@@ -107,15 +107,6 @@ function onboarding_slideshow_views_default_views() {
   $handler->display->display_options['filters']['type']['value'] = array(
     'welcome_slideshow' => 'welcome_slideshow',
   );
-  /* Filter criterion: Content: Tag (field_tag) */
-  $handler->display->display_options['filters']['field_tag_tid']['id'] = 'field_tag_tid';
-  $handler->display->display_options['filters']['field_tag_tid']['table'] = 'field_data_field_tag';
-  $handler->display->display_options['filters']['field_tag_tid']['field'] = 'field_tag_tid';
-  $handler->display->display_options['filters']['field_tag_tid']['value'] = array(
-    1 => '1',
-  );
-  $handler->display->display_options['filters']['field_tag_tid']['type'] = 'select';
-  $handler->display->display_options['filters']['field_tag_tid']['vocabulary'] = 'tags';
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
