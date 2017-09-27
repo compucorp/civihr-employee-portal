@@ -39,6 +39,7 @@ class OnboardingWizardCustomizationForm {
     return [
       '#type' => 'managed_file',
       '#title' => t('Organization Logo'),
+      '#weight' => 1,
       '#description' => t("Upload organization logo for welcome screen"),
       '#default_value' => variable_get(self::LOGO_KEY),
       '#upload_location' => 'public://',
@@ -54,10 +55,10 @@ class OnboardingWizardCustomizationForm {
     $welcomeText = variable_get(self::WELCOME_TEXT_KEY, $default);
 
     return [
-      '#type' => 'text_format',
+      '#type' => 'textarea',
       '#title' => t('Welcome Text'),
+      '#weight' => 2,
       '#description' => t("Personalize your welcome text"),
-      '#format' => $welcomeText['format'],
       '#default_value' => $welcomeText['value'],
     ];
   }
@@ -70,8 +71,9 @@ class OnboardingWizardCustomizationForm {
       . "on tasks and documents page at end of wizard.";
 
     return [
-      '#type' => 'textfield',
+      '#type' => 'textarea',
       '#title' => t('Introduction'),
+      '#weight' => 4,
       '#description' => t($introDescription),
       '#default_value' => variable_get(self::INTRODUCTION_TEXT_KEY),
     ];
@@ -94,6 +96,7 @@ class OnboardingWizardCustomizationForm {
     return [
       '#type' => 'checkboxes',
       '#options' => $carouselOptions,
+      '#weight' => 3,
       '#title' => t('Select which features are shown on the welcome carousel'),
       '#default_value' => $carouselDefaults,
     ];
