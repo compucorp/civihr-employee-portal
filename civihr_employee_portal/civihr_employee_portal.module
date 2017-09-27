@@ -6243,7 +6243,7 @@ function civihr_employee_portal_user_login(&$edit, $account) {
     }
 
     if (_civihr_employee_portal_should_do_onboarding($account)) {
-      // $_GET['destination'] = $onboardingFormPath;
+       $_GET['destination'] = $onboardingFormPath;
     }
   }
 }
@@ -6273,10 +6273,14 @@ function civihr_employee_portal_webform_submission_insert($node, $submission) {
   $nodeTitle = property_exists($node, 'title') ? $node->title : NULL;
   $onboardingTitle = 'Welcome to CiviHR';
   $isOnboardingForm = $nodeTitle === $onboardingTitle;
+  $contactID = CRM_Core_Session::singleton()->getLoggedInContactID();
 
   if (!$isOnboardingForm) {
     return;
   }
+
+  // clear contact data cache used in get_civihr_contact_data()
+  cache_clear_all('civihr_contact_data_' . $contactID, 'cache');
 
   $ssnFieldName = 'I am currently applying for a NI/ SSN';
   $applicationStatusField = WebformHelper::getWebformComponentsByName($node, $ssnFieldName);
@@ -6298,7 +6302,6 @@ function civihr_employee_portal_webform_submission_insert($node, $submission) {
     return;
   }
 
-  $contactID = CRM_Core_Session::singleton()->getLoggedInContactID();
   $taskTypeName = 'Check on contact for NI/SSN';
   $date = date('d-m-Y', strtotime('+1 months'));
 
@@ -6311,9 +6314,6 @@ function civihr_employee_portal_webform_submission_insert($node, $submission) {
   if ($assigneeID && $assigneeID != $contactID) {
     TaskCreationService::create($contactID, [$assigneeID], $taskTypeName, $date);
   }
-
-  // clear contact data cache used in get_civihr_contact_data()
-  cache_clear_all('civihr_contact_data_' . $contactID, 'cache');
 }
 
 function webform_client_form_ajax_callback($form, &$form_state) {
