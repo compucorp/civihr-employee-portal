@@ -31,12 +31,13 @@ class AbsenceRequestForm {
      *   The structure of the 'dates selected' form area
      */
     public function ajax_callback() {
-        $from = $this->form_state['values']['absence_request_date_from'];
+        $from = new \DateTime($this->form_state['values']['absence_request_date_from']);
+        $to = new \DateTime($this->form_state['values']['absence_request_date_to']);
         $i = 0;
 
-        while ($from <= $this->form_state['values']['absence_request_date_to']) {
+        while ($from <= $to) {
             $i++;
-            $this->add_day_to($from);
+            $from->modify('+1 day');
         }
 
         $this->form['absence_request_dates_selected']['dates_counter']['#value'] = $i;
@@ -245,16 +246,6 @@ class AbsenceRequestForm {
     }
 
     /**
-     * Adds a day to a given date
-     *
-     * @param string
-     *   The date to add a day to
-     */
-    protected function add_day_to(&$date) {
-        $date = date('Y-m-d', strtotime($date) + (60 * 60 * 24));
-    }
-
-    /**
      * Adds the fields that make up the form
      */
     protected function add_fields() {
@@ -353,7 +344,8 @@ class AbsenceRequestForm {
      * Adds the _requested_day_ field to the form, based on the selected absence period
      */
     protected function add_requested_date_fields() {
-        $from = $this->form_state['values']['absence_request_date_from'];
+        $from = new \DateTime($this->form_state['values']['absence_request_date_from']);
+        $to = new \DateTime($this->form_state['values']['absence_request_date_to']);
 
         try {
             $public_holidays = $this->public_holidays();
@@ -364,12 +356,12 @@ class AbsenceRequestForm {
             return;
         }
 
-        while ($from <= $this->form_state['values']['absence_request_date_to']) {
+        while ($from <= $to) {
             $check_day = _checkRequestedDay($public_holidays, $from); // Check if the day is public holiday or not working day
 
-            $this->form['absence_request_dates_selected']['_requested_day_' . str_replace('-', '', $from)] = array(
+            $this->form['absence_request_dates_selected']['_requested_day_' . $from->format('Ymd')] = array(
                 '#type' => 'select',
-                '#title' => $from . $check_day['exclude_type'],
+                '#title' => $from->format('Y-m-d') . $check_day['exclude_type'],
                 '#options' => array('480' => t('All day'), '240' => t('Half day'), '0' => t('Excluded @exclude_type', array('@exclude_type' => $check_day['exclude_type']))),
                 '#default_value' => $check_day['default_value'],
                 '#ajax' => array(
@@ -379,7 +371,7 @@ class AbsenceRequestForm {
                 )
             );
 
-            $this->add_day_to($from);
+            $from->modify('+1 day');
         }
 
         $this->reset_form_state_requested_days();

@@ -110,7 +110,7 @@ function civihr_employee_portal_rules_action_info() {
             ),
         ),
     );
-    
+
     return $actions;
 }
 
@@ -136,13 +136,13 @@ function _new_absence_request_action($roles, $absence_type, $absence_details, $f
         // TODO --> status ID should be dynamic??
         'status_id' => '1'
     );
-    
+
     $result = civicrm_api3('Activity', 'create', $activityParam);
-        
+
     // Get the main "absence" activity ID
     $activityTypes = CRM_Core_OptionGroup::values('activity_type', FALSE, FALSE, FALSE, NULL, 'name');
     $activityTypeId = CRM_Utils_Array::key('Absence', $activityTypes);
-    
+
     // Create sub-activities
     $activityLeavesParam = array(
         'sequential' => 1,
@@ -172,41 +172,26 @@ function _new_absence_request_action($roles, $absence_type, $absence_details, $f
 
     // Define Absence Date Durations
     $absentDateDurations = array();
-    $date_counter = 0;
-    
+
+    $fromDate = new \DateTime($form_values->absence_request_date_from);
     foreach ($form_values as $object_property_key => $object_property_value) {
-        
+
         if (strpos($object_property_key, '_requested_day_') !== false) {
-            
-            if ($date_counter > 0) {
-            
-                $new_date = strtotime($form_values->absence_request_date_from);
-                $new_date = $new_date + (60 * 60 * 24 * $date_counter);
-                $new_date = date('Y-m-d', $new_date);
-                
-                $absentDateDurations[$object_property_key] = array('date' => $new_date . " 00:00:00", 'duration' => $object_property_value, 'approval' => '1');
-            
-            }
-            else {
-                
-                $absentDateDurations[$object_property_key] = array('date' => $form_values->absence_request_date_from . " 00:00:00", 'duration' => $object_property_value, 'approval' => '1');
-                
-            }
-            
-            $date_counter++;
+          $absentDateDurations[$object_property_key] = array('date' => $fromDate->format('Y-m-d 00:00:00'), 'duration' => $object_property_value, 'approval' => '1');
+          $fromDate->modify('+1 day');
         }
-        
+
     }
-    
+
     foreach ($absentDateDurations as $object_key => $duration) {
         $activityLeavesParam['activity_date_time'] = $duration['date'];
         $activityLeavesParam['duration'] = $duration['duration'];
         $activityLeavesParam['status_id'] = $duration['approval'];
-        
+
         civicrm_api3('Activity', 'create', $activityLeavesParam);
 
     }
-    
+
     // @TODO -> This should provide success / failure value (email message should be based on this success or failure) -> If failure don't create activity
-        
+
 }
