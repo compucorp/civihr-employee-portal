@@ -4,7 +4,7 @@ use Drupal\civihr_employee_portal\Blocks\Base;
 use Drupal\civihr_employee_portal\Helpers\WebformHelper;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
-use Drupal\civihr_employee_portal\Service\RedirectionService;
+use Drupal\civihr_employee_portal\Security\PublicFirewall;
 use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
 use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
 
@@ -7522,8 +7522,8 @@ function _get_task_filter_by_date($date, $normalize = false) {
  * drupal_goto() and current_path() cannot be used).
  */
 function _user_redirection() {
+  $publicFirewall = new PublicFirewall();
   global $user, $base_url;
-  $redirectionService = new RedirectionService();
 
   // This function should only be executed in a non-cli environment.
   // It calls exit() function, which causes errors when running drush commands
@@ -7531,12 +7531,20 @@ function _user_redirection() {
     return;
   }
 
-  $route = request_path();
-  $uri = rawurlencode(request_uri());
+  $current_path = request_path();
+  $requestURI = rawurlencode(request_uri());
 
-  $newRoute = $redirectionService->getRedirectRoute($user, $route, $uri);
-  if ($newRoute) {
-    drupal_add_http_header('Location', sprintf('%s/%s', $base_url, $newRoute));
+  if (!$publicFirewall->canAccess($user, $current_path)) {
+    $query = $current_path ? sprintf('?destination=%s', $requestURI) : '';
+    $redirect_path = 'welcome-page' . $query;
+  }
+  elseif (in_array($current_path, ['', 'civicrm', 'civicrm/dashboard'])) {
+    $tasksDashboard = 'civicrm/tasksassignments/dashboard#/tasks';
+    $redirect_path = user_access('access CiviCRM') ? $tasksDashboard : 'dashboard';
+  }
+
+  if (!empty($redirect_path)) {
+    drupal_add_http_header('Location', "$base_url/{$redirect_path}");
     exit();
   }
 }
