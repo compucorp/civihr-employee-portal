@@ -5,8 +5,7 @@ use Drupal\civihr_employee_portal\Helpers\WebformHelper;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 use Drupal\civihr_employee_portal\Security\PublicFirewall;
-use Drupal\civihr_employee_portal\Service\TaskCreationService;
-use Drupal\civihr_employee_portal\Service\ContactService;
+use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
 use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
 
 /**
@@ -6240,46 +6239,10 @@ function civihr_employee_portal_webform_submission_insert($node, $submission) {
   $nodeTitle = property_exists($node, 'title') ? $node->title : NULL;
   $onboardingTitle = 'Welcome to CiviHR';
   $isOnboardingForm = $nodeTitle === $onboardingTitle;
-  $contactID = CRM_Core_Session::singleton()->getLoggedInContactID();
 
-  if (!$isOnboardingForm) {
-    return;
-  }
-
-  // clear contact data cache used in get_civihr_contact_data()
-  cache_clear_all('civihr_contact_data_' . $contactID, 'cache');
-
-  $ssnFieldName = 'I am currently applying for a NI/ SSN';
-  $applicationStatusField = WebformHelper::getWebformComponentsByName($node, $ssnFieldName);
-  $uid = property_exists($submission, 'uid') ? $submission->uid : NULL;
-
-  if (count($applicationStatusField) !== 1 || NULL === $uid) {
-    return;
-  }
-
-  $applicationStatusField = array_shift($applicationStatusField);
-
-  $cid = CRM_Utils_Array::value('cid', $applicationStatusField);
-  $values = property_exists($submission, 'data') ? $submission->data : NULL;
-  $applicationStatus = CRM_Utils_Array::value($cid, $values, []);
-  $applicationStatus = array_shift($applicationStatus);
-  $isApplying = $applicationStatus == '1';
-
-  if (!$isApplying) {
-    return;
-  }
-
-  $taskTypeName = 'Check on contact for NI/SSN';
-  $date = date('d-m-Y', strtotime('+1 months'));
-
-  $assigneeIDs = ContactService::getLineManagerIDs($contactID);
-  if (empty($assigneeIDs)) {
-    $assigneeIDs = ContactService::getContactsWithRole('CIVIHR_ADMIN');
-  }
-  $assigneeID = current($assigneeIDs); // only one assignee, first in line
-
-  if ($assigneeID && $assigneeID != $contactID) {
-    TaskCreationService::create($contactID, [$assigneeID], $taskTypeName, $date);
+  if ($isOnboardingForm) {
+    $form = new OnboardingWebForm();
+    $form->onSubmit($node, $submission);
   }
 }
 
