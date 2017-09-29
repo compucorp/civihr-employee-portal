@@ -160,6 +160,14 @@ span.appraisals-employee-legend {
   padding-left: 10px;
 }
 
+.view-id-hr_resource_types_list .add-button {
+    margin-bottom: 20px;
+}
+
+.view-id-hr_resource_types_list .add-button-icon {
+    margin-right: 10px;
+}
+
 #footer {
   height: 250px;
   color: #727e8a;
