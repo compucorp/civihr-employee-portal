@@ -21,9 +21,9 @@
 ?>
 
 <div>
-    <a class="add-button btn btn-default btn-primary" href="/admin/structure/taxonomy/hr_resource_type/add">
-        <span class="add-button-icon fa fa-plus"></span> <?php print t('Add HR Resource Type'); ?>
-    </a>
+  <a class="add-button btn btn-default btn-primary" href="/admin/structure/taxonomy/hr_resource_type/add">
+    <span class="add-button-icon fa fa-plus"></span> <?php print t('Add HR Resource Type'); ?>
+  </a>
 </div>
 
 <table <?php if ($classes) { print 'class="'. $classes . '" '; } ?><?php print $attributes; ?>>
