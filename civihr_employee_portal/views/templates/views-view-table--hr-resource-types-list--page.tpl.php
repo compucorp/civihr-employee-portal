@@ -22,7 +22,7 @@
 
 <div style="margin-bottom: 20px;">
     <a class="btn btn-default btn-primary" href="/admin/structure/taxonomy/hr_resource_type/add">
-        <span class="fa fa-plus"></span> <?php print t('Add HR Resource Type'); ?>
+        <span class="fa fa-plus" style="margin-right: 10px;"></span> <?php print t('Add HR Resource Type'); ?>
     </a>
 </div>
 
