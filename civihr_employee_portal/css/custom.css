@@ -9,151 +9,154 @@ and open the template in the editor.
 */
 
 .view-absence-list .views-field, .view-absence-list th {
-    width: 15%;
+  width: 15%;
 }
 
 .view-absence-list > .view-content {
-    margin: 0 -20px;
+  margin: 0 -20px;
 }
 
 .table-editable {
-    width: auto;
-    position: relative;
+  width: auto;
+  position: relative;
 
-    .glyphicon {
-        font-size: 20px;
-    }
+ .glyphicon {
+    font-size: 20px;
+ }
 }
 
 .table-remove {
-    color: #700;
-    cursor: pointer;
+  color: #700;
+  cursor: pointer;
 
-    &:hover {
-        color: #f00;
-    }
+  & :hover {
+    color: #f00;
+  }
 }
 
 .table-up, .table-down {
-    color: #007;
-    cursor: pointer;
+  color: #007;
+  cursor: pointer;
 
-    &:hover {
-        color: #00f;
-    }
+  &:hover {
+    color: #00f;
+  }
 }
 
 .table-add {
-    color: #070;
-    cursor: pointer;
-    position: absolute;
-    top: 8px;
-    right: 0;
+  color: #070;
+  cursor: pointer;
+  position: absolute;
+  top: 8px;
+  right: 0;
 
-    &:hover {
-        color: #0b0;
-    }
+  &:hover {
+    color: #0b0;
+  }
 }
-
 
 /* Appraisals temporary styling. TODO: move to scss Theme files. */
 #civihr-employee-portal-appraisal-manager-form #drop-target {
-    box-shadow: none;
-    background-color: #E8EEF0;
-    border: 1px dashed #727E8A;
-    color: #525966;
+  box-shadow: none;
+  background-color: #E8EEF0;
+  border: 1px dashed #727E8A;
+  color: #525966;
 }
 
 #civihr-employee-portal-appraisal-manager-form .col-index {
-    width: 5%;
+  width: 5%;
 }
 
 #civihr-employee-portal-appraisal-manager-form .col-name {
-    width: 50%;
+  width: 50%;
 }
 
 #civihr-employee-portal-appraisal-manager-form .drop-zone {
-    margin: 10px 0;
-    padding: 30px;
+  margin: 10px 0;
+  padding: 30px;
 }
 
 #civihr-employee-portal-appraisal-manager-form .help-block {
-    clear: left;
-    font-size: 12px;
-    float: left;
+  clear: left;
+  font-size: 12px;
+  float: left;
 }
 
 #civihr-employee-portal-appraisal-manager-form .form-type-date-popup {
-    width: 100%;
+  width: 100%;
 }
 
 #civihr-employee-portal-appraisal-manager-form .date-padding {
-    padding: 0;
+  padding: 0;
 }
 
 #civihr-employee-portal-appraisal-manager-form .table-upload {
-    table-layout: fixed;
+  table-layout: fixed;
 }
 
 #civihr-employee-portal-appraisal-manager-form .col-index {
-      width: 60px;
+  width: 60px;
 }
 
 #civihr-employee-portal-appraisal-manager-form .col-name {
-      width: 45%;
+  width: 45%;
 }
 
 #civihr-employee-portal-appraisal-manager-form .col-size {
-      width: 95px;
+  width: 95px;
 }
 
 #civihr-employee-portal-appraisal-manager-form .col-action {
-      width: 130px;
+  width: 130px;
 }
 
 #civihr-employee-portal-appraisal-manager-form td {
-      overflow: hidden;
-      text-overflow: ellipsis;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 div.appraisals-manager-chart {
-    margin-bottom: 28px;
+  margin-bottom: 28px;
 }
+
 div.appraisals-manager-chart .grade {
-    font-size: 74px;
+  font-size: 74px;
 }
 
 span.appraisals-employee-legend {
-    width: 12px;
-    height: 12px;
-    display: inline-block;
-    margin-right: 8px;
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  margin-right: 8px;
 }
 
 .report-filters .btn-report-date-filter {
-    float: none;
+  float: none;
 }
 
 .report-tabs {
-    margin-top: 12px;
+  margin-top: 12px;
 }
 
 .report-content {
-    margin-top: 12px;
+  margin-top: 12px;
 }
 
 #reportTable form {
-    display: none;
+  display: none;
 }
 
 .datepicker-popup td,
-.datepicker-popup th { padding: 0; }
+.datepicker-popup th {
+  padding: 0;
+}
 
 #reportPivotTableConfiguration {
   border-bottom: 1px solid #ddd;
   padding: 10px 10px;
   margin-top: 12px;
 }
+
 #reportPivotTableConfiguration .form-item {
   display: inline-block;
   vertical-align: middle;
