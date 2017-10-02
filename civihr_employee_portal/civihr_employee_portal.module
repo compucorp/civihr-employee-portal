@@ -135,9 +135,10 @@ function _setup_modals() {
  * @param string $resources the name of the script file (extension included)
  * @param string $extension
  * @param string $page
- * @param array $jsOptions
+ * @param string $scope
  */
-function _add_script_to_page($resources, $extension = NULL, $page = NULL, $jsOptions = ['scope' => 'footer']) {
+function _add_script_to_page($resources, $extension = NULL, $page = NULL, $scope = 'footer') {
+  $options = ['type' => 'file', 'scope' => $scope];
 
   if (!is_null($page) && arg(0) != $page) {
     return;
@@ -149,11 +150,11 @@ function _add_script_to_page($resources, $extension = NULL, $page = NULL, $jsOpt
   else {
     if (is_array($resources)) {
       foreach ($resources as $value) {
-        drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $value, $jsOptions);
+        drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $value, $options);
       }
     }
     else {
-      drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $resources, $jsOptions);
+      drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $resources, $options);
     }
   }
 }
@@ -603,8 +604,7 @@ function civihr_employee_portal_init() {
 
     _add_script_to_page(['reqangular.min.js'], 'org.civicrm.reqangular', 'dashboard');
     _add_script_to_page(['reqangular.min.js'], 'org.civicrm.reqangular', 'tasks-and-documents');
-
-    _add_script_to_page(['/js/tasks.js'], NULL, 'tasks-and-documents', ['scope' => 'header']);
+    _add_script_to_page(['/js/tasks.js'], NULL, 'tasks-and-documents', 'header');
     _add_script_to_page(['/js/ta-documents-app.js'], NULL, 'tasks-and-documents');
     _add_script_to_page(['tasks-assignments.min.js'], 'uk.co.compucorp.civicrm.tasksassignments', 'tasks-and-documents');
 
