@@ -55,7 +55,7 @@ function civicrm_resources_add_resources($extention_path, $req_files = []) {
     drupal_add_css(ltrim(str_replace(DRUPAL_ROOT, '', $css_file), '/'));
   }
   foreach ($js_list as $key => $js_file) {
-    drupal_add_js(ltrim(str_replace(DRUPAL_ROOT, '', $js_file), '/'));
+    drupal_add_js(ltrim(str_replace(DRUPAL_ROOT, '', $js_file), '/'),  array('scope' => 'footer'));
   }
 }
 
