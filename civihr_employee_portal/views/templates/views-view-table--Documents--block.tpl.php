@@ -172,5 +172,3 @@ endforeach;
 
   }(CRM.$));
 </script>
-
-<script src="<?php echo getModuleUrl('uk.co.compucorp.civicrm.tasksassignments').'js/dist/tasks-assignments.min.js';?>"></script>
