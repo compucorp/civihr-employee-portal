@@ -54,7 +54,7 @@
               }
 
               vm.cacheContacts([data]);
-              vm.openModalDocument(data[0], role);
+              vm.openModalDocument(data[0], role, mode);
             })
             .catch(function(reason) {
               CRM.alert(reason, 'Error', 'error');
