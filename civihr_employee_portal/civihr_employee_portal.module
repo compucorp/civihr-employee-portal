@@ -887,6 +887,7 @@ function civihr_employee_portal_mail_alter(&$message) {
 
   switch ($message['key']) {
     case 'status_activated':
+    case 'register_admin_created': // todo check if this is expected
       $replacementMail = new AccountActivatedSystemMail();
       break;
   }
