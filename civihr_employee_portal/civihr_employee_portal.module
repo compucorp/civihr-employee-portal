@@ -8,6 +8,7 @@ use Drupal\civihr_employee_portal\Helpers\HelperClass;
 use Drupal\civihr_employee_portal\Security\PublicFirewall;
 use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
 use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
+use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
 
 /**
  * Implements hook_css_alter().
@@ -853,6 +854,8 @@ function civihr_employee_portal_mail_alter(&$message) {
     case 'register_admin_created': // todo check if this is expected
       $replacementMail = new AccountActivatedSystemMail();
       break;
+    case 'password_reset':
+      $replacementMail = new PasswordResetSystemMail();
   }
 
   if (!$replacementMail) {
