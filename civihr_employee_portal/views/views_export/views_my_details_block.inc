@@ -132,17 +132,18 @@ $handler->display->display_options['fields']['work_email']['table'] = 'hrjc_cont
 $handler->display->display_options['fields']['work_email']['field'] = 'work_email';
 $handler->display->display_options['fields']['work_email']['relationship'] = 'hrjc_contact_details';
 $handler->display->display_options['fields']['work_email']['label'] = 'Work E-mail';
+/* Field: HRJobContract Details entity: Location_label */
+$handler->display->display_options['fields']['location_label']['id'] = 'location_label';
+$handler->display->display_options['fields']['location_label']['table'] = 'hrjc_details';
+$handler->display->display_options['fields']['location_label']['field'] = 'location_label';
+$handler->display->display_options['fields']['location_label']['relationship'] = 'details_revision_id';
+$handler->display->display_options['fields']['location_label']['label'] = 'Location';
 /* Field: HRJobContract Details entity: Title */
 $handler->display->display_options['fields']['title']['id'] = 'title';
 $handler->display->display_options['fields']['title']['table'] = 'hrjc_details';
 $handler->display->display_options['fields']['title']['field'] = 'title';
 $handler->display->display_options['fields']['title']['relationship'] = 'details_revision_id';
 $handler->display->display_options['fields']['title']['label'] = 'Designation';
-/* Field: HRJobContract Details entity: Location */
-$handler->display->display_options['fields']['location']['id'] = 'location';
-$handler->display->display_options['fields']['location']['table'] = 'hrjc_details';
-$handler->display->display_options['fields']['location']['field'] = 'location';
-$handler->display->display_options['fields']['location']['relationship'] = 'details_revision_id';
 /* Field: HRJobContract Role entity: Role_title */
 $handler->display->display_options['fields']['role_title']['id'] = 'role_title';
 $handler->display->display_options['fields']['role_title']['table'] = 'hrjc_role';
