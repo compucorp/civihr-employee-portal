@@ -32,7 +32,7 @@
          * Collect required contact and cache them for document modal
          */
         function cacheContacts (documents) {
-          DocumentService.cacheContactsAndAssignments(documents, 'contacts');
+          return DocumentService.cacheContactsAndAssignments(documents, 'contacts');
         };
 
         /**
@@ -49,12 +49,14 @@
 
           DocumentService.get({ id: id })
             .then(function(data) {
+
               if (!data) {
                 throw new Error('Requested Document is not available');
               }
 
-              vm.cacheContacts([data]);
-              vm.openModalDocument(data[0], role, mode);
+              vm.cacheContacts(data).then(function (){
+                vm.openModalDocument(data[0], role, mode);
+              });
             })
             .catch(function(reason) {
               CRM.alert(reason, 'Error', 'error');
