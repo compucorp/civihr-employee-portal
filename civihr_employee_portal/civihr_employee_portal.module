@@ -1,10 +1,14 @@
 <?php
 
 use Drupal\civihr_employee_portal\Blocks\Base;
-use Drupal\civihr_employee_portal\Blocks\Leave;
+use Drupal\civihr_employee_portal\Mail\AccountActivatedSystemMail;
+use Drupal\civihr_employee_portal\Helpers\WebformHelper;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 use Drupal\civihr_employee_portal\Security\PublicFirewall;
+use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
+use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
+use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
 
 /**
  * Implements hook_css_alter().
@@ -83,6 +87,27 @@ function _remove_resources(&$resourcesList, $blacklist = []) {
       unset($resourcesList[drupal_get_path('module', $value['module_name']) . $value['file_name']]);
     }
   }
+}
+
+/**
+ * Implements hook_menu_alter().
+ *
+ * @param array $items
+ */
+function civihr_employee_portal_menu_alter(&$items) {
+  if (isset($items['user/%user/edit'])) {
+    $items['user/%user/edit']['theme callback'] = '_user_edit_theme_callback';
+  }
+}
+
+/**
+ * The user edit page theme is overridden to use the admin them if the user is
+ * an admin. It should appear to be part of CiviHR regardless of roles.
+ *
+ * @return string
+ */
+function _user_edit_theme_callback() {
+  return 'civihr_default_theme';
 }
 
 /**
@@ -579,6 +604,15 @@ function civihr_employee_portal_init() {
   // some drupal functions such as user_access
   _user_redirection();
 
+  $query = drupal_get_query_parameters();
+  if (isset($query['source']) && $query['source'] == 'onboarding') {
+    $key = OnboardingWizardCustomizationForm::INTRODUCTION_TEXT_KEY;
+    $welcomeMessage = variable_get($key);
+    if ($welcomeMessage) {
+      drupal_set_message($welcomeMessage);
+    }
+  }
+
   // Loads all the resources only for non-civicrm pages.
   if (!_isCiviCRM()) {
     // Civi init + load the singleton needed for the AJAX calls
@@ -787,6 +821,10 @@ function civihr_employee_portal_permission() {
       'title' => t('View Vacancies'),
       'description' => t('Availability for the user to view vacancies block and page')
     ),
+    'customize welcome wizard' => array(
+      'title' => t('Customize Welcome Wizard'),
+      'description' => t('Set the company logo and text to be displayed in the onboarding wizard')
+    ),
     'access hrreports' => array(
       'title' => t('Access HR Reports'),
       'description' => t('Availability to access HR Report pages'),
@@ -800,6 +838,40 @@ function civihr_employee_portal_permission() {
       'description' => t('Availability to manage HR Reports configuration'),
     ),
   );
+}
+
+
+/**
+ * Implements hook_mail_alter().
+ *
+ * @param $message
+ */
+function civihr_employee_portal_mail_alter(&$message) {
+  $replacementMail = NULL;
+
+  switch ($message['key']) {
+    case 'status_activated':
+    case 'register_admin_created': // todo check if this is expected
+      $replacementMail = new AccountActivatedSystemMail();
+      break;
+    case 'password_reset':
+      $replacementMail = new PasswordResetSystemMail();
+  }
+
+  if (!$replacementMail) {
+    return;
+  }
+
+  $smarty = CRM_Core_Smarty::singleton();
+  $smarty->addTemplateDir(__DIR__ . '/templates/smarty');
+
+  $variables = $replacementMail->getVariables($message);
+  $headers = $replacementMail->getHeaders();
+  $templateName = $replacementMail->getTemplateName();
+  $body = $smarty->fetchWith($templateName, $variables);
+
+  $message['headers'] = array_merge($message['headers'], $headers);
+  $message['body'] = [$body];
 }
 
 /**
@@ -1666,16 +1738,6 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
-    /**
-     * Not used currently
-    $items['civihr_contacts'] = array(
-        'title' => 'Vacancy list',
-        'page callback' => 'civihr_employee_portal_get_contact_list',
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-     */
-
     $items['absence_request/%ctools_js/debit'] = array(
         'page callback' => 'civihr_employee_portal_absence_request_callback',
         'page arguments' => array(1, 2),
@@ -1853,7 +1915,61 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
-    return $items;
+  $items['customize-onboarding-wizard'] = [
+    'title' => 'Customize Welcome Wizard',
+    'description' => 'Customize Welcome Wizard',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['customize_welcome_wizard_callback'],
+    'access arguments' => ['customize welcome wizard'],
+    'theme callback' => 'customize_welcome_wizard_theme_callback',
+    'type' => MENU_NORMAL_ITEM,
+  ];
+
+  return $items;
+}
+
+/**
+ * Override default admin theme
+ *
+ * @return string
+ */
+function customize_welcome_wizard_theme_callback() {
+  return 'civihr_default_theme';
+}
+
+/**
+ * Create the form to customize the onboarding form
+ *
+ * @return array
+ */
+function customize_welcome_wizard_callback() {
+  return (new OnboardingWizardCustomizationForm())->build();
+}
+
+/**
+ * This callback is required as Drupal does not handle saving of files from a
+ * system form
+ * @see https://drupal.stackexchange.com/a/187043/75186
+ *
+ * @param $form
+ * @param $form_state
+ */
+function welcome_wizard_customization_form_submit($form, &$form_state) {
+  global $user;
+  $logoKey = OnboardingWizardCustomizationForm::LOGO_KEY;
+  $file = file_load($form_state['values'][$logoKey]);
+  if (!$file) {
+    return;
+  }
+
+  $file->status = FILE_STATUS_PERMANENT;
+  file_save($file);
+  variable_set($logoKey, $file->fid);
+  file_usage_add($file, 'user', 'user', $user->uid);
+  // value not required for system_settings_form
+  unset($form_state['values'][$logoKey]);
+
+
 }
 
 /**
@@ -5894,6 +6010,19 @@ function civihr_employee_portal_form_user_profile_form_alter(&$form, &$form_stat
       );
     }
   }
+
+  $form['#submit'][] = 'civihr_employee_portal_form_user_profile_form_submit';
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function civihr_employee_portal_form_user_profile_form_submit(&$form, &$form_state) {
+  global $user;
+  $shouldDoOnboarding = _civihr_employee_portal_should_do_onboarding($user);
+  $onboardingPath = '/onboarding-form';
+  $original = CRM_Utils_Array::value('redirect', $form_state);
+  $form_state['redirect'] = $shouldDoOnboarding ? $onboardingPath : $original;
 }
 
 /**
@@ -6066,10 +6195,47 @@ function civihr_employee_portal_user_login(&$edit, $account) {
   if (!isset($_POST['form_id']) || $_POST['form_id'] != 'user_pass_reset') {
     $sspEntryPath = 'dashboard';
     $civicrmEntryPath = 'civicrm/tasksassignments/dashboard#/tasks';
+    $onboardingFormPath = 'onboarding-form';
 
     if (current_path() == drupal_get_destination()['destination']) {
       $_GET['destination'] = user_access('access CiviCRM') ? $civicrmEntryPath : $sspEntryPath;
     }
+
+    if (_civihr_employee_portal_should_do_onboarding($account)) {
+       $_GET['destination'] = $onboardingFormPath;
+    }
+  }
+}
+
+/**
+ * @param \stdClass $account
+ *
+ * @return bool
+ */
+function _civihr_employee_portal_should_do_onboarding($account) {
+  $welcomeFormName = 'Welcome to CiviHR';
+  $nodes = node_load_multiple(NULL, ["title" => 'Welcome to CiviHR']);
+  $node = current($nodes);
+  $canViewOnboardingForm = node_access('view', $node, $account);
+  $submissions = WebformHelper::getUserSubmissionsByName($account, $welcomeFormName);
+
+  return $canViewOnboardingForm && empty($submissions);
+}
+
+/**
+ * Implements hook_webform_submission_insert().
+ *
+ * @param \stdClass $node
+ * @param array $submission
+ */
+function civihr_employee_portal_webform_submission_insert($node, $submission) {
+  $nodeTitle = property_exists($node, 'title') ? $node->title : NULL;
+  $onboardingTitle = 'Welcome to CiviHR';
+  $isOnboardingForm = $nodeTitle === $onboardingTitle;
+
+  if ($isOnboardingForm) {
+    $form = new OnboardingWebForm();
+    $form->onSubmit($node, $submission);
   }
 }
 
@@ -6797,7 +6963,7 @@ function civihr_employee_portal_preprocess_page(&$vars) {
     global $user;
     global $base_url;
 
-    $display_name = t('Anonymus');
+    $display_name = t('Anonymous');
     $edit_account_link = '';
     $logout_link = '';
     $user_guide_link = l('<i class="fa fa-book"></i>' . t('User guide'), 'http://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/', array('html' => true, 'attributes' => array('target' => '_blank')));
