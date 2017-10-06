@@ -30,6 +30,8 @@
 
         /**
          * Collect required contact and cache them for document modal
+         *
+         * @return {promise}
          */
         function cacheContacts (documents) {
           return DocumentService.cacheContactsAndAssignments(documents, 'contacts');
@@ -49,12 +51,11 @@
 
           DocumentService.get({ id: id })
             .then(function(data) {
-
               if (!data) {
                 throw new Error('Requested Document is not available');
               }
 
-              vm.cacheContacts(data).then(function (){
+              vm.cacheContacts(data).then(function () {
                 vm.openModalDocument(data[0], role, mode);
               });
             })
