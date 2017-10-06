@@ -20,24 +20,21 @@
 
         vm.modalDocument = modalDocument;
         vm.openModalDocument = openModalDocument;
+        vm.cacheContacts = cacheContacts;
 
         (function init() {
+          // Sets the date format for HR_settings.DATE_FORMAT
+          DateFormat.getDateFormat();
           subscribeForEvents();
-          watchForChanges();
-          collectRequiredData();
         })();
 
         /**
-         * Collect required data for document modal
+         * Collect required contact and cache them for document modal
+         *
+         * @return {promise}
          */
-        function collectRequiredData () {
-          // Sets the date format for HR_settings.DATE_FORMAT
-          DateFormat.getDateFormat();
-
-          // Fetch and cache contacts and addignments
-          DocumentService.get().then(function (documents) {
-            DocumentService.cacheContactsAndAssignments(documents, 'contacts');
-          });
+        function cacheContacts (documents) {
+          return DocumentService.cacheContactsAndAssignments(documents, 'contacts');
         };
 
         /**
@@ -46,8 +43,9 @@
          *
          * @param {integer} id
          * @param {string} role
+         * @param {string} mode
          */
-        function modalDocument (id, role) {
+        function modalDocument (id, role, mode) {
           $rootScope.$broadcast('ct-spinner-show', 'document-' + id);
           vm.loadingModalData = true;
 
@@ -57,7 +55,9 @@
                 throw new Error('Requested Document is not available');
               }
 
-              vm.openModalDocument(data[0], role);
+              vm.cacheContacts(data).then(function () {
+                vm.openModalDocument(data[0], role, mode);
+              });
             })
             .catch(function(reason) {
               CRM.alert(reason, 'Error', 'error');
@@ -69,16 +69,17 @@
          *
          * @param {object} data
          * @param {string} role
+         * @param {string} mode
          */
-        function openModalDocument(data, role) {
+        function openModalDocument(data, role, mode) {
           var modalInstance = $modal.open({
             appendTo: $rootElement,
             templateUrl: config.path.TPL + 'modal/document.html?v=3',
-            controller: 'ModalDocumentCtrl',
+            controller: 'ModalDocumentController',
             controllerAs: 'documentModal',
             resolve: {
               modalMode: function () {
-                return '';
+                return mode;
               },
               role: function () {
                 return role;
@@ -100,7 +101,7 @@
             $rootScope.$broadcast('ct-spinner-hide');
             vm.loadingModalData = false;
           });
-        };
+        }
 
         /**
          * All event subscribers
@@ -108,25 +109,6 @@
         function subscribeForEvents () {
           $rootScope.$on('document-saved', function () {
             $window.location.reload();
-          });
-        };
-
-        /**
-         * All watchers for changes
-         */
-        function watchForChanges () {
-          /**
-           * Watch for the changes in the list of $rootScope.cache.contact.arrSearch
-           * Display spinner and hide "open" button until the arrSearch is filled with contacts
-           *
-           * Note: $rootScope.cache.contact.arrSearch will always contain a
-           * contact data (curently logged in contact). So if there are documents,
-           * there must be more that one contacts conidering at aleast a target contact in a document
-           */
-          $rootScope.$watch('cache.contact', function () {
-            availableContacts = $rootScope.cache.contact.arrSearch.length > 1;
-            $rootScope.$broadcast('ct-spinner-' + (availableContacts ? 'hide' : 'show'));
-            vm.loadingModalData = !availableContacts;
           });
         };
     }

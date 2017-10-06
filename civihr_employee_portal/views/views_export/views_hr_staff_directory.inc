@@ -583,12 +583,6 @@ $handler->display->display_options['filters']['is_deleted']['table'] = 'civicrm_
 $handler->display->display_options['filters']['is_deleted']['field'] = 'is_deleted';
 $handler->display->display_options['filters']['is_deleted']['value'] = '0';
 $handler->display->display_options['filters']['is_deleted']['group'] = 1;
-/* Filter criterion: CiviCRM Custom: Immigration: Start Date */
-$handler->display->display_options['filters']['start_date_52']['id'] = 'start_date_52';
-$handler->display->display_options['filters']['start_date_52']['table'] = 'civicrm_value_immigration_3';
-$handler->display->display_options['filters']['start_date_52']['field'] = 'start_date_52';
-$handler->display->display_options['filters']['start_date_52']['operator'] = 'empty';
-$handler->display->display_options['filters']['start_date_52']['group'] = 1;
 /* Filter criterion: HRJobContract Role entity: Role end date */
 $handler->display->display_options['filters']['role_end_date']['id'] = 'role_end_date';
 $handler->display->display_options['filters']['role_end_date']['table'] = 'hrjc_role';

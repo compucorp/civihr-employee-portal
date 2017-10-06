@@ -135,8 +135,10 @@ function _setup_modals() {
  * @param string $resources the name of the script file (extension included)
  * @param string $extension
  * @param string $page
+ * @param string $scope
  */
-function _add_script_to_page($resources, $extension = NULL, $page = NULL) {
+function _add_script_to_page($resources, $extension = NULL, $page = NULL, $scope = 'footer') {
+  $options = ['type' => 'file', 'scope' => $scope];
 
   if (!is_null($page) && arg(0) != $page) {
     return;
@@ -148,11 +150,11 @@ function _add_script_to_page($resources, $extension = NULL, $page = NULL) {
   else {
     if (is_array($resources)) {
       foreach ($resources as $value) {
-        drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $value, 'file');
+        drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $value, $options);
       }
     }
     else {
-      drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $resources, 'file');
+      drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . $resources, $options);
     }
   }
 }
@@ -602,7 +604,9 @@ function civihr_employee_portal_init() {
 
     _add_script_to_page(['reqangular.min.js'], 'org.civicrm.reqangular', 'dashboard');
     _add_script_to_page(['reqangular.min.js'], 'org.civicrm.reqangular', 'tasks-and-documents');
-    _add_script_to_page(['/js/tasks.js', '/js/ta-documents-app.js'], NULL, 'tasks-and-documents');
+    _add_script_to_page(['/js/tasks.js'], NULL, 'tasks-and-documents', 'header');
+    _add_script_to_page(['/js/ta-documents-app.js'], NULL, 'tasks-and-documents');
+    _add_script_to_page(['tasks-assignments.min.js'], 'uk.co.compucorp.civicrm.tasksassignments', 'tasks-and-documents');
 
     _rebuild_view('absence_list');
     _rebuild_view('length_of_service');
@@ -5867,7 +5871,7 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 function civihr_employee_portal_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
 
   // Adding Yoti Login fieldset with button.
-  if (module_exists('yoti_connect')) {
+  if (module_exists('yoti')) {
 
     // Fetching block id from block description.
     $query = db_select('block_custom', 'b')
@@ -6980,21 +6984,27 @@ function civihr_employee_portal_module_implements_alter(&$implementations, $hook
 
 /**
  * Check if a passed date is weekend day or not
+ *
+ * @param \DateTime $date
+ *
+ * @return bool
  */
-function _isWeekend($date_passed) {
-
-    $date = explode("-", $date_passed);
-
-    $time = mktime(0, 0, 0, $date[1], $date[2], $date[0]);
-    $weekday = date('w', $time);
-    return ($weekday == 0 || $weekday == 6);
+function _isWeekend(\DateTime $date) {
+    $saturday = 6;
+    $sunday = 0;
+    $weekday = $date->format('w');
+    return ($weekday == $saturday || $weekday == $sunday);
 }
 
 /**
  * @param $public_holidays
- * Check if the requested day is holiday or not working day
+ *  Check if the requested day is holiday or not working day
+ * @param \DateTime $date
+ *  The requested day
+ *
+ * @return array
  */
-function _checkRequestedDay($public_holidays, $date) {
+function _checkRequestedDay($public_holidays, \DateTime $date) {
 
     $not_working_day = t('Weekend');
 
@@ -7003,7 +7013,7 @@ function _checkRequestedDay($public_holidays, $date) {
         $public_holiday_date = explode(" ", $public_holiday['activity_date_time']);
 
         // If the public holiday equals with the requested date and the public holiday is enabled
-        if ($public_holiday_date[0] == $date && $public_holiday['status_id'] == 1) {
+        if ($public_holiday_date[0] == $date->format('Y-m-d') && $public_holiday['status_id'] == 1) {
             $exclude_type = " (" . $public_holiday['subject'] . ")";
 
             return array(
