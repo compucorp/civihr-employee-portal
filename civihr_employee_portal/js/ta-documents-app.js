@@ -16,8 +16,6 @@
         var availableContacts = false;
         var vm = this;
 
-        vm.loadingModalData = false;
-
         vm.modalDocument = modalDocument;
         vm.openModalDocument = openModalDocument;
         vm.cacheContacts = cacheContacts;
@@ -46,17 +44,14 @@
          * @param {string} mode
          */
         function modalDocument (id, role, mode) {
-          $rootScope.$broadcast('ct-spinner-show', 'document-' + id);
-          vm.loadingModalData = true;
-
           DocumentService.get({ id: id })
             .then(function(data) {
               if (!data) {
                 throw new Error('Requested Document is not available');
               }
-
+              vm.openModalDocument(data[0], role, mode);
               vm.cacheContacts(data).then(function () {
-                vm.openModalDocument(data[0], role, mode);
+                $rootScope.isLoading = false;
               });
             })
             .catch(function(reason) {
@@ -98,8 +93,7 @@
           });
 
           modalInstance.opened.then(function () {
-            $rootScope.$broadcast('ct-spinner-hide');
-            vm.loadingModalData = false;
+            $rootScope.isLoading = true;
           });
         }
 
