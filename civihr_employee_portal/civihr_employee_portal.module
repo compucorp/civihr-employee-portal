@@ -84,6 +84,49 @@ function _remove_resources(&$resourcesList, $blacklist = []) {
 }
 
 /**
+ * Implements hook_menu_alter().
+ *
+ * To ensure that users with permission to (edit terms in HR Resource type)
+ * can access the form to add new ones without the need
+ * to to have (administer taxonomy) permission.
+ */
+function civihr_employee_portal_menu_alter(&$items) {
+  $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name/add']['access callback'] = '_civihr_employee_portal_taxonomy_form_access_callback';
+}
+
+/**
+ * Callback that Checks if the user has access
+ * to taxonomy add form
+ *
+ * @return bool
+ *   True if the user has access, false otherwise
+ */
+function _civihr_employee_portal_taxonomy_form_access_callback() {
+  return user_access('administer taxonomy')
+    || _civihr_employee_portal_has_hr_resource_types_form_access();
+}
+
+/**
+ * Checks if the user has access to add terms
+ * to (HR Resource types) Vocabulary.
+ *
+ * @return bool
+ * True if the user has access, false otherwise
+ */
+function _civihr_employee_portal_has_hr_resource_types_form_access() {
+  $vocabularyNameLocationInURL = 3;
+  $vocabularyName = arg($vocabularyNameLocationInURL);
+  $resourceTypesVocabularyID = taxonomy_vocabulary_machine_name_load('hr_resource_type')->vid;
+  $hasHRResourceTypesAccess = ($vocabularyName == 'hr_resource_type') && user_access("edit terms in {$resourceTypesVocabularyID}");
+
+  if ($hasHRResourceTypesAccess) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Checks if the current page is an CiviCRM loaded page.
  *
  * @return bool

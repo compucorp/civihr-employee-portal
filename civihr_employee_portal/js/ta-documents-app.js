@@ -30,9 +30,11 @@
 
         /**
          * Collect required contact and cache them for document modal
+         *
+         * @return {promise}
          */
         function cacheContacts (documents) {
-          DocumentService.cacheContactsAndAssignments(documents, 'contacts');
+          return DocumentService.cacheContactsAndAssignments(documents, 'contacts');
         };
 
         /**
@@ -41,8 +43,9 @@
          *
          * @param {integer} id
          * @param {string} role
+         * @param {string} mode
          */
-        function modalDocument (id, role) {
+        function modalDocument (id, role, mode) {
           $rootScope.$broadcast('ct-spinner-show', 'document-' + id);
           vm.loadingModalData = true;
 
@@ -52,8 +55,9 @@
                 throw new Error('Requested Document is not available');
               }
 
-              vm.cacheContacts([data]);
-              vm.openModalDocument(data[0], role);
+              vm.cacheContacts(data).then(function () {
+                vm.openModalDocument(data[0], role, mode);
+              });
             })
             .catch(function(reason) {
               CRM.alert(reason, 'Error', 'error');
@@ -65,8 +69,9 @@
          *
          * @param {object} data
          * @param {string} role
+         * @param {string} mode
          */
-        function openModalDocument(data, role) {
+        function openModalDocument(data, role, mode) {
           var modalInstance = $modal.open({
             appendTo: $rootElement,
             templateUrl: config.path.TPL + 'modal/document.html?v=3',
@@ -74,7 +79,7 @@
             controllerAs: 'documentModal',
             resolve: {
               modalMode: function () {
-                return '';
+                return mode;
               },
               role: function () {
                 return role;
@@ -96,7 +101,7 @@
             $rootScope.$broadcast('ct-spinner-hide');
             vm.loadingModalData = false;
           });
-        };
+        }
 
         /**
          * All event subscribers
