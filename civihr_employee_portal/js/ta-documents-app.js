@@ -17,8 +17,6 @@
         var vm = this;
 
         vm.modalDocument = modalDocument;
-        vm.openModalDocument = openModalDocument;
-        vm.cacheContacts = cacheContacts;
 
         (function init() {
           // Sets the date format for HR_settings.DATE_FORMAT
@@ -45,16 +43,19 @@
          */
         function modalDocument (id, role, mode) {
           DocumentService.get({ id: id })
-            .then(function(data) {
-              if (!data) {
-                throw new Error('Requested Document is not available');
-              }
-              vm.openModalDocument(data[0], role, mode);
-              vm.cacheContacts(data).then(function () {
-                $rootScope.isLoading = false;
-              });
+            .then(function (data) {
+              return {
+                data: data,
+                isOpened: openModalDocument(data[0], role, mode)
+              };
             })
-            .catch(function(reason) {
+            .then(function (result) {
+              return cacheContacts(result.data);
+            })
+            .then(function () {
+              $rootScope.isLoading = false;
+            })
+            .catch(function (reason) {
               CRM.alert(reason, 'Error', 'error');
             });
         };
@@ -65,8 +66,9 @@
          * @param {object} data
          * @param {string} role
          * @param {string} mode
+         * @param {promise}
          */
-        function openModalDocument(data, role, mode) {
+        function openModalDocument (data, role, mode) {
           var modalInstance = $modal.open({
             appendTo: $rootElement,
             templateUrl: config.path.TPL + 'modal/document.html?v=3',
@@ -92,7 +94,7 @@
             }
           });
 
-          modalInstance.opened.then(function () {
+          return modalInstance.opened.then(function () {
             $rootScope.isLoading = true;
           });
         }
