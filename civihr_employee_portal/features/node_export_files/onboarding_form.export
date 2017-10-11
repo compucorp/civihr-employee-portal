@@ -1052,7 +1052,7 @@ array(
           'extra' => array(
             'items' => '1|',
             'multiple' => 1,
-            'title_display' => 'before',
+            'title_display' => 'inline',
             'description_above' => 0,
             'private' => 0,
             'wrapper_classes' => '',
@@ -1085,7 +1085,7 @@ array(
             'items' => "1|Female\n2|Male\n3|Other\n4|Prefer not to say",
             'multiple' => 0,
             'title_display' => 'before',
-            'description_above' => 0,
+            'description_above' => 1,
             'private' => 0,
             'wrapper_classes' => '',
             'css_classes' => '',
