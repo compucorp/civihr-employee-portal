@@ -143,13 +143,9 @@ if (!empty($documentIds)) {
               } else {
                 printf('<td %s %s>%s</td>', $class, $attribute, $content);
               }
-
             } ?>
-            <td data-ct-spinner data-ct-spinner-id="document-<?php print $rowID; ?>">
-              <button
-                ng-show='!document.loadingModalData'
-                ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', '<?php print $mode ?>')"
-                class="btn btn-sm btn-default">
+            <td>
+              <button ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', '<?php print $mode ?>')" class="btn btn-sm btn-default">
                 <i class="fa <?php print $faIcon ?>"></i>
                 <?php print $label ?>
               </button>
