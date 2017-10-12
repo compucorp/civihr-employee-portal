@@ -96,6 +96,11 @@ function _remove_resources(&$resourcesList, $blacklist = []) {
  */
 function civihr_employee_portal_menu_alter(&$items) {
   $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name/add']['access callback'] = '_civihr_employee_portal_taxonomy_form_access_callback';
+
+  // User profile edit should always use civihr_default_theme
+  if (isset($items['user/%user/edit'])) {
+    $items['user/%user/edit']['theme callback'] = '_user_edit_theme_callback';
+  }
 }
 
 /**
@@ -128,17 +133,6 @@ function _civihr_employee_portal_has_hr_resource_types_form_access() {
   }
 
   return false;
-}
-
-/**
- * Implements hook_menu_alter().
- *
- * @param array $items
- */
-function civihr_employee_portal_menu_alter(&$items) {
-  if (isset($items['user/%user/edit'])) {
-    $items['user/%user/edit']['theme callback'] = '_user_edit_theme_callback';
-  }
 }
 
 /**
