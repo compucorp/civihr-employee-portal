@@ -857,10 +857,11 @@ function civihr_employee_portal_views_pre_render(&$view) {
       ctools_modal_add_js();
     }
   }
-  if (in_array($view->name, array('appraisals', 'Tasks'))) {
+  if (in_array($view->name, ['appraisals', 'Tasks', 'my_details_block'])) {
     ctools_include('modal');
     ctools_modal_add_js();
   }
+
   if ($view->name == "civihr_staff_directory") {
     $view->result = removeInactiveManagers($view->result);
     $view->result = removeInactiveRoleDetails($view->result);
