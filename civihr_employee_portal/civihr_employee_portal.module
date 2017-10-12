@@ -6223,7 +6223,7 @@ function civihr_employee_portal_user_login(&$edit, $account) {
  * @return bool
  */
 function _civihr_employee_portal_should_do_onboarding($account) {
-  $formName = 'Welcome to CiviHR';
+  $formName = OnboardingWebForm::NAME;
   $nodes = node_load_multiple(NULL, ["title" => $formName]);
   $node = current($nodes);
   $canViewOnboardingForm = node_access('view', $node, $account);
@@ -6241,7 +6241,7 @@ function _civihr_employee_portal_should_do_onboarding($account) {
  */
 function civihr_employee_portal_webform_submission_insert($node, $submission) {
   $nodeTitle = property_exists($node, 'title') ? $node->title : NULL;
-  $onboardingTitle = 'Welcome to CiviHR';
+  $onboardingTitle = OnboardingWebForm::NAME;
   $isOnboardingForm = $nodeTitle === $onboardingTitle;
 
   if ($isOnboardingForm) {

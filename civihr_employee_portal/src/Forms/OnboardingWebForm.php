@@ -9,6 +9,7 @@ use Drupal\civihr_employee_portal\Service\TaskCreationService;
 class OnboardingWebForm {
 
   const STATUS_APPLYING = 1;
+  const NAME = 'Welcome to CiviHR';
 
   /**
    * @param \stdClass $node
