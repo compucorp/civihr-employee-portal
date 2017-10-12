@@ -6215,16 +6215,19 @@ function civihr_employee_portal_user_login(&$edit, $account) {
 }
 
 /**
+ * Checks if the user should do onboarding, returns true if they can view the
+ * form and they have no recorded submissions for it.
+ *
  * @param \stdClass $account
  *
  * @return bool
  */
 function _civihr_employee_portal_should_do_onboarding($account) {
-  $welcomeFormName = 'Welcome to CiviHR';
-  $nodes = node_load_multiple(NULL, ["title" => 'Welcome to CiviHR']);
+  $formName = 'Welcome to CiviHR';
+  $nodes = node_load_multiple(NULL, ["title" => $formName]);
   $node = current($nodes);
   $canViewOnboardingForm = node_access('view', $node, $account);
-  $submissions = WebformHelper::getUserSubmissionsByName($account, $welcomeFormName);
+  $submissions = WebformHelper::getUserSubmissionsByName($account, $formName);
 
   return $canViewOnboardingForm && empty($submissions);
 }
