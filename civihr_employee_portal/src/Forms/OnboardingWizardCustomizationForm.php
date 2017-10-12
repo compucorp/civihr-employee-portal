@@ -89,6 +89,7 @@ class OnboardingWizardCustomizationForm {
       ->execute();
     $carouselNodes = $query->fetchAll(\PDO::FETCH_ASSOC);
     $carouselOptions = array_column($carouselNodes, 'title', 'nid');
+    // defaults is simple array of node IDs that are enabled
     $carouselDefaults = array_column($carouselNodes, 'status', 'nid');
     $carouselDefaults = array_keys(array_filter($carouselDefaults));
 
@@ -127,6 +128,7 @@ class OnboardingWizardCustomizationForm {
   private function updateCarouselContent($formState) {
     $nodeIDs = $formState['values'][self::CAROUSEL_OPTIONS_KEY];
     foreach ($nodeIDs as $nid => $value) {
+      // if $value is not zero node should be published
       $isPublished = (int) ($value != 0);
       $node = node_load($nid);
       $node->status = $isPublished;
