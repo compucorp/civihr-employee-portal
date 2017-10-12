@@ -60,7 +60,7 @@ class OnboardingWebForm {
 
     $assigneeIDs = ContactService::getLineManagerIDs($contactID);
     if (empty($assigneeIDs)) {
-      $assigneeIDs = ContactService::getContactsWithRole('CIVIHR_ADMIN');
+      $assigneeIDs = ContactService::getContactIDsWithRole('CIVIHR_ADMIN');
     }
     $assigneeID = current($assigneeIDs); // only one assignee, first in line
 

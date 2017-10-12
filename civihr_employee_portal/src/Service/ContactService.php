@@ -9,7 +9,7 @@ class ContactService {
    * @return array
    *   An array of contact IDs with that role
    */
-  public static function getContactsWithRole($role) {
+  public static function getContactIDsWithRole($role) {
     $role = user_role_load_by_name($role);
 
     if (!$role) {
