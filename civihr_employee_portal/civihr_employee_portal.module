@@ -6234,6 +6234,7 @@ function _civihr_employee_portal_should_do_onboarding($account) {
 
 /**
  * Implements hook_webform_submission_insert().
+ * Some post processing needs to be done on the form, such as cache clearing
  *
  * @param \stdClass $node
  * @param array $submission
