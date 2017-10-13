@@ -1,0 +1,12 @@
+<section data-leave-absences-manager-leave>
+  <ui-view></ui-view>
+</section>
+<script>
+  // Transfers the Drupal.settings data into
+  // the expected (by the app) CRM.vars.leaveAndAbsences object
+  CRM.vars.leaveAndAbsences = {
+    baseURL: Drupal.settings.civihr_leave_absences.baseURL,
+    contactId: Drupal.settings.currentCiviCRMUserId,
+    attachmentToken: Drupal.settings.civihr_leave_absences.attachmentToken
+  };
+</script>

@@ -10,7 +10,8 @@
 function civihr_employee_portal_features_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'civicrm_activity-civicrm_activity-field_attachment'
+  // Exported field_instance:
+  // 'civicrm_activity-civicrm_activity-field_attachment'.
   $field_instances['civicrm_activity-civicrm_activity-field_attachment'] = array(
     'bundle' => 'civicrm_activity',
     'deleted' => 0,
@@ -52,7 +53,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-hr_documents-body'
+  // Exported field_instance: 'node-hr_documents-body'.
   $field_instances['node-hr_documents-body'] = array(
     'bundle' => 'hr_documents',
     'default_value' => NULL,
@@ -97,7 +98,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-hr_documents-field_attachment'
+  // Exported field_instance: 'node-hr_documents-field_attachment'.
   $field_instances['node-hr_documents-field_attachment'] = array(
     'bundle' => 'hr_documents',
     'deleted' => 0,
@@ -139,7 +140,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-hr_documents-field_download'
+  // Exported field_instance: 'node-hr_documents-field_download'.
   $field_instances['node-hr_documents-field_download'] = array(
     'bundle' => 'hr_documents',
     'default_value' => array(
@@ -184,7 +185,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-hr_documents-field_resource_type'
+  // Exported field_instance: 'node-hr_documents-field_resource_type'.
   $field_instances['node-hr_documents-field_resource_type'] = array(
     'bundle' => 'hr_documents',
     'default_value' => NULL,
@@ -221,7 +222,7 @@ function civihr_employee_portal_features_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-hr_documents-field_short_description'
+  // Exported field_instance: 'node-hr_documents-field_short_description'.
   $field_instances['node-hr_documents-field_short_description'] = array(
     'bundle' => 'hr_documents',
     'default_value' => NULL,

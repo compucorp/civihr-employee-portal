@@ -10,7 +10,7 @@
 function civihr_employee_portal_features_field_default_field_bases() {
   $field_bases = array();
 
-  // Exported field_base: 'body'
+  // Exported field_base: 'body'.
   $field_bases['body'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -19,14 +19,6 @@ function civihr_employee_portal_features_field_default_field_bases() {
       0 => 'node',
     ),
     'field_name' => 'body',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -39,21 +31,13 @@ function civihr_employee_portal_features_field_default_field_bases() {
     'type' => 'text_with_summary',
   );
 
-  // Exported field_base: 'field_attachment'
+  // Exported field_base: 'field_attachment'.
   $field_bases['field_attachment'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_attachment',
-    'foreign keys' => array(
-      'fid' => array(
-        'columns' => array(
-          'fid' => 'fid',
-        ),
-        'table' => 'file_managed',
-      ),
-    ),
     'indexes' => array(
       'fid' => array(
         0 => 'fid',
@@ -70,14 +54,13 @@ function civihr_employee_portal_features_field_default_field_bases() {
     'type' => 'file',
   );
 
-  // Exported field_base: 'field_download'
+  // Exported field_base: 'field_download'.
   $field_bases['field_download'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_download',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'download',
@@ -86,21 +69,13 @@ function civihr_employee_portal_features_field_default_field_bases() {
     'type' => 'download_link',
   );
 
-  // Exported field_base: 'field_resource_type'
+  // Exported field_base: 'field_resource_type'.
   $field_bases['field_resource_type'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_resource_type',
-    'foreign keys' => array(
-      'tid' => array(
-        'columns' => array(
-          'tid' => 'tid',
-        ),
-        'table' => 'taxonomy_term_data',
-      ),
-    ),
     'indexes' => array(
       'tid' => array(
         0 => 'tid',
@@ -120,21 +95,13 @@ function civihr_employee_portal_features_field_default_field_bases() {
     'type' => 'taxonomy_term_reference',
   );
 
-  // Exported field_base: 'field_short_description'
+  // Exported field_base: 'field_short_description'.
   $field_bases['field_short_description'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_short_description',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
