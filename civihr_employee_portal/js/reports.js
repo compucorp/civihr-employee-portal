@@ -163,18 +163,19 @@
    */
   HRReport.prototype.updateDropdown = function() {
     $('.pvtUi select').each(function () {
-      var selectClass = 'chr_custom-select chr_custom-select--full';
+      var selectClass = 'crm_custom-select crm_custom-select--full';
 
-      if (!$(this).parent().hasClass('chr_custom-select')) {
+      if (!$(this).parent().hasClass('crm_custom-select')) {
         if ($(this).hasClass('pvtAggregator')) {
-          selectClass += ' chr_custom-select--transparent';
+          selectClass += ' crm_custom-select--transparent';
         }
 
         $(this).wrap('<div class="' + selectClass + '"></div>');
+        $(this).parent().append('<span class="crm_custom-select__arrow"></span>');
       }
     });
 
-    $('.pvtVals .chr_custom-select').each(function () {
+    $('.pvtVals .crm_custom-select').each(function () {
       if ($(this).find('select').length === 0) {
         $(this).remove();
       }
@@ -191,7 +192,7 @@
     var that = this;
     $('.pvtFilterBox').each(function () {
       $(this).find('.pvtSearch').removeClass('pvtSearch').addClass('form-text');
-      $(this).find('button').addClass('btn btn-primary btn-default btn-block');
+      $(this).find('button').addClass('btn btn-primary btn-block');
 
       if ($(this).find('.pvtFilterSelectAllWrap').length === 0) {
         var filters = $(this).find(".pvtFilter");
@@ -247,7 +248,7 @@
       $(filter_selector).find('span:first').text(that.formatLengthsOfService(employee_length_service));
     }
   }
-  
+
   /**
    * Processes results in people report view to format length of service for each
    * contact in a human readable form using moment lib.
@@ -607,7 +608,7 @@
       });
     });
   }
-  
+
   /**
    * Return an ID of currently active Report configuration.
    *
@@ -616,7 +617,7 @@
   HRReport.prototype.getReportConfigurationId = function() {
     return CRM.$('.report-config-select').val();
   }
-  
+
   /**
    * Apply given Pivot Table configuration.
    *
@@ -689,7 +690,7 @@
         CRM.$('.report-block.' + CRM.$(this).data('tab')).removeClass('hidden');
       });
       CRM.$('.report-tabs a:first').click();
-      
+
       // Reports configuration bindings
       CRM.$('.report-config-select').bind('change', function(e) {
         that.instance.configGet();
