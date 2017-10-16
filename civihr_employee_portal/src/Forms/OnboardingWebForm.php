@@ -12,8 +12,10 @@ class OnboardingWebForm {
   const NAME = 'Welcome to CiviHR';
 
   /**
+   * Some required processing such as clearing caches and creating tasks.
+   *
    * @param \stdClass $node
-   * @param array $submission
+   * @param \stdClass $submission
    */
   public function onSubmit($node, $submission) {
     $contactID = \CRM_Core_Session::singleton()->getLoggedInContactID();
@@ -27,8 +29,10 @@ class OnboardingWebForm {
   }
 
   /**
-   * @param $node
-   * @param $submission
+   * Checks the application status for the "Is applying for NI/SSN" field
+   *
+   * @param \stdClass $node
+   * @param \stdClass $submission
    *
    * @return bool
    */
@@ -51,20 +55,25 @@ class OnboardingWebForm {
   }
 
   /**
+   * Creates a reminder task for the line manager to check if NI/SSN application
+   * is still in progress 1 month later.
+   *
    * @param int $contactID
    *   The logged in contact ID
    */
   private function createReminderTask($contactID) {
     $taskTypeName = 'Check on contact for NI/SSN';
-    $date = date('d-m-Y', strtotime('+1 months'));
+    $date = new \DateTime('+1 months');
 
     $assigneeIDs = ContactService::getLineManagerIDs($contactID);
     if (empty($assigneeIDs)) {
       $assigneeIDs = ContactService::getContactIDsWithRole('CIVIHR_ADMIN');
     }
+
+    $assigneeIDs = array_diff($assigneeIDs, [$contactID]); // remove self
     $assigneeID = current($assigneeIDs); // only one assignee, first in line
 
-    if ($assigneeID && $assigneeID != $contactID) {
+    if ($assigneeID) {
       TaskCreationService::create($contactID, [$assigneeID], $taskTypeName, $date);
     }
   }

@@ -10,6 +10,9 @@ class OnboardingWizardCustomizationForm {
   const CAROUSEL_OPTIONS_KEY = 'civihr_onboarding_carousel_options';
 
   /**
+   * Builds an array representation of the onboarding customization settings
+   * form which can be rendered.
+   *
    * @return array
    */
   public function build() {
@@ -24,8 +27,11 @@ class OnboardingWizardCustomizationForm {
   }
 
   /**
-   * @param $form
-   * @param $formState
+   * Handles some post-processing of the form such as saving images and
+   * (un)publishing content.
+   *
+   * @param array $form
+   * @param array $formState
    */
   public function onSubmit($form, &$formState) {
     $this->saveLogo($formState);
@@ -40,7 +46,7 @@ class OnboardingWizardCustomizationForm {
       '#type' => 'managed_file',
       '#title' => t('Organization Logo'),
       '#weight' => 1,
-      '#description' => t("Upload organization logo for welcome screen"),
+      '#description' => t('Upload organization logo for welcome screen'),
       '#default_value' => variable_get(self::LOGO_KEY),
       '#upload_location' => 'public://',
       '#upload_validators' => ['file_validate_extensions' => ['gif png jpg jpeg']]
@@ -57,7 +63,7 @@ class OnboardingWizardCustomizationForm {
       '#type' => 'textarea',
       '#title' => t('Welcome Text'),
       '#weight' => 2,
-      '#description' => t("Personalize your welcome text"),
+      '#description' => t('Personalize your welcome text'),
       '#default_value' => $welcomeText,
     ];
   }
@@ -66,8 +72,8 @@ class OnboardingWizardCustomizationForm {
    * @return array
    */
   private function getIntroElement() {
-    $introDescription = "Customize the welcome introduction when a user lands "
-      . "on tasks and documents page at end of wizard.";
+    $introDescription = 'Customize the welcome introduction when a user lands '
+      . 'on tasks and documents page at end of wizard.';
 
     return [
       '#type' => 'textarea',
@@ -107,7 +113,7 @@ class OnboardingWizardCustomizationForm {
    * system form
    * @see https://drupal.stackexchange.com/a/187043/75186
    *
-   * @param $formState
+   * @param array $formState
    */
   private function saveLogo(&$formState) {
     global $user;
@@ -123,7 +129,9 @@ class OnboardingWizardCustomizationForm {
   }
 
   /**
-   * @param $formState
+   * Publishes / unpublishes onboarding slideshow content based on their status.
+   *
+   * @param array $formState
    */
   private function updateCarouselContent($formState) {
     $nodeIDs = $formState['values'][self::CAROUSEL_OPTIONS_KEY];

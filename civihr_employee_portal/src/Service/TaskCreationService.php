@@ -7,7 +7,7 @@ class TaskCreationService {
    * @param int $contactID
    * @param array $assigneeIDs
    * @param string $taskType
-   * @param string $date
+   * @param \DateTime $date
    */
   public static function create($contactID, $assigneeIDs, $taskType, $date) {
     $taskTypeId = static::getTaskTypeID($taskType);
@@ -19,7 +19,7 @@ class TaskCreationService {
     civicrm_api3('Task', 'create', [
       'assignee_contact_id' => $assigneeIDs,
       'activity_type_id' => $taskTypeId,
-      'activity_date_time' => $date,
+      'activity_date_time' => $date->format('d-m-Y'),
       'target_id' => $contactID,
     ]);
   }
