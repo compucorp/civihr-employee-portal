@@ -1235,9 +1235,10 @@ function civihr_employee_portal_views_query_alter(&$view, &$query) {
 
 /**
  * Implements hook_views_pre_view().
+ *
  * @param view $view
- * @param $display_id
- * @param $args
+ * @param int $display_id
+ * @param array $args
  */
 function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
   // Custom configuration start for items per page

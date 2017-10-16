@@ -136,7 +136,7 @@ function _civihr_employee_portal_has_hr_resource_types_form_access() {
 }
 
 /**
- * The user edit page theme is overridden to use the admin them if the user is
+ * The user edit page theme is overridden to use the admin theme if the user is
  * an admin. It should appear to be part of CiviHR regardless of roles.
  *
  * @return string
@@ -1952,8 +1952,8 @@ function customize_welcome_wizard_callback() {
  * system form
  * @see https://drupal.stackexchange.com/a/187043/75186
  *
- * @param $form
- * @param $form_state
+ * @param array $form
+ * @param array $form_state
  */
 function welcome_wizard_customization_form_submit($form, &$form_state) {
   global $user;
@@ -6227,7 +6227,7 @@ function civihr_employee_portal_user_login(&$edit, $account) {
  */
 function _civihr_employee_portal_should_do_onboarding($account) {
   $formName = OnboardingWebForm::NAME;
-  $nodes = node_load_multiple(NULL, ["title" => $formName]);
+  $nodes = node_load_multiple(NULL, ['title' => $formName]);
   $node = current($nodes);
   $canViewOnboardingForm = node_access('view', $node, $account);
   $submissions = WebformHelper::getUserSubmissionsByName($account, $formName);

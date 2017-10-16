@@ -6,6 +6,7 @@ class ContactService {
   /**
    * @param string $role
    *   The name of the target role
+   *
    * @return array
    *   An array of contact IDs with that role
    */
@@ -37,7 +38,9 @@ class ContactService {
   }
 
   /**
-   * @param $contactID
+   * Gets all line managers for the provided contact ID.
+   *
+   * @param int $contactID
    *
    * @return array
    */

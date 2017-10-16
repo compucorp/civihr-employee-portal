@@ -27,8 +27,10 @@ class WebformHelper {
   }
 
   /**
-   * @param $user
-   * @param $name
+   * Finds all webform submissions by a Drupal user.
+   *
+   * @param \stdClass $user
+   * @param string $name
    *
    * @return array
    */

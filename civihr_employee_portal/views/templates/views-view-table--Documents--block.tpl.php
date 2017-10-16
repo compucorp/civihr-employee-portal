@@ -147,14 +147,14 @@ if (!empty($documentIds)) {
             <td >
               <?php if ($row['status_id'] === 'awaiting upload'): ?>
                 <button
-
                 ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', 'edit')"
                 class="btn btn-sm btn-default">
                 <i class="fa fa-upload"></i>
                 Upload
-                </button><?php else: ?>
-              <button
-              ng-show='!document.loadingModalData'
+                </button>
+              <?php else: ?>
+                <button
+                  ng-show='!document.loadingModalData'
                   ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', 'view')"
                   class="btn btn-sm btn-default">
                   <i class="fa fa-eye"></i>
@@ -164,8 +164,7 @@ if (!empty($documentIds)) {
                 <a class="btn btn-sm btn-default"
                   <?php printf("ng-show='!document.loadingModalData && %s'", $showDownload); ?>
                    target="_blank"
-                   ng-href="/civicrm/tasksassignments/file/zip?entityID=<?php print $rowID; ?>&entityTable=civicrm_activity"
-                >
+                   ng-href="/civicrm/tasksassignments/file/zip?entityID=<?php print $rowID; ?>&entityTable=civicrm_activity">
                   <i class="fa fa-download"></i>
                   Download
                 </a>

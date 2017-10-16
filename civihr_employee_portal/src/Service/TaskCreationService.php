@@ -25,7 +25,9 @@ class TaskCreationService {
   }
 
   /**
-   * @param $taskTypeName
+   * Returns the ID for a task of given name, or NULL if it doesn't exist.
+   *
+   * @param string $taskTypeName
    *
    * @return null|int
    */
