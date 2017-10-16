@@ -719,7 +719,6 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer permissions',
     'roles' => array(
       'administrator' => 'administrator',
-      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'user',
   );
@@ -903,7 +902,6 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'assign all roles',
     'roles' => array(
       'administrator' => 'administrator',
-      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'role_delegation',
   );
