@@ -7,6 +7,8 @@ use CRM_Utils_Array as ArrayHelper;
 class WebformHelper {
 
   /**
+   * Returns all components of a form that match the provided name
+   *
    * @param \stdClass $node
    * @param string $name
    *
