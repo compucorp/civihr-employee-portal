@@ -5980,6 +5980,15 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
             $form['submitted'][$fieldset[$contact]]['civicrm_1_contact_' . $contact . '_cg99999_custom_100009']['#suffix'] = '</div>';
         }
     }
+
+  /**
+   * Remove empty components keys from $form['submitted'] as they break markup.
+   * @see https://www.drupal.org/node/2916491
+   */
+  if (isset($form['#node']) && $form['#node']->title == OnboardingWebForm::NAME) {
+    $form['submitted'] = array_filter($form['submitted']);
+  }
+
 }
 
 /**
