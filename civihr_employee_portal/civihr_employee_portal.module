@@ -1,12 +1,14 @@
 <?php
 
 use Drupal\civihr_employee_portal\Blocks\Base;
+use Drupal\civihr_employee_portal\Mail\AccountActivatedSystemMail;
 use Drupal\civihr_employee_portal\Helpers\WebformHelper;
 use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 use Drupal\civihr_employee_portal\Security\PublicFirewall;
 use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
 use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
+use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
 
 /**
  * Implements hook_css_alter().
@@ -873,6 +875,44 @@ function civihr_employee_portal_permission() {
       'description' => t('Availability to manage HR Reports configuration'),
     ),
   );
+}
+
+
+/**
+ * Implements hook_mail_alter().
+ *
+ * @param array $message
+ */
+function civihr_employee_portal_mail_alter(&$message) {
+  $replacementMail = NULL;
+
+  switch ($message['key']) {
+    case 'status_activated':
+    case 'register_admin_created':
+      $replacementMail = new AccountActivatedSystemMail();
+      break;
+    case 'password_reset':
+      $replacementMail = new PasswordResetSystemMail();
+      break;
+  }
+
+  if (!$replacementMail) {
+    return;
+  }
+
+  $smarty = CRM_Core_Smarty::singleton();
+  $smarty->addTemplateDir(__DIR__ . '/templates/smarty');
+
+  $variables = $replacementMail->getVariables($message);
+  $headers = $replacementMail->getHeaders();
+  $templateName = $replacementMail->getTemplateName();
+
+  // allow use of original content
+  $variables['body'] = $message['body'][0];
+  $body = $smarty->fetchWith($templateName, $variables);
+
+  $message['headers'] = array_merge($message['headers'], $headers);
+  $message['body'] = [$body];
 }
 
 /**
