@@ -881,7 +881,7 @@ function civihr_employee_portal_permission() {
 /**
  * Implements hook_mail_alter().
  *
- * @param $message
+ * @param array $message
  */
 function civihr_employee_portal_mail_alter(&$message) {
   $replacementMail = NULL;
