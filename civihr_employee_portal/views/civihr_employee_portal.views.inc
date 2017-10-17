@@ -15,172 +15,172 @@ function civihr_employee_portal_views_data_alter(&$data) {
   /**
    * Custom field handler which will create age group based on the contact birth date
    */
-  $data['civicrm_contact']['age'] = array(
+  $data['civicrm_contact']['age'] = [
     'title' => t('Age'),
     'help' => t('Contact age'),
     'real field' => 'birth_date',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_age_group',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'civihr_employee_portal_argument_age_group',
       'name field' => 'birth_date',
       'numeric' => FALSE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
   /**
    * Custom field handler which will create age group based on the contact birth date
    */
-  $data['civicrm_contact']['age_group'] = array(
+  $data['civicrm_contact']['age_group'] = [
     'title' => t('Age Group'),
     'help' => t('Age group for the contact'),
     'real field' => 'birth_date',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_contact_age_group',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_json_query_argument_request_handler',
       'name field' => 'birth_date',
       'numeric' => FALSE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
   // Add custom date handler for job contract start/end dates
   $data['hrjc_revision']['effective_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
   $data['hrjc_revision']['effective_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
 
-  $data['hrjc_details']['period_start_date'] = array(
+  $data['hrjc_details']['period_start_date'] = [
     'title' => t('Period start date'),
     'real field' => 'period_start_date',
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'civihr_employee_portal_argument_date_range',
       'name field' => 'period_start_date',
       'numeric' => FALSE,
-    ),
-    'sort' => array(
+    ],
+    'sort' => [
       'handler' => 'views_handler_sort_date',
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_date',
-    ),
-  );
+    ],
+  ];
 
-  $data['hrjc_details']['period_end_date'] = array(
+  $data['hrjc_details']['period_end_date'] = [
     'title' => t('Period end date'),
     'real field' => 'period_end_date',
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field', // 'views_handler_field_date',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'civihr_employee_portal_argument_date_range',
       'name field' => 'period_end_date',
       'numeric' => FALSE,
-    ),
-    'sort' => array(
+    ],
+    'sort' => [
       'handler' => 'views_handler_sort_date',
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_date',
-    ),
-  );
+    ],
+  ];
 
-  $data['hrjc_role']['role_start_date'] = array(
+  $data['hrjc_role']['role_start_date'] = [
     'title' => t('Role start date'),
     'real field' => 'role_start_date',
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'civihr_employee_portal_argument_date_range',
       'name field' => 'role_start_date',
       'numeric' => FALSE,
-    ),
-    'sort' => array(
+    ],
+    'sort' => [
       'handler' => 'views_handler_sort_date',
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_date',
-    ),
-  );
+    ],
+  ];
 
-  $data['hrjc_role']['role_end_date'] = array(
+  $data['hrjc_role']['role_end_date'] = [
     'title' => t('Role end date'),
     'real field' => 'role_end_date',
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'civihr_employee_portal_argument_date_range',
       'name field' => 'role_end_date',
       'numeric' => FALSE,
-    ),
-    'sort' => array(
+    ],
+    'sort' => [
       'handler' => 'views_handler_sort_date',
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_date',
-    ),
-  );
+    ],
+  ];
 
-  $data['hrjc_details_hrjc_revision']['period_start_date'] = array(
+  $data['hrjc_details_hrjc_revision']['period_start_date'] = [
     'title' => t('Period start date'),
     'real field' => 'period_start_date',
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'civihr_employee_portal_argument_date_range',
       'name field' => 'period_start_date',
       'numeric' => FALSE,
-    ),
-    'sort' => array(
+    ],
+    'sort' => [
       'handler' => 'views_handler_sort_date',
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_date',
-    ),
-  );
+    ],
+  ];
 
-  $data['hrjc_details_hrjc_revision']['period_end_date'] = array(
+  $data['hrjc_details_hrjc_revision']['period_end_date'] = [
     'title' => t('Period end date'),
     'real field' => 'period_end_date',
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'civihr_employee_portal_argument_date_range',
       'name field' => 'period_end_date',
       'numeric' => FALSE,
-    ),
-    'sort' => array(
+    ],
+    'sort' => [
       'handler' => 'views_handler_sort_date',
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_date',
-    ),
-  );
+    ],
+  ];
 
   $data['absence_list']['absence_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
   $data['absence_list']['absence_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
@@ -188,642 +188,642 @@ function civihr_employee_portal_views_data_alter(&$data) {
   $data['absence_approval_list']['absence_start_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
   $data['absence_approval_list']['absence_end_date']['argument']['handler'] = 'civihr_employee_portal_argument_date_range';
 
-  $data['absence_activity']['absence_date'] = array(
+  $data['absence_activity']['absence_date'] = [
     'title' => t('Absence date'),
     'real field' => 'absence_date',
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'civihr_employee_portal_argument_date_range',
       'name field' => 'absence_date',
       'numeric' => FALSE,
-    ),
-    'sort' => array(
+    ],
+    'sort' => [
       'handler' => 'views_handler_sort_date',
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_date',
-    ),
-  );
+    ],
+  ];
 
   // Appraisals handlers
-  $data['appraisal']['appraisal_cycle_type'] = array(
+  $data['appraisal']['appraisal_cycle_type'] = [
     'title' => t('Appraisal Cycle Type'),
     'help' => t('Appraisal Cycle Type'),
     'real field' => 'cycle_type_id',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_appraisal_cycle_type',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument',
       'name_field' => 'appraisal_cycle_type',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
-  $data['appraisal']['appraisal_cycle_period'] = array(
+  $data['appraisal']['appraisal_cycle_period'] = [
     'title' => t('Appraisal Cycle Period'),
     'help' => t('Appraisal Cycle Period'),
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_appraisal_cycle_period',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument',
       'name_field' => 'appraisal_cycle_period',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
-  $data['appraisal']['appraisal_status'] = array(
+  $data['appraisal']['appraisal_status'] = [
     'title' => t('Appraisal Status'),
     'help' => t('Appraisal Status'),
     'real field' => 'status_id',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_appraisal_status',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument',
       'name_field' => 'appraisal_status',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
-  $data['appraisal']['appraisal_employee'] = array(
+  $data['appraisal']['appraisal_employee'] = [
     'title' => t('Appraisal Employee'),
     'help' => t('Appraisal Employee'),
     'real field' => 'contact_id',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_appraisal_employee',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument',
       'name_field' => 'appraisal_employee',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
-  $data['appraisal']['appraisal_line_manager'] = array(
+  $data['appraisal']['appraisal_line_manager'] = [
     'title' => t('Appraisal Line Manager'),
     'help' => t('Appraisal Line Manager'),
     'real field' => 'manager_id',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_appraisal_line_manager',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument',
       'name_field' => 'appraisal_line_manager',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
-  $data['appraisal']['appraisal_due_date'] = array(
+  $data['appraisal']['appraisal_due_date'] = [
     'title' => t('Appraisal Due Date'),
     'help' => t('Appraisal Due Date'),
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_appraisal_due_date',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument',
       'name_field' => 'appraisal_due_date',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
-  $data['appraisal']['contact_id'] = array(
+  $data['appraisal']['contact_id'] = [
     'title' => t('Appraisal Contact ID'),
     'help' => t('Appraisal Contact ID'),
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'civihr_employee_portal_argument_contact_id',
       'name_field' => 'contact_id',
       'string' => TRUE,
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_numeric',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
-  $data['appraisal']['manager_id'] = array(
+  $data['appraisal']['manager_id'] = [
     'title' => t('Appraisal Manager ID'),
     'help' => t('Appraisal Manager ID'),
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'civihr_employee_portal_argument_contact_id',
       'name_field' => 'manager_id',
       'string' => TRUE,
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_numeric',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
   // Task handlers
-  $data['tasks']['assignee_contact_id'] = array(
+  $data['tasks']['assignee_contact_id'] = [
     'title' => t('Assignee contact'),
     'help' => t('Assignee contact'),
     'real field' => 'assignee_contact_id',
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'civihr_employee_portal_argument_contact_id',
       'name_field' => 'assignee_contact',
       'string' => TRUE,
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_numeric',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
-  $data['tasks']['target_contact_id'] = array(
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
+  $data['tasks']['target_contact_id'] = [
     'title' => t('Target contact'),
     'help' => t('Target contact'),
     'real field' => 'target_contact_id',
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'civihr_employee_portal_argument_contact_id',
       'name_field' => 'target_contact',
       'string' => TRUE,
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_numeric',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
-  $data['tasks']['status_id'] = array(
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
+  $data['tasks']['status_id'] = [
     'title' => t('Task status'),
     'help' => t('Task status'),
     'real field' => 'status_id',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_task_status',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument',
       'name_field' => 'task_status',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
-  $data['tasks']['activity_type_id'] = array(
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
+  $data['tasks']['activity_type_id'] = [
     'title' => t('Task type'),
     'help' => t('Task type'),
     'real field' => 'activity_type_id',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_activity_type',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument',
       'name_field' => 'task_type',
       'string' => TRUE
-    ),
-  );
-  $data['tasks']['activity_date_time'] = array(
+    ],
+  ];
+  $data['tasks']['activity_date_time'] = [
     'title' => t('Task due date'),
     'help' => t('Task due date'),
     'real field' => 'activity_date_time',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_tasks_date',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument',
       'name_field' => 'task_due_date',
       'string' => TRUE
-    ),
-  );
+    ],
+  ];
 
   // Document handlers
-  $data['documents']['assignee_contact_id'] = array(
+  $data['documents']['assignee_contact_id'] = [
     'title' => t('Assignee contact'),
     'help' => t('Assignee contact'),
     'real field' => 'assignee_contact_id',
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'civihr_employee_portal_argument_contact_id',
       'name_field' => 'assignee_contact',
       'string' => TRUE,
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_numeric',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
-  $data['documents']['target_contact_id'] = array(
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
+  $data['documents']['target_contact_id'] = [
     'title' => t('Target contact'),
     'help' => t('Target contact'),
     'real field' => 'target_contact_id',
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'civihr_employee_portal_argument_contact_id',
       'name_field' => 'target_contact',
       'string' => TRUE,
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_numeric',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
-  $data['documents']['status_id'] = array(
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
+  $data['documents']['status_id'] = [
     'title' => t('Document status'),
     'help' => t('Document status'),
     'real field' => 'status_id',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_document_status',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument',
       'name_field' => 'status',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
-  $data['documents']['activity_type_id'] = array(
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
+  $data['documents']['activity_type_id'] = [
     'title' => t('Document type'),
     'help' => t('Document type'),
     'real field' => 'activity_type_id',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_activity_type',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument',
       'name_field' => 'document_type',
       'string' => TRUE
-    ),
-  );
-  $data['documents']['activity_date_time'] = array(
+    ],
+  ];
+  $data['documents']['activity_date_time'] = [
     'title' => t('Document due date'),
     'help' => t('Document due date'),
     'real field' => 'activity_date_time',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_documents_date',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument',
       'name_field' => 'document_due_date',
       'string' => TRUE
-    ),
-  );
-  $data['documents']['expire_date'] = array(
+    ],
+  ];
+  $data['documents']['expire_date'] = [
     'title' => t('Document expire date'),
     'help' => t('Document expire date'),
     'real field' => 'expire_date',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_documents_date',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument',
       'name_field' => 'document_expire_date',
       'string' => TRUE
-    ),
-  );
+    ],
+  ];
 
   // Reports handlers
-  $data['hrjc_details']['end_reason'] = array(
+  $data['hrjc_details']['end_reason'] = [
     'title' => t('Contract end reason'),
     'real field' => 'end_reason',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_jobcontract_end_reason',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_json_query_argument_request_handler',
       'name_field' => 'end_reason',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_json_query_handler_filter',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
-  $data['hrjc_hour']['location_standard_hours'] = array(
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
+  $data['hrjc_hour']['location_standard_hours'] = [
     'title' => t('Contract location standard hours'),
     'real field' => 'location_standard_hours',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_jobcontract_location_standard_hours',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_json_query_argument_request_handler',
       'name_field' => 'location_standard_hours',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_json_query_handler_filter',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
-  $data['hrjc_pay']['pay_scale'] = array(
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
+  $data['hrjc_pay']['pay_scale'] = [
     'title' => t('Contract pay scale'),
     'real field' => 'pay_scale',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_jobcontract_pay_scale',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_json_query_argument_request_handler',
       'name_field' => 'pay_scale',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_json_query_handler_filter',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
-  $data['hrjc_pension']['is_enrolled'] = array(
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
+  $data['hrjc_pension']['is_enrolled'] = [
     'title' => t('Contract pension is enrolled'),
     'real field' => 'is_enrolled',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_jobcontract_pension_is_enrolled',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_json_query_argument_request_handler',
       'name_field' => 'is_enrolled',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_json_query_handler_filter',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
-  $data['hrjc_role']['role_funder'] = array(
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
+  $data['hrjc_role']['role_funder'] = [
     'title' => t('Role funder'),
     'real field' => 'role_funder',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_pipe',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_json_query_argument_request_handler',
       'name_field' => 'role_funder',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_json_query_handler_filter',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
-  $data['hrjc_role']['role_percent_pay_funder'] = array(
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
+  $data['hrjc_role']['role_percent_pay_funder'] = [
     'title' => t('Role percent pay funder'),
     'real field' => 'role_percent_pay_funder',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_pipe',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_json_query_argument_request_handler',
       'name_field' => 'role_percent_pay_funder',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_json_query_handler_filter',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
-  $data['hrjc_role']['role_cost_center'] = array(
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
+  $data['hrjc_role']['role_cost_center'] = [
     'title' => t('Role cost center'),
     'real field' => 'role_cost_center',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_pipe',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_json_query_argument_request_handler',
       'name_field' => 'role_cost_center',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_json_query_handler_filter',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
-  $data['hrjc_role']['role_percent_pay_cost_center'] = array(
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
+  $data['hrjc_role']['role_percent_pay_cost_center'] = [
     'title' => t('Role percent pay cost center'),
     'real field' => 'role_percent_pay_cost_center',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_pipe',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_json_query_argument_request_handler',
       'name_field' => 'role_percent_pay_cost_center',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_json_query_handler_filter',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
 
-  $data['absence_activity']['absence_duration'] = array(
+  $data['absence_activity']['absence_duration'] = [
     'title' => t('Absence duration in days'),
     'real field' => 'absence_duration',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_absence_duration_in_days',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_json_query_argument_request_handler',
       'name_field' => 'absence_duration',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_json_query_handler_filter',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
-  $data['absence_activity']['absence_amount_taken'] = array(
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
+  $data['absence_activity']['absence_amount_taken'] = [
     'title' => t('Absence amount taken'),
     'real field' => 'absence_amount_taken',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_absence_duration_in_days',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_json_query_argument_request_handler',
       'name_field' => 'absence_amount_taken',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_json_query_handler_filter',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
-  $data['absence_activity']['absence_amount_accrued'] = array(
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
+  $data['absence_activity']['absence_amount_accrued'] = [
     'title' => t('Absence amount accrued'),
     'real field' => 'absence_amount_accrued',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_absence_duration_in_days',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_json_query_argument_request_handler',
       'name_field' => 'absence_amount_accrued',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_json_query_handler_filter',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
-  $data['absence_activity']['absence_absolute_amount'] = array(
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
+  $data['absence_activity']['absence_absolute_amount'] = [
     'title' => t('Absence absolute duration'),
     'real field' => 'absence_absolute_amount',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_absence_duration_in_days',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_json_query_argument_request_handler',
       'name_field' => 'absence_absolute_amount',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_json_query_handler_filter',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
-  $data['absence_activity']['absence_is_credit'] = array(
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
+  $data['absence_activity']['absence_is_credit'] = [
     'title' => t('Absence is credit'),
     'real field' => 'absence_is_credit',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_yes_no',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_json_query_argument_request_handler',
       'name_field' => 'absence_is_credit',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_json_query_handler_filter',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_json_query_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_json_query_handler_sort'],
+  ];
 
-  $data['absence_activity']['absence_status'] = array(
+  $data['absence_activity']['absence_status'] = [
     'title' => t('Absence status'),
     'help' => t('Absence status field value'),
     'real field' => 'absence_status',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_absence_status',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument_string',
       'name_field' => 'title',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
-  $data['civicrm_value_emergency_contacts_21']['id'] = array(
+  $data['civicrm_value_emergency_contacts_21']['id'] = [
     'title' => t('Emergency Contact ID'),
     'help' => t('Emergency Contact ID field value'),
     'real field' => 'id',
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field_numeric',
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_numeric',
-    ),
-    'sort' => array(
+    ],
+    'sort' => [
       'handler' => 'views_handler_sort'
-    ),
-  );
+    ],
+  ];
 
   // Add custom date handler
 //    $data['absence_activity']['absence_date']['field']['handler'] = 'views_handler_field_date';
@@ -841,153 +841,153 @@ function civihr_employee_portal_views_data_alter(&$data) {
   $data['absence_list']['absence_end_date_timestamp']['filter']['handler'] = 'views_handler_filter_date';
   $data['absence_list']['absence_end_date_timestamp']['argument']['handler'] = 'views_handler_argument_date';
 
-  $data['absence_list']['absence_start_date_period_filter'] = array(
+  $data['absence_list']['absence_start_date_period_filter'] = [
     'title' => t('Absence date filter based on Civi date periods'),
     'help' => t('Absence date filter based on Civi date periods.'),
     'real field' => 'absence_start_date_timestamp',
-    'field' => array(
+    'field' => [
       'handler' => 'views_handler_field_date',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument_date',
       'name_field' => 'title',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'civihr_employee_portal_filter_absence_period',
       'help' => t('Filter absence list result based on Civi date periods'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort_date'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort_date'],
+  ];
 
-  $data['absence_list']['duration'] = array(
+  $data['absence_list']['duration'] = [
     'title' => t('Absence type row value (Duration)'),
     'help' => t('Row value for each absence type (Duration)'),
     'real field' => 'duration',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_absence_duration',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument_numeric',
       'name_field' => 'title',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_numeric',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
-  $data['absence_list']['absence_status'] = array(
+  $data['absence_list']['absence_status'] = [
     'title' => t('Absence status'),
     'help' => t('Absence status field value'),
     'real field' => 'absence_status',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_absence_status',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument_string',
       'name_field' => 'title',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
-  $data['absence_list']['absence_table_header'] = array(
+  $data['absence_list']['absence_table_header'] = [
     'title' => t('Absence table header block area'),
     'help' => t('Absence table header block area.'),
-    'area' => array(
+    'area' => [
       'handler' => 'civihr_employee_portal_handler_absence_table_header_block_area',
-    ),
-  );
+    ],
+  ];
 
-  $data['absence_approval_list']['civi_target_contact_name'] = array(
+  $data['absence_approval_list']['civi_target_contact_name'] = [
     'title' => t('Civi contact name - absence target contact'),
     'help' => t('Civi contact name for the assigned absence/activity target contact'),
     'real field' => 'employee_id',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_employee_id',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument_string',
       'name_field' => 'title',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
-  $data['absence_approval_list']['duration'] = array(
+  $data['absence_approval_list']['duration'] = [
     'title' => t('Absence type row value (Duration)'),
     'help' => t('Row value for each absence type (Duration)'),
     'real field' => 'duration',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_absence_duration',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument_numeric',
       'name_field' => 'title',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_numeric',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
-  $data['absence_approval_list']['absence_status'] = array(
+  $data['absence_approval_list']['absence_status'] = [
     'title' => t('Absence status'),
     'help' => t('Absence status field value'),
     'real field' => 'absence_status',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_absence_status',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument_string',
       'name_field' => 'title',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
-  $data['absence_approval_list']['manager_id'] = array(
+  $data['absence_approval_list']['manager_id'] = [
     'title' => t('Manager ID'),
     'help' => t('Manager ID field value'),
     'real field' => 'manager_id',
-    'field' => array(
+    'field' => [
       'handler' => 'civihr_employee_portal_handler_manager_id',
       'click sortable' => TRUE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument_string',
       'name_field' => 'title',
       'string' => TRUE
-    ),
-    'filter' => array(
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_string',
       'help' => t('Filter results to a particular result set'),
-    ),
-    'sort' => array('handler' => 'views_handler_sort'),
-  );
+    ],
+    'sort' => ['handler' => 'views_handler_sort'],
+  ];
 
   // Add custom date handler
   $data['absence_approval_list']['absence_start_date_timestamp']['field']['handler'] = 'views_handler_field_date';
@@ -1017,7 +1017,7 @@ function civihr_employee_portal_views_pre_render(&$view) {
       ctools_modal_add_js();
     }
   }
-  if (in_array($view->name, array('appraisals', 'approvals', 'Tasks'))) {
+  if (in_array($view->name, ['appraisals', 'approvals', 'Tasks'])) {
     ctools_include('modal');
     ctools_modal_add_js();
   }
@@ -1114,10 +1114,11 @@ function _civihr_employee_portal_decode_vacancy_description_html(&$view, &$outpu
   $replacements = [];
   $renderedFields = [];
 
-  if (isset($view->style_plugin->rendered_fields)) {
-    $renderedFields = $view->style_plugin->rendered_fields;
+  if (!property_exists($view->style_plugin, 'rendered_fields')) {
+    return;
   }
-  foreach ($renderedFields as $vacancy) {
+
+  foreach ($view->style_plugin->rendered_fields as $vacancy) {
     $replacements[$vacancy['description']] = html_entity_decode($vacancy['description']);
   }
 
@@ -1125,7 +1126,7 @@ function _civihr_employee_portal_decode_vacancy_description_html(&$view, &$outpu
 }
 
 function removeAdditionalCommas($view) {
-  $fieldsToClean = array();
+  $fieldsToClean = [];
 
   foreach ($view->style_plugin->rendered_fields as $renderedField) {
     $managerFieldValues = !empty($renderedField['last_name_1']) ? $renderedField['last_name_1'] : NULL;
@@ -1234,9 +1235,10 @@ function civihr_employee_portal_views_query_alter(&$view, &$query) {
 
 /**
  * Implements hook_views_pre_view().
- * @param $view
- * @param $display_id
- * @param $args
+ *
+ * @param view $view
+ * @param int $display_id
+ * @param array $args
  */
 function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
   // Custom configuration start for items per page
