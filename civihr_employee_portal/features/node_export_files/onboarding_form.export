@@ -1027,6 +1027,7 @@ array(
             'width' => 20,
             'private' => 0,
             'maxlength' => '',
+            'wrapper_classes' => 'onboarding_wizard_payroll_ssin_textfield',
             'field_prefix' => '',
             'field_suffix' => '',
             'disabled' => 0,
