@@ -1,0 +1,6 @@
+name = CiviHR Leave and Absences
+description = Provides Leave and Absences functionality on the CiviHR Self Service Portal.
+core = 7.x
+package = Compucorp
+dependencies[] = civihr_employee_portal
+dependencies[] = civicrm_resources

@@ -1,0 +1,123 @@
+<?php
+
+/**
+ * @file
+ * Module to add functionality for CiviHR Leave and Absences.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function civihr_leave_absences_block_info() {
+  $blocks = [];
+  $blocks['my_leave'] = [
+    'info' => t('My Leave'),
+    'cache' => DRUPAL_NO_CACHE,
+  ];
+  $blocks['manager_leave'] = [
+    'info' => t('Manager Leave'),
+    'cache' => DRUPAL_NO_CACHE,
+  ];
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ *
+ * Generates block for Leave pages.
+ */
+function civihr_leave_absences_block_view($delta = '') {
+  $block = [];
+  switch ($delta) {
+    case 'my_leave':
+      $block['content'] = civihr_leave_absences_get_markup('my-leave');
+      break;
+    case 'manager_leave':
+      $block['content'] = civihr_leave_absences_get_markup('manager-leave');
+      break;
+  }
+  return $block;
+}
+
+/**
+ * Implements hook_init().
+ *
+ * Fetches the base URL of the angular app, to be stored in the Drupal.settings
+ * global var.
+ *
+ * Adds the Leave and Absences permissions to the CRM.permissions global var.
+ */
+function civihr_leave_absences_init() {
+  if (!_isCiviCRM()) {
+    $baseURL = CRM_Extension_System::singleton()->getMapper()->keyToUrl('uk.co.compucorp.civicrm.hrleaveandabsences');
+    $attachmentToken = CRM_Core_Page_AJAX_Attachment::createToken();
+
+    $settings = [
+      'civihr_leave_absences' => [
+        'baseURL' => $baseURL,
+        'attachmentToken' => $attachmentToken
+      ]
+    ];
+    drupal_add_js($settings, 'setting');
+
+    _civihr_leave_absences_push_permissions();
+  }
+}
+
+/**
+ * Internal function for fetching custom markup from template and Angular Js.
+ *
+ * @param String
+ *    Name of the resource to load template and angular js.
+ *
+ * @return String
+ *    Custom markup from template file.
+ */
+function civihr_leave_absences_get_markup($resource = '') {
+  $script = CRM_Core_Config::singleton()->debug ? "{$resource}.js" : "{$resource}.min.js";
+
+  // Adds RequireJS + AngularJS dependencies only once
+  if (!strpos(drupal_get_js('footer'), 'reqangular.min.js')) {
+    civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
+  }
+
+  civicrm_resources_load('uk.co.compucorp.civicrm.hrleaveandabsences', [$script]);
+
+  return civihr_leave_absences_load_file(str_replace('-', '_', $resource));
+}
+
+/**
+ * Internal function to load predefined template file.
+ *
+ * @param String
+ *    File name to load the content.
+ *
+ * @return String
+ *    File Content.
+ */
+function civihr_leave_absences_load_file($template = '') {
+
+  // Fetching custom markup from pre-defined template file.
+  $file_path = drupal_get_path('module', 'civihr_leave_absences') . '/templates/' . $template . '.html';
+  if (file_exists($file_path)) {
+    return @file_get_contents($file_path);
+  }
+  else {
+    return '';
+  }
+}
+
+/**
+ * Internal function to push the Leave & Absences permissions to the frontend.
+ *
+ * This will add the permissions to the CRM.permissions javascript variable,
+ * which then can be used by the CRM.checkPerm() function.
+ */
+function _civihr_leave_absences_push_permissions() {
+  CRM_Core_Resources::singleton()->addPermissions([
+    'access leave and absences',
+    'administer leave and absences',
+    'access leave and absences in ssp',
+    'manage leave and absences in ssp',
+  ]);
+}

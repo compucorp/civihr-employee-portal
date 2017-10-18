@@ -3,7 +3,6 @@
 use Drupal\civihr_employee_portal\Blocks\Base;
 use Drupal\civihr_employee_portal\Mail\AccountActivatedSystemMail;
 use Drupal\civihr_employee_portal\Helpers\WebformHelper;
-use Drupal\civihr_employee_portal\Forms\AbsenceRequestForm;
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
 use Drupal\civihr_employee_portal\Security\PublicFirewall;
 use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
@@ -373,98 +372,6 @@ function _get_tasks_documents_sql_query(array $activityTypes) {
 }
 
 /**
- * Rebuilds the absence list view.
- */
-function _rebuild_absence_list_view() {
-  $civi_settings = parse_url(CIVICRM_DSN);
-  $civi_db_name = trim($civi_settings['path'], '/');
-
-  try {
-    $res = civicrm_api3('HRAbsenceType', 'get', array());
-    $absenceTypes = $res['values'];
-    // Build the option values based on Absence types
-    $options = '';
-
-    foreach ($absenceTypes as $absenceType) {
-      if ($absenceType['allow_credits'] == '1') {
-        // Default credit types
-        $options .= $absenceType['credit_activity_type_id'] . ',';
-      }
-      if ($absenceType['allow_debits'] == '1') {
-        // Default debit types
-        $options .= $absenceType['debit_activity_type_id']. ',';
-      }
-    }
-
-    // Activity target contact ID (3 types of activity contacts -> source, assignee, target)
-    $activityContacts = CRM_Core_OptionGroup::values('activity_contacts', FALSE, FALSE, FALSE, NULL, 'name');
-    $targetID = CRM_Utils_Array::key('Activity Targets', $activityContacts);
-    $assigneeID = CRM_Utils_Array::key('Activity Assignees', $activityContacts);
-
-    // Get the main "absence" activity ID
-    $activityTypes = CRM_Core_OptionGroup::values('activity_type', FALSE, FALSE, FALSE, NULL, 'name');
-    $activityTypeId = CRM_Utils_Array::key('Absence', $activityTypes);
-    watchdog('Rebuild view TRUE', 'ABSENCE LIST MYSQL VIEW');
-
-    /**
-     * Leave / sickness list view
-     */
-    $result = db_query('DROP view if exists absence_list');
-    $result = db_query("CREATE VIEW absence_list AS
-                        SELECT request.id, request.details, request.activity_type_id, absence_type_debit.title as debit_title, absence_type_credit.title as credit_title,
-                                IF(absence_type_debit.title IS NOT NULL, absence_type_debit.title, absence_type_credit.title) as absence_title,
-                            CASE absence_type_credit.credit_activity_type_id
-                                WHEN request.activity_type_id THEN 1
-                                ELSE 0 END AS is_credit, tgt.contact_id, tgt.record_type_id, min(absence.activity_date_time) as absence_start_date, max(absence.activity_date_time) as absence_end_date, drupal_contact.uf_id as drupal_uid,
-                                SUM(CASE WHEN absence.status_id = 9 THEN 0 WHEN absence.status_id = 3 THEN 0 ELSE absence.duration END) as duration, request.status_id as absence_status,
-                        UNIX_TIMESTAMP(STR_TO_DATE(min(absence.activity_date_time), '%Y-%m-%d')) as absence_start_date_timestamp,
-                        UNIX_TIMESTAMP(STR_TO_DATE(max(absence.activity_date_time), '%Y-%m-%d')) as absence_end_date_timestamp
-                        FROM " . $civi_db_name . ".civicrm_activity request
-                        INNER JOIN " . $civi_db_name . ".civicrm_activity absence ON (absence.source_record_id = request.id AND absence.activity_type_id = " . $activityTypeId . ")
-                        INNER JOIN " . $civi_db_name . ".civicrm_activity_contact tgt ON tgt.activity_id = request.id AND tgt.record_type_id = " . $targetID . "
-                        LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_debit
-                        ON request.activity_type_id = absence_type_debit.debit_activity_type_id
-                        LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_credit
-                        ON request.activity_type_id = absence_type_credit.credit_activity_type_id
-                        LEFT JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
-                        ON tgt.contact_id = drupal_contact.contact_id
-                        WHERE (request.activity_type_id IN (" . rtrim($options, ',') . "))
-                        GROUP BY request.id");
-    /**
-     * Manager approval view
-     */
-    $result = db_query('DROP view if exists absence_approval_list');
-    $result = db_query("CREATE VIEW absence_approval_list AS
-                        SELECT request.id, request.activity_type_id, absence_type_debit.title as debit_title, absence_type_credit.title as credit_title,
-                                IF(absence_type_debit.title IS NOT NULL, absence_type_debit.title, absence_type_credit.title) as absence_title,
-                            CASE absence_type_credit.credit_activity_type_id
-                                WHEN request.activity_type_id THEN 1
-                                ELSE 0 END AS is_credit, tgt.contact_id AS manager_id, tgt_contact.contact_id AS employee_id, tgt.record_type_id, min(absence.activity_date_time) as absence_start_date, max(absence.activity_date_time) as absence_end_date, drupal_contact.uf_id as drupal_uid,
-                                SUM(CASE WHEN absence.status_id = 9 THEN 0 WHEN absence.status_id = 3 THEN 0 ELSE absence.duration END) as duration, request.status_id as absence_status,
-                        UNIX_TIMESTAMP(STR_TO_DATE(min(absence.activity_date_time), '%Y-%m-%d')) as absence_start_date_timestamp,
-                        UNIX_TIMESTAMP(STR_TO_DATE(max(absence.activity_date_time), '%Y-%m-%d')) as absence_end_date_timestamp
-                        FROM " . $civi_db_name . ".civicrm_activity request
-                        INNER JOIN " . $civi_db_name . ".civicrm_activity absence ON (absence.source_record_id = request.id AND absence.activity_type_id = " . $activityTypeId . ")
-                        INNER JOIN " . $civi_db_name . ".civicrm_activity_contact tgt ON tgt.activity_id = request.id AND tgt.record_type_id = " . $assigneeID . "
-                        INNER JOIN " . $civi_db_name . ".civicrm_activity_contact tgt_contact ON tgt_contact.activity_id = request.id AND tgt_contact.record_type_id = " . $targetID . "
-                        LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_debit
-                        ON request.activity_type_id = absence_type_debit.debit_activity_type_id
-                        LEFT JOIN " . $civi_db_name . ".civicrm_hrabsence_type absence_type_credit
-                        ON request.activity_type_id = absence_type_credit.credit_activity_type_id
-                        LEFT JOIN " . $civi_db_name . ".civicrm_uf_match drupal_contact
-                        ON tgt.contact_id = drupal_contact.contact_id
-                        WHERE (request.activity_type_id IN (" . rtrim($options, ',') . "))
-                        GROUP BY request.id");
-
-    // Set to false so it will not rebuild until not asked to rebuild
-    variable_set('rebuild_absence_list_view', 'FALSE');
-  }
-  catch (Exception $e) {
-    drupal_set_message('Cannot create database views: ' . $e->getMessage(), 'error');
-  }
-}
-
-/**
  * Rebuilds the length of service view.
  */
 function _rebuild_length_of_service_view() {
@@ -487,80 +394,33 @@ function _rebuild_absence_activity_view() {
   $civi_settings = parse_url(CIVICRM_DSN);
   $civi_db_name = trim($civi_settings['path'], '/');
 
-  $customGroup = civicrm_api3('CustomGroup', 'getsingle', array(
-    'sequential' => 1,
-    'name' => "Absence_Comment",
-  ));
+  db_query('DROP VIEW IF EXISTS absence_activity');
+  db_query("CREATE VIEW absence_activity AS
+            SELECT lr.contact_id AS absence_contact_id,
+              lr.id AS absence_activity_id,
+              at.title as absence_type,
+              lr.sickness_reason as sickness_reason,
+              lrd.date AS absence_date,
+              DATE_FORMAT(DATE(lrd.date), '%Y-%m') AS absence_month,
+              lr.from_date AS absence_start_date,
+              DATE_FORMAT(DATE(lr.from_date), '%Y-%m') AS absence_start_date_month,
+              lr.to_date AS absence_end_date,
+              DATE_FORMAT(DATE(lr.to_date), '%Y-%m') AS absence_end_date_month,
+              CONCAT(IF (DATE_FORMAT(lrd.date, '%w') = 0, 7, DATE_FORMAT(lrd.date, '%w')), '. ', DATE_FORMAT(lrd.date, '%W')) AS absence_day_of_week,
+              ABS(bc.amount) as absence_duration,
+              IF(lr.request_type != 'toil', ABS(bc.amount), NULL) AS absence_amount_taken,
+              IF(lr.request_type = 'toil', bc.amount, NULL) AS absence_amount_accrued,
+              IF(lr.request_type = 'toil', -bc.amount, -bc.amount) AS absence_absolute_amount,
+              lr.status_id AS absence_status,
+              IF(lr.request_type = 'toil', 1, 0) AS absence_is_credit
+            FROM {$civi_db_name}.civicrm_hrleaveandabsences_leave_request lr
+            INNER JOIN {$civi_db_name}.civicrm_hrleaveandabsences_leave_request_date lrd ON lr.id = lrd.leave_request_id
+            INNER JOIN {$civi_db_name}.civicrm_hrleaveandabsences_absence_type at ON at.id = lr.type_id
+            INNER JOIN {$civi_db_name}.civicrm_hrleaveandabsences_leave_balance_change bc ON bc.source_id = lrd.id and bc.source_type = 'leave_request_day'");
 
-  if (!array_key_exists('is_error', $customGroup) ||
-    (array_key_exists('is_error', $customGroup) && !(int)$customGroup['is_error'])) {
-    $absenceCommentTable = $customGroup['table_name'];
-    $customName = civicrm_api3('CustomField', 'getsingle', array(
-      'sequential' => 1,
-      'custom_group_id' => $customGroup['id'],
-      'name' => "Comment",
-    ));
-    $absenceCommentColumn = $customName['column_name'];
+  // Set to false so it will not rebuild until not asked to rebuild
+  variable_set('rebuild_absence_activity', 'FALSE');
 
-    $activityTypesIds = _get_absence_activity_types_ids();
-    if (!empty($activityTypesIds)) {
-      db_query('DROP VIEW IF EXISTS absence_activity');
-      db_query("CREATE VIEW absence_activity AS
-                SELECT ac.contact_id AS absence_contact_id,
-                  absence_activity.id AS absence_activity_id,
-                  ov.label AS absence_type,
-                  DATE(a2.activity_date_time) AS absence_date,
-                  DATE_FORMAT(DATE(a2.activity_date_time), '%Y-%m') AS absence_month,
-                  (SELECT MIN(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id) AS absence_start_date,
-                  DATE_FORMAT((SELECT MIN(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id), '%Y-%m') AS absence_start_date_month,
-                  (SELECT MAX(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id) AS absence_end_date,
-                  DATE_FORMAT((SELECT MAX(DATE(activity_date_time)) FROM {$civi_db_name}.civicrm_activity WHERE source_record_id = a2.source_record_id), '%Y-%m') AS absence_end_date_month,
-                  CONCAT(IF (DATE_FORMAT(a2.activity_date_time, '%w') = 0, 7, DATE_FORMAT(a2.activity_date_time, '%w')), '. ', DATE_FORMAT(a2.activity_date_time, '%W')) AS absence_day_of_week,
-                  a2.duration AS absence_duration,
-                  IF (ov.label <> 'TOIL (Credit)', a2.duration, NULL) AS absence_amount_taken,
-                  IF (ov.label = 'TOIL (Credit)', a2.duration, NULL) AS absence_amount_accrued,
-                  IF (ov.label = 'TOIL (Credit)', -a2.duration, a2.duration) AS absence_absolute_amount,
-                  abc.{$absenceCommentColumn} AS absence_comment,
-                  a.status_id AS absence_status,
-                  IF (ov.label = 'TOIL (Credit)', 1, 0) AS absence_is_credit
-                FROM {$civi_db_name}.civicrm_activity absence_activity
-                LEFT JOIN {$civi_db_name}.civicrm_activity a ON a.id = absence_activity.id
-                LEFT JOIN {$civi_db_name}.civicrm_activity a2 ON a2.source_record_id = absence_activity.id
-                LEFT JOIN {$civi_db_name}.civicrm_option_group og ON og.name = 'activity_type'
-                LEFT JOIN {$civi_db_name}.civicrm_option_value ov ON ov.value = a.activity_type_id AND ov.option_group_id = og.id
-                LEFT JOIN {$civi_db_name}.civicrm_activity_contact ac ON ac.activity_id = absence_activity.id AND ac.record_type_id = 3
-                LEFT JOIN {$civi_db_name}.{$absenceCommentTable} abc ON abc.entity_id = absence_activity.id
-                WHERE (a2.duration IS NOT NULL AND a2.duration > 0)
-                AND
-                absence_activity.activity_type_id IN (" . implode(',', $activityTypesIds) . ")");
-
-      // Set to false so it will not rebuild until not asked to rebuild
-      variable_set('rebuild_absence_activity', 'FALSE');
-    }
-  }
-}
-
-/**
- * Return an array of absence activity types IDs.
- *
- * @return array
- */
-function _get_absence_activity_types_ids() {
-  $activityTypesIds = [];
-  $absenceTypes = civicrm_api3('HRAbsenceType', 'get', [
-    'sequential' => 1,
-  ]);
-
-  foreach ($absenceTypes['values'] as $absenceType) {
-    if (!empty($absenceType['debit_activity_type_id'])) {
-      $activityTypesIds[] = $absenceType['debit_activity_type_id'];
-    }
-    if (!empty($absenceType['credit_activity_type_id'])) {
-      $activityTypesIds[] = $absenceType['credit_activity_type_id'];
-    }
-  }
-
-  return $activityTypesIds;
 }
 
 /**
@@ -664,7 +524,6 @@ function civihr_employee_portal_init() {
 
     _add_script_to_page([
       '/js/scripts.js',
-      '/js/filters.js',
       '/js/plupload/plupload.full.min.js',
       '/js/plupload-init.js',
       '/js/chart.min.js',
@@ -679,7 +538,6 @@ function civihr_employee_portal_init() {
     _add_script_to_page(['/js/ta-documents-app.js'], NULL, 'tasks-and-documents');
     _add_script_to_page(['tasks-assignments.min.js'], 'uk.co.compucorp.civicrm.tasksassignments', 'tasks-and-documents');
 
-    _rebuild_view('absence_list');
     _rebuild_view('length_of_service');
     _rebuild_view('absence_activity');
     _rebuild_view('hrvacancy');
@@ -748,7 +606,6 @@ function _run_civihr_tasks() {
     }
 
     // Set variable to TRUE so the mysql database views will be refreshed
-    variable_set('rebuild_absence_list_view', 'TRUE');
     variable_set('rebuild_length_of_service_view', 'TRUE');
     variable_set('rebuild_absence_activity_view', 'TRUE');
     variable_set('rebuild_appraisal_view', 'TRUE');
@@ -802,25 +659,9 @@ function _clear_json_cache($cli = FALSE) {
  */
 function civihr_employee_portal_permission() {
   return array(
-    'access manager approval screen' => array(
-      'title' => t('Access CiviHR manager approval screen'),
-      'description' => t('Perfom manager approval related tasks for CiviHR.'),
-    ),
-    'access private file download' => array(
-      'title' => t('Access CiviHR absence attached files'),
-      'description' => t('Availability to access the files attached for Absence.'),
-    ),
     'can create and edit tasks' => array(
       'title' => t('Create and edit Tasks'),
       'description' => t('Availability to create and edit Tasks.'),
-    ),
-    'access leave and absences in ssp' => array(
-      'title' => t('Access CiviHR Leave and Absences'),
-      'description' => t('Availability for the Staff to access leave block and calendar')
-    ),
-    'manage leave and absences in ssp' => array(
-      'title' => t('Manage CiviHR Leave and Absences'),
-      'description' => t('Availability for the Manager to access leave block and calendar and manage leave requests')
     ),
     'view my details' => array(
       'title' => t('View My Details'),
@@ -833,14 +674,6 @@ function civihr_employee_portal_permission() {
     'view appraisals' => array(
       'title' => t('View Appraisals'),
       'description' => t('Availability for the user to view appraisals block and page')
-    ),
-    'view my leave block' => array(
-      'title' => t('View My Leave Block'),
-      'description' => t('Availability for the user to view my leave block')
-    ),
-    'view my sickness report block' => array(
-      'title' => t('View My Sickness Report Block'),
-      'description' => t('Availability for the user to view my sickness report block')
     ),
     'view staff directory' => array(
       'title' => t('View Staff Directory'),
@@ -929,12 +762,6 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
                 'civihr_employee_portal_preprocess_user_login'
             ),
         ),
-        'civihr_employee_portal_manager_calendar_block' => array(
-            'variables' => array(
-                'custom_data' => NULL
-            ),
-            'template' => 'templates/civihr-employee-portal-manager-calendar--block',
-        ),
         'civihr_employee_portal_my_details_block' => array(
             'variables' => array(
                 'profile_image' => NULL,
@@ -949,12 +776,6 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
                 'custom_data' => NULL
             ),
             'template' => 'templates/civihr-employee-portal-login-block--block',
-        ),
-        'civihr_employee_portal_print_leave_report' => array(
-            'variables' => array(
-                'custom_data' => NULL
-            ),
-            'template' => 'templates/civihr-employee-portal-print-leave-report',
         ),
         'civihr_employee_portal_document_form' => array(
             //'arguments' => array('form' => NULL),
@@ -1004,10 +825,6 @@ function civihr_employee_portal_theme($existing, $type, $theme, $path) {
  * Implements hook_views_default_views().
  */
 function civihr_employee_portal_views_default_views() {
-
-    // Get the absence types
-    $absenceTypes = get_civihr_absence_types();
-
     // Check for all view files in views directory
     $files = file_scan_directory(drupal_get_path('module', 'civihr_employee_portal') . '/views/views_export', '/.*\.inc$/');
 
@@ -1023,52 +840,6 @@ function civihr_employee_portal_views_default_views() {
 
     // At the end, return array of default views.
     return $views;
-}
-
-/**
- * Function for caching date periods returned from CiviCRM (avoiding expensive
- * DB calls for each dashboard page hit)
- */
-function get_civihr_date_periods() {
-
-  $periods_data = &drupal_static(__FUNCTION__);
-
-  if (!isset($periods_data)) {
-    if ($cache = cache_get('civihr_date_periods')) {
-      $periods_data = $cache->data;
-      watchdog(
-        'CiviHR Period Cache',
-        'Periods found in cache: <br/><pre>' . print_r($periods_data, true) . '</pre>'
-      );
-    }
-    else {
-      try {
-        // Civi init
-        civicrm_initialize();
-
-        $res = civicrm_api3('HRAbsencePeriod', 'get', ['options' => ['sort' => "start_date DESC"]]);
-        $periods_data = $res['values'];
-        watchdog('DB hit', 'DB');
-      }
-      catch (CiviCRM_API3_Exception $e) {
-          $error = $e->getMessage();
-          watchdog(
-            'CiviHR Period Cache',
-            "Error obtaining periods from DB: $error ",
-            array(),
-            WATCHDOG_ALERT
-          );
-      }
-
-      cache_set('civihr_date_periods', $periods_data, 'cache', strtotime('+6 minutes'));
-      watchdog(
-        'CiviHR Period Cache',
-        'Periods obtained from DB and stored in cache: <br/><pre>' . print_r($periods_data, true) . '</pre>'
-      );
-    }
-  }
-
-  return $periods_data;
 }
 
 /**
@@ -1090,8 +861,7 @@ function get_civihr_absence_types() {
                 // Civi init
                 civicrm_initialize();
 
-                $res = civicrm_api3('HRAbsenceType', 'get', array());
-                $absenceTypes = $res['values'];
+                $absenceTypes = [];
                 watchdog('DB hit absence types', 'DB');
 
             }
@@ -1131,7 +901,7 @@ function get_civihr_absence_statuses($status_id = NULL) {
                 civicrm_initialize();
 
                 // Activity absence statuses array
-                $absenceStatuses = CRM_Core_OptionGroup::values('activity_status', FALSE, FALSE, FALSE, NULL, 'name');
+                $absenceStatuses = CRM_Core_OptionGroup::values('hrleaveandabsences_leave_request_status', FALSE, FALSE, FALSE, NULL, 'label');
 
                 watchdog('DB hit absence statuses', 'DB');
 
@@ -1151,16 +921,49 @@ function get_civihr_absence_statuses($status_id = NULL) {
     // Get the status values based on the status_id
     $status_id_value = CRM_Utils_Array::value($status_id, $absenceStatuses);
 
-    // How we want to display the approved absences?
-    if ($status_id_value == 'Completed') {
-        $status_id_value = 'Approved';
-    }
-    if ($status_id_value == 'Scheduled') {
-        $status_id_value = 'Awaiting approval';
-    }
-
     return $status_id_value;
+}
 
+/**
+ * Returns the sickness reason label for the sickness reason
+ * option value passed to it.
+ * The sickness reason option group is cached to avoid hitting the Db on
+ * every call.
+ *
+ * @param int $sicknessReasonValue
+ *
+ * @return string
+ */
+
+function get_civihr_absence_sickness_reason_label($sicknessReasonValue) {
+    $sicknessReasons = &drupal_static(__FUNCTION__);
+    $SICKNESS_REASONS_CACHE_KEY = 'civihr_absence_sickness_reasons';
+
+    if (!isset($sicknessReasons)) {
+    	  $cachedSicknessReasons = cache_get($SICKNESS_REASONS_CACHE_KEY);
+        if ($cachedSicknessReasons) {
+            $sicknessReasons = $cachedSicknessReasons->data;
+        }
+        else {
+            civicrm_initialize();
+            $sicknessReasons = [];
+            $result = civicrm_api3('OptionValue', 'get', ['option_group_id' => 'hrleaveandabsences_sickness_reason']);
+
+            if ($result['count'] > 0) {
+                $sicknessReasons = array_column($result['values'], 'label', 'value');
+            }
+            // Cache the absence sickness reasons for 5 minutes
+            $SECONDS_IN_FIVE_MINUTES = 300;
+            cache_set($SICKNESS_REASONS_CACHE_KEY, $sicknessReasons, 'cache', time() + $SECONDS_IN_FIVE_MINUTES);
+        }
+    }
+
+    $sicknessReasonLabel = '';
+    if (!empty($sicknessReasons[$sicknessReasonValue])) {
+        $sicknessReasonLabel = $sicknessReasons[$sicknessReasonValue];
+    }
+
+    return $sicknessReasonLabel;
 }
 
 function get_document_statuses($status_id = NULL) {
@@ -1779,72 +1582,9 @@ function civihr_employee_portal_menu() {
         'type' => MENU_CALLBACK,
     );
 
-    $items['absence_request/%ctools_js/debit'] = array(
-        'page callback' => 'civihr_employee_portal_absence_request_callback',
-        'page arguments' => array(1, 2),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['absence_request/%ctools_js/credit'] = array(
-        'page callback' => 'civihr_employee_portal_absence_request_callback',
-        'page arguments' => array(1, 2),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['absence_request/%ctools_js/credit_use'] = array(
-        'page callback' => 'civihr_employee_portal_absence_request_callback',
-        'page arguments' => array(1, 2),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['absence_request/%ctools_js/sick'] = array(
-        'page callback' => 'civihr_employee_portal_absence_request_callback',
-        'page arguments' => array(1, 2),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['absence_calendar/%ctools_js/show'] = array(
-        'page callback' => 'civihr_employee_portal_absence_calendar_callback',
-        'page arguments' => array(1),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['manager_approval/%ctools_js/pick_days'] = array(
-        'page callback' => 'civihr_employee_portal_manager_approval_pick_days_callback',
-        'page arguments' => array(1, 2, 3, 4, 5),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['manager_approval/ajax/quick_approval'] = array(
-      'page callback' => 'civihr_employee_portal_manager_approval_quick_approval',
-      'page arguments' => array(1, 2, 3, 4, 5),
-      'access callback' => TRUE,
-      'type' => MENU_CALLBACK,
-    );
-
-    $items['manager_approval/%ctools_js/calendar/show'] = array(
-        'page callback' => 'civihr_employee_portal_manager_approval_show_calendar_callback',
-        'page arguments' => array(1),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
     $items['hr_resources/%ctools_js/resource/%'] = array(
         'page callback' => 'civihr_employee_portal_hr_resource_load_callback',
         'page arguments' => array(1, 3),
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    );
-
-    $items['absence_all/%ctools_js/view'] = array(
-        'page callback' => 'civihr_employee_portal_absence_all_view_callback',
-        'page arguments' => array(1),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
@@ -1870,13 +1610,6 @@ function civihr_employee_portal_menu() {
         'type' => MENU_NORMAL_ITEM,
         'menu_name' => 'main-menu',
         'weight' => 4
-    );
-
-    $items['ajax/quick_email_notify/%/%'] = array(
-        'title' => 'Quick Approve Leave',
-        'page callback' => '_ajax_quick_email_notify',
-        'page arguments' => array(2, 3),
-        'access arguments' => array('access manager approval screen'),
     );
 
     $items['reports'] = array(
@@ -2034,56 +1767,6 @@ function _user_has_role($roles = array()) {
 }
 
 /**
- * Quick Approve/Reject email notifications
- * Used to trigger rules events from javascript calls
- * @param $absence_id
- */
-function _ajax_quick_email_notify($absence_id, $email_type = NULL) {
-
-    global $user;
-
-    // Get additional details about the absence
-    $q = db_select('absence_approval_list', 'aal')
-        ->fields('aal', array('absence_title', 'absence_start_date', 'absence_end_date', 'duration', 'employee_id'))
-        ->condition('id', $absence_id);
-
-    $result = $q->execute()->fetchObject();
-
-    // Loads the target user based on passed user ID
-    $target_user = user_load(_get_uf_match_contact($result->employee_id)['uf_id']);
-
-    // Pass empty manager notes as this is quick approval
-    $manager_notes = '';
-
-    // Calculate total duration
-    $duration = $result->duration / (6 * 80);
-
-    if ($duration > 1) {
-        $day = 'days';
-    }
-    else {
-        $day = 'day';
-    }
-
-    $leave_date = explode(" ", $result->absence_start_date)[0] . ' - ' . explode(" ", $result->absence_end_date)[0] . ' = ' . $duration . ' ' . $day;
-
-    if ($email_type == 'approve') {
-
-        // Fire rules events
-        rules_invoke_event('approve_all_post_event', $user, $target_user, $manager_notes, $result->absence_title, $leave_date);
-
-    }
-
-    if ($email_type == 'reject') {
-
-        // Fire rules events
-        rules_invoke_event('reject_all_post_event', $user, $target_user, $manager_notes, $result->absence_title, $leave_date);
-
-    }
-
-}
-
-/**
  * Loads civicrm_uf_match data based on passed contact_id
  * @param $contact_id
  * @return mixed
@@ -2142,30 +1825,11 @@ function _get_civicrm_contact_id_by_drupal_uid($uid) {
  *   Any additional css classes that the links must have
  * @return string
  */
-function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid = '', $class = '') {
+function civihr_employee_portal_make_link($link_text, $link_type, $nid = '', $class = '') {
 
     // Set a default value if no text in supplied.
     if (empty($link_text)) {
         $link_text = t('Modal');
-    }
-
-    if ($link_type == 'calendar') {
-        return '' . l("<span>$link_text</span>", 'absence_calendar/nojs/show',
-            array(
-                'attributes' => array('class' => "chr_action--icon--calendar ctools-use-modal ctools-modal-civihr-default-style $class"),
-                'html' => true
-            )
-        ) . '';
-    }
-
-    if ($link_type == 'leave_report') {
-        return '' . l("<span>$link_text</span>", 'print-leave-report/',
-            array(
-                'query' => array('absence_start_date_period_filter' => $nid),
-                'attributes' => array('class' => "chr_action--icon--print $class", 'target'=>'_blank'),
-                'html' => true
-            )
-        ) . '';
     }
 
     if ($link_type == 'hr-resource') {
@@ -2180,64 +1844,7 @@ function civihr_employee_portal_make_link($link_text, $link_type = 'debit', $nid
         ) . '';
     }
 
-    return '' . l("<span>$link_text</span>", 'absence_request/nojs/' . $link_type,
-        array(
-            'attributes' => array('class' => "chr_action ctools-use-modal ctools-modal-civihr-custom-style $class"),
-            'html' => true
-        )
-    ) . '';
-}
-
-/**
- * Absence calendar callback
- */
-function civihr_employee_portal_absence_calendar_callback($ajax) {
-
-    if ($ajax) {
-
-        ctools_include('ajax');
-        ctools_include('modal');
-
-        // Add the responder javascript, required by ctools
-        ctools_add_js('ajax-responder');
-
-        $output = array();
-        $output[] = ctools_modal_command_display('Calendar view', views_embed_view('calendar_absence_list', 'page_1'));
-
-        print ajax_render($output);
-        drupal_exit();
-    }
-    else {
-        return '';
-    }
-
-}
-
-/**
- * Manager calendar / employee list callback
- */
-function civihr_employee_portal_manager_approval_show_calendar_callback($ajax) {
-
-    if ($ajax) {
-
-        ctools_include('ajax');
-        ctools_include('modal');
-
-        // Add the responder javascript, required by ctools
-        ctools_add_js('ajax-responder');
-
-        $block = module_invoke('civihr_employee_portal', 'block_view', 'manager_calendar');
-
-        $output = array();
-        $output[] = ctools_modal_command_display('Manager Calendar View', render($block['content']));
-
-        print ajax_render($output);
-        drupal_exit();
-    }
-    else {
-        return '';
-    }
-
+    return '';
 }
 
 /**
@@ -2266,32 +1873,6 @@ function civihr_employee_portal_hr_resource_load_callback($ajax, $nid) {
     }
     else {
         return '';
-    }
-
-}
-
-/**
- * Show all already approved absences in modal window and not seperate page
- * @param $ajax
- */
-function civihr_employee_portal_absence_all_view_callback($ajax) {
-
-    if ($ajax) {
-
-        ctools_include('ajax');
-        ctools_include('modal');
-
-        // Add the responder javascript, required by ctools
-        ctools_add_js('ajax-responder');
-
-        // Get the view for approved absences
-        $output[] = ctools_modal_command_display(t('All Absences'), views_embed_view('approvals', 'page'));
-
-        print ajax_render($output);
-        drupal_exit();
-    }
-    else {
-        return 'Javascript not enabled';
     }
 
 }
@@ -2361,669 +1942,6 @@ function civihr_employee_portal_emergency_contacts_callback($ajax) {
         return '';
     }
 
-}
-
-/**
- * Manager approval pick days callback function
- */
-function civihr_employee_portal_manager_approval_pick_days_callback($ajax, $action = 'pick_days', $user = NULL, $main_absence_id = NULL, $activity_type_id = NULL) {
-
-    if ($ajax) {
-        ctools_include('ajax');
-        ctools_include('modal');
-
-        $title = t('Manager approval modal window');
-
-        // Getting the details for the current user or staff
-        if (!isset($user) || $user == 'user') {
-
-            $title = t('Absence Details');
-
-        }
-        else {
-
-            // Get the contact data (cached or from CIVI)
-            $contact_data = get_civihr_contact_data($user);
-
-            if ($action == 'pick_days') {
-                $title = t('Approve leave for: ' . $contact_data['display_name']);
-            }
-
-        }
-
-        $form_state = array(
-            'ajax' => TRUE,
-            'is_ajax_update' => TRUE,
-            'title' => $title,
-            'action' => $action,
-            'user_data' => $user,
-            'main_absence_id' => $main_absence_id,
-            'activity_type_id' => $activity_type_id
-        );
-
-        // Use ctools to generate ajax instructions for the browser to create a form in a modal popup.
-        $output = ctools_modal_form_wrapper('civihr_employee_portal_manager_approval_pick_days_form', $form_state);
-
-        // If the form has been submitted, there may be additional instructions such as dismissing the modal popup.
-        if (!empty($form_state['executed'])) {
-
-            // Add the responder javascript, required by ctools
-            ctools_add_js('ajax-responder');
-
-            $output[] = ctools_modal_command_dismiss();
-            $output[] = ctools_ajax_command_redirect('dashboard');
-
-        }
-
-        // Return the ajax instructions to the browser via ajax_render().
-        print ajax_render($output);
-        drupal_exit();
-
-    }
-    else {
-        return drupal_get_form('civihr_employee_portal_manager_approval_pick_days_form');
-    }
-
-}
-
-/**
- * Function that processes approvals and rejections made by manager from the quick absence approval widget button
- *
- * @param int $ajax
- *   boolean value, 1 if it is an ajax call
- * @param string $action
- *   should always be "quick_approval"
- * @param int $activity_id
- *   Activity ID that identifies the absence to be processed
- * @param int $status
- *   ID of status that should be set to main absence and each absence per day (2: Accepted, 9: Rejected)
- * @param string $type
- *   Staus type that is to be set, either "accept" or "reject"
- */
-function civihr_employee_portal_manager_approval_quick_approval($ajax, $action, $activity_id, $status, $type) {
-  // Civi init
-  civicrm_initialize();
-
-  try {
-    // Load main activity leave
-    $main_activity = civicrm_api3('Activity', 'get', ['sequential' => 1, 'id' => $activity_id])['values'][0];
-
-    // Get activities for each day of leave
-    $absenceTypeValue = civicrm_api3('OptionValue', 'get', [
-      'sequential' => 1,
-      'return' => array("value"),
-      'option_group_id' => "activity_type",
-      'name' => "Absence",
-      'options' => array('limit' => 1),
-    ])['values'][0];
-    $search_params = [
-      'source_record_id' => $activity_id,
-      'activity_type_id' => CRM_Utils_Array::key('Absence', $absenceTypeValue['value'])
-    ];
-    $absence_details = civicrm_api3('Activity', 'get', $search_params);
-
-    // Set activities' status for each day of leave
-    foreach ($absence_details['values'] as $current_absence) {
-      civicrm_api3('Activity', 'setvalue', ['id' => $current_absence['id'], 'field' => 'status_id', 'value' => $status]);
-    }
-
-    // Set main activity's status
-    civicrm_api3('Activity', 'setvalue', ['id' => $activity_id, 'field' => 'status_id', 'value' => $status]);
-
-    // Invoke rules event
-    _invoke_rules_on_absence_decision($main_activity, $type, $absence_details['values']);
-
-    $result = ['status' => 'success'];
-  } catch (CiviCRM_API3_Exception $e) {
-    $errorMessage = $e->getMessage();
-    $errorCode = $e->getErrorCode();
-    $errorData = $e->getExtraParams();
-
-    $result = [
-      'status' => 'error',
-      'error' => $errorMessage,
-      'error_code' => $errorCode,
-      'error_data' => $errorData,
-    ];
-  }
-
-  // Issue response
-  print drupal_json_output($result);
-  drupal_exit();
-}
-
-/**
- * Helper function that builds required parameters to pass to rules_invoke_event on decision (accept/reject) by manager
- *
- * @param $main_activity
- * @param $type
- * @param $absence_details
- */
-function _invoke_rules_on_absence_decision($main_activity, $type, $absence_details) {
-  global $user;
-
-  // Get target user id
-  $target_user = user_load(_get_uf_match_contact($main_activity['source_contact_id'])['uf_id']);
-
-  // Build $leave_date
-  $disputes = [];
-  $all_duration = 0;
-
-  foreach ($absence_details as $key => $current_absence) {
-    $duration = $current_absence['duration'] / (6 * 80);
-    $all_duration += $duration;
-    $date = new DateTime($current_absence['activity_date_time']);
-    $disputes[$current_absence['id']] = [$date->format('Y-m-d'), $duration, get_civihr_absence_statuses($current_absence['status_id'])];
-    $last_day = $current_absence;
-  }
-
-  if ($all_duration <= 1) {
-    $date = new DateTime($last_day['activity_date_time']);
-    $duration_date = $date->format('Y-m-d');
-    $day = t('day');
-  }
-  else {
-    // Show start date and end date for the absence
-    $endDate = new DateTime($last_day['activity_date_time']);
-    $duration_date = array_values($disputes)[0][0] . ' - ' .  $endDate->format('Y-m-d');
-    $day = t('days');
-  }
-  $leave_date = $duration_date . ' = ' . $all_duration . ' ' . $day;
-
-  // Get absence type title
-  $absenceTypes = get_civihr_absence_types();
-
-  foreach ($absenceTypes as $absenceType) {
-    if (isset($absenceType['credit_activity_type_id']) && $absenceType['credit_activity_type_id'] == $main_activity['activity_type_id']) {
-      $leave_type = $absenceType['title'];
-    }
-
-    if (isset($absenceType['debit_activity_type_id']) && $absenceType['debit_activity_type_id'] == $main_activity['activity_type_id']) {
-      $leave_type = $absenceType['title'];
-    }
-  }
-
-  $event = ($type == 'approve' ? 'approve_all_post_event' : 'reject_all_post_event');
-  rules_invoke_event($event, $user, $target_user, '', $leave_type, $leave_date);
-}
-
-/**
- * Drupal form to be put in a modal (manager approval pick days form).
- */
-function civihr_employee_portal_manager_approval_pick_days_form($form, $form_state) {
-
-    // Civi init
-    civicrm_initialize();
-
-    // Get the main "absence" activity ID
-    $activityTypes = CRM_Core_OptionGroup::values('activity_type', FALSE, FALSE, FALSE, NULL, 'name');
-    $activityTypeId = CRM_Utils_Array::key('Absence', $activityTypes);
-
-    $abesence_details = array(
-        'source_record_id' => $form_state['main_absence_id'],
-        'activity_type_id' => $activityTypeId,
-    );
-
-    $res = civicrm_api3('Activity', 'get', $abesence_details);
-    $absence_details = $res['values'];
-
-    // Get additional details about the main activity (staff notes and manager notes too)
-    $additional_info = array(
-        'sequential' => 1,
-        'id' => $form_state['main_absence_id'],
-        'api.CustomValue.get' => array('entity_id' => $form_state['main_absence_id']),
-    );
-
-    $res = civicrm_api3('Activity', 'get', $additional_info);
-    $additional_info = array_shift($res['values']);
-
-    // Set up array list for checkboxes with absence values
-    $disputes = array();
-
-    // Calculate the whole duration
-    $all_duration = 0;
-
-    // Build the checkbox table list from the child absence values
-    foreach ($absence_details as $absence_value) {
-
-        $duration = $absence_value['duration'] / (6 * 80);
-        $all_duration += $duration;
-        $date = new DateTime($absence_value['activity_date_time']);
-        $disputes[$absence_value['id']] = array(
-            $date->format('Y-m-d'),
-            $duration,
-            get_civihr_absence_statuses($absence_value['status_id'])
-        );
-    }
-
-    if ($all_duration <= 1) {
-
-        // Show 1 date only
-        $date = new DateTime($absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time']);
-        $duration_date = $date->format('Y-m-d');
-        $day = t('day');
-    }
-    else {
-
-        // Show start date and end date for the absence
-        $endDate = new DateTime($absence_details[key(array_slice($absence_details, -1, 1, TRUE))]['activity_date_time']);
-        $duration_date = array_values($disputes)[0][0] . ' - ' .  $endDate->format('Y-m-d');
-        $day = t('days');
-    }
-
-    $header = array(t('Date'), t('Absence duration'), t('Absence status'));
-    $absenceTypes = get_civihr_absence_types();
-
-    foreach ($absenceTypes as $absenceType) {
-
-        if (isset($absenceType['credit_activity_type_id']) && $absenceType['credit_activity_type_id'] == $form_state['activity_type_id']) {
-            $leave_type = $absenceType['title'];
-        }
-
-        if (isset($absenceType['debit_activity_type_id']) && $absenceType['debit_activity_type_id'] == $form_state['activity_type_id']) {
-            $leave_type = $absenceType['title'];
-        }
-    }
-
-    $form['main_id'] = array(
-        '#type'     => 'hidden',
-        '#title' => 'Main absence ID',
-        '#default_value' => $form_state['main_absence_id'],
-        '#prefix' => '<div class="modal-civihr-custom__section"><div class="row">'
-    );
-
-    $form['leave_type'] = array(
-        '#markup' => '
-            <div class="col-sm-6">
-                <div class="approval-leave-type">
-                    <b>' . t('Leave type:') . '</b> '
-                    . $leave_type . '
-                </div>
-            </div>',
-    );
-
-    $form['hidden_leave_type'] = array(
-        '#type'     => 'hidden',
-        '#title' => 'Leave type',
-        '#default_value' => $leave_type,
-    );
-
-    // Start / End date of the absence duration - temporarily removed according to PCHR-346 task
-    $form['whole_duration'] = array(
-        '#markup' => '
-            <div class="col-sm-6">
-                <div class="whole-duration">
-                    <b>Date: </b>'
-                    . $duration_date . ' (' . $all_duration . ' ' . $day . ')
-                </div>
-            </div>
-        ',
-    );
-
-    $form['hidden_whole_duration'] = array(
-        '#type'     => 'hidden',
-        '#title' => 'Duration and Date (showed in emails)',
-        '#default_value' => $duration_date . ' = ' . $all_duration . ' ' . $day,
-        '#suffix' => '</div></div>'
-    );
-
-    $form['pick_day_checkboxes'] = array(
-        '#attributes' => array('class' => array('manager-pick-days-table')),
-        '#type' => 'tableselect',
-        '#header' => $header,
-        '#options' => $disputes,
-        '#empty' => 'No users were found.',
-        '#prefix' => '<div class="modal-civihr-custom__section--no-padding">',
-        '#suffix' => '</div>'
-    );
-
-    // Check if the user has the permissions to see the attachments
-    if (user_access('access private file download')) {
-        // Load the activity entity
-        $main_activity = entity_load_single('civicrm_activity', $form_state['main_absence_id']);
-
-        // Check if attachment is set
-        if (isset($main_activity->field_attachment['und'][0]['uri'])) {
-            $imgpath = $main_activity->field_attachment['und'][0]['uri'];
-
-            $form['show_attached_file'] = array(
-                '#markup' => '
-                    <div class="modal-civihr-custom__section">
-                        <div class="show-attached-file">
-                            <div class="show-attached-file-label">
-                                <b>' . t('Attached file: ') . '</b>
-                            </div>'
-                            . l("View Attachment", file_create_url($imgpath), array('html' => TRUE, 'attributes' => array('target' => '_blank'))) . '
-                        </div>
-                    </div>
-                '
-            );
-        }
-    }
-
-    // Output staff comments (if any)
-    if ($additional_info['details']) {
-        $form['staff_comments'] = array(
-            '#markup' => '
-                <div class="modal-civihr-custom__section">
-                    <div class="staff-comments">
-                        <div class="staff-notes-label">
-                            <b>' . t('Staff notes: ') . '</b>
-                        </div>'
-                        . $additional_info['details'] . '
-                    </div>
-                </div>
-            '
-        );
-    }
-
-    // Get manager notes data (if any)
-    $manager_notes_data = isset($additional_info['api.CustomValue.get']) && !empty($additional_info['api.CustomValue.get']['values']) ? $additional_info['api.CustomValue.get']['values'][0]['latest'] : '';
-
-    // Check if we are in readonly mode
-    if ($form_state['user_data'] != 'user') {
-
-        // api.CustomValue.get (show manager notes)
-        $form['manager_notes'] = array(
-            '#title' => t('Manager notes: '),
-            '#type' => 'textarea',
-            '#rows' => 2,
-            '#description' => t('Additional manager notes. (These will be visible for staff!)'),
-            '#default_value' => $manager_notes_data,
-            '#prefix' => '<div class="modal-civihr-custom__section">',
-            '#suffix' => '</div>'
-        );
-
-        $form['actions_wrapper_open'] = array(
-            '#markup' => '
-                <div class="modal-civihr-custom__footer">
-                    <div class="chr_actions-wrapper">
-            '
-        );
-
-        $form['approve_selected'] = array(
-            '#attributes' => array('class' => array('chr_action')),
-            '#type' => 'submit',
-            '#value' => t('Approve selected'),
-        );
-
-        $form['approve_all'] = array(
-            '#attributes' => array('class' => array('chr_action')),
-            '#type' => 'submit',
-            '#value' => t('Approve all'),
-        );
-
-        $form['reject_all'] = array(
-            '#attributes' => array('class' => array('chr_action')),
-            '#type' => 'submit',
-            '#value' => t('Reject all'),
-        );
-
-        // This is a jquery button, which will be replaced onclick with the real Reject All form button (+it will show the manager comments form)
-        $form['manager_actions'] = array(
-            '#markup' => '<div id="manager-reject-all" class="form-submit chr_action">' . t('Reject all') . '</div>'
-        );
-
-        $form['actions_wrapper_close'] = array(
-            '#markup' => '</div></div>'
-        );
-
-        $form['#validate'][] = 'civihr_employee_portal_manager_approval_pick_days_form_validate';
-        $form['#submit'][] = "civihr_employee_portal_manager_approval_pick_days_form_submit";
-    }
-    else {
-        // Still show the read only manager notes
-        $form['show_manager_notes'] = array(
-            '#markup' => '
-                <div class="modal-civihr-custom__section">
-                    <div class="show-manager-comments">
-                        <div class="show-manager-notes-label">
-                            <b>' . t('Manager notes: ') . '</b>
-                        </div>'
-                        . $manager_notes_data . '
-                    </div>
-                </div>
-            '
-        );
-    }
-
-    return $form;
-}
-
-function civihr_employee_portal_manager_approval_pick_days_form_validate($form, &$form_state) {
-
-    /*
-
-    if (isset($form_state['values']['pick_day_checkboxes']) && $form_state['values']['pick_day_checkboxes'][1] == 0) {
-        form_set_error('pick_day_checkboxes', t('Please select days to approve / reject'));
-    }
-     *
-     */
-
-    return TRUE;
-}
-
-function civihr_employee_portal_manager_approval_pick_days_form_submit($form, &$form_state) {
-
-    // Current USER object
-    global $user;
-
-    // Set the target user OBJECT
-    $target_user = user_load(_get_uf_match_contact($form_state['user_data'])['uf_id']);
-
-    // Get the manager notes
-    $manager_notes = drupal_html_to_text(nl2br($form_state['values']['manager_notes']));
-
-    // Get the leave type
-    $leave_type = $form_state['values']['hidden_leave_type'];
-
-    // Get the Start Date / End Date + duration of the leave
-    $leave_date = $form_state['values']['hidden_whole_duration'];
-
-    // @TODO -> move to custom rules action (so it will be configurable through UI)
-    if ($form_state['values']['op'] == 'Reject all') {
-        if (isset($form_state['values']['pick_day_checkboxes'])) {
-
-            // Civi init
-            civicrm_initialize();
-
-            foreach ($form_state['values']['pick_day_checkboxes'] as $act_key => $act_value) {
-
-                $result = civicrm_api3('Activity', 'setvalue', array(
-                    'id' => $act_key,
-                    'field' => 'status_id',
-                    'value' => 9
-                ));
-
-            }
-
-            // Set the activity status
-            $result = civicrm_api3('Activity', 'setvalue', array(
-                'id' => $form_state['values']['main_id'],
-                'field' => 'status_id',
-                'value' => 9
-            ));
-
-            // As manger notes is a custom field at first we need to find the ID for the custom field as this can change
-            $custom_field_data = civicrm_api3('CustomField', 'get', array(
-                'sequential' => 1,
-                'name' => "Comment",
-            ));
-
-            // Set the manager notes for the main absence ID
-            $result = civicrm_api3('Activity', 'setvalue', array(
-                'id' => $form_state['values']['main_id'],
-                'field' => 'custom_' . $custom_field_data['id'],
-                'value' => $form_state['values']['manager_notes']
-            ));
-
-            // Fire rules events
-            rules_invoke_event('reject_all_post_event', $user, $target_user, $manager_notes, $leave_type, $leave_date);
-
-        }
-
-    }
-
-    if ($form_state['values']['op'] == 'Approve all') {
-        if (isset($form_state['values']['pick_day_checkboxes'])) {
-
-            // Civi init
-            civicrm_initialize();
-
-            foreach ($form_state['values']['pick_day_checkboxes'] as $act_key => $act_value) {
-
-                $result = civicrm_api3('Activity', 'setvalue', array(
-                    'id' => $act_key,
-                    'field' => 'status_id',
-                    'value' => 2
-                ));
-
-            }
-
-            $result = civicrm_api3('Activity', 'setvalue', array(
-                'id' => $form_state['values']['main_id'],
-                'field' => 'status_id',
-                'value' => 2
-            ));
-
-            // Fire rules events
-            rules_invoke_event('approve_all_post_event', $user, $target_user, $manager_notes, $leave_type, $leave_date);
-        }
-
-    }
-
-    if ($form_state['values']['op'] == 'Approve selected') {
-        if (isset($form_state['values']['pick_day_checkboxes'])) {
-
-            // Civi init
-            civicrm_initialize();
-
-            foreach ($form_state['values']['pick_day_checkboxes'] as $act_key => $act_value) {
-
-                if ($act_key == $act_value) {
-                    $result = civicrm_api3('Activity', 'setvalue', array(
-                        'id' => $act_key,
-                        'field' => 'status_id',
-                        'value' => 2
-                    ));
-                }
-                else {
-
-                    // Set the not approved days as Rejected
-                    $result = civicrm_api3('Activity', 'setvalue', array(
-                        'id' => $act_key,
-                        'field' => 'status_id',
-                        'value' => 9
-                    ));
-                }
-
-            }
-
-            $result = civicrm_api3('Activity', 'setvalue', array(
-                'id' => $form_state['values']['main_id'],
-                'field' => 'status_id',
-                'value' => 10 // Set to the Partially Approved Status
-            ));
-
-            // Fire rules events
-            rules_invoke_event('partially_approve_post_event', $user, $target_user, $manager_notes, $leave_type, $leave_date);
-        }
-
-    }
-
-}
-
-/**
-* Ajax menu callback.
-*/
-function civihr_employee_portal_absence_request_callback($ajax, $absence_type = 'debit') {
-
-    if ($ajax) {
-        ctools_include('ajax');
-        ctools_include('modal');
-
-        $title = t('Request leave');
-
-        if ($absence_type == 'credit') {
-            $title = t('Request TOIL');
-        }
-
-        if ($absence_type == 'credit_use') {
-            $title = t('Use TOIL');
-        }
-
-        if ($absence_type == 'sick') {
-            $title = t('Report new sickness');
-        }
-
-        $form_state = array(
-            'ajax' => TRUE,
-            'is_ajax_update' => TRUE,
-            'title' => $title,
-            'absence_type' => $absence_type,
-        );
-
-        // Since this will run again on form rebuild while still in the modal, prevent
-        // form IDs from being incremented.
-        // @todo https://drupal.org/node/1305882
-        if (!empty($_POST['ajax_html_ids'])) {
-            unset($_POST['ajax_html_ids']);
-        }
-
-        // Use ctools to generate ajax instructions for the browser to create
-        // a form in a modal popup.
-        $output = ctools_modal_form_wrapper('civihr_employee_portal_absence_request_form', $form_state);
-
-        // If the form has been submitted, there may be additional instructions
-        // such as dismissing the modal popup.
-        if (!empty($form_state['executed'])) {
-
-            // Add the responder javascript, required by ctools
-            ctools_add_js('ajax-responder');
-
-            $output[] = ajax_command_replace('.messages', 'all good');
-            $output[] = ctools_modal_command_dismiss();
-            $output[] = ctools_ajax_command_redirect('dashboard');
-
-        }
-
-        // Return the ajax instructions to the browser via ajax_render().
-        print ajax_render($output);
-        drupal_exit();
-
-    }
-
-    else {
-        return drupal_get_form('civihr_employee_portal_absence_request_form');
-    }
-
-}
-
-/**
- * Drupal form to be put in a modal.
- */
-function civihr_employee_portal_absence_request_form($form, &$form_state) {
-    return (new AbsenceRequestForm($form, $form_state))->build();
-}
-
-/**
- * Ajax callback to change the rendered industry lens taxonomy term
- */
-function jms_industry_lens_form_ajax(&$form, &$form_state) {
-    return (new AbsenceRequestForm($form, $form_state))->ajax_callback();
-}
-
-/**
- * @param $form
- * @param $form_state
- * @return bool
- */
-function civihr_employee_portal_absence_request_form_validate($form, &$form_state) {
-    return (new AbsenceRequestForm($form, $form_state))->validate();
-}
-
-function civihr_employee_portal_absence_request_form_submit($form, &$form_state) {
-    return (new AbsenceRequestForm($form, $form_state))->submit();
 }
 
 /**
@@ -4961,144 +3879,6 @@ function civihr_employee_portal_schema() {
  * Implements hook_schema_alter().
  */
 function civihr_employee_portal_schema_alter(&$schema) {
-
-    $schema['absence_list']['description'] = 'Views data associated with absence_list';
-    $schema['absence_list']['fields']['id'] = array(
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'description' => 'Activity ID.',
-    );
-    $schema['absence_list']['fields']['contact_id'] = array(
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'description' => 'CiviCRM Contact ID.',
-    );
-    $schema['absence_list']['fields']['absence_title'] = array(
-        'type' => 'varchar',
-        'length' => 200,
-        'not null' => TRUE,
-        'description' => 'Activity Title.',
-    );
-    $schema['absence_list']['fields']['drupal_uid'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Drupal User ID.',
-    );
-    $schema['absence_list']['fields']['duration'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Absence duration.',
-    );
-    $schema['absence_list']['fields']['activity_type_id'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Absence type ID.',
-    );
-    $schema['absence_list']['fields']['is_credit'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Absence activity (Is Credit type?)',
-    );
-    $schema['absence_list']['fields']['absence_status'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Absence status',
-    );
-    $schema['absence_list']['fields']['absence_start_date'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence start date.',
-    );
-    $schema['absence_list']['fields']['absence_end_date'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence end date.',
-    );
-    $schema['absence_list']['fields']['absence_start_date_timestamp'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence start date. (TIMESTAMP)',
-    );
-    $schema['absence_list']['fields']['absence_end_date_timestamp'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence end date. (TIMESTAMP)',
-    );
-    $schema['absence_list']['fields']['details'] = array(
-        'type' => 'text',
-        'not null' => TRUE,
-        'description' => 'Activity details text.',
-    );
-
-    $schema['absence_approval_list']['description'] = 'Views data associated with absence_approval_list';
-    $schema['absence_approval_list']['fields']['id'] = array(
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'description' => 'Activity ID.',
-    );
-    $schema['absence_approval_list']['fields']['absence_title'] = array(
-        'type' => 'varchar',
-        'length' => 200,
-        'not null' => TRUE,
-        'description' => 'Activity Title.',
-    );
-    $schema['absence_approval_list']['fields']['drupal_uid'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Drupal User ID.',
-    );
-    $schema['absence_approval_list']['fields']['employee_id'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Employee ID.',
-    );
-    $schema['absence_approval_list']['fields']['duration'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Absence duration.',
-    );
-    $schema['absence_approval_list']['fields']['activity_type_id'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Absence type ID.',
-    );
-    $schema['absence_approval_list']['fields']['is_credit'] = array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'description' => 'Absence activity (Is Credit type?)',
-    );
-    $schema['absence_approval_list']['fields']['absence_start_date'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence start date.',
-    );
-    $schema['absence_approval_list']['fields']['absence_end_date'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence end date.',
-    );
-    $schema['absence_approval_list']['fields']['absence_start_date_timestamp'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence start date timestamp.',
-    );
-    $schema['absence_approval_list']['fields']['absence_end_date_timestamp'] = array(
-        'type' => 'varchar',
-        'mysql_type' => 'DATETIME',
-        'not null' => FALSE,
-        'description' => 'Absence end date timestamp.',
-    );
-
     $schema['absence_activity']['description'] = 'Views data associated with Absence Activities';
     $schema['absence_activity']['fields']['absence_activity_id'] = array(
         'type' => 'serial',
@@ -5117,6 +3897,12 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'length' => 256,
         'not null' => FALSE,
         'description' => 'Absence Type.',
+    );
+    $schema['absence_activity']['fields']['sickness_reason'] = array(
+        'type' => 'varchar',
+        'length' => 512,
+        'not null' => FALSE,
+        'description' => 'Sickness Reason.',
     );
     $schema['absence_activity']['fields']['absence_date'] = array(
         'type' => 'varchar',
@@ -5194,12 +3980,6 @@ function civihr_employee_portal_schema_alter(&$schema) {
         'type' => 'varchar',
         'not null' => FALSE,
         'description' => 'Absence absolute amount.',
-    );
-    $schema['absence_activity']['fields']['absence_comment'] = array(
-        'type' => 'varchar',
-        'length' => 256,
-        'not null' => FALSE,
-        'description' => 'Absence Comment.',
     );
     $schema['absence_activity']['fields']['absence_status'] = array(
         'type' => 'varchar',
@@ -5531,50 +4311,6 @@ function civihr_employee_portal_schema_alter(&$schema) {
  */
 function civihr_employee_portal_entity_info() {
     $info = array();
-
-    $info['civihr_absences'] = array(
-        'label' => t('Absence entity'),
-        'plural label' => t('Absences entity'),
-        'description' => t('Absences entity definition.'),
-        'entity class' => 'Entity',
-        'controller class' => 'EntityAPIController',
-        'views controller class' => 'EntityDefaultViewsController',
-        'base table' => 'absence_list',
-        'fieldable' => TRUE,
-        'entity keys' => array(
-            'id' => 'id',
-            'label' => 'Entity Activity ID'
-        ),
-        'bundles' => array(),
-        // Use the default label() and uri() functions
-        'label callback' => 'entity_class_label',
-        'uri callback' => 'entity_class_uri',
-        // Entity API needs to know about your module for the views integration to work
-        'module' => 'civihr_employee_portal',
-
-    );
-
-    $info['civihr_absence_approvals'] = array(
-        'label' => t('Absence approval entity'),
-        'plural label' => t('Absence approvals entity'),
-        'description' => t('Absence approval entity for managers.'),
-        'entity class' => 'Entity',
-        'controller class' => 'EntityAPIController',
-        'views controller class' => 'EntityDefaultViewsController',
-        'base table' => 'absence_approval_list',
-        'fieldable' => TRUE,
-        'entity keys' => array(
-            'id' => 'id',
-            'label' => 'Entity Activity ID'
-        ),
-        'bundles' => array(),
-        // Use the default label() and uri() functions
-        'label callback' => 'entity_class_label',
-        'uri callback' => 'entity_class_uri',
-        // Entity API needs to know about your module for the views integration to work
-        'module' => 'civihr_employee_portal',
-
-    );
 
     $info['civihr_absence_activity'] = array(
         'label' => t('Absence Activity entity'),
@@ -6841,50 +5577,6 @@ function civihr_employee_portal_hrreport_custom_printtable($reportName, $dateFil
  * Implement form_views_exposed_form_alter()
  */
 function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {
-
-    // Show the open calendar button in the my leave block next to the date filters select list
-    if (isset($form['#id']) && $form['#id'] == 'views-exposed-form-absence-list-page') {
-
-        if (isset($_REQUEST['absence_start_date_period_filter'])) {
-            $request_date = $_REQUEST['absence_start_date_period_filter'];
-        }
-        else {
-            // Set default period
-            $request_date = variable_get('default_date_period_id', '1');
-        }
-
-        $form['open_calendar'] = array(
-            '#markup' => civihr_employee_portal_make_link(t('Open calendar'), 'calendar', null, 'chr_action--transparent chr_action--icon--responsive')
-        );
-
-        $form['leave_report'] = array(
-            '#markup' => civihr_employee_portal_make_link(t('Print leave report'), 'leave_report', $request_date, 'chr_action--transparent  chr_action--icon--responsive hidden-xs')
-        );
-
-        // Replace the print leave report URL with the selected date period URL
-        $form['absence_start_date_period_filter']['#ajax'] =
-        array(
-            'callback' => '_absence_start_date_period_change_submit',
-            'wrapper' => 'report-replace-div',
-            'method' => 'replace',
-            'effect' => 'fade',
-            'progress' => array('type' => 'none')
-        );
-
-        // Autosubmit the form on page load as views autosubmit doesn't pass values of contextual filters to inserted view in Global : View Area
-        drupal_add_js(
-            'jQuery(document).ready(function () { jQuery("#edit-submit-absence-list").click() });',
-            array(
-                'type' => 'inline',
-                'scope' => 'footer',
-                'group' => JS_THEME,
-                'weight' => 5,
-            )
-        );
-        // Autosubmit the form after date_period select change
-        $form['absence_start_date_period_filter']['#attributes'] = array('onchange' => "jQuery('#edit-submit-absence-list').click()");
-    }
-
     /**
      *  Staff Directory filters form, HR Documents filters form
      */
@@ -6987,26 +5679,6 @@ function getCalendarButtonMarkup($idxKey) {
     <button type=\"button\" class=\"btn btn-default\" ng-click=\"filters.$idxKey = !filters.$idxKey\">
       <i class=\"fa fa-calendar\"></i>
     </button>";
-}
-
-function _absence_start_date_period_change_submit(&$form, &$form_state) {
-
-    if (isset($_REQUEST['absence_start_date_period_filter'])) {
-        $request_date = $_REQUEST['absence_start_date_period_filter'];
-    }
-    else {
-        // Set default period
-        $request_date = variable_get('default_date_period_id', '1');
-    }
-
-    $form['leave_report'] = array(
-        '#markup' => civihr_employee_portal_make_link(t('Print leave report'), 'leave_report', $request_date),
-        '#prefix' => '<div id="report-replace-div">',
-        '#suffix' => '</div>',
-    );
-
-    return $form['leave_report'];
-
 }
 
 /**
@@ -7202,122 +5874,12 @@ function civihr_employee_portal_module_implements_alter(&$implementations, $hook
     watchdog('alter modified order', print_r($implementations, TRUE));
 }
 
-/**
- * Check if a passed date is weekend day or not
- *
- * @param \DateTime $date
- *
- * @return bool
- */
-function _isWeekend(\DateTime $date) {
-    $saturday = 6;
-    $sunday = 0;
-    $weekday = $date->format('w');
-    return ($weekday == $saturday || $weekday == $sunday);
-}
-
-/**
- * @param $public_holidays
- *  Check if the requested day is holiday or not working day
- * @param \DateTime $date
- *  The requested day
- *
- * @return array
- */
-function _checkRequestedDay($public_holidays, \DateTime $date) {
-
-    $not_working_day = t('Weekend');
-
-    foreach ($public_holidays['values'] as $public_holiday) {
-
-        $public_holiday_date = explode(" ", $public_holiday['activity_date_time']);
-
-        // If the public holiday equals with the requested date and the public holiday is enabled
-        if ($public_holiday_date[0] == $date->format('Y-m-d') && $public_holiday['status_id'] == 1) {
-            $exclude_type = " (" . $public_holiday['subject'] . ")";
-
-            return array(
-                'default_value' => 0,
-                'exclude_type' => $exclude_type
-            );
-        }
-        else if (_isWeekend($date)) {
-            $exclude_type = " (" . $not_working_day . ")";
-
-            return array(
-                'default_value' => 0,
-                'exclude_type' => $exclude_type
-            );
-
-        }
-
-    }
-
-    // Default fallback value
-    return array(
-        'default_value' => 480,
-        'exclude_type' => ''
-    );
-
-}
-
-// Check if the user can access the private file
-function civihr_employee_portal_file_download_access_alter(&$grants, $file_item, $entity_type, $entity) {
-
-    if ($entity_type == 'civicrm_activity') {
-
-        // Check if the user has the permissions to see the attachments
-        if (user_access('access private file download')) {
-            $grants = array(TRUE);
-        }
-    }
-
-}
-
 function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$objectRef) {
     if ($op === 'create' || $op === 'edit') {
         if (in_array($objectName, array('Document', 'Task'))) {
             _clear_json_cache();
         }
     }
-    if ($objectName === 'HRAbsenceType') {
-      cache_set('civihr_absence_types', NULL);
-    }
-}
-
-/**
- * Checks if the given absence is of the "Sick" type
- *
- * There is no other way currently to check if an absence type is of the
- * "Sick" type other than checking its title, so we have to resort to a
- * simple regex match on the title string, looking for the "sick" word
- *
- * @param  string $absenceName
- * @return boolean
- */
-function civihr_employee_portal_is_sick_absence($absenceName) {
-  return preg_match('/^sick/i', $absenceName);
-}
-
-/**
- * Return an ID of 'sick' Absence Type or NULL if 'sick' type is not found.
- *
- * @return int|NULL
- */
-function civihr_employee_portal_get_absence_sick_type_id() {
-  $sickId = null;
-
-  try {
-    $result = civicrm_api3('HRAbsenceType', 'getsingle', array(
-      'name' => 'sick',
-      'return' => array('id'),
-    ));
-    $sickId = $result['id'];
-  } catch (Exception $e) {
-    return NULL;
-  }
-
-  return $sickId;
 }
 
 /**
@@ -7594,43 +6156,6 @@ function _user_redirection() {
     drupal_add_http_header('Location', "$base_url/{$redirect_path}");
     exit();
   }
-}
-
-/**
- * Convert array option values in an array to labels
- *
- * @param string $optionGroup The option group name to check against for converting data
- * @param string $fieldName The option field name ( key ) in data array to be converted
- * @param array $data The data which contain an option field to be converted
- *
- * @return array The data list with converted option values
- */
-function civihr_employee_portal_convert_array_option_value($optionGroup, $fieldName, $data) {
-  // get location option values list
-  $locationOptions = civicrm_api3('OptionValue', 'get', array(
-    'sequential' => 1,
-    'return' => array("value", "label"),
-    'option_group_id' => $optionGroup,
-    'options' => array('limit' => 0),
-  ));
-
-  // create a value => label array from option values
-  $locationList = [];
-  foreach($locationOptions['values'] as $location) {
-    $locationList[$location['value']] = $location['label'];
-  }
-
-  // change location value to location label
-  for($i=0; $i < count($data); $i++) {
-    if (!empty($data[$i][$fieldName])) {
-      $data[$i][$fieldName] = $locationList[$data[$i][$fieldName]];
-    }
-    else {
-      $data[$i][$fieldName] = '';
-    }
-  }
-
-  return $data;
 }
 
 /**
