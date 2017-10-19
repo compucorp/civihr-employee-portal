@@ -196,6 +196,34 @@ function civihr_employee_portal_update_7009() {
 }
 
 /**
+ * Update My Details webform upload size
+ */
+function civihr_employee_portal_update_7009() {
+  $nodes = node_load_multiple(NULL, ["title" => "My details - edit"]);
+
+  if (count($nodes) !== 1) {
+    return;
+  }
+
+  $node = current($nodes);
+
+  if (!isset($node->webform['components'])) {
+    return;
+  }
+
+  $components = $node->webform['components'];
+  $imageFieldName = 'Upload Image';
+
+  foreach ($components as $component) {
+    if ($imageFieldName == $component['name']) {
+      $component['extra']['filtering']['size'] = '10MB';
+      webform_component_update($component);
+      break;
+    }
+  }
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string
