@@ -205,13 +205,13 @@ function civihr_employee_portal_update_7009() {
     return;
   }
 
-  $node = current($nodes);
+  $myDetailsWebform = current($nodes);
 
-  if (!isset($node->webform['components'])) {
+  if (!isset($myDetailsWebform->webform['components'])) {
     return;
   }
 
-  $components = $node->webform['components'];
+  $components = $myDetailsWebform->webform['components'];
   $imageFieldName = 'Upload Image';
 
   foreach ($components as $component) {

@@ -6187,9 +6187,17 @@ function get_civihr_version() {
  */
 function civihr_employee_portal_civicrm_postProcess($formName, &$form) {
   if ($formName === CRM_Contact_Form_Contact::class) {
-    // user data was updated so clear cache
-    $contactID = CRM_Core_Session::getLoggedInContactID();
-    $contact_value = 'civihr_contact_data_' . $contactID;
-    cache_clear_all($contact_value, 'cache');
+    _civihr_employee_portal_clear_contact_cache($form->getContactID());
   }
+}
+
+/**
+ * Clears the basic cached contact data
+ * @see get_civihr_contact_data
+ *
+ * @param int $contactID
+ */
+function _civihr_employee_portal_clear_contact_cache($contactID) {
+  $cacheKey = 'civihr_contact_data_' . $contactID;
+  cache_clear_all($cacheKey, 'cache');
 }
