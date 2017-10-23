@@ -20,6 +20,7 @@ class AccountActivatedSystemMail extends AbstractDrupalSystemMail {
 
     return [
       'invitationLink' => user_pass_reset_url($recipient),
+      'currentDateTime' => new \DateTime(),
     ];
   }
 

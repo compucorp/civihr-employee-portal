@@ -20,6 +20,7 @@ class PasswordResetSystemMail extends AbstractDrupalSystemMail {
 
     return [
       'resetLink' => user_pass_reset_url($recipient),
+      'currentDateTime' => new \DateTime(),
     ];
   }
 
