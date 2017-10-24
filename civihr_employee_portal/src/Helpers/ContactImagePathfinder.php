@@ -10,7 +10,7 @@ class ContactImagePathfinder {
    * @return string|NULL
    *   The image path if it exists, or NULL if not set or doesn't exist.
    */
-  public static function getPathToContactImage($contactID) {
+  public static function getPath($contactID) {
     $targetContact = civicrm_api3('Contact', 'getsingle', ['id' => $contactID]);
     // Since this is postProcess image_URL is already pointing to new image
     $imageUrl = $targetContact['image_URL'];

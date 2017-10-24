@@ -28,7 +28,7 @@ class ContactForm {
       return;
     }
 
-    $imagePath = ContactImagePathfinder::getPathToContactImage($contactID);
+    $imagePath = ContactImagePathfinder::getPath($contactID);
 
     ImageResizer::resizeForProfile($imagePath);
   }
