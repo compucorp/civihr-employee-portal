@@ -168,7 +168,7 @@ function civihr_employee_portal_update_7008() {
 /**
  * Update My Details webform image description
  */
-function civihr_employee_portal_update_7010() {
+function civihr_employee_portal_update_7009() {
   $nodes = node_load_multiple(NULL, ["title" => "My details - edit"]);
 
   if (count($nodes) !== 1) {
