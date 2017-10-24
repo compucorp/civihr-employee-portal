@@ -7,6 +7,26 @@ use CRM_Utils_Array as ArrayHelper;
 class WebformHelper {
 
   /**
+   * Finds a single webform by title.
+   *
+   * @param string $title
+   *   The title of the webform
+   *
+   * @return \stdClass|null
+   *   The webform if found, NULL if not found or more than one exist
+   */
+  public static function findOneByTitle($title) {
+    $conditions = ['title' => $title, 'type' => 'webform'];
+    $nodes = node_load_multiple(NULL, $conditions);
+
+    if (count($nodes) !== 1) {
+      return NULL;
+    }
+
+    return current($nodes);
+  }
+
+  /**
    * Returns all components of a form that match the provided name
    *
    * @param \stdClass $node
@@ -30,22 +50,25 @@ class WebformHelper {
    * Finds all webform submissions by a Drupal user.
    *
    * @param \stdClass $user
-   * @param string $name
+   * @param string $title
    *
    * @return array
    */
-  public static function getUserSubmissionsByName($user, $name) {
+  public static function getUserSubmissionsByTitle($user, $title) {
     $filters = ['uid' => $user->uid];
     module_load_include('inc', 'webform', 'includes/webform.submissions');
-    $submissions = webform_get_submissions($filters);
+    $allUserSubmissions = webform_get_submissions($filters);
+    $targetFormSubmissions = [];
+    $webform = self::findOneByTitle($title);
+    $webformId = $webform->nid;
 
-    foreach ($submissions as $submission) {
-      $title = property_exists($submission, 'title') ? $submission->title : NULL;
-      if ($title === $name) {
-        $submissions[] = $submission;
+    foreach ($allUserSubmissions as $submission) {
+      $nodeID = property_exists($submission, 'nid') ? $submission->nid : NULL;
+      if ($webformId === $nodeID) {
+        $targetFormSubmissions[] = $submission;
       }
     }
 
-    return $submissions;
+    return $targetFormSubmissions;
   }
 }
