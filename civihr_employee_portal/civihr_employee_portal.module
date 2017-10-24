@@ -8,6 +8,8 @@ use Drupal\civihr_employee_portal\Security\PublicFirewall;
 use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
 use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
 use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
+use Drupal\civihr_employee_portal\Helpers\ImageResizer;
+use Drupal\civihr_employee_portal\Forms\ContactForm;
 
 /**
  * Implements hook_css_alter().
@@ -4809,6 +4811,34 @@ function civihr_employee_portal_form_user_profile_form_submit(&$form, &$form_sta
   $onboardingPath = '/onboarding-form';
   $original = CRM_Utils_Array::value('redirect', $form_state);
   $form_state['redirect'] = $shouldDoOnboarding ? $onboardingPath : $original;
+}
+
+/**
+ * Implements hook_file_presave().
+ *
+ * @param \stdClass $file
+ */
+function civihr_employee_portal_file_presave($file) {
+  $resizeSources = [
+    'submitted_civicrm_1_contact_1_contact_image_URL'
+  ];
+
+  if (in_array($file->source, $resizeSources)) {
+    ImageResizer::resizeForProfile($file->uri);
+  }
+}
+
+/**
+ * @param string $formName
+ * @param CRM_Contact_Form_Contact $form
+ */
+function civihr_employee_portal_civicrm_postProcess($formName, &$form) {
+  switch ($formName) {
+    case 'CRM_Contact_Form_Contact':
+      ContactForm::postProcess($form);
+      break;
+
+  }
 }
 
 /**

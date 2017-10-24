@@ -249,7 +249,7 @@ array(
               'directory' => '',
               'progress_indicator' => 'throbber',
               'title_display' => 0,
-              'description' => '',
+              'description' => 'The image should be at least 130 x 130 pixels, but 400 x 400 pixels is the recommended size for the user image.',
               'attributes' => array(),
               'analysis' => FALSE,
             ),
