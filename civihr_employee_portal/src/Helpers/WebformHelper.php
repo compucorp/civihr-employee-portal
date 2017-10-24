@@ -7,8 +7,13 @@ use CRM_Utils_Array as ArrayHelper;
 class WebformHelper {
 
   /**
-   * @param $title
+   * Finds a single webform by title.
+   *
+   * @param string $title
+   *   The title of the webform
+   *
    * @return \stdClass|null
+   *   The webform if found, NULL if not found or more than one exist
    */
   public static function findOneByTitle($title) {
     $conditions = ['title' => $title, 'type' => 'webform'];
