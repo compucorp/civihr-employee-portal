@@ -14,8 +14,7 @@ function civihr_default_mail_content_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'user_mail_password_reset_body';
-  $strongarm->value = '<h2>Follow these instructions to reset your password</h2>
-      <p>
+  $strongarm->value = '<p>
         A request has been made to reset your CiviHR password. To reset your password, please click the button below. The link will take you to the system’s user page where you can enter a new password into the password fields. Once saved, this will be your new password to login to the site.
       </p>
       <p>
@@ -40,8 +39,7 @@ function civihr_default_mail_content_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'user_mail_register_admin_created_body';
-  $strongarm->value = '<h2>Please create a password</h2>
-  <p>
+  $strongarm->value = '<p>
     Hello, and welcome to CiviHR, the open-source HR solution for non-profit organisations.
   </p>
   <p>
@@ -73,8 +71,7 @@ function civihr_default_mail_content_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'user_mail_status_activated_body';
-  $strongarm->value = '<h2>Please create a password</h2>
-  <p>
+  $strongarm->value = '<p>
     Hello, and welcome to CiviHR, the open-source HR solution for non-profit organisations.
   </p>
   <p>
