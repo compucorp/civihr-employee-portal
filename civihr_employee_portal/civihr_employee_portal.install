@@ -175,13 +175,13 @@ function civihr_employee_portal_update_7010() {
     return;
   }
 
-  $node = current($nodes);
+  $myDetailsEditNode = current($nodes);
 
-  if (!isset($node->webform['components'])) {
+  if (!isset($myDetailsEditNode->webform['components'])) {
     return;
   }
 
-  $components = $node->webform['components'];
+  $components = $myDetailsEditNode->webform['components'];
   $imageFieldName = 'Upload Image';
   $description = 'The image should be at least 130 x 130 pixels, but 400 x 400 '
   . 'pixels is the recommended size for the user image.';
