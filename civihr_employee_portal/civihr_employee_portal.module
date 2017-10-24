@@ -5036,7 +5036,7 @@ function _civihr_employee_portal_should_do_onboarding($account) {
   $onboardingWebform = WebformHelper::findOneByTitle($formName);
 
   if (!$onboardingWebform) {
-    throw new \Exception('Could not find onboarding webform');
+    return FALSE;
   }
 
   $canViewOnboardingForm = node_access('view', $onboardingWebform, $account);
