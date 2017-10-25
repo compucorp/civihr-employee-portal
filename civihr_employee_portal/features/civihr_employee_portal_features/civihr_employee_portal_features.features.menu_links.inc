@@ -144,7 +144,7 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'external' => 0,
     'has_children' => 0,
     'expanded' => 0,
-    'weight' => 3,
+    'weight' => 2,
     'customized' => 1,
   );
   // Exported menu link: main-menu_reports:reports.
@@ -164,7 +164,7 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'external' => 0,
     'has_children' => 0,
     'expanded' => 0,
-    'weight' => 10,
+    'weight' => 9,
     'customized' => 1,
   );
 

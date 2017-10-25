@@ -271,7 +271,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     'type' => 'normal',
     'title' => 'Tasks and Documents',
     'name' => 'main-menu',
-    'weight' => '10',
+    'weight' => '4',
     'parent' => array(
       'type' => 'none',
       'title' => '',
