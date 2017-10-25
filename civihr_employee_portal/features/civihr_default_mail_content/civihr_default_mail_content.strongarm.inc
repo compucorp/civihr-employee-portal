@@ -57,7 +57,7 @@ function civihr_default_mail_content_strongarm() {
     Password: (the password you have just created)
   </p>
   <p>
-    Your system can be accessed through this address:[site:url]. Please bookmark this page.
+    Your system can be accessed through this address: <a href="[site:url]">[site:url]</a>. Please bookmark this page.
     We hope you enjoy using CiviHR. For instructions on how to use the system, please read the online <a href="http://civihr-documentation.readthedocs.io/en/latest/initial-setup-and-configuration/staff-managers-quickstart/">user guide</a>.
   </p>
   <p>
@@ -89,7 +89,7 @@ function civihr_default_mail_content_strongarm() {
     Password: (the password you have just created)
   </p>
   <p>
-    Your system can be accessed through this address:[site:url]. Please bookmark this page.
+    Your system can be accessed through this address: <a href="[site:url]">[site:url]</a>. Please bookmark this page.
     We hope you enjoy using CiviHR. For instructions on how to use the system, please read the online <a href="http://civihr-documentation.readthedocs.io/en/latest/initial-setup-and-configuration/staff-managers-quickstart/">user guide</a>.
   </p>
   <p>
