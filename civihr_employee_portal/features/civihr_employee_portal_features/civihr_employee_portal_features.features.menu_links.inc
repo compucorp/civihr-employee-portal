@@ -144,7 +144,28 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'external' => 0,
     'has_children' => 0,
     'expanded' => 0,
-    'weight' => 3,
+    'weight' => 2,
+    'customized' => 1,
+  );
+  // Exported menu link: main-menu_help://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/.
+  $menu_links['main-menu_help://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => '//civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/',
+    'router_path' => '',
+    'link_title' => 'Help',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+        'target' => '_blank',
+      ),
+      'identifier' => 'main-menu_help://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/',
+    ),
+    'module' => 'menu',
+    'hidden' => 0,
+    'external' => 1,
+    'has_children' => 0,
+    'expanded' => 0,
+    'weight' => 9,
     'customized' => 1,
   );
   // Exported menu link: main-menu_reports:reports.
