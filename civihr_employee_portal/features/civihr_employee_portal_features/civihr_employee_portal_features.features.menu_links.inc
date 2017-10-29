@@ -73,9 +73,14 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'menu_name' => 'main-menu',
     'link_path' => 'civicrm',
     'router_path' => 'civicrm',
-    'link_title' => 'CiviHR admin',
+    'link_title' => 'HR admin',
     'options' => array(
-      'attributes' => array(),
+      'attributes' => array(
+        'class' => array(
+          0 => 'fa',
+          1 => 'fa-tachometer',
+        ),
+      ),
       'identifier' => 'main-menu_civihr-admin:civicrm',
     ),
     'module' => 'menu',
@@ -380,7 +385,7 @@ function civihr_employee_portal_features_menu_default_menu_links() {
   // Included for use with string extractors like potx.
   t('Age groups');
   t('CiviHR SSP');
-  t('CiviHR admin');
+  t('HR admin');
   t('HR Resources');
   t('Help');
   t('Home');
