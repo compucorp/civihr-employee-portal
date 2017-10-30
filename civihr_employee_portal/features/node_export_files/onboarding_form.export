@@ -170,7 +170,7 @@ array(
             ),
           ),
           'required' => '0',
-          'weight' => '153',
+          'weight' => '152',
           'page_num' => 1,
         ),
         2 => array(
@@ -197,7 +197,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '1',
-          'weight' => '154',
+          'weight' => '153',
           'page_num' => 1,
         ),
         3 => array(
@@ -224,7 +224,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '1',
-          'weight' => '155',
+          'weight' => '154',
           'page_num' => 1,
         ),
         5 => array(
@@ -250,7 +250,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '1',
-          'weight' => '156',
+          'weight' => '155',
           'page_num' => 1,
         ),
         14 => array(
@@ -279,7 +279,7 @@ array(
             'analysis' => TRUE,
           ),
           'required' => '1',
-          'weight' => '157',
+          'weight' => '156',
           'page_num' => 1,
         ),
         43 => array(
@@ -296,7 +296,7 @@ array(
             'private' => 0,
           ),
           'required' => '0',
-          'weight' => '158',
+          'weight' => '157',
           'page_num' => 2,
         ),
         148 => array(
@@ -313,7 +313,7 @@ array(
             'display_on' => 'form',
           ),
           'required' => '0',
-          'weight' => '159',
+          'weight' => '158',
           'page_num' => 2,
         ),
         17 => array(
@@ -342,7 +342,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '1',
-          'weight' => '160',
+          'weight' => '159',
           'page_num' => 2,
         ),
         18 => array(
@@ -371,7 +371,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '0',
-          'weight' => '161',
+          'weight' => '160',
           'page_num' => 2,
         ),
         19 => array(
@@ -400,7 +400,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '0',
-          'weight' => '162',
+          'weight' => '161',
           'page_num' => 2,
         ),
         20 => array(
@@ -427,7 +427,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '1',
-          'weight' => '163',
+          'weight' => '162',
           'page_num' => 2,
         ),
         21 => array(
@@ -454,7 +454,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '1',
-          'weight' => '164',
+          'weight' => '163',
           'page_num' => 2,
         ),
         23 => array(
@@ -481,7 +481,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '0',
-          'weight' => '165',
+          'weight' => '164',
           'page_num' => 2,
         ),
         22 => array(
@@ -512,7 +512,7 @@ array(
             'analysis' => TRUE,
           ),
           'required' => '1',
-          'weight' => '166',
+          'weight' => '165',
           'page_num' => 2,
         ),
         44 => array(
@@ -529,7 +529,7 @@ array(
             'private' => 0,
           ),
           'required' => '0',
-          'weight' => '167',
+          'weight' => '166',
           'page_num' => 3,
         ),
         149 => array(
@@ -546,7 +546,7 @@ array(
             'display_on' => 'form',
           ),
           'required' => '0',
-          'weight' => '168',
+          'weight' => '167',
           'page_num' => 3,
         ),
         45 => array(
@@ -575,14 +575,14 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '1',
-          'weight' => '169',
+          'weight' => '168',
           'page_num' => 3,
         ),
-        25 => array(
+          24 => array(
           'nid' => 19,
-          'cid' => '25',
+            'cid' => '24',
           'pid' => '0',
-          'form_key' => 'civicrm_1_contact_2_phone_phone',
+            'form_key' => 'civicrm_1_contact_1_phone_phone',
           'name' => 'Work Phone Number',
           'type' => 'textfield',
           'value' => '',
@@ -604,14 +604,14 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '0',
-          'weight' => '170',
+          'weight' => '169',
           'page_num' => 3,
         ),
-        24 => array(
+          25 => array(
           'nid' => 19,
-          'cid' => '24',
+            'cid' => '25',
           'pid' => '0',
-          'form_key' => 'civicrm_1_contact_1_phone_phone',
+            'form_key' => 'civicrm_1_contact_2_phone_phone',
           'name' => 'Home Phone Number',
           'type' => 'textfield',
           'value' => '',
@@ -633,7 +633,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '0',
-          'weight' => '171',
+          'weight' => '170',
           'page_num' => 3,
         ),
         26 => array(
@@ -661,7 +661,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '0',
-          'weight' => '172',
+          'weight' => '171',
           'page_num' => 3,
         ),
         27 => array(
@@ -689,7 +689,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '0',
-          'weight' => '173',
+          'weight' => '172',
           'page_num' => 3,
         ),
         29 => array(
@@ -720,7 +720,7 @@ array(
             'analysis' => TRUE,
           ),
           'required' => '0',
-          'weight' => '174',
+          'weight' => '173',
           'page_num' => 3,
         ),
         28 => array(
@@ -749,7 +749,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '0',
-          'weight' => '175',
+          'weight' => '174',
           'page_num' => 3,
         ),
         46 => array(
@@ -766,7 +766,7 @@ array(
             'private' => 0,
           ),
           'required' => '0',
-          'weight' => '176',
+          'weight' => '175',
           'page_num' => 4,
         ),
         150 => array(
@@ -783,7 +783,7 @@ array(
             'display_on' => 'form',
           ),
           'required' => '0',
-          'weight' => '177',
+          'weight' => '176',
           'page_num' => 4,
         ),
         6 => array(
@@ -810,7 +810,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '1',
-          'weight' => '178',
+          'weight' => '177',
           'page_num' => 4,
         ),
         7 => array(
@@ -839,7 +839,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '1',
-          'weight' => '179',
+          'weight' => '178',
           'page_num' => 4,
         ),
         8 => array(
@@ -868,7 +868,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '1',
-          'weight' => '180',
+          'weight' => '179',
           'page_num' => 4,
         ),
         9 => array(
@@ -895,7 +895,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '1',
-          'weight' => '181',
+          'weight' => '180',
           'page_num' => 4,
         ),
         10 => array(
@@ -924,7 +924,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '0',
-          'weight' => '182',
+          'weight' => '181',
           'page_num' => 4,
         ),
         11 => array(
@@ -953,7 +953,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '0',
-          'weight' => '183',
+          'weight' => '182',
           'page_num' => 4,
         ),
         12 => array(
@@ -982,7 +982,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '0',
-          'weight' => '184',
+          'weight' => '183',
           'page_num' => 4,
         ),
         13 => array(
@@ -1011,7 +1011,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '0',
-          'weight' => '185',
+          'weight' => '184',
           'page_num' => 4,
         ),
         53 => array(
@@ -1039,7 +1039,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '1',
-          'weight' => '186',
+          'weight' => '185',
           'page_num' => 4,
         ),
         54 => array(
@@ -1070,7 +1070,7 @@ array(
             'analysis' => TRUE,
           ),
           'required' => '0',
-          'weight' => '187',
+          'weight' => '186',
           'page_num' => 4,
         ),
         4 => array(
@@ -1101,7 +1101,7 @@ array(
             'analysis' => TRUE,
           ),
           'required' => '0',
-          'weight' => '188',
+          'weight' => '187',
           'page_num' => 4,
         ),
         15 => array(
@@ -1132,7 +1132,7 @@ array(
             'analysis' => TRUE,
           ),
           'required' => '1',
-          'weight' => '189',
+          'weight' => '188',
           'page_num' => 4,
         ),
         47 => array(
@@ -1149,7 +1149,7 @@ array(
             'private' => 0,
           ),
           'required' => '0',
-          'weight' => '190',
+          'weight' => '189',
           'page_num' => 5,
         ),
         151 => array(
@@ -1166,7 +1166,7 @@ array(
             'display_on' => 'form',
           ),
           'required' => '0',
-          'weight' => '191',
+          'weight' => '190',
           'page_num' => 5,
         ),
         95 => array(
@@ -1187,7 +1187,7 @@ array(
             'description' => '',
           ),
           'required' => '0',
-          'weight' => '192',
+          'weight' => '191',
           'page_num' => 5,
         ),
         30 => array(
@@ -1216,7 +1216,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '1',
-          'weight' => '614',
+        'weight' => '614',
           'page_num' => 5,
         ),
         31 => array(
@@ -1590,7 +1590,7 @@ array(
             'analysis' => TRUE,
           ),
           'required' => '0',
-          'weight' => '193',
+            'weight' => '192',
           'page_num' => 5,
         ),
         96 => array(
@@ -1611,7 +1611,7 @@ array(
             'description' => '',
           ),
           'required' => '0',
-          'weight' => '194',
+            'weight' => '193',
           'page_num' => 5,
         ),
         55 => array(
@@ -2009,7 +2009,7 @@ array(
             'private' => 0,
           ),
           'required' => '0',
-          'weight' => '195',
+            'weight' => '194',
           'page_num' => 6,
         ),
         152 => array(
@@ -2026,7 +2026,7 @@ array(
             'display_on' => 'form',
           ),
           'required' => '0',
-          'weight' => '196',
+            'weight' => '195',
           'page_num' => 6,
         ),
         146 => array(
@@ -2056,7 +2056,7 @@ array(
             'analysis' => TRUE,
           ),
           'required' => '1',
-          'weight' => '197',
+            'weight' => '196',
           'page_num' => 6,
         ),
         98 => array(
@@ -2077,7 +2077,7 @@ array(
             'description' => '',
           ),
           'required' => '0',
-          'weight' => '198',
+            'weight' => '197',
           'page_num' => 6,
         ),
         68 => array(
@@ -2493,7 +2493,7 @@ array(
             'description' => '',
           ),
           'required' => '0',
-          'weight' => '199',
+            'weight' => '198',
           'page_num' => 6,
         ),
         81 => array(
@@ -2907,7 +2907,7 @@ array(
             'description' => '',
           ),
           'required' => '0',
-          'weight' => '200',
+            'weight' => '199',
           'page_num' => 6,
         ),
         100 => array(
@@ -3325,7 +3325,7 @@ array(
             'description' => '',
           ),
           'required' => '0',
-          'weight' => '201',
+            'weight' => '200',
           'page_num' => 6,
         ),
         113 => array(
@@ -3741,7 +3741,7 @@ array(
             'description' => '',
           ),
           'required' => '0',
-          'weight' => '202',
+            'weight' => '201',
           'page_num' => 6,
         ),
         126 => array(
@@ -4121,7 +4121,7 @@ array(
             'private' => 0,
           ),
           'required' => '0',
-          'weight' => '203',
+            'weight' => '202',
           'page_num' => 7,
         ),
         153 => array(
@@ -4138,7 +4138,7 @@ array(
             'display_on' => 'form',
           ),
           'required' => '0',
-          'weight' => '204',
+            'weight' => '203',
           'page_num' => 7,
         ),
         52 => array(
@@ -4174,7 +4174,7 @@ array(
             'analysis' => FALSE,
           ),
           'required' => '0',
-          'weight' => '205',
+            'weight' => '204',
           'page_num' => 7,
         ),
       ),
