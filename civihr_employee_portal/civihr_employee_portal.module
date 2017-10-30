@@ -4764,7 +4764,7 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
    * @see https://www.drupal.org/node/2916491
    */
   if (isset($form['#node']) && $form['#node']->title == OnboardingWebForm::NAME) {
-    $form['submitted'] = array_filter($form['submitted']);
+    $form['submitted'] = array_filter(CRM_Utils_Array::value('submitted', $form));
   }
 
 }
