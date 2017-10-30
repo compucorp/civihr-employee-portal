@@ -4429,24 +4429,24 @@ array(
             'phone' => array(
               1 => array(
                 'phone_type_id' => '1',
-                'location_type_id' => '1',
+                  'location_type_id' => '2',
               ),
               2 => array(
                 'phone_type_id' => '1',
-                'location_type_id' => '2',
+                  'location_type_id' => '1',
               ),
             ),
             'email' => array(
               1 => array(
+                  'location_type_id' => '2',
+                ),
+                2 => array(
                 'location_type_id' => '1',
-              ),
-              2 => array(
-                'location_type_id' => '2',
               ),
             ),
             'im' => array(
               1 => array(
-                'location_type_id' => '1',
+                  'location_type_id' => '2',
               ),
             ),
           ),
