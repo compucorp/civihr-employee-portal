@@ -21,6 +21,7 @@ class OnboardingWizardCustomizationForm {
     $form[self::WELCOME_TEXT_KEY] = $this->getWelcomeTextElement();
     $form[self::INTRODUCTION_TEXT_KEY] = $this->getIntroElement();
     $form[self::CAROUSEL_OPTIONS_KEY] = $this->getCarouselElement();
+    $form['actions']['cancel'] = $this->getCancelButton();
     $form['#submit'][] = [$this, 'onSubmit'];
 
     return system_settings_form($form);
@@ -34,6 +35,10 @@ class OnboardingWizardCustomizationForm {
    * @param array $formState
    */
   public function onSubmit($form, &$formState) {
+    if ($this->clickedCancel($formState)) {
+      drupal_goto('/');
+    }
+
     $this->saveLogo($formState);
     $this->updateCarouselContent($formState);
   }
@@ -109,6 +114,16 @@ class OnboardingWizardCustomizationForm {
   }
 
   /**
+   * @return array
+   */
+  private function getCancelButton() {
+    return [
+      '#type' => 'submit',
+      '#value' => t('Cancel')
+    ];
+  }
+
+  /**
    * This is required as Drupal does not handle saving of files from a
    * system form
    * @see https://drupal.stackexchange.com/a/187043/75186
@@ -142,5 +157,18 @@ class OnboardingWizardCustomizationForm {
       $node->status = $isPublished;
       node_save($node);
     }
+  }
+
+  /**
+   * On form submission checks if the button pressed was "cancel"
+   *
+   * @param array $formState
+   *
+   * @return bool
+   */
+  private function clickedCancel($formState) {
+    $clickedButton = \CRM_Utils_Array::value('clicked_button', $formState);
+
+    return \CRM_Utils_Array::value('#value', $clickedButton) === 'Cancel';
   }
 }
