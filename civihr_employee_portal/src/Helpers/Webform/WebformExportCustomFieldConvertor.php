@@ -93,6 +93,7 @@ class WebformExportCustomFieldConvertor {
    * Returns true if key matches the format cg<groupID>_custom_<fieldID>
    *
    * @param string $formKey
+   *
    * @return bool
    */
   private static function isCustomFieldKey($formKey) {
