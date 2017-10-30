@@ -13,6 +13,8 @@ class ContactForm {
    */
   public static function postProcess($form) {
     self::resizeImage($form);
+    // If details are updated clear contact cache
+    _civihr_employee_portal_clear_contact_cache($form->getContactID());
   }
 
   /**
@@ -29,7 +31,6 @@ class ContactForm {
     }
 
     $imagePath = ContactImagePathfinder::getPath($contactID);
-
     ImageResizer::resizeForProfile($imagePath);
   }
 }
