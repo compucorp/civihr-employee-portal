@@ -44,9 +44,9 @@ class OnboardingWizardCustomizationForm {
   private function getLogoElement() {
     return [
       '#type' => 'managed_file',
-      '#title' => t('Organization Logo'),
+      '#title' => t('Upload organization logo for welcome screen'),
       '#weight' => 1,
-      '#description' => t('Upload organization logo for welcome screen'),
+      '#description' => '',
       '#default_value' => variable_get(self::LOGO_KEY),
       '#upload_location' => 'public://',
       '#upload_validators' => ['file_validate_extensions' => ['gif png jpg jpeg']]
@@ -61,9 +61,9 @@ class OnboardingWizardCustomizationForm {
 
     return [
       '#type' => 'textarea',
-      '#title' => t('Welcome Text'),
+      '#title' => t('Personalize your welcome text'),
       '#weight' => 2,
-      '#description' => t('Personalize your welcome text'),
+      '#description' => '',
       '#default_value' => $welcomeText,
     ];
   }
@@ -77,9 +77,9 @@ class OnboardingWizardCustomizationForm {
 
     return [
       '#type' => 'textarea',
-      '#title' => t('Introduction'),
+      '#title' => t($introDescription),
       '#weight' => 4,
-      '#description' => t($introDescription),
+      '#description' => '',
       '#default_value' => variable_get(self::INTRODUCTION_TEXT_KEY),
     ];
   }
