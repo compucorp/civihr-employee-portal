@@ -4823,7 +4823,9 @@ function civihr_employee_portal_file_presave($file) {
     'submitted_civicrm_1_contact_1_contact_image_URL'
   ];
 
-  if (in_array($file->source, $resizeSources)) {
+  $source = isset($file->source) ? $file->source : NULL;
+
+  if (in_array($source, $resizeSources)) {
     ImageResizer::resizeForProfile($file->uri);
   }
 }
