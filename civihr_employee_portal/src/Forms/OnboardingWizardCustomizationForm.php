@@ -21,6 +21,7 @@ class OnboardingWizardCustomizationForm {
     $form[self::WELCOME_TEXT_KEY] = $this->getWelcomeTextElement();
     $form[self::INTRODUCTION_TEXT_KEY] = $this->getIntroElement();
     $form[self::CAROUSEL_OPTIONS_KEY] = $this->getCarouselElement();
+    $form['actions']['cancel'] = $this->getCancelButton();
     $form['#submit'][] = [$this, 'onSubmit'];
 
     return system_settings_form($form);
@@ -34,6 +35,10 @@ class OnboardingWizardCustomizationForm {
    * @param array $formState
    */
   public function onSubmit($form, &$formState) {
+    if ($this->clickedCancel($formState)) {
+      drupal_goto('/');
+    }
+
     $this->saveLogo($formState);
     $this->updateCarouselContent($formState);
   }
@@ -44,9 +49,9 @@ class OnboardingWizardCustomizationForm {
   private function getLogoElement() {
     return [
       '#type' => 'managed_file',
-      '#title' => t('Organization Logo'),
+      '#title' => t('Upload organization logo for welcome screen'),
       '#weight' => 1,
-      '#description' => t('Upload organization logo for welcome screen'),
+      '#description' => '',
       '#default_value' => variable_get(self::LOGO_KEY),
       '#upload_location' => 'public://',
       '#upload_validators' => ['file_validate_extensions' => ['gif png jpg jpeg']]
@@ -61,9 +66,9 @@ class OnboardingWizardCustomizationForm {
 
     return [
       '#type' => 'textarea',
-      '#title' => t('Welcome Text'),
+      '#title' => t('Personalize your welcome text'),
       '#weight' => 2,
-      '#description' => t('Personalize your welcome text'),
+      '#description' => '',
       '#default_value' => $welcomeText,
     ];
   }
@@ -77,9 +82,9 @@ class OnboardingWizardCustomizationForm {
 
     return [
       '#type' => 'textarea',
-      '#title' => t('Introduction'),
+      '#title' => t($introDescription),
       '#weight' => 4,
-      '#description' => t($introDescription),
+      '#description' => '',
       '#default_value' => variable_get(self::INTRODUCTION_TEXT_KEY),
     ];
   }
@@ -105,6 +110,16 @@ class OnboardingWizardCustomizationForm {
       '#weight' => 3,
       '#title' => t('Select which features are shown on the welcome carousel'),
       '#default_value' => $carouselDefaults,
+    ];
+  }
+
+  /**
+   * @return array
+   */
+  private function getCancelButton() {
+    return [
+      '#type' => 'submit',
+      '#value' => t('Cancel')
     ];
   }
 
@@ -142,5 +157,18 @@ class OnboardingWizardCustomizationForm {
       $node->status = $isPublished;
       node_save($node);
     }
+  }
+
+  /**
+   * On form submission checks if the button pressed was "cancel"
+   *
+   * @param array $formState
+   *
+   * @return bool
+   */
+  private function clickedCancel($formState) {
+    $clickedButton = \CRM_Utils_Array::value('clicked_button', $formState);
+
+    return \CRM_Utils_Array::value('#value', $clickedButton) === t('Cancel');
   }
 }

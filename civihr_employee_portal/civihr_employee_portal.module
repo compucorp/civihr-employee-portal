@@ -10,6 +10,7 @@ use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
 use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
 use Drupal\civihr_employee_portal\Helpers\ImageResizer;
 use Drupal\civihr_employee_portal\Forms\ContactForm;
+use Drupal\civihr_employee_portal\Helpers\Webform\WebformExportCustomFieldConvertor;
 
 /**
  * Implements hook_css_alter().
@@ -4764,7 +4765,7 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
    * @see https://www.drupal.org/node/2916491
    */
   if (isset($form['#node']) && $form['#node']->title == OnboardingWebForm::NAME) {
-    $form['submitted'] = array_filter($form['submitted']);
+    $form['submitted'] = array_filter(CRM_Utils_Array::value('submitted', $form));
   }
 
 }
@@ -4823,7 +4824,9 @@ function civihr_employee_portal_file_presave($file) {
     'submitted_civicrm_1_contact_1_contact_image_URL'
   ];
 
-  if (in_array($file->source, $resizeSources)) {
+  $source = isset($file->source) ? $file->source : NULL;
+
+  if (in_array($source, $resizeSources)) {
     ImageResizer::resizeForProfile($file->uri);
   }
 }
@@ -6359,4 +6362,39 @@ function get_civihr_version() {
   }
 
   return $civihrVersion;
+}
+
+/**
+ * Implements hook_node_export_alter().
+ *
+ * Add some metadata to the exported nodes to allow importing of custom fields
+ * based on name, and not ID.
+ *
+ * @param array $nodes
+ *   The array of nodes to alter.
+ * @param string $format
+ *   The format of node code being used.
+ */
+function civihr_employee_portal_node_export_alter(&$nodes, $format) {
+  foreach ($nodes as &$node) {
+    WebformExportCustomFieldConvertor::addCustomDataForExport($node);
+  }
+}
+
+/**
+ * Implements hook_node_export_import_alter().
+ *
+ * Alter the field keys for webform components using CiviCRM custom data.
+ *
+ * @param array $nodes
+ *   The array of nodes to alter.
+ * @param string $format
+ *   The format of node code being used.
+ * @param bool $save
+ *   Whether the nodes will be saved by node_export_import().
+ */
+function civihr_employee_portal_node_export_import_alter(&$nodes, $format, $save) {
+  foreach ($nodes as &$node) {
+    WebformExportCustomFieldConvertor::replaceCustomDataForImport($node);
+  }
 }
