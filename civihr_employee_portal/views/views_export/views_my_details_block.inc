@@ -162,11 +162,6 @@ $handler->display->display_options['fields']['role_department']['table'] = 'hrjc
 $handler->display->display_options['fields']['role_department']['field'] = 'role_department';
 $handler->display->display_options['fields']['role_department']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['fields']['role_department']['label'] = 'Role Department';
-/* Field: CiviCRM Contacts: Aggregated Contact Address */
-$handler->display->display_options['fields']['aggregated_address']['id'] = 'aggregated_address';
-$handler->display->display_options['fields']['aggregated_address']['table'] = 'civicrm_contact';
-$handler->display->display_options['fields']['aggregated_address']['field'] = 'aggregated_address';
-$handler->display->display_options['fields']['aggregated_address']['label'] = 'Address';
 $handler->display->display_options['defaults']['arguments'] = FALSE;
 /* Contextual filter: HRJobContract Details entity: Period start date */
 $handler->display->display_options['arguments']['period_start_date']['id'] = 'period_start_date';
@@ -208,10 +203,10 @@ $handler->display->display_options['arguments']['effective_end_date']['summary_o
 $handler->display->display_options['arguments']['effective_end_date']['civihr_range'] = '>=';
 $handler->display->display_options['arguments']['effective_end_date']['civihr_range_empty'] = '1';
 
-/* Display: My address */
-$handler = $view->new_display('block', 'My address', 'my_address_block');
+/* Display: Contact Information */
+$handler = $view->new_display('block', 'Contact Information', 'my_address_block');
 $handler->display->display_options['defaults']['title'] = FALSE;
-$handler->display->display_options['title'] = 'My Address Block';
+$handler->display->display_options['title'] = 'Contact Information Block';
 $handler->display->display_options['defaults']['pager'] = FALSE;
 $handler->display->display_options['pager']['type'] = 'some';
 $handler->display->display_options['pager']['options']['items_per_page'] = '1';
@@ -227,6 +222,11 @@ $handler->display->display_options['relationships']['hrjc_contact_details']['id'
 $handler->display->display_options['relationships']['hrjc_contact_details']['table'] = 'civicrm_contact';
 $handler->display->display_options['relationships']['hrjc_contact_details']['field'] = 'hrjc_contact_details';
 $handler->display->display_options['defaults']['fields'] = FALSE;
+/* Field: CiviCRM Address: Contact ID */
+$handler->display->display_options['fields']['contact_id']['id'] = 'contact_id';
+$handler->display->display_options['fields']['contact_id']['table'] = 'civicrm_address';
+$handler->display->display_options['fields']['contact_id']['field'] = 'contact_id';
+$handler->display->display_options['fields']['contact_id']['exclude'] = TRUE;
 /* Field: HRJobContract Contact Work/Home Phone and E-mail Entity: Home_phone */
 $handler->display->display_options['fields']['home_phone']['id'] = 'home_phone';
 $handler->display->display_options['fields']['home_phone']['table'] = 'hrjc_contact_details';
@@ -239,55 +239,11 @@ $handler->display->display_options['fields']['home_email']['table'] = 'hrjc_cont
 $handler->display->display_options['fields']['home_email']['field'] = 'home_email';
 $handler->display->display_options['fields']['home_email']['relationship'] = 'hrjc_contact_details';
 $handler->display->display_options['fields']['home_email']['label'] = 'Personal E-mail';
-/* Field: CiviCRM Address: Full Street Address */
-$handler->display->display_options['fields']['street_address']['id'] = 'street_address';
-$handler->display->display_options['fields']['street_address']['table'] = 'civicrm_address';
-$handler->display->display_options['fields']['street_address']['field'] = 'street_address';
-$handler->display->display_options['fields']['street_address']['relationship'] = 'drupal_id';
-$handler->display->display_options['fields']['street_address']['label'] = 'Address';
-$handler->display->display_options['fields']['street_address']['location_type'] = '1';
-$handler->display->display_options['fields']['street_address']['location_op'] = '0';
-$handler->display->display_options['fields']['street_address']['is_primary'] = 1;
-/* Field: CiviCRM Address: Supplemental Street Address */
-$handler->display->display_options['fields']['supplemental_address_1']['id'] = 'supplemental_address_1';
-$handler->display->display_options['fields']['supplemental_address_1']['table'] = 'civicrm_address';
-$handler->display->display_options['fields']['supplemental_address_1']['field'] = 'supplemental_address_1';
-$handler->display->display_options['fields']['supplemental_address_1']['relationship'] = 'drupal_id';
-$handler->display->display_options['fields']['supplemental_address_1']['label'] = 'Address Line 2';
-$handler->display->display_options['fields']['supplemental_address_1']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['supplemental_address_1']['location_type'] = '1';
-$handler->display->display_options['fields']['supplemental_address_1']['location_op'] = '0';
-$handler->display->display_options['fields']['supplemental_address_1']['is_primary'] = 1;
-/* Field: CiviCRM Address: City / Suburb */
-$handler->display->display_options['fields']['city']['id'] = 'city';
-$handler->display->display_options['fields']['city']['table'] = 'civicrm_address';
-$handler->display->display_options['fields']['city']['field'] = 'city';
-$handler->display->display_options['fields']['city']['relationship'] = 'drupal_id';
-$handler->display->display_options['fields']['city']['location_type'] = '1';
-$handler->display->display_options['fields']['city']['location_op'] = '0';
-$handler->display->display_options['fields']['city']['is_primary'] = 1;
-/* Field: CiviCRM Address: Postal Code */
-$handler->display->display_options['fields']['postal_code']['id'] = 'postal_code';
-$handler->display->display_options['fields']['postal_code']['table'] = 'civicrm_address';
-$handler->display->display_options['fields']['postal_code']['field'] = 'postal_code';
-$handler->display->display_options['fields']['postal_code']['relationship'] = 'drupal_id';
-$handler->display->display_options['fields']['postal_code']['location_type'] = '1';
-$handler->display->display_options['fields']['postal_code']['location_op'] = '0';
-$handler->display->display_options['fields']['postal_code']['is_primary'] = 1;
-/* Field: CiviCRM Address: State/Province */
-$handler->display->display_options['fields']['state_province']['id'] = 'state_province';
-$handler->display->display_options['fields']['state_province']['table'] = 'civicrm_address';
-$handler->display->display_options['fields']['state_province']['field'] = 'state_province';
-$handler->display->display_options['fields']['state_province']['location_type'] = '1';
-$handler->display->display_options['fields']['state_province']['location_op'] = '0';
-$handler->display->display_options['fields']['state_province']['is_primary'] = 1;
-/* Field: CiviCRM Address: Country */
-$handler->display->display_options['fields']['country']['id'] = 'country';
-$handler->display->display_options['fields']['country']['table'] = 'civicrm_address';
-$handler->display->display_options['fields']['country']['field'] = 'country';
-$handler->display->display_options['fields']['country']['location_type'] = '1';
-$handler->display->display_options['fields']['country']['location_op'] = '0';
-$handler->display->display_options['fields']['country']['is_primary'] = 1;
+/* Field: CiviCRM Contacts: Aggregated Contact Address */
+$handler->display->display_options['fields']['aggregated_address']['id'] = 'aggregated_address';
+$handler->display->display_options['fields']['aggregated_address']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['aggregated_address']['field'] = 'aggregated_address';
+$handler->display->display_options['fields']['aggregated_address']['label'] = 'Address';
 $translatables['my_details_block'] = array(
   t('Master'),
   t('My Details Block'),
@@ -318,15 +274,10 @@ $translatables['my_details_block'] = array(
   t('Designation'),
   t('Role title'),
   t('Role Department'),
-  t('Address'),
   t('All'),
-  t('My address'),
-  t('My Address Block'),
+  t('Contact Information'),
+  t('Contact Information Block'),
   t('Personal Phone'),
   t('Personal E-mail'),
-  t('Address Line 2'),
-  t('City / Suburb'),
-  t('Postal Code'),
-  t('State/Province'),
-  t('Country'),
+  t('Address'),
 );
