@@ -1,6 +1,6 @@
 <?php
 
-use Drupal\civihr_employee_portal\Helpers\Webform\CustomComponentKeyHelper;
+use Drupal\civihr_employee_portal\Helpers\Webform\CustomComponentKeyHelper as KeyHelper;
 
 class CustomComponentKeyHelperTest extends \PHPUnit_Framework_TestCase {
 
@@ -9,24 +9,58 @@ class CustomComponentKeyHelperTest extends \PHPUnit_Framework_TestCase {
    *
    * @param string $key
    * @param int $expectedGroup
-   * @param int $expectedField
    */
-  public function testGettingParts($key, $expectedGroup, $expectedField) {
-    $groupID = CustomComponentKeyHelper::getCustomGroupID($key);
-    $fieldID = CustomComponentKeyHelper::getCustomFieldID($key);
-
-    $this->assertEquals($expectedGroup, $groupID);
-    $this->assertEquals($expectedField, $fieldID);
+  public function testGettingGroupID($key, $expectedGroup) {
+    $this->assertEquals($expectedGroup, KeyHelper::getCustomGroupID($key));
   }
 
-  public function testRebuildingKey() {
-    $groupID = 1;
-    $fieldID = 2;
-    $original = 'civicrm_1_contact_1_cg_5_custom_15';
-    $expected = 'civicrm_1_contact_1_cg_1_custom_2';
-    $new = CustomComponentKeyHelper::rebuildKey($groupID, $fieldID, $original);
+  /**
+   * @dataProvider groupIDKeyProvider
+   *
+   * @param string $key
+   * @param int $expectedGroup
+   * @param int $expectedField
+   */
+  public function testGettingFieldID($key, $expectedGroup, $expectedField) {
+    $this->assertEquals(
+      $expectedField,
+      KeyHelper::getCustomFieldID($key)
+    );
+  }
 
-    $this->assertEquals($expected, $new);
+  /**
+   * @dataProvider rebuildKeyProvider
+   *
+   * @param string $original
+   * @param int $groupID
+   * @param int $fieldID
+   * @param string $expected
+   */
+  public function testRebuildingKey($original, $groupID, $fieldID, $expected) {
+    $this->assertEquals(
+      $expected,
+      KeyHelper::rebuildKey($groupID, $fieldID, $original)
+    );
+  }
+
+  /**
+   * @return array
+   */
+  public function rebuildKeyProvider() {
+    return [
+      [
+        'civicrm_1_contact_1_cg_5_custom_15',
+        1,
+        2,
+        'civicrm_1_contact_1_cg_1_custom_2'
+      ],
+      [
+        'civicrm_1_contact_1_cg5_custom_15',
+        1000,
+        999999,
+        'civicrm_1_contact_1_cg1000_custom_999999'
+      ]
+    ];
   }
 
   /**

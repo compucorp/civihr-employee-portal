@@ -6365,6 +6365,8 @@ function get_civihr_version() {
 }
 
 /**
+ * Implements hook_node_export_alter().
+ *
  * Add some metadata to the exported nodes to allow importing of custom fields
  * based on name, and not ID.
  *
@@ -6380,6 +6382,8 @@ function civihr_employee_portal_node_export_alter(&$nodes, $format) {
 }
 
 /**
+ * Implements hook_node_export_import_alter().
+ *
  * Alter the field keys for webform components using CiviCRM custom data.
  *
  * @param array $nodes

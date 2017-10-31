@@ -5,6 +5,11 @@ namespace Drupal\civihr_employee_portal\Helpers\Webform;
 use CRM_Utils_Array as ArrayHelper;
 use Drupal\civihr_employee_portal\Helpers\Webform\CustomComponentKeyHelper as KeyHelper;
 
+/**
+ * Responsible for adding metadata on custom fields when exporting webforms and
+ * using that metadata to correct cross-system changes in custom field IDs when
+ * importing webforms.
+ */
 class WebformExportCustomFieldConvertor {
 
   const KEY_GROUP = 'custom_group_name';

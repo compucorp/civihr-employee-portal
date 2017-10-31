@@ -169,6 +169,6 @@ class OnboardingWizardCustomizationForm {
   private function clickedCancel($formState) {
     $clickedButton = \CRM_Utils_Array::value('clicked_button', $formState);
 
-    return \CRM_Utils_Array::value('#value', $clickedButton) === 'Cancel';
+    return \CRM_Utils_Array::value('#value', $clickedButton) === t('Cancel');
   }
 }
