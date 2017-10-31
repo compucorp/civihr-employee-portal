@@ -22,7 +22,7 @@ class WebformExportCustomFieldConvertor {
    * @param \stdClass $node
    */
   public static function addCustomDataForExport(\stdClass $node) {
-    if (!self::isWebform($node)) {
+    if (!$node->type !== 'webform') {
       return;
     }
 
@@ -54,7 +54,7 @@ class WebformExportCustomFieldConvertor {
    * @param \stdClass $node
    */
   public static function replaceCustomDataForImport(\stdClass $node) {
-    if (!self::isWebform($node)) {
+    if (!$node->type !== 'webform') {
       return;
     }
 
@@ -78,20 +78,6 @@ class WebformExportCustomFieldConvertor {
 
       $node->webform['components'][$key]['form_key'] = $newKey;
     }
-  }
-
-  /**
-   * Checks if the node is of type webform
-   *
-   * @param \stdClass $node
-   * @return bool
-   */
-  private static function isWebform(\stdClass $node) {
-    if (isset($node->type) && $node->type === 'webform') {
-      return TRUE;
-    }
-
-    return FALSE;
   }
 
   /**
