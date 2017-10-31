@@ -135,6 +135,7 @@ $handler->display->display_options['fields']['work_email']['label'] = 'Work E-ma
 $handler->display->display_options['fields']['birth_date']['id'] = 'birth_date';
 $handler->display->display_options['fields']['birth_date']['table'] = 'civicrm_contact';
 $handler->display->display_options['fields']['birth_date']['field'] = 'birth_date';
+$handler->display->display_options['fields']['birth_date']['label'] = 'Date of Birth';
 $handler->display->display_options['fields']['birth_date']['date_format'] = 'custom';
 $handler->display->display_options['fields']['birth_date']['custom_date_format'] = 'd.m.Y';
 $handler->display->display_options['fields']['birth_date']['second_date_format'] = 'long';
@@ -269,7 +270,7 @@ $translatables['my_details_block'] = array(
   t('Work Phone Extension'),
   t('[work_phone] ext. [work_phone_ext]'),
   t('Work E-mail'),
-  t('Birth Date'),
+  t('Date of Birth'),
   t('Location'),
   t('Designation'),
   t('Role title'),
