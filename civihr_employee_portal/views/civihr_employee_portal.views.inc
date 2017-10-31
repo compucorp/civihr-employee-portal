@@ -35,6 +35,14 @@ function civihr_employee_portal_views_data_alter(&$data) {
     'sort' => array('handler' => 'views_handler_sort'),
   );
 
+  $data['civicrm_contact']['aggregated_address'] = [
+    'title' => t('Aggregated Contact Address'),
+    'help' => t('Displays aggregated address for the contact'),
+    'field' => [
+      'handler' => 'civihr_employee_portal_handler_aggregated_address',
+    ],
+  ];
+
   /**
    * Custom field handler which will create age group based on the contact birth date
    */
