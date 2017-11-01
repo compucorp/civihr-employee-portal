@@ -843,13 +843,41 @@ function civihr_employee_portal_views_data_alter(&$data) {
     ),
   );
 
-  // Add custom date handler
-//    $data['absence_activity']['absence_date']['field']['handler'] = 'views_handler_field_date';
-//    $data['absence_activity']['absence_date']['sort']['handler'] = 'views_handler_sort_date';
-//    $data['absence_activity']['absence_date']['filter']['handler'] = 'views_handler_filter_date';
-//    $data['absence_activity']['absence_date']['argument']['handler'] = 'views_handler_argument_date';
+  // Add link to contact ID
+  $data['civicrm_value_emergency_contacts_21']['entity_id'] = array(
+    'title' => t('Entity ID'),
+    'real field' => 'entity_id',
+    'help' => t('The contact this emergency contact is related to.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => FALSE,
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument',
+    ),
+    'relationship' => array(
+      'base' => 'civicrm_contact',
+      'base field' => 'id',
+      'handler' => 'views_handler_relationship',
+      'label' => t('CiviCRM Emergency Contact Contact ID'),
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_numeric',
+      'allow empty' => TRUE,
+    )
+  );
 
   $data['hrjc_contact_details']['work_email']['field']['handler'] = 'civihr_employee_portal_handler_email';
+
+  /**
+   * Required to show entity in views list.
+   * @see views_fetch_base_tables
+   */
+  $data['civicrm_value_emergency_contacts_21']['table']['base'] = [
+    'field' => 'id',
+    'title' => 'CiviHR Emergency Contacts',
+    'help' => 'emergency_contacts'
+  ];
 
   return $data;
 }
