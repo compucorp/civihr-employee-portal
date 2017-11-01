@@ -15,7 +15,6 @@ dependencies[] = file
 dependencies[] = menu
 dependencies[] = mimemail
 dependencies[] = mimemail_action
-dependencies[] = mimemail_compress
 dependencies[] = node
 dependencies[] = options
 dependencies[] = page_manager
