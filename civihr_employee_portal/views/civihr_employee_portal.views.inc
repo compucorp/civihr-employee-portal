@@ -844,28 +844,28 @@ function civihr_employee_portal_views_data_alter(&$data) {
   );
 
   // Add link to contact ID
-  $data['civicrm_value_emergency_contacts_21']['entity_id'] = array(
+  $data['civicrm_value_emergency_contacts_21']['entity_id'] = [
     'title' => t('Entity ID'),
     'real field' => 'entity_id',
-    'help' => t('The contact this emergency contact is related to.'),
-    'field' => array(
+    'help' => t('The contact ID this emergency contact is related to.'),
+    'field' => [
       'handler' => 'views_handler_field',
       'click sortable' => FALSE,
-    ),
-    'argument' => array(
+    ],
+    'argument' => [
       'handler' => 'views_handler_argument',
-    ),
-    'relationship' => array(
+    ],
+    'relationship' => [
       'base' => 'civicrm_contact',
       'base field' => 'id',
       'handler' => 'views_handler_relationship',
-      'label' => t('CiviCRM Emergency Contact Contact ID'),
-    ),
-    'filter' => array(
+      'label' => t('CiviCRM Contact ID'),
+    ],
+    'filter' => [
       'handler' => 'views_handler_filter_numeric',
       'allow empty' => TRUE,
-    )
-  );
+    ]
+  ];
 
   $data['hrjc_contact_details']['work_email']['field']['handler'] = 'civihr_employee_portal_handler_email';
 
