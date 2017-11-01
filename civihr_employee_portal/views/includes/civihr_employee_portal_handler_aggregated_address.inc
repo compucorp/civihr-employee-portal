@@ -60,13 +60,15 @@ class civihr_employee_portal_handler_aggregated_address extends views_handler_fi
   }
 
   /**
+   * Returns the HTML for the address as it will appear in the view.
+   *
    * @param array $address
    *   The address data
    * @return string
    *   The formatted address
    */
   private function formatAddress($address) {
-    $format = '%s<br/>%s<br/>%s %s<br/>%s<br />%s';
+    $format = '%s<br/>%s<br/>%s %s<br/>%s<br/>%s';
 
     return sprintf(
       $format,
