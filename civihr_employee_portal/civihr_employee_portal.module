@@ -5884,31 +5884,35 @@ function civihr_employee_portal_tokens($type, $tokens, array $data = array(), ar
  */
 function civihr_employee_portal_module_implements_alter(&$implementations, $hook) {
 
-    if ($hook != 'views_data_alter') {
-        return;
-    }
+  if ($hook != 'views_data_alter') {
+    return;
+  }
 
-    watchdog('alter default order', print_r($implementations, TRUE));
+  watchdog('alter default order', print_r($implementations, TRUE));
 
-    $group = [];
+  $group = [];
 
-    // Check if the module exists and it's installed
-    if (module_exists('views_autocomplete_filters')) {
-        // Put the views autocomplete filters after civicrm
-        $module = 'views_autocomplete_filters';
-        $group += array($module => $implementations[$module]);
-        unset($implementations[$module]);
-    }
+  // Check if the module exists and it's installed
+  if (module_exists('views_autocomplete_filters')) {
+    // Put the views autocomplete filters after civicrm
+    $module = 'views_autocomplete_filters';
+    $group += array($module => $implementations[$module]);
+    unset($implementations[$module]);
+  }
 
-    // Put the civihr employee portal module after civicrm module (breaks the Calendar view)
-    // $module = 'civihr_employee_portal';
-    // $group += array($module => $implementations[$module]);
-    // unset($implementations[$module]);
+  /**
+   * Put the civihr employee portal module after civicrm module. The civicrm
+   * module will ruthlessly replace all changes from views_data_alter hook
+   * @see civicrm_views_data_alter
+   */
+  $module = 'civihr_employee_portal';
+  $group += array($module => $implementations[$module]);
+  unset($implementations[$module]);
 
-    // Make sure some modules are after civicrm to avoid error with autocomplete search or drush cc all
-    $implementations = $implementations + $group;
+  // Make sure some modules are after civicrm to avoid error with autocomplete search or drush cc all
+  $implementations = $implementations + $group;
 
-    watchdog('alter modified order', print_r($implementations, TRUE));
+  watchdog('alter modified order', print_r($implementations, TRUE));
 }
 
 function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$objectRef) {
