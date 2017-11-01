@@ -12,9 +12,6 @@ use Drupal\civihr_employee_portal\Helpers\Webform\CustomComponentKeyHelper as Ke
  */
 class WebformExportCustomFieldConvertor {
 
-  const KEY_GROUP = 'custom_group_name';
-  const KEY_FIELD = 'custom_field_name';
-
   /**
    * Supplements the node data with a snapshot of a mapping of custom group and
    * field IDs to their machine name for use when re-importing.
@@ -54,6 +51,100 @@ class WebformExportCustomFieldConvertor {
 
     $node->customMapping['customFields'] = $fields;
     $node->customMapping['customGroups'] = $groups;
+  }
+
+  /**
+   * Replaces form keys with the correct custom group and field ID for this
+   * CiviCRM instance if metadata exists in the import node.
+   *
+   * @param \stdClass $node
+   */
+  public static function replaceCustomDataForImport(\stdClass $node) {
+    if ($node->type !== 'webform') {
+      return;
+    }
+
+    // Node was not exported since this change was applied
+    if (!isset($node->customMapping)) {
+      return;
+    }
+
+    $groupNameMapping = $node->customMapping['customGroups'];
+    $groupMapping = self::reverseNameMapping('CustomGroup', $groupNameMapping);
+    $fieldNameMapping = $node->customMapping['customFields'];
+    $fieldMapping = self::reverseNameMapping('CustomField', $fieldNameMapping);
+    $components = ArrayHelper::value('components', $node->webform, []);
+
+    foreach ($components as $key => $component) {
+      $formKey = ArrayHelper::value('form_key', $component);
+
+      if (!self::isCustomFieldKey($formKey)) {
+        continue;
+      }
+
+      $oldGroupID = KeyHelper::getCustomGroupID($formKey);
+      $newGroupID = ArrayHelper::value($oldGroupID, $groupMapping);
+
+      $oldFieldID = KeyHelper::getCustomFieldID($formKey);
+      $newFieldID = ArrayHelper::value($oldFieldID, $fieldMapping);
+
+      $newKey = KeyHelper::rebuildKey($newGroupID, $newFieldID, $formKey);
+
+      $node->webform['components'][$key]['form_key'] = $newKey;
+    }
+
+    self::replaceWebformCiviCRMCounts($node, $groupMapping);
+  }
+
+  /**
+   * The webform node also keeps a count of how many custom groups values are
+   * in use when exporting. However it uses the format "number_of_cg_<groupID>"
+   * and if the group ID changes it disables this custom group in the webform.
+   *
+   * @param \stdClass $node
+   * @param array $groupMapping
+   */
+  private static function replaceWebformCiviCRMCounts(\stdClass $node, $groupMapping) {
+    $civiWebform = isset($node->webform_civicrm) ? $node->webform_civicrm : [];
+    $civiGroups = ArrayHelper::value('data', $civiWebform, []);
+    $prefix = 'number_of_cg';
+
+    foreach ($civiGroups as $entity => $groups) {
+      foreach ($groups as $index => $values) {
+
+        if (!is_array($values)) {
+          continue;
+        }
+
+        foreach ($values as $key => $value) {
+
+          if (substr($key, 0, strlen($prefix)) === $prefix) {
+            $oldGroupID = str_replace($prefix, '', $key);
+            $newGroupID = ArrayHelper::value($oldGroupID, $groupMapping);
+
+            if (!$newGroupID) {
+              continue;
+            }
+
+            $newKey = sprintf('%s%d', $prefix, $newGroupID);
+
+            unset($node->webform_civicrm['data'][$entity][$index][$key]);
+            $node->webform_civicrm['data'][$entity][$index][$newKey] = $value;
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Returns true if key matches the format cg<groupID>_custom_<fieldID>
+   *
+   * @param string $formKey
+   *
+   * @return bool
+   */
+  private static function isCustomFieldKey($formKey) {
+    return !empty(KeyHelper::getCustomGroupID($formKey));
   }
 
   /**
@@ -99,86 +190,5 @@ class WebformExportCustomFieldConvertor {
     }
 
     return $oldToNewMapping;
-  }
-
-  /**
-   * Replaces form keys with the correct custom group and field ID for this
-   * CiviCRM instance if metadata exists in the import node.
-   *
-   * @param \stdClass $node
-   */
-  public static function replaceCustomDataForImport(\stdClass $node) {
-    if ($node->type !== 'webform') {
-      return;
-    }
-
-    // Node was not exported since this change was applied
-    if (!isset($node->customMapping)) {
-      return;
-    }
-
-    $groupNameMapping = $node->customMapping['customGroups'];
-    $groupMapping = self::reverseNameMapping('CustomGroup', $groupNameMapping);
-    $fieldNameMapping = $node->customMapping['customFields'];
-    $fieldMapping = self::reverseNameMapping('CustomField', $fieldNameMapping);
-    $components = ArrayHelper::value('components', $node->webform, []);
-
-    foreach ($components as $key => $component) {
-      $formKey = ArrayHelper::value('form_key', $component);
-
-      if (!self::isCustomFieldKey($formKey)) {
-        continue;
-      }
-
-      $oldGroupID = KeyHelper::getCustomGroupID($formKey);
-      $newGroupID = ArrayHelper::value($oldGroupID, $groupMapping);
-
-      $oldFieldID = KeyHelper::getCustomFieldID($formKey);
-      $newFieldID = ArrayHelper::value($oldFieldID, $fieldMapping);
-
-      $newKey = KeyHelper::rebuildKey($newGroupID, $newFieldID, $formKey);
-
-      $node->webform['components'][$key]['form_key'] = $newKey;
-    }
-
-    $civiWebform = isset($node->webform_civicrm) ? $node->webform_civicrm : [];
-    $civiGroups = ArrayHelper::value('data', $civiWebform, []);
-    $customGroupCountPrefix = 'number_of_cg';
-
-    foreach ($civiGroups as $entity => $groups) {
-      foreach ($groups as $index => $values) {
-
-        if (!is_array($values)) {
-          continue;
-        }
-
-        foreach ($values as $key => $value) {
-
-          if (substr($key, 0, 12) === $customGroupCountPrefix) {
-            $oldGroupID = str_replace($customGroupCountPrefix, '', $key);
-            $newGroupID = ArrayHelper::value($oldGroupID, $groupMapping);
-
-            if (!$newGroupID) {
-              continue;
-            }
-
-            $newKey = sprintf('%s%d', $customGroupCountPrefix, $newGroupID);
-            unset($node->webform_civicrm['data'][$entity][$index][$key]);
-            $node->webform_civicrm['data'][$entity][$index][$newKey] = $value;
-          }
-        }
-      }
-    }
-  }
-
-  /**
-   * Returns true if key matches the format cg<groupID>_custom_<fieldID>
-   *
-   * @param string $formKey
-   *
-   * @return bool
-   */
-  private static function isCustomFieldKey($formKey) {
-    return !empty(KeyHelper::getCustomGroupID($formKey));
   }
 }
