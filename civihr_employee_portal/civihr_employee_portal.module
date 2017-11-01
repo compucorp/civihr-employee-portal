@@ -6377,7 +6377,7 @@ function get_civihr_version() {
  */
 function civihr_employee_portal_node_export_alter(&$nodes, $format) {
   foreach ($nodes as &$node) {
-    WebformExportCustomFieldConvertor::addCustomDataForExport($node);
+    WebformExportCustomFieldConvertor::addCustomMappingForExport($node);
   }
 }
 
