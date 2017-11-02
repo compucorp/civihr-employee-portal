@@ -47,6 +47,33 @@ class WebformHelper {
   }
 
   /**
+   * Gets the submitted value for a webform by the title of the field.
+   *
+   * @param \stdClass $node
+   *   The webform node
+   * @param \stdClass $submission
+   *   The submitted values
+   * @param string $title
+   *   The title of the field to lookup
+   *
+   * @return mixed
+   */
+  public static function getValueByTitle($node, $submission, $title) {
+    $component = WebformHelper::getWebformComponentsByName($node, $title);
+
+    if (count($component) !== 1) {
+      throw new \Exception('Webform component title is not unique');
+    }
+
+    $component = array_shift($component);
+    $cid = \CRM_Utils_Array::value('cid', $component);
+    $submission = isset($submission->data) ? $submission->data : [];
+    $value = \CRM_Utils_Array::value($cid, $submission, []);
+
+    return array_shift($value);
+  }
+
+  /**
    * Finds all webform submissions by a Drupal user.
    *
    * @param \stdClass $user
