@@ -88,6 +88,10 @@ class WebformExportCustomFieldConvertor {
       $oldFieldID = KeyHelper::getCustomFieldID($formKey);
       $newFieldID = ArrayHelper::value($oldFieldID, $fieldMapping);
 
+      if (is_null($newGroupID) || is_null($newFieldID)) {
+        continue;
+      }
+
       $newKey = KeyHelper::rebuildKey($newGroupID, $newFieldID, $formKey);
 
       $node->webform['components'][$key]['form_key'] = $newKey;
@@ -122,7 +126,7 @@ class WebformExportCustomFieldConvertor {
             $oldGroupID = str_replace($prefix, '', $key);
             $newGroupID = ArrayHelper::value($oldGroupID, $groupMapping);
 
-            if (!$newGroupID) {
+            if (is_null($newGroupID)) {
               continue;
             }
 
@@ -156,6 +160,11 @@ class WebformExportCustomFieldConvertor {
    * @return array
    */
   private static function getNameMapping($entity, $ids) {
+
+    if (empty($ids)) {
+      return [];
+    }
+
     $params['id'] = ['IN' => $ids];
     $params['return'] = ['name'];
     $results = civicrm_api3($entity, 'get', $params);
