@@ -36,7 +36,7 @@ class OnboardingWizardCustomizationForm {
    */
   public function onSubmit($form, &$formState) {
     if ($this->clickedCancel($formState)) {
-      drupal_goto('/');
+      drupal_goto('/dashboard');
     }
 
     $this->saveLogo($formState);
