@@ -29,10 +29,7 @@ class OnboardingWebForm {
       $this->createReminderTask($contactID);
     }
 
-    $workEmail = WebformHelper::getValueByTitle($node, $values, 'Work Email');
-    if ($workEmail) {
-      $this->setWorkEmailAsPrimary($contactID, $workEmail);
-    }
+    $this->setWorkEmailAsPrimary($node, $values, $contactID);
   }
 
   /**
@@ -83,15 +80,33 @@ class OnboardingWebForm {
    * If work email is included then create it here. It will be created on
    * webform submission anyway, but we need to make it primary.
    *
+   * @param \stdClass $node
+   * @param \stdClass $values
    * @param int $contactID
-   * @param string $workEmail
    */
-  private function setWorkEmailAsPrimary($contactID, $workEmail) {
+  private function setWorkEmailAsPrimary($node, $values, $contactID) {
+    $workEmail = WebformHelper::getValueByTitle($node, $values, 'Work Email');
+
+    // it wasn't set in form
+    if (!$workEmail) {
+      return;
+    }
+
     $params = [
       'contact_id' => $contactID,
-      'is_primary' => 1,
-      'email' => $workEmail
+      'email' => $workEmail,
+      'location_type_id' => 'Work'
     ];
+
+    $mail = civicrm_api3('Email', 'get', $params);
+
+    if ($mail['count'] != 1) {
+      return;
+    }
+
+    $mail = array_shift($mail['values']);
+    $params['is_primary'] = 1;
+    $params['id'] = $mail['id'];
 
     civicrm_api3('Email', 'create', $params);
   }

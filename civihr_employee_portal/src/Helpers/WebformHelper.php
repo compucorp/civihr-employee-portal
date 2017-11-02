@@ -27,23 +27,29 @@ class WebformHelper {
   }
 
   /**
-   * Returns all components of a form that match the provided name
+   * Returns a single component of a form that matches the provided title
    *
    * @param \stdClass $node
-   * @param string $name
+   * @param string $title
    *
    * @return array
    */
-  public static function getWebformComponentsByName($node, $name) {
+  public static function getComponentByTitle($node, $title) {
     if (!property_exists($node, 'webform')) {
       return [];
     }
 
     $components = ArrayHelper::value('components', $node->webform, []);
 
-    return array_filter($components, function($component) use ($name) {
-      return ArrayHelper::value('name', $component) === $name;
+    $components = array_filter($components, function($component) use ($title) {
+      return ArrayHelper::value('name', $component) === $title;
     });
+
+    if (count($components) !== 1) {
+      throw new \Exception('Webform component title is not unique');
+    }
+
+    return array_shift($components);
   }
 
   /**
@@ -59,13 +65,7 @@ class WebformHelper {
    * @return mixed
    */
   public static function getValueByTitle($node, $submission, $title) {
-    $component = WebformHelper::getWebformComponentsByName($node, $title);
-
-    if (count($component) !== 1) {
-      throw new \Exception('Webform component title is not unique');
-    }
-
-    $component = array_shift($component);
+    $component = WebformHelper::getComponentByTitle($node, $title);
     $cid = \CRM_Utils_Array::value('cid', $component);
     $submission = isset($submission->data) ? $submission->data : [];
     $value = \CRM_Utils_Array::value($cid, $submission, []);
