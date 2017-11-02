@@ -12,21 +12,20 @@ use Drupal\civihr_employee_portal\Helpers\Webform\CustomComponentKeyHelper as Ke
  */
 class WebformExportCustomFieldConvertor {
 
-  const KEY_GROUP = 'custom_group_name';
-  const KEY_FIELD = 'custom_field_name';
-
   /**
-   * Supplements the node data with custom field metadata such as custom group
-   * name and custom field name for use when re-importing.
+   * Supplements the node data with a snapshot of a mapping of custom group and
+   * field IDs to their machine name for use when re-importing.
    *
    * @param \stdClass $node
    */
-  public static function addCustomDataForExport(\stdClass $node) {
-    if (!$node->type !== 'webform') {
+  public static function addCustomMappingForExport(\stdClass $node) {
+    if ($node->type !== 'webform') {
       return;
     }
 
     $components = ArrayHelper::value('components', $node->webform, []);
+    $customGroupIDs = [];
+    $customFieldIDs = [];
 
     foreach ($components as $key => $component) {
       $formKey = ArrayHelper::value('form_key', $component);
@@ -35,16 +34,23 @@ class WebformExportCustomFieldConvertor {
         continue;
       }
 
-      $groupName = self::getCustomGroupNameFromKey($formKey);
-      $fieldName = self::getCustomFieldNameFromKey($formKey);
+      $groupID = KeyHelper::getCustomGroupID($formKey);
+      $fieldID = KeyHelper::getCustomFieldID($formKey);
 
-      if (!$groupName || !$fieldName) {
-        continue;
+      if ($groupID && !in_array($groupID, $customGroupIDs)) {
+        $customGroupIDs[] = $groupID;
       }
 
-      $node->webform['components'][$key][self::KEY_GROUP] = $groupName;
-      $node->webform['components'][$key][self::KEY_FIELD] = $fieldName;
+      if ($fieldID && !in_array($fieldID, $customFieldIDs)) {
+        $customFieldIDs[] = $fieldID;
+      }
     }
+
+    $groups = self::getNameMapping('CustomGroup', $customGroupIDs);
+    $fields = self::getNameMapping('CustomField', $customFieldIDs);
+
+    $node->customMapping['customFields'] = $fields;
+    $node->customMapping['customGroups'] = $groups;
   }
 
   /**
@@ -54,10 +60,19 @@ class WebformExportCustomFieldConvertor {
    * @param \stdClass $node
    */
   public static function replaceCustomDataForImport(\stdClass $node) {
-    if (!$node->type !== 'webform') {
+    if ($node->type !== 'webform') {
       return;
     }
 
+    // Node was not exported since this change was applied
+    if (!isset($node->customMapping)) {
+      return;
+    }
+
+    $groupNameMapping = $node->customMapping['customGroups'];
+    $groupMapping = self::reverseNameMapping('CustomGroup', $groupNameMapping);
+    $fieldNameMapping = $node->customMapping['customFields'];
+    $fieldMapping = self::reverseNameMapping('CustomField', $fieldNameMapping);
     $components = ArrayHelper::value('components', $node->webform, []);
 
     foreach ($components as $key => $component) {
@@ -67,16 +82,61 @@ class WebformExportCustomFieldConvertor {
         continue;
       }
 
-      $groupID = self::getCustomGroupIDFromComponent($component);
-      $fieldID = self::getCustomFieldIDFromComponent($component);
+      $oldGroupID = KeyHelper::getCustomGroupID($formKey);
+      $newGroupID = ArrayHelper::value($oldGroupID, $groupMapping);
 
-      if (!$groupID || !$fieldID) {
+      $oldFieldID = KeyHelper::getCustomFieldID($formKey);
+      $newFieldID = ArrayHelper::value($oldFieldID, $fieldMapping);
+
+      if (is_null($newGroupID) || is_null($newFieldID)) {
         continue;
       }
 
-      $newKey = KeyHelper::rebuildKey($groupID, $fieldID, $formKey);
+      $newKey = KeyHelper::rebuildKey($newGroupID, $newFieldID, $formKey);
 
       $node->webform['components'][$key]['form_key'] = $newKey;
+    }
+
+    self::replaceWebformCiviCRMCounts($node, $groupMapping);
+  }
+
+  /**
+   * The webform node also keeps a count of how many custom groups values are
+   * in use when exporting. However it uses the format "number_of_cg_<groupID>"
+   * and if the group ID changes it disables this custom group in the webform.
+   *
+   * @param \stdClass $node
+   * @param array $groupMapping
+   */
+  private static function replaceWebformCiviCRMCounts(\stdClass $node, $groupMapping) {
+    $civiWebform = isset($node->webform_civicrm) ? $node->webform_civicrm : [];
+    $civiGroups = ArrayHelper::value('data', $civiWebform, []);
+    $prefix = 'number_of_cg';
+
+    foreach ($civiGroups as $entity => $groups) {
+      foreach ($groups as $index => $values) {
+
+        if (!is_array($values)) {
+          continue;
+        }
+
+        foreach ($values as $key => $value) {
+
+          if (substr($key, 0, strlen($prefix)) === $prefix) {
+            $oldGroupID = str_replace($prefix, '', $key);
+            $newGroupID = ArrayHelper::value($oldGroupID, $groupMapping);
+
+            if (is_null($newGroupID)) {
+              continue;
+            }
+
+            $newKey = sprintf('%s%d', $prefix, $newGroupID);
+
+            unset($node->webform_civicrm['data'][$entity][$index][$key]);
+            $node->webform_civicrm['data'][$entity][$index][$newKey] = $value;
+          }
+        }
+      }
     }
   }
 
@@ -92,100 +152,52 @@ class WebformExportCustomFieldConvertor {
   }
 
   /**
-   * Finds the custom group ID from a form key
-   *
-   * @param string $formKey
-   *
-   * @return int|NULL
-   */
-  private static function getCustomGroupNameFromKey($formKey) {
-    $groupID = KeyHelper::getCustomGroupID($formKey);
-
-    if (!$groupID) {
-      return NULL;
-    }
-
-    $result = self::getSingleOrNullEntity('CustomGroup', ['id' => $groupID]);
-
-    return ArrayHelper::value('name', $result);
-  }
-
-  /**
-   * Finds the custom field ID from a form key
-   *
-   * @param string $formKey
-   *
-   * @return int|NULL
-   */
-  private static function getCustomFieldNameFromKey($formKey) {
-    $fieldID = KeyHelper::getCustomFieldID($formKey);
-
-    if (!$fieldID) {
-      return NULL;
-    }
-
-    $result = self::getSingleOrNullEntity('CustomField', ['id' => $fieldID]);
-
-    return ArrayHelper::value('name', $result);
-  }
-
-  /**
-   * Gets the custom group ID based on group name, if it is set in the component
-   * and the group exists.
-   *
-   * @param array $component
-   *
-   * @return int|NULL
-   */
-  private static function getCustomGroupIDFromComponent($component) {
-    $groupName = ArrayHelper::value(self::KEY_GROUP, $component);
-
-    if (!$groupName) {
-      return NULL;
-    }
-
-    $result = self::getSingleOrNullEntity('CustomGroup', ['name' => $groupName]);
-
-    return ArrayHelper::value('id', $result);
-  }
-
-  /**
-   * Gets the custom group ID based on group name, if it is set in the component
-   * and the group exists.
-   *
-   * @param array $component
-   *
-   * @return int|NULL
-   */
-  private static function getCustomFieldIDFromComponent($component) {
-    $fieldName = ArrayHelper::value(self::KEY_FIELD, $component);
-
-    if (!$fieldName) {
-      return NULL;
-    }
-
-    $result = self::getSingleOrNullEntity('CustomField', ['name' => $fieldName]);
-
-    return ArrayHelper::value('id', $result);
-  }
-
-
-  /**
-   * Does an API call to get a single entity without throwing an exception like
-   * get_single does.
+   * Gets a mapping of entity IDs to names for custom fields or groups
    *
    * @param string $entity
-   * @param array $params
-   * @return array|NULL
+   * @param array $ids
+   *
+   * @return array
    */
-  private static function getSingleOrNullEntity($entity, $params) {
-    $result = civicrm_api3($entity, 'get', $params);
+  private static function getNameMapping($entity, $ids) {
 
-    if ($result['count'] != 1) {
-      return NULL;
+    if (empty($ids)) {
+      return [];
     }
 
-    return array_shift($result['values']);
+    $params['id'] = ['IN' => $ids];
+    $params['return'] = ['name'];
+    $results = civicrm_api3($entity, 'get', $params);
+    $results = ArrayHelper::value('values', $results, []);
+
+    return array_column($results, 'name', 'id');
   }
 
+  /**
+   * Reverse the process of original mapping by looking up the new ID of the
+   * custom group/field entity based on the name from the mapping.
+   *
+   * @param string $entity
+   * @param array $originalMapping
+   *
+   * @return array
+   *   With values of old ID => new ID
+   */
+  private static function reverseNameMapping($entity, $originalMapping) {
+    $names = array_values($originalMapping);
+
+    $params['name'] = ['IN' => $names];
+    $params['return'] = ['id', 'name'];
+    $results = civicrm_api3($entity, 'get', $params);
+    $results = ArrayHelper::value('values', $results, []);
+
+    $oldToNewMapping = [];
+
+    foreach ($results as $result) {
+      $orignalID = ArrayHelper::key($result['name'], $originalMapping);
+      $oldToNewMapping[$orignalID] = $result['id'];
+    }
+
+    return $oldToNewMapping;
+  }
 }
