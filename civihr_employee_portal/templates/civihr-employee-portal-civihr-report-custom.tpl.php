@@ -28,11 +28,11 @@
 <?php endif; ?>
 
   <ul class="nav nav-tabs nav-justified nav-tabs-header report-tabs">
-    <?php if (!empty($tableUrl)): ?>
-      <li role="presentation" class="active"><a data-tab="data">Data</a></li>
-    <?php endif; ?>
     <?php if (!empty($jsonUrl)): ?>
-      <li role="presentation"><a data-tab="pivot-table">Pivot Table</a></li>
+      <li role="presentation" class="active"><a data-tab="pivot-table">Pivot Table</a></li>
+    <?php endif; ?>
+    <?php if (!empty($tableUrl)): ?>
+      <li role="presentation"><a data-tab="data">Data</a></li>
     <?php endif; ?>
   </ul>
 
@@ -62,14 +62,17 @@
               Configuration:
             </div>
             <div class="form-item">
-              <select name="id" class="report-config-select">
-                <option value=""><?php print t('-- select configuration --'); ?></option>
-                <?php if (!empty($configurationList)): ?>
-                  <?php foreach ($configurationList as $key => $value): ?>
-                    <option value="<?php print $key; ?>"><?php print $value; ?></option>
-                  <?php endforeach; ?>
-                <?php endif; ?>
-              </select>
+              <div class="crm_custom-select">
+                <select name="id" class="report-config-select skip-js-custom-select">
+                  <option value=""><?php print t('-- select configuration --'); ?></option>
+                  <?php if (!empty($configurationList)): ?>
+                    <?php foreach ($configurationList as $key => $value): ?>
+                      <option value="<?php print $key; ?>"><?php print $value; ?></option>
+                    <?php endforeach; ?>
+                  <?php endif; ?>
+                </select>
+                <span class="crm_custom-select__arrow"></span>
+              </div>
             </div>
             <?php if (user_access('manage hrreports configuration')): ?>
               <div class="form-item">
