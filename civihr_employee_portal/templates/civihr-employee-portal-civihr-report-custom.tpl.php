@@ -24,8 +24,7 @@
         </div>
       </div>
     </div>
-  </div>
-<?php endif; ?>
+  <?php endif; ?>
 
   <ul class="nav nav-tabs nav-justified nav-tabs-header report-tabs">
     <?php if (!empty($jsonUrl)): ?>
@@ -93,47 +92,54 @@
   </div>
 
   <script type="text/javascript">
-            CRM.$(function () {
-            var data = [];
-                    var initialDerivedAttributes = {};
-  <?php if ($reportName === 'people'): ?>
-              initialDerivedAttributes = {
-              "Employee length of service group": function(row) {
-              var los = parseInt(row['Employee length of service'] / 365, 10);
-                      if (los < 1) {
-              return "Under 1 year";
-              }
-              if (los < 2) {
-              return "1 - 2 years";
-              }
-              if (los < 5) {
-              return "2 - 5 years";
-              }
-              if (los < 10) {
-              return "5 - 10 years";
-              }
-              if (los < 15) {
-              return "10 - 15 years";
-              }
-              if (los < 20) {
-              return "15 - 20 years";
-              }
-              return "Over 20 years";
-              }
-              }
-  <?php endif; ?>
-            Drupal.behaviors.civihr_employee_portal_reports.instance.init({
-            reportName: '<?php print $reportName; ?>',
-                    configurationList: <?php print json_encode($configurationList); ?>,
-                    data: data,
-                    tableContainer: jQuery('#reportTable'),
-                    pivotTableContainer: jQuery('#reportPivotTable'),
-                    derivedAttributes: initialDerivedAttributes,
-                    tableUrl: '<?php print $tableUrl; ?>',
-                    jsonUrl: '<?php print $jsonUrl; ?>',
-                    filters: <?php print !empty($filters) ? 1 : 0; ?>
-            });
-                    Drupal.behaviors.civihr_employee_portal_reports.instance.show();
-            });
+    CRM.$(function () {
+      var data = [];
+      var initialDerivedAttributes = {};
+      <?php if ($reportName === 'people'): ?>
+      initialDerivedAttributes = {
+        "Employee length of service group": function (row) {
+          var los = parseInt(row['Employee length of service'] / 365, 10);
+
+          if (los < 1) {
+            return "Under 1 year";
+          }
+
+          if (los < 2) {
+            return "1 - 2 years";
+          }
+
+          if (los < 5) {
+            return "2 - 5 years";
+          }
+
+          if (los < 10) {
+            return "5 - 10 years";
+          }
+
+          if (los < 15) {
+            return "10 - 15 years";
+          }
+
+          if (los < 20) {
+            return "15 - 20 years";
+          }
+
+          return "Over 20 years";
+        }
+      };
+      <?php endif; ?>
+      Drupal.behaviors.civihr_employee_portal_reports.instance.init({
+        reportName: '<?php print $reportName; ?>',
+        configurationList: <?php print json_encode($configurationList); ?>,
+        data: data,
+        tableContainer: jQuery('#reportTable'),
+        pivotTableContainer: jQuery('#reportPivotTable'),
+        derivedAttributes: initialDerivedAttributes,
+        tableUrl: '<?php print $tableUrl; ?>',
+        jsonUrl: '<?php print $jsonUrl; ?>',
+        filters: <?php print !empty($filters) ? 1 : 0; ?>
+      });
+      Drupal.behaviors.civihr_employee_portal_reports.instance.show();
+    });
   </script>
 </div>
