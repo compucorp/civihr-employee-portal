@@ -2701,7 +2701,7 @@ function civihr_employee_portal_civi_tasks_form($form, &$form_state) {
 
     $form['assignment'] = array(
         '#type' => 'textfield',
-        '#title' => t('Assignment:'),
+        '#title' => t('Workflow:'),
         '#default_value' => '',
         '#attributes' => $disabledAttr,
         '#label_class' => 'col-sm-3 control-label',
