@@ -6361,6 +6361,17 @@ function get_civihr_version() {
 }
 
 /**
+ * Clears the basic cached contact data
+ * @see get_civihr_contact_data
+ *
+ * @param int $contactID
+ */
+function _civihr_employee_portal_clear_contact_cache($contactID) {
+  $cacheKey = 'civihr_contact_data_' . $contactID;
+  cache_clear_all($cacheKey, 'cache');
+}
+
+/**
  * Implements hook_node_export_alter().
  *
  * Add some metadata to the exported nodes to allow importing of custom fields

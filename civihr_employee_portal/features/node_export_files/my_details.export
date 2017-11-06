@@ -243,7 +243,7 @@ array(
                   'png',
                 ),
                 'addextensions' => '',
-                'size' => '2 MB',
+                'size' => '10 MB',
               ),
               'scheme' => 'public',
               'directory' => '',
