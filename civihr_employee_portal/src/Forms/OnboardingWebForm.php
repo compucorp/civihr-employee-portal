@@ -174,7 +174,8 @@ class OnboardingWebForm {
    */
   private function userCreatedAfterOnboardingReleased() {
     global $user;
-    $onboardingRelease = (new \DateTime('13 November 2017'))->getTimestamp();
+    $onboardingForm = WebformHelper::findOneByTitle(self::NAME);
+    $onboardingRelease = $onboardingForm->created;
 
     return $user->created > $onboardingRelease;
   }
