@@ -24,7 +24,11 @@ class OnboardingWizardCustomizationForm {
     $form['actions']['cancel'] = $this->getCancelButton();
     $form['#submit'][] = [$this, 'onSubmit'];
 
-    return system_settings_form($form);
+    $form = system_settings_form($form);
+
+    $form = $this->adjustSaveButton($form);
+
+    return $form;
   }
 
   /**
@@ -36,7 +40,7 @@ class OnboardingWizardCustomizationForm {
    */
   public function onSubmit($form, &$formState) {
     if ($this->clickedCancel($formState)) {
-      drupal_goto('/');
+      drupal_goto('/dashboard');
     }
 
     $this->saveLogo($formState);
@@ -119,7 +123,8 @@ class OnboardingWizardCustomizationForm {
   private function getCancelButton() {
     return [
       '#type' => 'submit',
-      '#value' => t('Cancel')
+      '#value' => t('Cancel'),
+      '#weight' => 1,
     ];
   }
 
@@ -170,5 +175,19 @@ class OnboardingWizardCustomizationForm {
     $clickedButton = \CRM_Utils_Array::value('clicked_button', $formState);
 
     return \CRM_Utils_Array::value('#value', $clickedButton) === t('Cancel');
+  }
+
+  /**
+   * Sets the title and weight for the save button
+   *
+   * @param array $form
+   *
+   * @return array
+   */
+  private function adjustSaveButton($form) {
+    $form['actions']['submit']['#value'] = ts('Save');
+    $form['actions']['submit']['#weight'] = 0;
+
+    return $form;
   }
 }

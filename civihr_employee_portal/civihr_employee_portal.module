@@ -5053,7 +5053,7 @@ function _civihr_employee_portal_should_do_onboarding($account) {
  * Some post processing needs to be done on the form, such as cache clearing
  *
  * @param \stdClass $node
- * @param array $submission
+ * @param \stdClass $submission
  */
 function civihr_employee_portal_webform_submission_insert($node, $submission) {
   $nodeTitle = property_exists($node, 'title') ? $node->title : NULL;

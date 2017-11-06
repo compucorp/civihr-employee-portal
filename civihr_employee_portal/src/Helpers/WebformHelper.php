@@ -27,23 +27,50 @@ class WebformHelper {
   }
 
   /**
-   * Returns all components of a form that match the provided name
+   * Returns a single component of a form that matches the provided title
    *
    * @param \stdClass $node
-   * @param string $name
+   * @param string $title
    *
    * @return array
    */
-  public static function getWebformComponentsByName($node, $name) {
+  public static function getComponentByTitle($node, $title) {
     if (!property_exists($node, 'webform')) {
       return [];
     }
 
     $components = ArrayHelper::value('components', $node->webform, []);
 
-    return array_filter($components, function($component) use ($name) {
-      return ArrayHelper::value('name', $component) === $name;
+    $components = array_filter($components, function($component) use ($title) {
+      return ArrayHelper::value('name', $component) === $title;
     });
+
+    if (count($components) !== 1) {
+      throw new \Exception('Webform component title is not unique');
+    }
+
+    return array_shift($components);
+  }
+
+  /**
+   * Gets the submitted value for a webform by the title of the field.
+   *
+   * @param \stdClass $node
+   *   The webform node
+   * @param \stdClass $submission
+   *   The submitted values
+   * @param string $title
+   *   The title of the field to lookup
+   *
+   * @return mixed
+   */
+  public static function getValueByTitle($node, $submission, $title) {
+    $component = WebformHelper::getComponentByTitle($node, $title);
+    $cid = \CRM_Utils_Array::value('cid', $component);
+    $submission = isset($submission->data) ? $submission->data : [];
+    $value = \CRM_Utils_Array::value($cid, $submission, []);
+
+    return array_shift($value);
   }
 
   /**

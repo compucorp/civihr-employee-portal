@@ -15,43 +15,41 @@ class OnboardingWebForm {
    * Some required processing such as clearing caches and creating tasks.
    *
    * @param \stdClass $node
-   * @param \stdClass $submission
+   *   The webform node
+   * @param \stdClass $values
+   *   The submitted values
    */
-  public function onSubmit($node, $submission) {
+  public function onSubmit($node, $values) {
     $contactID = \CRM_Core_Session::singleton()->getLoggedInContactID();
 
     // clear contact data cache used in get_civihr_contact_data()
     cache_clear_all('civihr_contact_data_' . $contactID, 'cache');
 
-    if ($this->isApplyingForSSN($node, $submission)) {
+    if ($this->isApplyingForSSN($node, $values)) {
       $this->createReminderTask($contactID);
     }
+
+    $this->setWorkEmailAsPrimary($node, $values, $contactID);
   }
 
   /**
    * Checks the application status for the "Is applying for NI/SSN" field
    *
    * @param \stdClass $node
-   * @param \stdClass $submission
+   * @param \stdClass $values
    *
    * @return bool
    */
-  private function isApplyingForSSN($node, $submission) {
-    $fieldName = 'I am currently applying for a NI/ SSN';
-    $statusField = WebformHelper::getWebformComponentsByName($node, $fieldName);
-    $uid = property_exists($submission, 'uid') ? $submission->uid : NULL;
+  private function isApplyingForSSN($node, $values) {
+    $title = 'I am currently applying for a NI/ SSN';
+    $status = WebformHelper::getValueByTitle($node, $values, $title);
+    $uid = property_exists($values, 'uid') ? $values->uid : NULL;
 
-    if (count($statusField) !== 1 || NULL === $uid) {
-      return FALSE; // field doesn't exist
+    if (NULL === $uid) {
+      return FALSE;
     }
 
-    $statusField = array_shift($statusField);
-    $cid = \CRM_Utils_Array::value('cid', $statusField);
-    $values = property_exists($submission, 'data') ? $submission->data : NULL;
-    $applicationStatus = \CRM_Utils_Array::value($cid, $values, []);
-    $applicationStatus = array_shift($applicationStatus);
-
-    return $applicationStatus == self::STATUS_APPLYING;
+    return $status == self::STATUS_APPLYING;
   }
 
   /**
@@ -76,6 +74,41 @@ class OnboardingWebForm {
     if ($assigneeID) {
       TaskCreationService::create($contactID, [$assigneeID], $taskTypeName, $date);
     }
+  }
+
+  /**
+   * If work email is set in the webform it will have already been created  at
+   * this point, but we need to make it primary.
+   *
+   * @param \stdClass $node
+   * @param \stdClass $values
+   * @param int $contactID
+   */
+  private function setWorkEmailAsPrimary($node, $values, $contactID) {
+    $workEmail = WebformHelper::getValueByTitle($node, $values, 'Work Email');
+
+    // it wasn't set in form
+    if (!$workEmail) {
+      return;
+    }
+
+    $params = [
+      'contact_id' => $contactID,
+      'email' => $workEmail,
+      'location_type_id' => 'Work'
+    ];
+
+    $mail = civicrm_api3('Email', 'get', $params);
+
+    if ($mail['count'] != 1) {
+      return;
+    }
+
+    $mail = array_shift($mail['values']);
+    $params['is_primary'] = 1;
+    $params['id'] = $mail['id'];
+
+    civicrm_api3('Email', 'create', $params);
   }
 
 }
