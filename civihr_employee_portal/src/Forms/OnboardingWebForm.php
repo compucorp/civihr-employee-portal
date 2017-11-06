@@ -111,4 +111,72 @@ class OnboardingWebForm {
     civicrm_api3('Email', 'create', $params);
   }
 
+  /**
+   * Handles all alterations from hook_form_alter().
+   *
+   * @param array $form
+   */
+  public function alter(&$form) {
+    $this->removeEmptyKeys($form);
+    $this->addHelpText($form);
+  }
+
+  /**
+   * Remove empty components keys from $form['submitted'] as they break markup.
+   * @see https://www.drupal.org/node/2916491
+   *
+   * @param array $form
+   */
+  private function removeEmptyKeys(&$form) {
+    $form['submitted'] = array_filter(\CRM_Utils_Array::value('submitted', $form));
+  }
+
+  /**
+   * Adds help text to inform existing users of the system why they're being
+   * asked to complete the onboarding form.
+   *
+   * @param array $form
+   */
+  private function addHelpText(&$form) {
+    $helpText = 'CiviHR users can now complete a quick and easy'
+      . ' wizard to enter their details into the system.<br/>Any information '
+      . 'that you have already provided to the system will be shown in the '
+      . 'wizard and can be updated.';
+
+    $currentPage = $form['progressbar']['#page_num'];
+    $isFirstPage = $currentPage === 1;
+
+    if (!$isFirstPage || $this->userCreatedAfterOnboardingReleased()) {
+      return;
+    }
+
+    // create a 'markup' element to show message
+    $progressBarWeight = $form['progressbar']['#weight'];
+    $classes = 'alert alert-success';
+    $style = 'display: inline-block';
+    $format = '<p class="%s" style="%s">%s</p>';
+    $markup = sprintf($format, $classes, $style, $helpText);
+
+    $form['submitted']['onboarding_explanation'] = [
+      '#weight' => $progressBarWeight + 1,
+      '#type' => 'markup',
+      '#markup' => $markup,
+      '#prefix' => '<div style="text-align: center;">',
+      '#suffix' => '</div>'
+    ];
+  }
+
+  /**
+   * Checks if the current logged in user was created after the onboarding
+   * feature was released.
+   *
+   * @return bool
+   */
+  private function userCreatedAfterOnboardingReleased() {
+    global $user;
+    $onboardingRelease = (new \DateTime('13 November 2017'))->getTimestamp();
+
+    return $user->created > $onboardingRelease;
+  }
+
 }
