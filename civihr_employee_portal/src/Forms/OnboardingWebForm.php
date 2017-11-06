@@ -36,14 +36,14 @@ class OnboardingWebForm {
    * Checks the application status for the "Is applying for NI/SSN" field
    *
    * @param \stdClass $node
-   * @param \stdClass $submission
+   * @param \stdClass $values
    *
    * @return bool
    */
-  private function isApplyingForSSN($node, $submission) {
+  private function isApplyingForSSN($node, $values) {
     $title = 'I am currently applying for a NI/ SSN';
-    $status = WebformHelper::getValueByTitle($node, $submission, $title);
-    $uid = property_exists($submission, 'uid') ? $submission->uid : NULL;
+    $status = WebformHelper::getValueByTitle($node, $values, $title);
+    $uid = property_exists($values, 'uid') ? $values->uid : NULL;
 
     if (NULL === $uid) {
       return FALSE;
@@ -77,8 +77,8 @@ class OnboardingWebForm {
   }
 
   /**
-   * If work email is included then create it here. It will be created on
-   * webform submission anyway, but we need to make it primary.
+   * If work email is set in the webform it will have already been created  at
+   * this point, but we need to make it primary.
    *
    * @param \stdClass $node
    * @param \stdClass $values

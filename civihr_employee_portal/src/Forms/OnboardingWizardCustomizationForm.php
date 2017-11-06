@@ -181,6 +181,7 @@ class OnboardingWizardCustomizationForm {
    * Sets the title and weight for the save button
    *
    * @param array $form
+   *
    * @return array
    */
   private function adjustSaveButton($form) {
