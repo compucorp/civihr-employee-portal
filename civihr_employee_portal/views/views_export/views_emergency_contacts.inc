@@ -96,11 +96,11 @@ $handler->display->display_options['filters']['combine']['fields'] = array(
 );
 
 /* Display: Non Dependant Emergency Contacts */
-$handler = $view->new_display('block', 'Non Dependant Emergency Contacts', 'block_1');
+$handler = $view->new_display('block', 'Non Dependant Emergency Contacts', 'non_dependant_emergency_contact');
 $handler->display->display_options['display_description'] = 'A list of emergency contacts where the "dependant" flag is false';
 
 /* Display: Dependant Emergency Contacts */
-$handler = $view->new_display('block', 'Dependant Emergency Contacts', 'block_2');
+$handler = $view->new_display('block', 'Dependant Emergency Contacts', 'dependant_emergency_contact');
 $handler->display->display_options['display_description'] = 'A list of emergency contacts where the "dependant" flag is true';
 $handler->display->display_options['defaults']['filter_groups'] = FALSE;
 $handler->display->display_options['defaults']['filters'] = FALSE;
@@ -113,6 +113,7 @@ $handler->display->display_options['filters']['combine']['group'] = 1;
 $handler->display->display_options['filters']['combine']['fields'] = array(
   'dependant_s__92' => 'dependant_s__92',
 );
+$handler->display->display_options['block_description'] = 'dependant_emergency_contact';
 $translatables['emergency_contacts'] = array(
   t('Master'),
   t('more'),
@@ -139,6 +140,8 @@ $translatables['emergency_contacts'] = array(
   t('Notes'),
   t('Non Dependant Emergency Contacts'),
   t('A list of emergency contacts where the "dependant" flag is false'),
+  t('non_dependant_emergency_contact'),
   t('Dependant Emergency Contacts'),
   t('A list of emergency contacts where the "dependant" flag is true'),
+  t('dependant_emergency_contact'),
 );
