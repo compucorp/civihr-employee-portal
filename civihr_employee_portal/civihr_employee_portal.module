@@ -5,6 +5,7 @@ use Drupal\civihr_employee_portal\Helpers\HelperClass;
 use Drupal\civihr_employee_portal\Security\PublicFirewall;
 use Drupal\civihr_employee_portal\Helpers\ImageResizer;
 use Drupal\civihr_employee_portal\Forms\ContactForm;
+use CRM_HRLeaveAndAbsences_BAO_AbsenceType as AbsenceType;
 
 /**
  * Implements hook_css_alter().
@@ -375,6 +376,8 @@ function _rebuild_length_of_service_view() {
 function _rebuild_absence_activity_view() {
   $civi_settings = parse_url(CIVICRM_DSN);
   $civi_db_name = trim($civi_settings['path'], '/');
+  $calculationUnitOptions = array_flip(AbsenceType::buildOptions('calculation_unit', 'validate'));
+  $hoursUnit = $calculationUnitOptions['hours'];
 
   db_query('DROP VIEW IF EXISTS absence_activity');
   db_query("CREATE VIEW absence_activity AS
@@ -389,7 +392,8 @@ function _rebuild_absence_activity_view() {
               lr.to_date AS absence_end_date,
               DATE_FORMAT(DATE(lr.to_date), '%Y-%m') AS absence_end_date_month,
               CONCAT(IF (DATE_FORMAT(lrd.date, '%w') = 0, 7, DATE_FORMAT(lrd.date, '%w')), '. ', DATE_FORMAT(lrd.date, '%W')) AS absence_day_of_week,
-              ABS(bc.amount) as absence_duration,
+              IF(at.calculation_unit != {$hoursUnit}, ABS(bc.amount), NULL) as absence_duration_days,
+              IF(at.calculation_unit = {$hoursUnit}, ABS(bc.amount), NULL) as absence_duration_hours,
               IF(lr.request_type != 'toil', ABS(bc.amount), NULL) AS absence_amount_taken,
               IF(lr.request_type = 'toil', bc.amount, NULL) AS absence_amount_accrued,
               IF(lr.request_type = 'toil', -bc.amount, -bc.amount) AS absence_absolute_amount,
