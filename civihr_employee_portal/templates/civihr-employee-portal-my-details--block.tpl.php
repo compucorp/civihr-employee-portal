@@ -79,13 +79,6 @@ if (!$user->uid) {
   <div class="chr_panel__footer">
     <div class="chr_actions-wrapper">
       <?php print l(t('Edit my details'), 'my_details/nojs/view', array('attributes' => array('class' => $actionsClasses))); ?>
-      <?php print l(t('Edit emergency contact'), 'emergency_contacts/nojs/view', array('attributes' => array('class' => $actionsClasses))); ?>
     </div>
   </div>
 </div>
-
-<h2><?php print $emergencyContactsTitle; ?></h2>
-<?php print $emergencyContactsBlock; ?>
-
-<h2><?php print $dependantsTitle; ?></h2>
-<?php print $dependantsBlock; ?>
