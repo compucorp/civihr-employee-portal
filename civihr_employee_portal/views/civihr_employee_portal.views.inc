@@ -867,6 +867,15 @@ function civihr_employee_portal_views_data_alter(&$data) {
     ]
   ];
 
+  // Emergency contact aggregated address
+  $data['civicrm_value_emergency_contacts_21']['emergency_contact_aggregated_address'] = [
+    'title' => t('Aggregated Emergency Contact Address'),
+    'help' => t('Displays aggregated address for the emergency contact'),
+    'field' => [
+      'handler' => 'civihr_employee_portal_handler_emergency_contact_aggregated_address',
+    ],
+  ];
+
   $data['hrjc_contact_details']['work_email']['field']['handler'] = 'civihr_employee_portal_handler_email';
 
   /**
