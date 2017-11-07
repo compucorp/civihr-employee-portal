@@ -5,7 +5,6 @@ namespace Drupal\civihr_employee_portal\Blocks;
 class MyDetailsData {
 
   public function generateBlock() {
-
     $contact_data = '';
 
     // If we have logged in user, get his details

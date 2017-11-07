@@ -16,12 +16,12 @@ class civihr_employee_portal_handler_emergency_contact_aggregated_address extend
     }
 
     $addressFields = [
-      "Street_Address",
-      "Street_Address_Line_2",
-      "Province",
-      "City",
-      "Postal_Code",
-      "Country"
+      'Street_Address',
+      'Street_Address_Line_2',
+      'Province',
+      'City',
+      'Postal_Code',
+      'Country'
     ];
 
     $fieldMapping = $this->getFieldMapping($addressFields);
@@ -48,7 +48,7 @@ class civihr_employee_portal_handler_emergency_contact_aggregated_address extend
    */
   private function getFieldMapping($addressFields) {
     $params = [
-      'custom_group_id' => "Emergency_Contacts",
+      'custom_group_id' => 'Emergency_Contacts',
       'name' => [
         'IN' => $addressFields
       ],
@@ -87,6 +87,8 @@ class civihr_employee_portal_handler_emergency_contact_aggregated_address extend
   }
 
   /**
+   * Checks for the country ID and replaces it with the country name.
+   *
    * @param array $fieldMapping
    * @param array $result
    *
@@ -107,6 +109,8 @@ class civihr_employee_portal_handler_emergency_contact_aggregated_address extend
   }
 
   /**
+   * Checks for the province ID and replaces it with the country name.
+   *
    * @param array $fieldMapping
    * @param array $result
    *
