@@ -18,9 +18,9 @@ class civihr_employee_portal_handler_emergency_contact_aggregated_address extend
     $addressFields = [
       'Street_Address',
       'Street_Address_Line_2',
-      'Province',
       'City',
       'Postal_Code',
+      'Province',
       'Country'
     ];
 
