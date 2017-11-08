@@ -5,11 +5,6 @@
    * Define HRReport object.
    */
   function HRReport () {
-    var data = [];
-    var pivotTableContainer = jQuery('#reportPivotTable');
-    var derivedAttributes = {};
-    var pivotConfig = {};
-
     this.initScrollbarFallback();
   }
 
@@ -111,7 +106,9 @@
                 return this.sum;
               }
               this.byFieldValues[record[attribute2]] = 1;
-              return this.sum += parseFloat(record[attribute1]);
+              this.sum += parseFloat(record[attribute1]);
+
+              return this.sum;
             }
           },
           value: function () {
@@ -223,28 +220,25 @@
   /*
    * Finding the filter box for field Employee length of service.
    *
-   *  @param {string} filter_data
+   *  @param {string} filterData
    *
    *  @return {bool}
    */
-  HRReport.prototype.lengthOfServiceFilter = function (filter_data) {
-    if ($(filter_data).find('h4').text().indexOf('Employee length of service (') >= 0) {
-      return true;
-    }
-    return false;
+  HRReport.prototype.lengthOfServiceFilter = function (filterData) {
+    return $(filterData).find('h4').text().indexOf('Employee length of service (') >= 0;
   };
 
   /*
    * Finding and replacing the value of Employee length of service.
    *
-   *  @param {string} filter_selector - DOM element that has value.
+   *  @param {string} filterSelector - DOM element that has value.
    */
-  HRReport.prototype.lengthOfServiceValue = function (filter_selector) {
+  HRReport.prototype.lengthOfServiceValue = function (filterSelector) {
     var that = this;
     // Fetching the Employee length of service from filter values.
-    var employee_length_service = $(filter_selector).find('span:first').text();
-    if ($.isNumeric(employee_length_service)) {
-      $(filter_selector).find('span:first').text(that.formatLengthsOfService(employee_length_service));
+    var employeeLengthService = $(filterSelector).find('span:first').text();
+    if ($.isNumeric(employeeLengthService)) {
+      $(filterSelector).find('span:first').text(that.formatLengthsOfService(employeeLengthService));
     }
   };
 
@@ -252,13 +246,13 @@
    * Processes results in people report view to format length of service for each
    * contact in a human readable form using moment lib.
    *
-   * @param {string} employee_length_service - Employee length of service field value.
+   * @param {string} employeeLengthService - Employee length of service field value.
    *
    * @returns {string} Date format string for provide length of service.
    */
-  HRReport.prototype.formatLengthsOfService = function (employee_length_service) {
+  HRReport.prototype.formatLengthsOfService = function (employeeLengthService) {
     var dateEnd = moment();
-    var dateStart = moment().subtract(employee_length_service, 'days');
+    var dateStart = moment().subtract(employeeLengthService, 'days');
     if (!dateStart || !dateEnd) {
       return null;
     }
@@ -551,7 +545,9 @@
             CRM.$('.report-config-select').append('<option value="' + data['id'] + '">' + data['label'] + '</option>');
             // Sort options by their labels alphabetically.
             CRM.$('.report-config-select').append(CRM.$('.report-config-select option').remove().sort(function (a, b) {
-              var at = $(a).text(), bt = $(b).text();
+              var at = $(a).text();
+              var bt = $(b).text();
+
               return (at > bt) ? 1 : ((at < bt) ? -1 : 0);
             }));
             CRM.$('.report-config-select').val(data['id']);
@@ -579,7 +575,6 @@
       return false;
     }
     var reportName = this.reportName;
-    var configId = this.getReportConfigurationId();
 
     swal({
       title: 'Delete Report configuration?',
