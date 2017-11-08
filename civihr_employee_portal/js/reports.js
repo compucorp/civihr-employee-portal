@@ -206,7 +206,7 @@
       // Altering Employee length of service data to show number of days into
       // String format of Year, Months and Days of length of service.
       if (that.lengthOfServiceFilter(this)) {
-         // Iterating through all the filter values.
+        // Iterating through all the filter values.
         $(this).find('p.chr_custom-checkbox').each(function (i) {
           // Skip the Select All checkbox from filters.
           if (!$(this).hasClass('pvtFilterSelectAllWrap')) {
@@ -677,13 +677,13 @@
 
       // Tabs bindings
       CRM.$('.report-tabs a').bind('click', function (e) {
-        e.preventDefault();
         CRM.$('.report-tabs li').removeClass('active');
         CRM.$(this).parent().addClass('active');
         CRM.$('.report-block').addClass('hidden');
         CRM.$('.report-block.' + CRM.$(this).data('tab')).removeClass('hidden');
       });
-      CRM.$('.report-tabs a:first').click();
+
+      switchTabsOnLoad();
 
       // Reports configuration bindings
       CRM.$('.report-config-select').bind('change', function (e) {
@@ -698,6 +698,18 @@
       CRM.$('.report-config-delete-btn').bind('click', function (e) {
         that.instance.configDelete();
       });
+
+      /**
+       * Switch to correct tab, on page load
+       */
+      function switchTabsOnLoad () {
+        var tabSelector = '.report-tabs a';
+        var hash = window.location.hash;
+
+        hash ? tabSelector += '[data-tab="' + hash.substr(1) + '"]' : tabSelector += ':first';
+
+        CRM.$(tabSelector).click();
+      }
     }
   };
 })(jQuery);
