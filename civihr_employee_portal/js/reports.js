@@ -1,12 +1,12 @@
-(function($) {
+(function ($) {
   'use strict';
 
   /**
    * Define HRReport object.
    */
-  function HRReport() {
+  function HRReport () {
     var data = [];
-    var pivotTableContainer = jQuery("#reportPivotTable");
+    var pivotTableContainer = jQuery('#reportPivotTable');
     var derivedAttributes = {};
     var pivotConfig = {};
 
@@ -26,19 +26,19 @@
   /**
    * Init PivotTable.js library
    */
-  HRReport.prototype.initPivotTable = function() {
+  HRReport.prototype.initPivotTable = function () {
     var that = this;
     this.pivotTableContainer.pivotUI(this.data, {
-      rendererName: "Table",
+      rendererName: 'Table',
       renderers: CRM.$.extend(
         jQuery.pivotUtilities.renderers,
         jQuery.pivotUtilities.c3_renderers,
         jQuery.pivotUtilities.export_renderers
       ),
-      vals: ["Count"],
+      vals: ['Count'],
       rows: [],
       cols: [],
-      aggregatorName: "Count",
+      aggregatorName: 'Count',
       unusedAttrsVertical: false,
       aggregators: that.getAggregators(),
       derivedAttributes: this.derivedAttributes,
@@ -50,24 +50,24 @@
         return that.pivotTableOnRefresh(config);
       }
     }, false);
-  }
+  };
 
   /**
    * Update Pivot Table config data on refresh.
    *
    * @param {JSON} config
    */
-  HRReport.prototype.pivotTableOnRefresh = function(config) {
+  HRReport.prototype.pivotTableOnRefresh = function (config) {
     Drupal.behaviors.civihr_employee_portal_reports.instance.updateCustomTemplate();
     var configCopy = JSON.parse(JSON.stringify(config));
-    //delete some values which are functions
-    delete configCopy["aggregators"];
-    delete configCopy["renderers"];
-    //delete some bulky default values
-    delete configCopy["rendererOptions"];
-    delete configCopy["localeStrings"];
+    // delete some values which are functions
+    delete configCopy['aggregators'];
+    delete configCopy['renderers'];
+    // delete some bulky default values
+    delete configCopy['rendererOptions'];
+    delete configCopy['localeStrings'];
     this.pivotConfig = configCopy;
-  }
+  };
 
   /**
    * Return an object containing set of Pivot Table aggregators extended with
@@ -75,37 +75,37 @@
    *
    * @returns {jQuery.pivotUtilities.aggregators|_$.pivotUtilities.aggregators|aggregators}
    */
-  HRReport.prototype.getAggregators = function() {
+  HRReport.prototype.getAggregators = function () {
     var aggregators = $.pivotUtilities.aggregators;
     var ordered = {};
 
     // Create custom Aggregator behaving like 'Count Unique Values' but
     // not counting NULL, 0 or empty strings.
-    aggregators["Count Unique Values excluding null, 0 or empty"] = function(attributeArray) {
+    aggregators['Count Unique Values excluding null, 0 or empty'] = function (attributeArray) {
       var attribute = attributeArray[0];
-      return function(data, rowKey, colKey) {
+      return function (data, rowKey, colKey) {
         return {
           uniq: [],
-          push: function(record) {
+          push: function (record) {
             var _ref = record[attribute];
             if (!!+_ref && this.uniq.indexOf(_ref) < 0) {
               this.uniq.push(record[attribute]);
             }
           },
-          value: function() { return this.uniq.length; },
-          format: function(x) { return x; },
+          value: function () { return this.uniq.length; },
+          format: function (x) { return x; },
           numInputs: 1
         };
       };
     };
-    aggregators["Sum field 1 by unique values of field 2"] = function(attributeArray) {
+    aggregators['Sum field 1 by unique values of field 2'] = function (attributeArray) {
       var attribute1 = attributeArray[0];
       var attribute2 = attributeArray[1];
-      return function(data, rowKey, colKey) {
+      return function (data, rowKey, colKey) {
         return {
           sum: 0,
           byFieldValues: [],
-          push: function(record) {
+          push: function (record) {
             if (!isNaN(parseFloat(record[attribute1]))) {
               if (record[attribute2] in this.byFieldValues) {
                 return this.sum;
@@ -114,21 +114,21 @@
               return this.sum += parseFloat(record[attribute1]);
             }
           },
-          value: function() {
+          value: function () {
             return this.sum;
           },
-          format: function(x) { return x.toFixed(2); },
+          format: function (x) { return x.toFixed(2); },
           numInputs: attribute1 != null ? 0 : 2
         };
       };
     };
 
     // Sort aggregators by keys.
-    Object.keys(aggregators).sort().forEach(function(key) {
+    Object.keys(aggregators).sort().forEach(function (key) {
       ordered[key] = aggregators[key];
     });
     return ordered;
-  }
+  };
 
   /**
    * Do additional required operations on data returned from backend.
@@ -136,23 +136,23 @@
    * @param array data
    * @returns array
    */
-  HRReport.prototype.processData = function(data) {
+  HRReport.prototype.processData = function (data) {
     // Set 'null' for all empty values.
     for (var i in data) {
       for (var j in data[i]) {
-        if (data[i][j] === "") {
-          data[i][j] = "null";
+        if (data[i][j] === '') {
+          data[i][j] = 'null';
         }
       }
     }
     return data;
-  }
+  };
 
   /**
    * Update the pivot table dropdown and filter box
    *
    */
-  HRReport.prototype.updateCustomTemplate = function() {
+  HRReport.prototype.updateCustomTemplate = function () {
     this.updateDropdown();
     this.updateFilterbox();
   };
@@ -161,7 +161,7 @@
    * Update the pivot table dropdown to look like CiviHR style
    *
    */
-  HRReport.prototype.updateDropdown = function() {
+  HRReport.prototype.updateDropdown = function () {
     $('.pvtUi select').each(function () {
       var selectClass = 'crm_custom-select crm_custom-select--full';
 
@@ -187,21 +187,20 @@
    * the checkboxes and add a new checkbox to check all options
    *
    */
-  HRReport.prototype.updateFilterbox = function() {
-
+  HRReport.prototype.updateFilterbox = function () {
     var that = this;
     $('.pvtFilterBox').each(function () {
       $(this).find('.pvtSearch').removeClass('pvtSearch').addClass('form-text');
       $(this).find('button').addClass('btn btn-primary btn-block');
 
       if ($(this).find('.pvtFilterSelectAllWrap').length === 0) {
-        var filters = $(this).find(".pvtFilter");
+        var filters = $(this).find('.pvtFilter');
 
         $(this).find('.pvtFilterSelectAllWrap').remove();
         $(this).find('.pvtCheckContainer').prepend(`<p class="pvtFilterSelectAllWrap"><label><input type="checkbox" class="pvtFilterSelectAll" checked="checked"><span>Select All</span></label></p>`);
 
         $(this).find('.pvtFilterSelectAll').on('click', function () {
-          filters.prop("checked", $(this).is(':checked'));
+          filters.prop('checked', $(this).is(':checked'));
         });
 
         $(this).find('.pvtCheckContainer p').addClass('chr_custom-checkbox');
@@ -209,11 +208,11 @@
 
       // Altering Employee length of service data to show number of days into
       // String format of Year, Months and Days of length of service.
-      if(that.lengthOfServiceFilter(this)) {
+      if (that.lengthOfServiceFilter(this)) {
          // Iterating through all the filter values.
-        $(this).find('p.chr_custom-checkbox').each(function(i) {
+        $(this).find('p.chr_custom-checkbox').each(function (i) {
           // Skip the Select All checkbox from filters.
-          if (!$(this).hasClass("pvtFilterSelectAllWrap")) {
+          if (!$(this).hasClass('pvtFilterSelectAllWrap')) {
             that.lengthOfServiceValue(this);
           }
         });
@@ -228,26 +227,26 @@
    *
    *  @return {bool}
    */
-  HRReport.prototype.lengthOfServiceFilter = function(filter_data) {
-    if($(filter_data).find('h4').text().indexOf("Employee length of service (") >= 0) {
+  HRReport.prototype.lengthOfServiceFilter = function (filter_data) {
+    if ($(filter_data).find('h4').text().indexOf('Employee length of service (') >= 0) {
       return true;
     }
     return false;
-  }
+  };
 
   /*
    * Finding and replacing the value of Employee length of service.
    *
    *  @param {string} filter_selector - DOM element that has value.
    */
-  HRReport.prototype.lengthOfServiceValue = function(filter_selector) {
+  HRReport.prototype.lengthOfServiceValue = function (filter_selector) {
     var that = this;
     // Fetching the Employee length of service from filter values.
     var employee_length_service = $(filter_selector).find('span:first').text();
-    if($.isNumeric(employee_length_service)) {
+    if ($.isNumeric(employee_length_service)) {
       $(filter_selector).find('span:first').text(that.formatLengthsOfService(employee_length_service));
     }
-  }
+  };
 
   /**
    * Processes results in people report view to format length of service for each
@@ -275,8 +274,8 @@
     m.add(-months, 'months');
     days = m.diff(dateStart, 'days');
 
-    years = years > 0  ? (years > 1 ? years + ' years ' : years + ' year ') :  '';
-    months = months > 0 ? (months > 1 ? months + ' months ' : months + ' month ') :  '';
+    years = years > 0 ? (years > 1 ? years + ' years ' : years + ' year ') : '';
+    months = months > 0 ? (months > 1 ? months + ' months ' : months + ' month ') : '';
     days = days > 0 ? (days > 1 ? days + ' days' : days + ' day') : '';
     return (years + months + days) || '0 days';
   };
@@ -294,7 +293,7 @@
    * Init the scrollbar fallback
    *
    */
-  HRReport.prototype.initScrollbarFallback = function() {
+  HRReport.prototype.initScrollbarFallback = function () {
     var el = document.querySelector('.chr_custom-scrollbar');
 
     if (el) {
@@ -307,7 +306,7 @@
    *
    * @param string filterValues
    */
-  HRReport.prototype.refreshJson = function(filterValues) {
+  HRReport.prototype.refreshJson = function (filterValues) {
     var that = this;
     if (!this.jsonUrl) {
       return;
@@ -322,7 +321,7 @@
         data = that.processData(data);
         that.data = data;
         that.pivotTableContainer.pivotUI(data, {
-          rendererName: "Table",
+          rendererName: 'Table',
           renderers: CRM.$.extend(
             jQuery.pivotUtilities.renderers,
             jQuery.pivotUtilities.c3_renderers
@@ -338,14 +337,14 @@
       },
       type: 'GET'
     });
-  }
+  };
 
   /**
    * Refresh data table using provided filter values
    *
    * @param string filterValues
    */
-  HRReport.prototype.refreshTable = function(filterValues) {
+  HRReport.prototype.refreshTable = function (filterValues) {
     var that = this;
     if (!this.tableUrl) {
       return;
@@ -363,12 +362,12 @@
       },
       type: 'GET'
     });
-  }
+  };
 
   /**
    * Return unique Drupal View's DOM ID of data table
    */
-  HRReport.prototype.getReportTableDomID = function() {
+  HRReport.prototype.getReportTableDomID = function () {
     var reportTableDiv = CRM.$('#reportTable > div.view:first');
     var reportTableClasses = reportTableDiv.attr('class').split(' ');
     for (var i in reportTableClasses) {
@@ -377,14 +376,14 @@
       }
     }
     return null;
-  }
+  };
 
   /**
    * Reinitialize View instance of data table for given View's DOM ID
    *
    * @param string viewReportDataTableId
    */
-  HRReport.prototype.refreshReportTableViewInstance = function(viewReportDataTableId) {
+  HRReport.prototype.refreshReportTableViewInstance = function (viewReportDataTableId) {
     var viewReportDataTableSettings = Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableId];
     var viewReportDataTableNewId = this.getReportTableDomID();
 
@@ -394,29 +393,29 @@
     viewReportDataTableSettings.view_dom_id = viewReportDataTableNewId;
     Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableNewId] = viewReportDataTableSettings;
     Drupal.views.instances['views_dom_id:' + viewReportDataTableNewId] = new Drupal.views.ajaxView(Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableNewId]);
-  }
+  };
 
   /**
    * Bind filters UI events
    */
-  HRReport.prototype.bindFilters = function() {
+  HRReport.prototype.bindFilters = function () {
     // Filters bindings
     var that = this;
     if (!this.filters) {
       return;
     }
 
-    CRM.$('#report-filters input[type="submit"]').bind('click', function(e) {
+    CRM.$('#report-filters input[type="submit"]').bind('click', function (e) {
       e.preventDefault();
       that.applyFilters();
     });
-  }
+  };
 
-  HRReport.prototype.applyFilters = function() {
+  HRReport.prototype.applyFilters = function () {
     var that = this;
     var formSerialize = CRM.$('#report-filters form:first').serializeArray();
 
-    formSerialize.map(function(input) {
+    formSerialize.map(function (input) {
       input.value = that.formatDate(input.value, 'DD/MM/YYYY', 'YYYY-MM-DD');
     });
 
@@ -428,7 +427,7 @@
     if (that.tableUrl) {
       that.refreshTable('?' + formSerialize);
     }
-  }
+  };
 
   /**
    * Format a date passing the old format and
@@ -439,7 +438,7 @@
    * @param  {String} newFormat
    * @return {String} formated date
    */
-  HRReport.prototype.formatDate = function(date, oldFormat, newFormat) {
+  HRReport.prototype.formatDate = function (date, oldFormat, newFormat) {
     var mDate = moment(date, oldFormat);
 
     if (mDate.isValid()) {
@@ -453,7 +452,7 @@
    * Gets Report configuration by currently selected configId
    * and apply it to the Pivot Table instance.
    */
-  HRReport.prototype.configGet = function() {
+  HRReport.prototype.configGet = function () {
     var that = this;
     var configId = this.getReportConfigurationId();
     if (!configId) {
@@ -463,68 +462,68 @@
     CRM.$.ajax({
       url: '/reports/' + that.reportName + '/configuration/' + configId,
       error: function () {
-        swal("Failed", "Error loading Report configuration!", "error");
+        swal('Failed', 'Error loading Report configuration!', 'error');
       },
       success: function (data) {
         if (data.status === 'success') {
           that.configApply(data.config);
         } else {
-          swal("Failed", "Error loading Report configuration!", "error");
+          swal('Failed', 'Error loading Report configuration!', 'error');
         }
       },
       type: 'GET'
     });
-  }
+  };
 
   /**
    * Save Report configuration with currently selected configId.
    */
-  HRReport.prototype.configSave = function(message) {
+  HRReport.prototype.configSave = function (message) {
     var that = this;
     var configId = this.getReportConfigurationId();
     if (!configId) {
-      swal("No configuration selected", "Please choose configuration to update.", "error");
+      swal('No configuration selected', 'Please choose configuration to update.', 'error');
       return false;
     }
     if (typeof message === 'undefined') {
-      message = "Are you sure you want to save this configuration changes?";
+      message = 'Are you sure you want to save this configuration changes?';
     }
 
     swal({
-        title: "Save Report configuration?",
-        text: message,
-        type: "info",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Yes",
-        closeOnConfirm: false,
-    }, function() {
-        that.configSaveProcess(configId);
+      title: 'Save Report configuration?',
+      text: message,
+      type: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#DD6B55',
+      confirmButtonText: 'Yes',
+      closeOnConfirm: false
+    }, function () {
+      that.configSaveProcess(configId);
     });
-  }
+  };
 
   /**
    * Save new Report configuration basing on currently set configuration.
    */
-  HRReport.prototype.configSaveNew = function() {
+  HRReport.prototype.configSaveNew = function () {
     var that = this;
 
     swal({
-      title: "New Report configuration",
-      text: "Configuration name:",
-      type: "input",
+      title: 'New Report configuration',
+      text: 'Configuration name:',
+      type: 'input',
       showCancelButton: true,
       closeOnConfirm: false,
-      inputPlaceholder: ""
+      inputPlaceholder: ''
     }, function (inputValue) {
       if (inputValue === false) return false;
-      if (inputValue === "") {
-        swal.showInputError("Configuration name cannot be empty.");
-        return false
+      if (inputValue === '') {
+        swal.showInputError('Configuration name cannot be empty.');
+        return false;
       }
       that.configSaveProcess(0, inputValue);
     });
-  }
+  };
 
   /**
    * Handle both Save and SaveNew actions server requests.
@@ -532,7 +531,7 @@
    * @param {Integer} configId
    * @param {String} configName
    */
-  HRReport.prototype.configSaveProcess = function(configId, configName) {
+  HRReport.prototype.configSaveProcess = function (configId, configName) {
     var that = this;
     var reportName = this.reportName;
 
@@ -543,7 +542,7 @@
         json_config: that.pivotConfig
       },
       error: function () {
-        swal("Failed", "Error saving Report configuration!", "error");
+        swal('Failed', 'Error saving Report configuration!', 'error');
       },
       success: function (data) {
         if (data.status === 'success') {
@@ -551,72 +550,72 @@
           if (data['id']) {
             CRM.$('.report-config-select').append('<option value="' + data['id'] + '">' + data['label'] + '</option>');
             // Sort options by their labels alphabetically.
-            CRM.$('.report-config-select').append(CRM.$(".report-config-select option").remove().sort(function(a, b) {
-                var at = $(a).text(), bt = $(b).text();
-                return (at > bt) ? 1 : ((at < bt) ? -1 : 0);
+            CRM.$('.report-config-select').append(CRM.$('.report-config-select option').remove().sort(function (a, b) {
+              var at = $(a).text(), bt = $(b).text();
+              return (at > bt) ? 1 : ((at < bt) ? -1 : 0);
             }));
-            CRM.$(".report-config-select").val(data['id']);
+            CRM.$('.report-config-select').val(data['id']);
           }
-          swal("Success", "Report configuration has been saved", "success");
+          swal('Success', 'Report configuration has been saved', 'success');
         } else if (data.status === 'already_exists') {
           // If there is already a configuration with this label then we ask for overwriting it.
-          CRM.$(".report-config-select").val(data['id']);
+          CRM.$('.report-config-select').val(data['id']);
           that.configSave('Configuration with this name already exists. Do you want to modify it?');
         } else {
-          swal("Failed", "Error saving Report configuration!", "error");
+          swal('Failed', 'Error saving Report configuration!', 'error');
         }
       },
       method: 'POST'
     });
-  }
+  };
 
   /**
    * Delete currently active configuration.
    */
-  HRReport.prototype.configDelete = function() {
+  HRReport.prototype.configDelete = function () {
     var configId = this.getReportConfigurationId();
     if (!configId) {
-      swal("No configuration selected", "Please choose configuration to delete.", "error");
+      swal('No configuration selected', 'Please choose configuration to delete.', 'error');
       return false;
     }
     var reportName = this.reportName;
     var configId = this.getReportConfigurationId();
 
     swal({
-        title: "Delete Report configuration?",
-        text: "Are you sure you want to delete this configuration?",
-        type: "info",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Yes",
-        closeOnConfirm: false,
-    }, function() {
+      title: 'Delete Report configuration?',
+      text: 'Are you sure you want to delete this configuration?',
+      type: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#DD6B55',
+      confirmButtonText: 'Yes',
+      closeOnConfirm: false
+    }, function () {
       CRM.$.ajax({
         url: '/reports/' + reportName + '/configuration/' + configId + '/delete',
         error: function () {
-          swal("Failed", "Error deleting Report configuration!", "error");
+          swal('Failed', 'Error deleting Report configuration!', 'error');
         },
         success: function (data) {
           if (data.status === 'success') {
             CRM.$('.report-config-select option[value=' + configId + ']').remove();
-            swal("Success", "Report configuration has been deleted", "success");
+            swal('Success', 'Report configuration has been deleted', 'success');
           } else {
-            swal("Failed", "Error deleting Report configuration!", "error");
+            swal('Failed', 'Error deleting Report configuration!', 'error');
           }
         },
         method: 'POST'
       });
     });
-  }
+  };
 
   /**
    * Return an ID of currently active Report configuration.
    *
    * @returns {Integer}
    */
-  HRReport.prototype.getReportConfigurationId = function() {
+  HRReport.prototype.getReportConfigurationId = function () {
     return CRM.$('.report-config-select').val();
-  }
+  };
 
   /**
    * Apply given Pivot Table configuration.
@@ -624,46 +623,46 @@
    * @param {Object} config
    * @param {JSON} config
    */
-  HRReport.prototype.configApply = function(config) {
+  HRReport.prototype.configApply = function (config) {
     var that = this;
     config['onRefresh'] = function (config) {
       return that.pivotTableOnRefresh(config);
-    }
-    this.pivotTableContainer.pivotUI(this.data, config , true);
-  }
+    };
+    this.pivotTableContainer.pivotUI(this.data, config, true);
+  };
 
   /**
    * Init angular in reports custom page,
    * and add the calendar icon
    *
    */
-  HRReport.prototype.initAngular = function() {
+  HRReport.prototype.initAngular = function () {
     require([
       'common/angular',
       'common/services/angular-date/date-format',
       'common/directives/angular-date/date-input',
       'common/moment',
       'common/filters/angular-date/format-date'
-    ], function() {
+    ], function () {
       angular.module('civihrReports', [
         'ngAnimate',
         'ui.bootstrap',
         'common.angularDate'
       ])
-      .directive('uibDatepickerPopupWrap', function sectionDirective() {
-        return({
-          link: function(scope, element, attributes) {
+      .directive('uibDatepickerPopupWrap', function sectionDirective () {
+        return ({
+          link: function (scope, element, attributes) {
             return $(element[0]).wrap('<span id="bootstrap-theme" />');
           }
         });
       })
-      .controller('FiltersController', function() {
+      .controller('FiltersController', function () {
         this.format = 'dd/MM/yyyy';
         this.placeholderFormat = 'dd/MM/yyyy';
         this.date = new Date();
         this.filtersCollapsed = true;
       })
-      .controller('SettingsController', function() {
+      .controller('SettingsController', function () {
         this.isCollapsed = true;
       });
 
@@ -682,7 +681,7 @@
       this.instance.initAngular();
 
       // Tabs bindings
-      CRM.$('.report-tabs a').bind('click', function(e) {
+      CRM.$('.report-tabs a').bind('click', function (e) {
         e.preventDefault();
         CRM.$('.report-tabs li').removeClass('active');
         CRM.$(this).parent().addClass('active');
@@ -692,18 +691,18 @@
       CRM.$('.report-tabs a:first').click();
 
       // Reports configuration bindings
-      CRM.$('.report-config-select').bind('change', function(e) {
+      CRM.$('.report-config-select').bind('change', function (e) {
         that.instance.configGet();
       });
-      CRM.$('.report-config-save-btn').bind('click', function(e) {
+      CRM.$('.report-config-save-btn').bind('click', function (e) {
         that.instance.configSave();
       });
-      CRM.$('.report-config-save-new-btn').bind('click', function(e) {
+      CRM.$('.report-config-save-new-btn').bind('click', function (e) {
         that.instance.configSaveNew();
       });
-      CRM.$('.report-config-delete-btn').bind('click', function(e) {
+      CRM.$('.report-config-delete-btn').bind('click', function (e) {
         that.instance.configDelete();
       });
     }
-  }
+  };
 })(jQuery);
