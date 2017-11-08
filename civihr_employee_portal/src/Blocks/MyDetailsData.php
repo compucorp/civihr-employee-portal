@@ -19,16 +19,6 @@ class MyDetailsData {
     $address_data = views_embed_view('my_details_block', 'my_address_block');
     $address_data_title = t('Contact Information');
 
-    $emergencyContactsBlock = views_embed_view(
-      'emergency_contacts',
-      'non_dependant_emergency_contact'
-    );
-
-    $dependantsBlock = views_embed_view(
-      'emergency_contacts',
-      'dependant_emergency_contact'
-    );
-
     // Output the themed details block
     return theme('civihr_employee_portal_my_details_block',
       [
@@ -36,10 +26,6 @@ class MyDetailsData {
         'contact_details' => $contact_details,
         'address_data' => $address_data,
         'address_data_title' => $address_data_title,
-        'emergencyContactsBlock' => $emergencyContactsBlock,
-        'emergencyContactsTitle' => t('Emergency Contacts'),
-        'dependantsBlock' => $dependantsBlock,
-        'dependantsTitle' => t('Dependants')
       ]
     );
   }
