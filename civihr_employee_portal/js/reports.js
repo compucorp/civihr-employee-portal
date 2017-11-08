@@ -220,7 +220,7 @@
   /*
    * Finding the filter box for field Employee length of service.
    *
-   *  @param {string} filterData
+   *  @param {String} filterData
    *
    *  @return {bool}
    */
@@ -231,14 +231,14 @@
   /*
    * Finding and replacing the value of Employee length of service.
    *
-   *  @param {string} filterSelector - DOM element that has value.
+   *  @param {String} filterSelector - DOM element that has value.
    */
   HRReport.prototype.lengthOfServiceValue = function (filterSelector) {
     var that = this;
     // Fetching the Employee length of service from filter values.
     var employeeLengthService = $(filterSelector).find('span:first').text();
     if ($.isNumeric(employeeLengthService)) {
-      $(filterSelector).find('span:first').text(that.formatLengthsOfService(employeeLengthService));
+      $(filterSelector).find('span:first').text(that.formatLengthOfService(employeeLengthService));
     }
   };
 
@@ -246,13 +246,14 @@
    * Processes results in people report view to format length of service for each
    * contact in a human readable form using moment lib.
    *
-   * @param {string} employeeLengthService - Employee length of service field value.
+   * @param {String} employeeLengthService - Employee length of service field value.
    *
-   * @returns {string} Date format string for provide length of service.
+   * @returns {String} Date format string for provide length of service.
    */
-  HRReport.prototype.formatLengthsOfService = function (employeeLengthService) {
+  HRReport.prototype.formatLengthOfService = function (employeeLengthService) {
     var dateEnd = moment();
     var dateStart = moment().subtract(employeeLengthService, 'days');
+
     if (!dateStart || !dateEnd) {
       return null;
     }
@@ -545,10 +546,10 @@
             CRM.$('.report-config-select').append('<option value="' + data['id'] + '">' + data['label'] + '</option>');
             // Sort options by their labels alphabetically.
             CRM.$('.report-config-select').append(CRM.$('.report-config-select option').remove().sort(function (a, b) {
-              var at = $(a).text();
-              var bt = $(b).text();
+              var aText = $(a).text();
+              var bText = $(b).text();
 
-              return (at > bt) ? 1 : ((at < bt) ? -1 : 0);
+              return (aText > bText) ? 1 : ((aText < bText) ? -1 : 0);
             }));
             CRM.$('.report-config-select').val(data['id']);
           }
