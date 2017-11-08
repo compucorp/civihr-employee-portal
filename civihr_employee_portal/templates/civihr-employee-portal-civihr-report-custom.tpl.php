@@ -28,28 +28,16 @@
 
   <ul class="nav nav-tabs nav-justified nav-tabs-header report-tabs">
     <?php if (!empty($jsonUrl)): ?>
-      <li role="presentation" class="active"><a data-tab="pivot-table">Pivot Table</a></li>
+      <li role="presentation" class="active"><a data-tab="pivot-table" href="#pivot-table">Pivot Table</a></li>
     <?php endif; ?>
     <?php if (!empty($tableUrl)): ?>
-      <li role="presentation"><a data-tab="data">Data</a></li>
+      <li role="presentation"><a data-tab="data" href="#data">Data</a></li>
     <?php endif; ?>
   </ul>
 
   <div class="report-content panel-pane pane-block chr_panel chr_panel--no-padding">
-    <?php if (!empty($tableUrl)): ?>
-      <div class="report-block data pane-content">
-        <div id="reportTable"><?php print $table; ?></div>
-        <?php if (!empty($exportUrl)): ?>
-          <div class="chr_panel__footer">
-            <div class="chr_actions-wrapper">
-              <a href="<?php print $exportUrl; ?>" id="export-report" class="btn btn-primary">Export</a>
-            </div>
-          </div>
-        <?php endif; ?>
-      </div>
-    <?php endif; ?>
     <?php if (!empty($jsonUrl)): ?>
-      <div class="report-block pivot-table pane-content hidden">
+      <div class="report-block pivot-table tab-pane">
         <div class="chr_search-result__header">
           <div class="chr_search-result__total">
             Pivot Table
@@ -87,6 +75,18 @@
           </form>
         </div>
         <div id="reportPivotTable" class="pvtTable-civi"></div>
+      </div>
+    <?php endif; ?>
+    <?php if (!empty($tableUrl)): ?>
+      <div class="report-block data pane-content hidden">
+        <div id="reportTable"><?php print $table; ?></div>
+        <?php if (!empty($exportUrl)): ?>
+          <div class="chr_panel__footer">
+            <div class="chr_actions-wrapper">
+              <a href="<?php print $exportUrl; ?>" id="export-report" class="btn btn-primary">Export</a>
+            </div>
+          </div>
+        <?php endif; ?>
       </div>
     <?php endif; ?>
   </div>
