@@ -86,11 +86,11 @@ $handler->display->display_options['fields']['dependant_s__92']['label'] = '';
 $handler->display->display_options['fields']['dependant_s__92']['exclude'] = TRUE;
 $handler->display->display_options['fields']['dependant_s__92']['element_label_colon'] = FALSE;
 /* Field: Global: Custom text */
-$handler->display->display_options['fields']['nothing']['id'] = 'nothing';
-$handler->display->display_options['fields']['nothing']['table'] = 'views';
-$handler->display->display_options['fields']['nothing']['field'] = 'nothing';
-$handler->display->display_options['fields']['nothing']['label'] = '';
-$handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
+$handler->display->display_options['fields']['emergency_contact_deletion']['id'] = 'something';
+$handler->display->display_options['fields']['emergency_contact_deletion']['table'] = 'views';
+$handler->display->display_options['fields']['emergency_contact_deletion']['field'] = 'nothing';
+$handler->display->display_options['fields']['emergency_contact_deletion']['label'] = '';
+$handler->display->display_options['fields']['emergency_contact_deletion']['element_label_colon'] = FALSE;
 /* Filter criterion: Global: Combine fields filter */
 $handler->display->display_options['filters']['combine']['id'] = 'combine';
 $handler->display->display_options['filters']['combine']['table'] = 'views';
