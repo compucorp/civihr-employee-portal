@@ -128,7 +128,13 @@ class OnboardingWebForm {
    * @param array $form
    */
   private function removeEmptyKeys(&$form) {
-    $form['submitted'] = array_filter(\CRM_Utils_Array::value('submitted', $form));
+    $original = \CRM_Utils_Array::value('submitted', $form);
+
+    if (!$original) {
+      return;
+    }
+
+    $form['submitted'] = array_filter($original);
   }
 
   /**
@@ -142,6 +148,10 @@ class OnboardingWebForm {
       . ' wizard to enter their details into the system.<br/>Any information '
       . 'that you have already provided to the system will be shown in the '
       . 'wizard and can be updated.';
+
+    if (!isset($form['progressbar']['#page_num'])) {
+      return;
+    }
 
     $currentPage = $form['progressbar']['#page_num'];
     $isFirstPage = $currentPage === 1;
