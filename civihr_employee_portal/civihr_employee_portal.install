@@ -166,6 +166,64 @@ function civihr_employee_portal_update_7008() {
 }
 
 /**
+ * Update My Details webform image description
+ */
+function civihr_employee_portal_update_7009() {
+  $nodes = node_load_multiple(NULL, ["title" => "My details - edit"]);
+
+  if (count($nodes) !== 1) {
+    return;
+  }
+
+  $myDetailsEditNode = current($nodes);
+
+  if (!isset($myDetailsEditNode->webform['components'])) {
+    return;
+  }
+
+  $components = $myDetailsEditNode->webform['components'];
+  $imageFieldName = 'Upload Image';
+  $description = 'The image should be at least 130 x 130 pixels, but 400 x 400 '
+  . 'pixels is the recommended size for the user image.';
+
+  foreach ($components as $component) {
+    if ($imageFieldName == $component['name']) {
+      $component['extra']['description'] = $description;
+      webform_component_update($component);
+      break;
+    }
+  }
+}
+
+/**
+ * Update My Details webform upload size
+ */
+function civihr_employee_portal_update_7010() {
+  $nodes = node_load_multiple(NULL, ["title" => "My details - edit"]);
+
+  if (count($nodes) !== 1) {
+    return;
+  }
+
+  $myDetailsWebform = current($nodes);
+
+  if (!isset($myDetailsWebform->webform['components'])) {
+    return;
+  }
+
+  $components = $myDetailsWebform->webform['components'];
+  $imageFieldName = 'Upload Image';
+
+  foreach ($components as $component) {
+    if ($imageFieldName == $component['name']) {
+      $component['extra']['filtering']['size'] = '10MB';
+      webform_component_update($component);
+      break;
+    }
+  }
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string
