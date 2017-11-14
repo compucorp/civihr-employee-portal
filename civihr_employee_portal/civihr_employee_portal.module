@@ -11,6 +11,7 @@ use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
 use Drupal\civihr_employee_portal\Helpers\ImageResizer;
 use Drupal\civihr_employee_portal\Forms\ContactForm;
 use Drupal\civihr_employee_portal\Helpers\Webform\WebformExportCustomFieldConvertor;
+use Drupal\civihr_employee_portal\Page\HRDetailsPage;
 
 /**
  * Implements hook_css_alter().
@@ -4828,6 +4829,8 @@ function civihr_employee_portal_file_presave($file) {
 }
 
 /**
+ * Implements hook_civicrm_postProcess().
+ *
  * @param string $formName
  * @param CRM_Contact_Form_Contact $form
  */
@@ -4836,7 +4839,6 @@ function civihr_employee_portal_civicrm_postProcess($formName, &$form) {
     case 'CRM_Contact_Form_Contact':
       ContactForm::postProcess($form);
       break;
-
   }
 }
 
@@ -5749,6 +5751,10 @@ function civihr_employee_portal_preprocess_page(&$vars) {
     $vars['logout_link'] = $logout_link;
     $vars['user_guide_link'] = $user_guide_link;
 
+    if (current_path() === HRDetailsPage::getPath()) {
+      $page = new HRDetailsPage();
+      $vars = array_merge($vars, $page->getVariables());
+    }
 }
 
 /**
