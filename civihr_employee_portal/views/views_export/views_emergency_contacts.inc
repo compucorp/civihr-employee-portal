@@ -91,6 +91,16 @@ $handler->display->display_options['fields']['emergency_contact_deletion']['tabl
 $handler->display->display_options['fields']['emergency_contact_deletion']['field'] = 'nothing';
 $handler->display->display_options['fields']['emergency_contact_deletion']['label'] = '';
 $handler->display->display_options['fields']['emergency_contact_deletion']['element_label_colon'] = FALSE;
+/* Contextual filter: CiviCRM Custom: Emergency Contacts: Entity ID */
+$handler->display->display_options['arguments']['entity_id']['id'] = 'entity_id';
+$handler->display->display_options['arguments']['entity_id']['table'] = 'civicrm_value_emergency_contacts_21';
+$handler->display->display_options['arguments']['entity_id']['field'] = 'entity_id';
+$handler->display->display_options['arguments']['entity_id']['default_action'] = 'default';
+$handler->display->display_options['arguments']['entity_id']['default_argument_type'] = 'php';
+$handler->display->display_options['arguments']['entity_id']['default_argument_options']['code'] = 'return \\CRM_Core_Session::getLoggedInContactID();';
+$handler->display->display_options['arguments']['entity_id']['summary']['number_of_records'] = '0';
+$handler->display->display_options['arguments']['entity_id']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['entity_id']['summary_options']['items_per_page'] = '25';
 /* Filter criterion: Global: Combine fields filter */
 $handler->display->display_options['filters']['combine']['id'] = 'combine';
 $handler->display->display_options['filters']['combine']['table'] = 'views';
@@ -144,6 +154,7 @@ $translatables['emergency_contacts'] = array(
   t('Address'),
   t('Relationship with Employee'),
   t('Notes'),
+  t('All'),
   t('Non Dependant Emergency Contacts'),
   t('A list of emergency contacts where the "dependant" flag is false'),
   t('non_dependant_emergency_contact'),
