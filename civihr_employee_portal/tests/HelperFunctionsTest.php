@@ -32,7 +32,8 @@ class HelperFunctionsTest extends PHPUnit_Framework_TestCase {
 
   public function testGetWhereFields() {
     $parts = [];
-    getWhereFields($this->sampleWherePart, $parts);
+    $view = new \Drupal\civihr_employee_portal\View\MyDetailsView();
+    $view->getWhereFields($this->sampleWherePart, $parts);
     $expectedCount = 4;
     $this->assertCount($expectedCount, $parts);
     for ($i = 1; $i < $expectedCount + 1; $i++) {
