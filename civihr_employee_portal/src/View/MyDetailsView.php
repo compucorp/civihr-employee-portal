@@ -23,19 +23,22 @@ class MyDetailsView extends AbstractView {
     }
 
     $currentContactID = \CRM_Core_Session::getLoggedInContactID();
-    $contractID = $this->getCurrentContractID($currentContactID);
+    $revision = $this->getCurrentRevision($currentContactID);
 
     // If no current contract then add an impossible join condition
-    $filterID = $contractID ? $contractID : 0;
+    $contractID = $revision ? $revision['jobcontract_id'] : 0;
+    $roleRevisionID = $revision ? $revision['role_revision_id'] : 0;
+    $detailsRevisionID = $revision ? $revision['details_revision_id'] : 0;
 
     $revisionTable = 'hrjc_revision';
     $contactTable = 'civicrm_contact';
-    $joinAlias = sprintf('%s_%s', $revisionTable, $contactTable);
-    $joinCondition = sprintf('%s.jobcontract_id = %d', $joinAlias, $filterID);
+    $revisionAlias = sprintf('%s_%s', $revisionTable, $contactTable);
 
-    // Set the condition in the query
-    $join = &$query->table_queue[$joinAlias]['join'];
-    $join->extra = $joinCondition;
+    // Single condition for revision ID would be better, but revision ID does
+    // not exist in hrjc_details
+    $this->addJoinCondition($query, $revisionAlias, 'jobcontract_id', $contractID);
+    $this->addJoinCondition($query, $revisionAlias, 'role_revision_id', $roleRevisionID);
+    $this->addJoinCondition($query, $revisionAlias, 'details_revision_id', $detailsRevisionID);
   }
 
   /**
@@ -45,16 +48,39 @@ class MyDetailsView extends AbstractView {
    *
    * @return int|null
    */
-  private function getCurrentContractID($contactID) {
-    $result = civicrm_api3('HRJobContract', 'getcurrentcontract', [
+  private function getCurrentRevision($contactID) {
+    $contract = civicrm_api3('HRJobContract', 'getcurrentcontract', [
       'contact_id' => $contactID,
     ]);
 
     // God knows why but this result is a stdClass and count is always "1"
-    if (isset($result['values']->contract_id)) {
-      return $result['values']->contract_id;
+    if (!isset($contract['values']->contract_id)) {
+      return NULL;
     }
 
-    return NULL;
+    $contractID = $contract['values']->contract_id;
+
+    return civicrm_api3('HRJobContractRevision', 'getcurrentrevision', [
+      'jobcontract_id' => $contractID,
+    ])['values'];
+  }
+
+  /**
+   * Adds an extra join condition for a certain table alias.
+   *
+   * @param \views_plugin_query_default $query
+   * @param string $joinAlias
+   * @param string $field
+   * @param int $id
+   */
+  private function addJoinCondition(&$query, $joinAlias, $field, $id) {
+    $joinCondition = sprintf('%s.%s = %d', $joinAlias, $field, $id);
+    $join = &$query->table_queue[$joinAlias]['join'];
+
+    if (empty($join->extra)) {
+      $join->extra = $joinCondition;
+    } else {
+      $join->extra = $join->extra . ' AND ' . $joinCondition;
+    }
   }
 }
