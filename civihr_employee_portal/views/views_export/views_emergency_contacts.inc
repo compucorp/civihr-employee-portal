@@ -85,11 +85,13 @@ $handler->display->display_options['fields']['dependant_s__92']['field'] = 'depe
 $handler->display->display_options['fields']['dependant_s__92']['label'] = '';
 $handler->display->display_options['fields']['dependant_s__92']['exclude'] = TRUE;
 $handler->display->display_options['fields']['dependant_s__92']['element_label_colon'] = FALSE;
-/* Field: Global: Custom text */
-$handler->display->display_options['fields']['emergency_contact_deletion']['id'] = 'something';
+/* Field: Placeholder for Deletion Button (Button markup is provided by template) */
+$handler->display->display_options['fields']['emergency_contact_deletion']['id'] = 'emergency_contact_deletion';
 $handler->display->display_options['fields']['emergency_contact_deletion']['table'] = 'views';
 $handler->display->display_options['fields']['emergency_contact_deletion']['field'] = 'nothing';
+$handler->display->display_options['fields']['emergency_contact_deletion']['ui_name'] = 'Placeholder for Deletion Button (Button markup is provided by template)';
 $handler->display->display_options['fields']['emergency_contact_deletion']['label'] = '';
+$handler->display->display_options['fields']['emergency_contact_deletion']['alter']['text'] = '<!-- This field is totally empty, but uses markup from civihr-employee-portal-theme to display the button. See civihr_default_theme/templates/view/views-view-field--emergency-contacts--non-dependant-emergency-contact--emergency_contact_deletion.tpl.php -->';
 $handler->display->display_options['fields']['emergency_contact_deletion']['element_label_colon'] = FALSE;
 /* Contextual filter: CiviCRM Custom: Emergency Contacts: Entity ID */
 $handler->display->display_options['arguments']['entity_id']['id'] = 'entity_id';
@@ -154,10 +156,10 @@ $translatables['emergency_contacts'] = array(
   t('Address'),
   t('Relationship with Employee'),
   t('Notes'),
+  t('<!-- This field is totally empty, but uses markup from civihr-employee-portal-theme to display the button. See civihr_default_theme/templates/view/views-view-field--emergency-contacts--non-dependant-emergency-contact--emergency_contact_deletion.tpl.php -->'),
   t('All'),
   t('Non Dependant Emergency Contacts'),
   t('A list of emergency contacts where the "dependant" flag is false'),
-  t('non_dependant_emergency_contact'),
   t('Dependant Emergency Contacts'),
   t('A list of emergency contacts where the "dependant" flag is true'),
   t('dependant_emergency_contact'),
