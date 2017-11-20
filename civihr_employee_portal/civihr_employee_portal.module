@@ -1692,7 +1692,18 @@ function civihr_employee_portal_menu() {
         'access arguments' => array('manage hrreports configuration'),
         'type' => MENU_CALLBACK,
     );
-
+  $items['create-emergency-contact/js/view'] = array(
+    'page callback' => 'civihr_employee_portal_webform_render_callback',
+    'page arguments' => ['Create Emergency Contact'],
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  $items['create-dependant/js/view'] = array(
+    'page callback' => 'civihr_employee_portal_webform_render_callback',
+    'page arguments' => ['Create Dependant'],
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
   $items['customize-onboarding-wizard'] = [
     'title' => 'Customize Welcome Wizard',
     'description' => 'Customize Welcome Wizard',
@@ -1913,6 +1924,32 @@ function civihr_employee_portal_my_details_callback($ajax) {
         return '';
     }
 
+}
+
+/**
+ * Callback function to render a webform by its title.
+ * @see civihr_employee_portal_menu
+ *
+ * @param string $webformTitle
+ */
+function civihr_employee_portal_webform_render_callback($webformTitle) {
+  ctools_include('ajax');
+  ctools_include('modal');
+  ctools_add_js('ajax-responder');
+
+  $webform = WebformHelper::findOneByTitle($webformTitle);
+
+  if (!$webform) {
+    $msg = sprintf('Could not find webform with title "%s"', $webformTitle);
+    throw new \Exception($msg);
+  }
+
+  $webformRendered = node_view($webform, 'full', NULL);
+  $contents = render($webformRendered);
+  $output = [];
+  $output[] = ctools_modal_command_display(t($webformTitle), render($contents));
+  print ajax_render($output);
+  drupal_exit();
 }
 
 /**
