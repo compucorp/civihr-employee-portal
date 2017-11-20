@@ -415,30 +415,18 @@ function _rebuild_view($viewName) {
 }
 
 /**
- * Implements hook_coreResourceList
+ * Implements hook_civicrm_coreResourceList().
+ * Moves the notify jQuery plugin before CiviCRM common script file
  *
  * @param array $list
  * @param string $region
  */
 function civihr_employee_portal_civicrm_coreResourceList(&$list, $region) {
-  // To maintain the dependency remove the js files that are dependent on
-  // jquery.notify.js
-  $jsToRemove[] = array_search('js/Common.js', $list);
-  $jsToRemove[] = array_search('js/crm.ajax.js', $list);
-  $jsToRemove[] = array_search('js/wysiwyg/crm.wysiwyg.js', $list);
-  $jsToRemove[] = array_search('js/crm.drupal.js', $list);
+  $commonPos = array_search('js/Common.js', $list);
+  $notifyPos = array_search('packages/jquery/plugins/jquery.notify.min.js', $list);
 
-  foreach ($jsToRemove as $filepath) {
-    unset($list[$filepath]);
-  }
-
-  // Add the previously unlisted files to the list once the
-  // jquery.notify.js is added
-  $list[] = "packages/jquery/plugins/jquery.notify.js";
-  $list[] = "js/Common.js";
-  $list[] = "js/crm.ajax.js";
-  $list[] = "js/wysiwyg/crm.wysiwyg.js";
-  $list[] = "js/crm.drupal.js";
+  $notifyFile = array_splice($list, $notifyPos, 1);
+  array_splice($list, $commonPos, 0, $notifyFile);
 }
 
 /**
