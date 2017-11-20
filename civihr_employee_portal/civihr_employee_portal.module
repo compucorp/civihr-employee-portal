@@ -23,7 +23,9 @@ function civihr_employee_portal_css_alter(&$css) {
       ['module_name' => 'tipsy', 'file_name' => '/stylesheets/tipsy.css'],
     ];
 
-   _remove_resources($css, $removeFiles);
+    _remove_resources($css, $removeFiles);
+  } else {
+    _remove_shoreditch_resources($css);
   }
 }
 
@@ -57,6 +59,8 @@ function civihr_employee_portal_js_alter(&$javascript) {
     ];
 
     _remove_resources($javascript, $removeFiles);
+  } else {
+    _remove_shoreditch_resources($javascript);
   }
 }
 
@@ -73,6 +77,20 @@ function _remove_resources(&$resourcesList, $blacklist = []) {
   if ($resourcesList) {
     foreach ($blacklist as $key => $value) {
       unset($resourcesList[drupal_get_path('module', $value['module_name']) . $value['file_name']]);
+    }
+  }
+}
+
+/**
+ * Removes any resource related to the shoreditch extension
+ *
+ * @param array &$resourcesList variable contains all the references to loaded
+ *   js/css array from alter.
+ */
+function _remove_shoreditch_resources(&$resourcesList) {
+  foreach ($resourcesList as $path => $resource) {
+    if (strpos($path, 'org.civicrm.shoreditch')) {
+      unset($resourcesList[$path]);
     }
   }
 }
