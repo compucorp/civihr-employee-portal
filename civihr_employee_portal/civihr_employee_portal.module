@@ -5102,35 +5102,37 @@ function civihr_employee_portal_webform_submission_insert($node, $submission) {
 }
 
 function webform_client_form_ajax_callback($form, &$form_state) {
+  if (form_get_errors()) {
+    return $form;
+  }
 
-    if (form_get_errors()) {
-        return $form;
-    }
-    else {
+  ctools_include('ajax');
+  ctools_include('modal');
+  ctools_add_js('ajax-responder');
 
-        ctools_include('ajax');
-        ctools_include('modal');
-        ctools_add_js('ajax-responder');
+  $redirectPath = 'dashboard';
+  $action = CRM_Utils_Array::value('#action', $form);
+  $hrDetailsForms = [
+    '/create-emergency-contact/js/view',
+    '/create-dependant/js/view',
+  ];
+  if (in_array($action, $hrDetailsForms)) {
+    $redirectPath = 'hr-details';
+  }
 
-        // Get the contact ID and create the cache identifier value
-        $contact_value = 'civihr_contact_data_' . $_SESSION['CiviCRM']['userID'];
+  $commands = [];
+  $commands[] = ctools_modal_command_dismiss();
+  $commands[] = ctools_ajax_command_redirect($redirectPath);
+  $commands[] = ajax_command_remove('#messages');
+  $commands[] = ajax_command_after('#breadcrumb', '<div id="messages">' . theme('status_messages') . '</div>');
 
-        $commands = array();
+  // Try to remove the cached data for this contact as the values were updated
+  $contactID = CRM_Core_Session::getLoggedInContactID();
+  _civihr_employee_portal_clear_contact_cache($contactID);
 
-        $commands[] = ctools_modal_command_dismiss();
-        $commands[] = ctools_ajax_command_redirect('dashboard');
-        $commands[] = ajax_command_remove('#messages');
-        $commands[] = ajax_command_after('#breadcrumb', '<div id="messages">' . theme('status_messages') . '</div>');
+  print ajax_render($commands);
 
-        // Try to remove the cached data for this contact as the values were updated
-        cache_clear_all($contact_value, 'cache');
-
-        print ajax_render($commands);
-
-        exit;
-
-    }
-
+  exit;
 }
 
 /**
