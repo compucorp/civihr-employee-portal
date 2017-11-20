@@ -415,28 +415,6 @@ function _rebuild_view($viewName) {
 }
 
 /**
- * Get the module URL
- *
- * @param  string $moduleName <Module name>
- *
- * @return string             <Module url>
- */
-function getModuleUrl($moduleName) {
-  global $base_url;
-
-  $path = CRM_Core_Resources::singleton()->getUrl($moduleName);
-
-  // Need to do this to avoid some configurations issues
-  // Some environments return /sites/all/modules/civicrm
-  // And others return http://localhost:8900/sites/all/modules/civicrm
-  if (strstr($path, "$base_url/")) {
-    $path = explode("$base_url/", $path)[1];
-  }
-
-  return ltrim($path, '/');
-}
-
-/**
  * Implements hook_coreResourceList
  *
  * @param array $list
@@ -479,7 +457,6 @@ function civihr_employee_portal_init() {
 
     // Add our additional css libraries
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/custom.css");
-    drupal_add_css(getModuleUrl('org.civicrm.shoreditch') . 'css/bootstrap.css');
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/sweetalert/sweetalert.css");
     drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/lib/tablesaw/tablesaw.css");
 
