@@ -32,6 +32,12 @@ $handler->display->display_options['style_options']['info'] = array(
     'empty_column' => 0,
   ),
 );
+/* No results behavior: Global: Unfiltered text */
+$handler->display->display_options['empty']['area_text_custom']['id'] = 'area_text_custom';
+$handler->display->display_options['empty']['area_text_custom']['table'] = 'views';
+$handler->display->display_options['empty']['area_text_custom']['field'] = 'area_text_custom';
+$handler->display->display_options['empty']['area_text_custom']['empty'] = TRUE;
+$handler->display->display_options['empty']['area_text_custom']['content'] = 'No results';
 /* Field: CiviCRM Custom: Emergency Contacts: Emergency Contact ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'civicrm_value_emergency_contacts_21';
@@ -147,6 +153,7 @@ $translatables['emergency_contacts'] = array(
   t('‹ previous'),
   t('next ›'),
   t('last »'),
+  t('No results'),
   t('.'),
   t(','),
   t('Name'),

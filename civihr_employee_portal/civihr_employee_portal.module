@@ -11,6 +11,7 @@ use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
 use Drupal\civihr_employee_portal\Helpers\ImageResizer;
 use Drupal\civihr_employee_portal\Forms\ContactForm;
 use Drupal\civihr_employee_portal\Helpers\Webform\WebformExportCustomFieldConvertor;
+use Drupal\civihr_employee_portal\Page\HRDetailsPage;
 
 /**
  * Implements hook_css_alter().
@@ -1691,7 +1692,18 @@ function civihr_employee_portal_menu() {
         'access arguments' => array('manage hrreports configuration'),
         'type' => MENU_CALLBACK,
     );
-
+  $items['create-emergency-contact/js/view'] = [
+    'page callback' => 'civihr_employee_portal_webform_render_callback',
+    'page arguments' => ['Create Emergency Contact'],
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  ];
+  $items['create-dependant/js/view'] = [
+    'page callback' => 'civihr_employee_portal_webform_render_callback',
+    'page arguments' => ['Create Dependant'],
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  ];
   $items['customize-onboarding-wizard'] = [
     'title' => 'Customize Welcome Wizard',
     'description' => 'Customize Welcome Wizard',
@@ -1912,6 +1924,32 @@ function civihr_employee_portal_my_details_callback($ajax) {
         return '';
     }
 
+}
+
+/**
+ * Callback function to render a webform by its title.
+ * @see civihr_employee_portal_menu
+ *
+ * @param string $webformTitle
+ */
+function civihr_employee_portal_webform_render_callback($webformTitle) {
+  ctools_include('ajax');
+  ctools_include('modal');
+  ctools_add_js('ajax-responder');
+
+  $webform = WebformHelper::findOneByTitle($webformTitle);
+
+  if (!$webform) {
+    $msg = sprintf('Could not find webform with title "%s"', $webformTitle);
+    throw new \Exception($msg);
+  }
+
+  $webformRendered = node_view($webform, 'full', NULL);
+  $contents = render($webformRendered);
+  $output = [];
+  $output[] = ctools_modal_command_display(t($webformTitle), render($contents));
+  print ajax_render($output);
+  drupal_exit();
 }
 
 /**
@@ -4828,6 +4866,8 @@ function civihr_employee_portal_file_presave($file) {
 }
 
 /**
+ * Implements hook_civicrm_postProcess().
+ *
  * @param string $formName
  * @param CRM_Contact_Form_Contact $form
  */
@@ -4836,7 +4876,6 @@ function civihr_employee_portal_civicrm_postProcess($formName, &$form) {
     case 'CRM_Contact_Form_Contact':
       ContactForm::postProcess($form);
       break;
-
   }
 }
 
@@ -5063,35 +5102,37 @@ function civihr_employee_portal_webform_submission_insert($node, $submission) {
 }
 
 function webform_client_form_ajax_callback($form, &$form_state) {
+  if (form_get_errors()) {
+    return $form;
+  }
 
-    if (form_get_errors()) {
-        return $form;
-    }
-    else {
+  ctools_include('ajax');
+  ctools_include('modal');
+  ctools_add_js('ajax-responder');
 
-        ctools_include('ajax');
-        ctools_include('modal');
-        ctools_add_js('ajax-responder');
+  $redirectPath = 'dashboard';
+  $action = CRM_Utils_Array::value('#action', $form);
+  $hrDetailsForms = [
+    '/create-emergency-contact/js/view',
+    '/create-dependant/js/view',
+  ];
+  if (in_array($action, $hrDetailsForms)) {
+    $redirectPath = 'hr-details';
+  }
 
-        // Get the contact ID and create the cache identifier value
-        $contact_value = 'civihr_contact_data_' . $_SESSION['CiviCRM']['userID'];
+  $commands = [];
+  $commands[] = ctools_modal_command_dismiss();
+  $commands[] = ctools_ajax_command_redirect($redirectPath);
+  $commands[] = ajax_command_remove('#messages');
+  $commands[] = ajax_command_after('#breadcrumb', '<div id="messages">' . theme('status_messages') . '</div>');
 
-        $commands = array();
+  // Try to remove the cached data for this contact as the values were updated
+  $contactID = CRM_Core_Session::getLoggedInContactID();
+  _civihr_employee_portal_clear_contact_cache($contactID);
 
-        $commands[] = ctools_modal_command_dismiss();
-        $commands[] = ctools_ajax_command_redirect('dashboard');
-        $commands[] = ajax_command_remove('#messages');
-        $commands[] = ajax_command_after('#breadcrumb', '<div id="messages">' . theme('status_messages') . '</div>');
+  print ajax_render($commands);
 
-        // Try to remove the cached data for this contact as the values were updated
-        cache_clear_all($contact_value, 'cache');
-
-        print ajax_render($commands);
-
-        exit;
-
-    }
-
+  exit;
 }
 
 /**
@@ -5749,6 +5790,10 @@ function civihr_employee_portal_preprocess_page(&$vars) {
     $vars['logout_link'] = $logout_link;
     $vars['user_guide_link'] = $user_guide_link;
 
+    if (current_path() === HRDetailsPage::getPath()) {
+      $page = new HRDetailsPage();
+      $vars = array_merge($vars, $page->getVariables());
+    }
 }
 
 /**
