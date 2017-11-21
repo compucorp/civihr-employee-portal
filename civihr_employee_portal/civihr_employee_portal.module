@@ -437,17 +437,19 @@ function _rebuild_view($viewName) {
 
 /**
  * Implements hook_civicrm_coreResourceList().
- * Moves the notify jQuery plugin before CiviCRM common script file
+ * Injects the notify jQuery plugin if not present
  *
  * @param array $list
  * @param string $region
  */
 function civihr_employee_portal_civicrm_coreResourceList(&$list, $region) {
-  $commonPos = array_search('js/Common.js', $list);
-  $notifyPos = array_search('packages/jquery/plugins/jquery.notify.min.js', $list);
+  if (!_isCiviCRM()) {
+    $notifyPath = 'packages/jquery/plugins/jquery.notify.min.js';
 
-  $notifyFile = array_splice($list, $notifyPos, 1);
-  array_splice($list, $commonPos, 0, $notifyFile);
+    if (!array_search($notifyPath, $list)) {
+      $list[] = $notifyPath;
+    }
+  }
 }
 
 /**
