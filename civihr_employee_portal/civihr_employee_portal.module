@@ -67,9 +67,11 @@ function civihr_employee_portal_js_alter(&$javascript) {
 /**
  * Removes javascript/css from civicrm pages.
  *
- * @param array &$resourcesList variable contains all the references to loaded
+ * @param array
+ *   &$resourcesList variable contains all the references to loaded
  *   js/css array from alter.
- * @param array $blacklist contains multi-dimensional array : module_name key
+ * @param array
+ *   $blacklist contains multi-dimensional array : module_name key
  *   as name of the contrib module from which we need to remove corresponding
  *   file using file_name key.
  */
@@ -84,7 +86,8 @@ function _remove_resources(&$resourcesList, $blacklist = []) {
 /**
  * Removes any resource related to the shoreditch extension
  *
- * @param array &$resourcesList variable contains all the references to loaded
+ * @param array
+ *   &$resourcesList variable contains all the references to loaded
  *   js/css array from alter.
  */
 function _remove_shoreditch_resources(&$resourcesList) {
