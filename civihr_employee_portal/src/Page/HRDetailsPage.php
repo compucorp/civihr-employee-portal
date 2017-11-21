@@ -2,8 +2,6 @@
 
 namespace Drupal\civihr_employee_portal\Page;
 
-use Drupal\civihr_employee_portal\Helpers\CustomData\CustomEntityLinkHelper;
-
 class HRDetailsPage {
 
   /**
@@ -22,17 +20,10 @@ class HRDetailsPage {
     );
 
     return [
-      'contactID' => $this->getCurrentContactID(),
+      'contactID' => \CRM_Core_Session::getLoggedInContactID(),
       'emergencyContactsView' => $emergencyContactsView,
       'dependantsView' => $dependantsView,
     ];
-  }
-
-  /**
-   * @return int|NULL
-   */
-  private function getCurrentContactID() {
-    return \CRM_Core_Session::getLoggedInContactID();
   }
 
   /**
