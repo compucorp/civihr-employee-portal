@@ -5110,19 +5110,9 @@ function webform_client_form_ajax_callback($form, &$form_state) {
   ctools_include('modal');
   ctools_add_js('ajax-responder');
 
-  $redirectPath = 'dashboard';
-  $action = CRM_Utils_Array::value('#action', $form);
-  $hrDetailsForms = [
-    '/create-emergency-contact/js/view',
-    '/create-dependant/js/view',
-  ];
-  if (in_array($action, $hrDetailsForms)) {
-    $redirectPath = 'hr-details';
-  }
-
   $commands = [];
   $commands[] = ctools_modal_command_dismiss();
-  $commands[] = ctools_ajax_command_redirect($redirectPath);
+  $commands[] = ctools_ajax_command_reload();
   $commands[] = ajax_command_remove('#messages');
   $commands[] = ajax_command_after('#breadcrumb', '<div id="messages">' . theme('status_messages') . '</div>');
 
