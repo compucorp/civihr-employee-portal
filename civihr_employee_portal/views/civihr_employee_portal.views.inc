@@ -35,6 +35,14 @@ function civihr_employee_portal_views_data_alter(&$data) {
     'sort' => array('handler' => 'views_handler_sort'),
   );
 
+  $data['civicrm_contact']['aggregated_address'] = [
+    'title' => t('Aggregated Contact Address'),
+    'help' => t('Displays aggregated address for the contact'),
+    'field' => [
+      'handler' => 'civihr_employee_portal_handler_aggregated_address',
+    ],
+  ];
+
   /**
    * Custom field handler which will create age group based on the contact birth date
    */
@@ -835,13 +843,50 @@ function civihr_employee_portal_views_data_alter(&$data) {
     ),
   );
 
-  // Add custom date handler
-//    $data['absence_activity']['absence_date']['field']['handler'] = 'views_handler_field_date';
-//    $data['absence_activity']['absence_date']['sort']['handler'] = 'views_handler_sort_date';
-//    $data['absence_activity']['absence_date']['filter']['handler'] = 'views_handler_filter_date';
-//    $data['absence_activity']['absence_date']['argument']['handler'] = 'views_handler_argument_date';
+  // Add link to contact ID
+  $data['civicrm_value_emergency_contacts_21']['entity_id'] = [
+    'title' => t('Entity ID'),
+    'real field' => 'entity_id',
+    'help' => t('The contact ID this emergency contact is related to.'),
+    'field' => [
+      'handler' => 'views_handler_field',
+      'click sortable' => FALSE,
+    ],
+    'argument' => [
+      'handler' => 'views_handler_argument',
+    ],
+    'relationship' => [
+      'base' => 'civicrm_contact',
+      'base field' => 'id',
+      'handler' => 'views_handler_relationship',
+      'label' => t('CiviCRM Contact ID'),
+    ],
+    'filter' => [
+      'handler' => 'views_handler_filter_numeric',
+      'allow empty' => TRUE,
+    ]
+  ];
+
+  // Emergency contact aggregated address
+  $data['civicrm_value_emergency_contacts_21']['emergency_contact_aggregated_address'] = [
+    'title' => t('Aggregated Emergency Contact Address'),
+    'help' => t('Displays aggregated address for the emergency contact'),
+    'field' => [
+      'handler' => 'civihr_employee_portal_handler_emergency_contact_aggregated_address',
+    ],
+  ];
 
   $data['hrjc_contact_details']['work_email']['field']['handler'] = 'civihr_employee_portal_handler_email';
+
+  /**
+   * Required to show entity in views list.
+   * @see views_fetch_base_tables
+   */
+  $data['civicrm_value_emergency_contacts_21']['table']['base'] = [
+    'field' => 'id',
+    'title' => 'CiviHR Emergency Contacts',
+    'help' => 'emergency_contacts'
+  ];
 
   return $data;
 }

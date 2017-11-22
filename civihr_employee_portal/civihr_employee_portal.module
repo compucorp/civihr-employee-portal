@@ -11,6 +11,7 @@ use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
 use Drupal\civihr_employee_portal\Helpers\ImageResizer;
 use Drupal\civihr_employee_portal\Forms\ContactForm;
 use Drupal\civihr_employee_portal\Helpers\Webform\WebformExportCustomFieldConvertor;
+use Drupal\civihr_employee_portal\Page\HRDetailsPage;
 
 /**
  * Implements hook_css_alter().
@@ -1691,7 +1692,18 @@ function civihr_employee_portal_menu() {
         'access arguments' => array('manage hrreports configuration'),
         'type' => MENU_CALLBACK,
     );
-
+  $items['create-emergency-contact/js/view'] = [
+    'page callback' => 'civihr_employee_portal_webform_render_callback',
+    'page arguments' => ['Create Emergency Contact'],
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  ];
+  $items['create-dependant/js/view'] = [
+    'page callback' => 'civihr_employee_portal_webform_render_callback',
+    'page arguments' => ['Create Dependant'],
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  ];
   $items['customize-onboarding-wizard'] = [
     'title' => 'Customize Welcome Wizard',
     'description' => 'Customize Welcome Wizard',
@@ -1912,6 +1924,32 @@ function civihr_employee_portal_my_details_callback($ajax) {
         return '';
     }
 
+}
+
+/**
+ * Callback function to render a webform by its title.
+ * @see civihr_employee_portal_menu
+ *
+ * @param string $webformTitle
+ */
+function civihr_employee_portal_webform_render_callback($webformTitle) {
+  ctools_include('ajax');
+  ctools_include('modal');
+  ctools_add_js('ajax-responder');
+
+  $webform = WebformHelper::findOneByTitle($webformTitle);
+
+  if (!$webform) {
+    $msg = sprintf('Could not find webform with title "%s"', $webformTitle);
+    throw new \Exception($msg);
+  }
+
+  $webformRendered = node_view($webform, 'full', NULL);
+  $contents = render($webformRendered);
+  $output = [];
+  $output[] = ctools_modal_command_display(t($webformTitle), render($contents));
+  print ajax_render($output);
+  drupal_exit();
 }
 
 /**
@@ -4655,11 +4693,18 @@ function civihr_employee_portal_node_view($node, $view_mode, $langcode) {
 // Note: Under "Redirection location" NO redirect option should be select to get the confirmation message with ajax.
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
-
-    if ($form_id == 'webform_client_form_' . variable_get('my_details_webform_nid') ||
-        $form_id == 'webform_client_form_' . variable_get('emergency_contact_webform_nid')) {
-        $form['#attributes']['class'][] = 'civihr_form civihr_form--reset form-horizontal';
-    }
+  $customClasses = 'civihr_form civihr_form--reset form-horizontal';
+  $formNode = CRM_Utils_Array::value('#node', $form);
+  $title = isset($formNode->title) ? $formNode->title : NULL;
+  $formsWithCustomClasses = [
+    'Emergency contact - edit',
+    'My details - edit',
+    'Create Dependant',
+    'Create Emergency Contact',
+  ];
+  if (in_array($title, $formsWithCustomClasses)) {
+    $form['#attributes']['class'][] = $customClasses;
+  }
 
     // Form become outdated fix
     if ($form_id == 'views_exposed_form') {
@@ -4828,6 +4873,8 @@ function civihr_employee_portal_file_presave($file) {
 }
 
 /**
+ * Implements hook_civicrm_postProcess().
+ *
  * @param string $formName
  * @param CRM_Contact_Form_Contact $form
  */
@@ -4836,7 +4883,6 @@ function civihr_employee_portal_civicrm_postProcess($formName, &$form) {
     case 'CRM_Contact_Form_Contact':
       ContactForm::postProcess($form);
       break;
-
   }
 }
 
@@ -5063,35 +5109,27 @@ function civihr_employee_portal_webform_submission_insert($node, $submission) {
 }
 
 function webform_client_form_ajax_callback($form, &$form_state) {
+  if (form_get_errors()) {
+    return $form;
+  }
 
-    if (form_get_errors()) {
-        return $form;
-    }
-    else {
+  ctools_include('ajax');
+  ctools_include('modal');
+  ctools_add_js('ajax-responder');
 
-        ctools_include('ajax');
-        ctools_include('modal');
-        ctools_add_js('ajax-responder');
+  $commands = [];
+  $commands[] = ctools_modal_command_dismiss();
+  $commands[] = ctools_ajax_command_reload();
+  $commands[] = ajax_command_remove('#messages');
+  $commands[] = ajax_command_after('#breadcrumb', '<div id="messages">' . theme('status_messages') . '</div>');
 
-        // Get the contact ID and create the cache identifier value
-        $contact_value = 'civihr_contact_data_' . $_SESSION['CiviCRM']['userID'];
+  // Try to remove the cached data for this contact as the values were updated
+  $contactID = CRM_Core_Session::getLoggedInContactID();
+  _civihr_employee_portal_clear_contact_cache($contactID);
 
-        $commands = array();
+  print ajax_render($commands);
 
-        $commands[] = ctools_modal_command_dismiss();
-        $commands[] = ctools_ajax_command_redirect('dashboard');
-        $commands[] = ajax_command_remove('#messages');
-        $commands[] = ajax_command_after('#breadcrumb', '<div id="messages">' . theme('status_messages') . '</div>');
-
-        // Try to remove the cached data for this contact as the values were updated
-        cache_clear_all($contact_value, 'cache');
-
-        print ajax_render($commands);
-
-        exit;
-
-    }
-
+  exit;
 }
 
 /**
@@ -5749,6 +5787,10 @@ function civihr_employee_portal_preprocess_page(&$vars) {
     $vars['logout_link'] = $logout_link;
     $vars['user_guide_link'] = $user_guide_link;
 
+    if (current_path() === HRDetailsPage::getPath()) {
+      $page = new HRDetailsPage();
+      $vars = array_merge($vars, $page->getVariables());
+    }
 }
 
 /**
@@ -5880,31 +5922,35 @@ function civihr_employee_portal_tokens($type, $tokens, array $data = array(), ar
  */
 function civihr_employee_portal_module_implements_alter(&$implementations, $hook) {
 
-    if ($hook != 'views_data_alter') {
-        return;
-    }
+  if ($hook != 'views_data_alter') {
+    return;
+  }
 
-    watchdog('alter default order', print_r($implementations, TRUE));
+  watchdog('alter default order', print_r($implementations, TRUE));
 
-    $group = [];
+  $group = [];
 
-    // Check if the module exists and it's installed
-    if (module_exists('views_autocomplete_filters')) {
-        // Put the views autocomplete filters after civicrm
-        $module = 'views_autocomplete_filters';
-        $group += array($module => $implementations[$module]);
-        unset($implementations[$module]);
-    }
+  // Check if the module exists and it's installed
+  if (module_exists('views_autocomplete_filters')) {
+    // Put the views autocomplete filters after civicrm
+    $module = 'views_autocomplete_filters';
+    $group += array($module => $implementations[$module]);
+    unset($implementations[$module]);
+  }
 
-    // Put the civihr employee portal module after civicrm module (breaks the Calendar view)
-    // $module = 'civihr_employee_portal';
-    // $group += array($module => $implementations[$module]);
-    // unset($implementations[$module]);
+  /**
+   * Put the civihr employee portal module after civicrm module. The civicrm
+   * module will ruthlessly replace all changes from views_data_alter hook
+   * @see civicrm_views_data_alter
+   */
+  $module = 'civihr_employee_portal';
+  $group += array($module => $implementations[$module]);
+  unset($implementations[$module]);
 
-    // Make sure some modules are after civicrm to avoid error with autocomplete search or drush cc all
-    $implementations = $implementations + $group;
+  // Make sure some modules are after civicrm to avoid error with autocomplete search or drush cc all
+  $implementations = $implementations + $group;
 
-    watchdog('alter modified order', print_r($implementations, TRUE));
+  watchdog('alter modified order', print_r($implementations, TRUE));
 }
 
 function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$objectRef) {
