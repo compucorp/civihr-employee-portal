@@ -524,7 +524,7 @@ array(
           'type' => 'select',
           'value' => 'no',
           'extra' => array(
-            'items' => "yes|Yes\nno|No",
+            'items' => 'no|No',
             'multiple' => 0,
             'title_display' => 'none',
             'description_above' => 0,
@@ -532,7 +532,7 @@ array(
             'wrapper_classes' => 'hidden',
             'css_classes' => '',
             'aslist' => 1,
-            'civicrm_live_options' => '1',
+            'civicrm_live_options' => '0',
             'empty_option' => '',
             'optrand' => 0,
             'other_option' => NULL,
