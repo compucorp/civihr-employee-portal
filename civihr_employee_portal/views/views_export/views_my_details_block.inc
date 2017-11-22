@@ -164,45 +164,6 @@ $handler->display->display_options['fields']['role_department']['field'] = 'role
 $handler->display->display_options['fields']['role_department']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['fields']['role_department']['label'] = 'Role Department';
 $handler->display->display_options['defaults']['arguments'] = FALSE;
-/* Contextual filter: HRJobContract Details entity: Period start date */
-$handler->display->display_options['arguments']['period_start_date']['id'] = 'period_start_date';
-$handler->display->display_options['arguments']['period_start_date']['table'] = 'hrjc_details';
-$handler->display->display_options['arguments']['period_start_date']['field'] = 'period_start_date';
-$handler->display->display_options['arguments']['period_start_date']['relationship'] = 'details_revision_id';
-$handler->display->display_options['arguments']['period_start_date']['default_action'] = 'default';
-$handler->display->display_options['arguments']['period_start_date']['default_argument_type'] = 'php';
-$handler->display->display_options['arguments']['period_start_date']['default_argument_options']['code'] = 'return date(\'Y-m-d\');';
-$handler->display->display_options['arguments']['period_start_date']['summary']['number_of_records'] = '0';
-$handler->display->display_options['arguments']['period_start_date']['summary']['format'] = 'default_summary';
-$handler->display->display_options['arguments']['period_start_date']['summary_options']['items_per_page'] = '25';
-$handler->display->display_options['arguments']['period_start_date']['civihr_range'] = '<=';
-$handler->display->display_options['arguments']['period_start_date']['civihr_range_empty'] = '1';
-/* Contextual filter: HRJobContract Details entity: Period end date */
-$handler->display->display_options['arguments']['period_end_date']['id'] = 'period_end_date';
-$handler->display->display_options['arguments']['period_end_date']['table'] = 'hrjc_details';
-$handler->display->display_options['arguments']['period_end_date']['field'] = 'period_end_date';
-$handler->display->display_options['arguments']['period_end_date']['relationship'] = 'details_revision_id';
-$handler->display->display_options['arguments']['period_end_date']['default_action'] = 'default';
-$handler->display->display_options['arguments']['period_end_date']['default_argument_type'] = 'php';
-$handler->display->display_options['arguments']['period_end_date']['default_argument_options']['code'] = 'return date(\'Y-m-d\');';
-$handler->display->display_options['arguments']['period_end_date']['summary']['number_of_records'] = '0';
-$handler->display->display_options['arguments']['period_end_date']['summary']['format'] = 'default_summary';
-$handler->display->display_options['arguments']['period_end_date']['summary_options']['items_per_page'] = '25';
-$handler->display->display_options['arguments']['period_end_date']['civihr_range'] = '>=';
-$handler->display->display_options['arguments']['period_end_date']['civihr_range_empty'] = '1';
-/* Contextual filter: HRJobContract Revision entity: Effective_end_date */
-$handler->display->display_options['arguments']['effective_end_date']['id'] = 'effective_end_date';
-$handler->display->display_options['arguments']['effective_end_date']['table'] = 'hrjc_revision';
-$handler->display->display_options['arguments']['effective_end_date']['field'] = 'effective_end_date';
-$handler->display->display_options['arguments']['effective_end_date']['relationship'] = 'hrjc_revision';
-$handler->display->display_options['arguments']['effective_end_date']['default_action'] = 'default';
-$handler->display->display_options['arguments']['effective_end_date']['default_argument_type'] = 'php';
-$handler->display->display_options['arguments']['effective_end_date']['default_argument_options']['code'] = 'return date(\'Y-m-d\');';
-$handler->display->display_options['arguments']['effective_end_date']['summary']['number_of_records'] = '0';
-$handler->display->display_options['arguments']['effective_end_date']['summary']['format'] = 'default_summary';
-$handler->display->display_options['arguments']['effective_end_date']['summary_options']['items_per_page'] = '25';
-$handler->display->display_options['arguments']['effective_end_date']['civihr_range'] = '>=';
-$handler->display->display_options['arguments']['effective_end_date']['civihr_range_empty'] = '1';
 
 /* Display: Contact Information */
 $handler = $view->new_display('block', 'Contact Information', 'my_address_block');
