@@ -4695,6 +4695,7 @@ function civihr_employee_portal_node_view($node, $view_mode, $langcode) {
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
     if ($form_id == 'webform_client_form_' . variable_get('my_details_webform_nid') ||
+        $form_id == 'webform_client_form_11' || $form_id == 'webform_client_form_12' ||
         $form_id == 'webform_client_form_' . variable_get('emergency_contact_webform_nid')) {
         $form['#attributes']['class'][] = 'civihr_form civihr_form--reset form-horizontal';
     }
