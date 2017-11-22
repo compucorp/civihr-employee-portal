@@ -67,6 +67,7 @@ if (!$user->uid) {
         <?php print $contact_details; ?>
       </div>
     </div>
+    <div class="col-md-offset-7 vertical-splitter visible-md visible-lg"></div>
     <div class="col-md-5 chr_panel--my-details__data-group">
       <h5
         class="chr_panel--my-details__data-group__title"><?php print $address_data_title ?></h5>
