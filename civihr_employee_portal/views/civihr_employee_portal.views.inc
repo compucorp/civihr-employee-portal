@@ -1092,12 +1092,10 @@ function civihr_employee_portal_views_query_alter(&$view, &$query) {
       $viewClass = new MyDetailsView();
       break;
     default:
-      $viewClass = NULL;
+      return;
   }
 
-  if ($viewClass) {
-    $viewClass->alter($view, $query);
-  }
+  $viewClass->alter($view, $query);
 }
 
 /**

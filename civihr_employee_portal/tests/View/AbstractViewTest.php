@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../views/civihr_employee_portal.views.inc';
+use Drupal\civihr_employee_portal\View\AbstractView;
 
 class HelperFunctionsTest extends PHPUnit_Framework_TestCase {
   protected $sampleWherePart = [
@@ -32,7 +32,7 @@ class HelperFunctionsTest extends PHPUnit_Framework_TestCase {
 
   public function testGetWhereFields() {
     $parts = [];
-    $view = new \Drupal\civihr_employee_portal\View\MyDetailsView();
+    $view = $this->getMockForAbstractClass(AbstractView::class);
     $view->getWhereFields($this->sampleWherePart, $parts);
     $expectedCount = 4;
     $this->assertCount($expectedCount, $parts);
