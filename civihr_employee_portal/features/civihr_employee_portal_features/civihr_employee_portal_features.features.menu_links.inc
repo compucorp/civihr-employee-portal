@@ -99,6 +99,13 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'link_title' => 'Help',
     'options' => array(
       'identifier' => 'main-menu_help://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/',
+      'alter' => TRUE,
+      'roles_for_menu' => array(
+        'show' => array(),
+        'hide' => array(
+          1 => 1,
+        ),
+      ),
       'attributes' => array(
         'class' => array(
           0 => 'fa',
