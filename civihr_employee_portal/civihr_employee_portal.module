@@ -4693,12 +4693,18 @@ function civihr_employee_portal_node_view($node, $view_mode, $langcode) {
 // Note: Under "Redirection location" NO redirect option should be select to get the confirmation message with ajax.
 // We can use this trick to make it generic for all webforms those have No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
-
-    if ($form_id == 'webform_client_form_' . variable_get('my_details_webform_nid') ||
-        $form_id == 'webform_client_form_11' || $form_id == 'webform_client_form_12' ||
-        $form_id == 'webform_client_form_' . variable_get('emergency_contact_webform_nid')) {
-        $form['#attributes']['class'][] = 'civihr_form civihr_form--reset form-horizontal';
-    }
+  $customClasses = 'civihr_form civihr_form--reset form-horizontal';
+  $formNode = CRM_Utils_Array::value('#node', $form);
+  $title = isset($formNode->title) ? $formNode->title : NULL;
+  $formsWithCustomClasses = [
+    'Emergency contact - edit',
+    'My details - edit',
+    'Create Dependant',
+    'Create Emergency Contact',
+  ];
+  if (in_array($title, $formsWithCustomClasses)) {
+    $form['#attributes']['class'][] = $customClasses;
+  }
 
     // Form become outdated fix
     if ($form_id == 'views_exposed_form') {
