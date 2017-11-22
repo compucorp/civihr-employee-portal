@@ -12,7 +12,7 @@ class StaffDirectoryView extends AbstractView {
   /**
    * @inheritdoc
    */
-  public function alter(&$view, &$query) {
+  public function alter($view, $query) {
     $queryParts = [];
     $this->getWhereFields($query->where, $queryParts);
     $departmentField = 'hrjc_role_hrjc_revision.role_department';

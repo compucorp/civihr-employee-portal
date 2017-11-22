@@ -16,7 +16,7 @@ class MyDetailsView extends AbstractView {
    *
    * @inheritdoc
    */
-  public function alter(&$view, &$query) {
+  public function alter($view, $query) {
     // Only applies to my_details_block display
     if ($view->current_display !== self::$name) {
       return;
@@ -30,9 +30,7 @@ class MyDetailsView extends AbstractView {
     $roleRevisionID = $revision ? $revision['role_revision_id'] : 0;
     $detailsRevisionID = $revision ? $revision['details_revision_id'] : 0;
 
-    $revisionTable = 'hrjc_revision';
-    $contactTable = 'civicrm_contact';
-    $revisionAlias = sprintf('%s_%s', $revisionTable, $contactTable);
+    $revisionAlias = 'hrjc_revision_civicrm_contact';
 
     // Single condition for revision ID would be better, but revision ID does
     // not exist in hrjc_details
@@ -53,7 +51,7 @@ class MyDetailsView extends AbstractView {
       'contact_id' => $contactID,
     ]);
 
-    // God knows why but this result is a stdClass and count is always "1"
+    // God knows why but this result is a stdClass
     if (!isset($contract['values']->contract_id)) {
       return NULL;
     }
@@ -73,9 +71,9 @@ class MyDetailsView extends AbstractView {
    * @param string $field
    * @param int $id
    */
-  private function addJoinCondition(&$query, $joinAlias, $field, $id) {
+  private function addJoinCondition($query, $joinAlias, $field, $id) {
     $joinCondition = sprintf('%s.%s = %d', $joinAlias, $field, $id);
-    $join = &$query->table_queue[$joinAlias]['join'];
+    $join = $query->table_queue[$joinAlias]['join'];
 
     if (empty($join->extra)) {
       $join->extra = $joinCondition;

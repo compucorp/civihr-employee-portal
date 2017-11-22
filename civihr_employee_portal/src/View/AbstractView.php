@@ -2,15 +2,25 @@
 
 namespace Drupal\civihr_employee_portal\View;
 
+/**
+ * Contains methods common to views. Extend to encapsulate functionality
+ * specific to certain views, such as what code should be executed for certain
+ * view hooks.
+ */
 abstract class AbstractView {
 
+  /**
+   * This should be defined in child classes.
+   *
+   * @var string|NULL
+   */
   protected static $name = NULL;
 
   /**
    * @param \view $view
    * @param \views_plugin_query_default $query
    */
-  public function alter(&$view, &$query) {
+  public function alter($view, $query) {
     // do nothing
   }
 
