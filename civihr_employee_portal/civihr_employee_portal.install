@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\civihr_employee_portal\Helpers\WebformHelper;
+
 /**
  * Create Report Pages and Report Age Settings menu links.
  */
@@ -221,6 +223,19 @@ function civihr_employee_portal_update_7010() {
       break;
     }
   }
+}
+
+/**
+ * Removes the "Emergency contact - edit" webform
+ */
+function civihr_employee_portal_update_7011() {
+  $node = WebformHelper::findOneByTitle('Emergency contact - edit');
+
+  if (!$node) {
+    return;
+  }
+
+  node_delete($node->nid);
 }
 
 /**

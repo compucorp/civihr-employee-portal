@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the CiviHR Default Mail Content feature.
+ */
+
+include_once 'civihr_default_mail_content.features.inc';

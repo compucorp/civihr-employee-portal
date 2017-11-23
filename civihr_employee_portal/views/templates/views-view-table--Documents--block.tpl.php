@@ -144,12 +144,22 @@ if (!empty($documentIds)) {
                 printf('<td %s %s>%s</td>', $class, $attribute, $content);
               }
             } ?>
-            <td>
-              <button ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', '<?php print $mode ?>')" class="btn btn-sm btn-default">
-                <i class="fa <?php print $faIcon ?>"></i>
-                <?php print $label ?>
-              </button>
-              <?php if ($row['status_id'] !== 'awaiting upload'): ?>
+            <td >
+              <?php if ($row['status_id'] === 'awaiting upload'): ?>
+                <button
+                ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', 'edit')"
+                class="btn btn-sm btn-default">
+                <i class="fa fa-upload"></i>
+                Upload
+                </button>
+              <?php else: ?>
+                <button
+                  ng-show='!document.loadingModalData'
+                  ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', 'view')"
+                  class="btn btn-sm btn-default">
+                  <i class="fa fa-eye"></i>
+                  View
+                </button>
                 <?php $showDownload = CRM_Utils_Array::value($rowID, $documentFileCount, 0) > 0 ? 'true' : 'false'; ?>
                 <a class="btn btn-sm btn-default"
                   <?php printf("ng-show='!document.loadingModalData && %s'", $showDownload); ?>

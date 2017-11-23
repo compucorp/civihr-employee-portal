@@ -1,0 +1,20 @@
+<?php
+
+use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
+
+include_once 'onboarding_slideshow.features.inc';
+
+/**
+ * Implements hook_enable().
+ */
+function onboarding_slideshow_enable() {
+  $introKey = OnboardingWizardCustomizationForm::INTRODUCTION_TEXT_KEY;
+  $existing = variable_get($introKey);
+
+  if (!$existing) {
+    $defaultIntroText = 'Welcome to the HR system! Here you will see your new '
+      . 'joiner tasks and any documents that you are required to provide to '
+      . 'your HR administrator';
+    variable_set($introKey, $defaultIntroText);
+  }
+}
