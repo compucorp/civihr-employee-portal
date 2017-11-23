@@ -317,7 +317,7 @@ $handler->display->display_options['filters']['field_resource_type_tid']['vocabu
 $handler->display->display_options['path'] = 'hr-resources';
 $handler->display->display_options['menu']['type'] = 'normal';
 $handler->display->display_options['menu']['title'] = 'HR Resources';
-$handler->display->display_options['menu']['weight'] = '5';
+$handler->display->display_options['menu']['weight'] = '8';
 $handler->display->display_options['menu']['name'] = 'main-menu';
 $handler->display->display_options['menu']['context'] = 0;
 $handler->display->display_options['menu']['context_only_inline'] = 0;

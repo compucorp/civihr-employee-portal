@@ -2285,5 +2285,14 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civihr_employee_portal',
   );
 
+  // Exported permission: 'access CiviCRM developer menu and tools'.
+  $permissions['access CiviCRM developer menu and tools'] = array(
+    'name' => 'access CiviCRM developer menu and tools',
+    'roles' => array(
+      'administrator' => 'administrator'
+    ),
+    'module' => 'civicrm',
+  );
+
   return $permissions;
 }

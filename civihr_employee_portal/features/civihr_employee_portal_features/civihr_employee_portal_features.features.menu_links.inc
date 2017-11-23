@@ -17,9 +17,7 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'router_path' => 'reports/settings/age_group',
     'link_title' => 'Age groups',
     'options' => array(
-      'attributes' => array(
-        'title' => '',
-      ),
+      'attributes' => array(),
       'identifier' => 'hr-reports-settings_age-groups:reports/settings/age_group/',
     ),
     'module' => 'menu',
@@ -75,10 +73,13 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'menu_name' => 'main-menu',
     'link_path' => 'civicrm',
     'router_path' => 'civicrm',
-    'link_title' => 'CiviHR admin',
+    'link_title' => 'HR admin',
     'options' => array(
       'attributes' => array(
-        'title' => '',
+        'class' => array(
+          0 => 'fa',
+          1 => 'fa-tachometer',
+        ),
       ),
       'identifier' => 'main-menu_civihr-admin:civicrm',
     ),
@@ -90,24 +91,40 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => -1,
     'customized' => 1,
   );
-  // Exported menu link: main-menu_civihr-ssp:dashboard.
-  $menu_links['main-menu_civihr-ssp:dashboard'] = array(
+  // Exported menu link: main-menu_help://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/.
+  $menu_links['main-menu_help://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/'] = array(
     'menu_name' => 'main-menu',
-    'link_path' => 'dashboard',
-    'router_path' => 'dashboard',
-    'link_title' => 'CiviHR SSP',
+    'link_path' => '//civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/',
+    'router_path' => '',
+    'link_title' => 'Help',
     'options' => array(
-      'attributes' => array(
-        'title' => '',
+      'identifier' => 'main-menu_help://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/',
+      'alter' => TRUE,
+      'roles_for_menu' => array(
+        'show' => array(),
+        'hide' => array(
+          1 => 1,
+        ),
       ),
-      'identifier' => 'main-menu_civihr-ssp:dashboard',
+      'attributes' => array(
+        'class' => array(
+          0 => 'fa',
+          1 => 'fa-question-circle',
+        ),
+        'target' => '_blank',
+      ),
+      'item_attributes' => array(
+        'id' => '',
+        'class' => '',
+        'style' => '',
+      ),
     ),
     'module' => 'menu',
     'hidden' => 0,
-    'external' => 0,
+    'external' => 1,
     'has_children' => 0,
     'expanded' => 0,
-    'weight' => 0,
+    'weight' => 9,
     'customized' => 1,
   );
   // Exported menu link: main-menu_home:dashboard.
@@ -118,7 +135,15 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'link_title' => 'Home',
     'options' => array(
       'attributes' => array(
-        'title' => '',
+        'class' => array(
+          0 => 'fa',
+          1 => 'fa-home',
+        ),
+      ),
+      'item_attributes' => array(
+        'id' => '',
+        'class' => '',
+        'style' => '',
       ),
       'identifier' => 'main-menu_home:dashboard',
     ),
@@ -130,6 +155,62 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 0,
     'customized' => 1,
   );
+  // Exported menu link: main-menu_hr-resources:hr-resources.
+  $menu_links['main-menu_hr-resources:hr-resources'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'hr-resources',
+    'router_path' => 'hr-resources',
+    'link_title' => 'HR Resources',
+    'options' => array(
+      'attributes' => array(
+        'class' => array(
+          0 => 'fa',
+          1 => 'fa-file-text-o',
+        ),
+      ),
+      'item_attributes' => array(
+        'id' => '',
+        'class' => '',
+        'style' => '',
+      ),
+      'identifier' => 'main-menu_hr-resources:hr-resources',
+    ),
+    'module' => 'system',
+    'hidden' => 0,
+    'external' => 0,
+    'has_children' => 0,
+    'expanded' => 0,
+    'weight' => 8,
+    'customized' => 1,
+  );
+  // Exported menu link: main-menu_manager-leave:manager-leave.
+  $menu_links['main-menu_manager-leave:manager-leave'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'manager-leave',
+    'router_path' => 'manager-leave',
+    'link_title' => 'Manager Leave',
+    'options' => array(
+      'attributes' => array(
+        'class' => array(
+          0 => 'fa',
+          1 => 'fa-suitcase',
+        ),
+      ),
+      'item_attributes' => array(
+        'id' => '',
+        'class' => '',
+        'style' => '',
+      ),
+      'identifier' => 'main-menu_manager-leave:manager-leave',
+    ),
+    'module' => 'system',
+    'hidden' => 0,
+    'external' => 0,
+    'has_children' => 0,
+    'expanded' => 0,
+    'weight' => 6,
+    'customized' => 1,
+  );
   // Exported menu link: main-menu_my-details:hr-details.
   $menu_links['main-menu_my-details:hr-details'] = array(
     'menu_name' => 'main-menu',
@@ -138,13 +219,52 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'link_title' => 'My Details',
     'options' => array(
       'identifier' => 'main-menu_my-details:hr-details',
+      'attributes' => array(
+        'class' => array(
+          0 => 'fa',
+          1 => 'fa-user',
+        ),
+      ),
+      'item_attributes' => array(
+        'id' => '',
+        'class' => '',
+        'style' => '',
+      ),
     ),
     'module' => 'system',
     'hidden' => 0,
     'external' => 0,
     'has_children' => 0,
     'expanded' => 0,
-    'weight' => 3,
+    'weight' => 2,
+    'customized' => 1,
+  );
+  // Exported menu link: main-menu_my-leave:my-leave.
+  $menu_links['main-menu_my-leave:my-leave'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'my-leave',
+    'router_path' => 'my-leave',
+    'link_title' => 'My Leave',
+    'options' => array(
+      'attributes' => array(
+        'class' => array(
+          0 => 'fa',
+          1 => 'fa-calendar',
+        ),
+      ),
+      'item_attributes' => array(
+        'id' => '',
+        'class' => '',
+        'style' => '',
+      ),
+      'identifier' => 'main-menu_my-leave:my-leave',
+    ),
+    'module' => 'system',
+    'hidden' => 0,
+    'external' => 0,
+    'has_children' => 0,
+    'expanded' => 0,
+    'weight' => 5,
     'customized' => 1,
   );
   // Exported menu link: main-menu_reports:reports.
@@ -154,10 +274,18 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'router_path' => 'reports',
     'link_title' => 'Reports',
     'options' => array(
-      'attributes' => array(
-        'title' => '',
-      ),
       'identifier' => 'main-menu_reports:reports',
+      'attributes' => array(
+        'class' => array(
+          0 => 'fa',
+          1 => 'fa-table',
+        ),
+      ),
+      'item_attributes' => array(
+        'id' => '',
+        'class' => '',
+        'style' => '',
+      ),
     ),
     'module' => 'system',
     'hidden' => 0,
@@ -167,17 +295,107 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 10,
     'customized' => 1,
   );
+  // Exported menu link: main-menu_staff-directory:staff-directory.
+  $menu_links['main-menu_staff-directory:staff-directory'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'staff-directory',
+    'router_path' => 'staff-directory',
+    'link_title' => 'Staff Directory',
+    'options' => array(
+      'attributes' => array(
+        'class' => array(
+          0 => 'fa',
+          1 => 'fa-search',
+        ),
+      ),
+      'item_attributes' => array(
+        'id' => '',
+        'class' => '',
+        'style' => '',
+      ),
+      'identifier' => 'main-menu_staff-directory:staff-directory',
+    ),
+    'module' => 'system',
+    'hidden' => 0,
+    'external' => 0,
+    'has_children' => 0,
+    'expanded' => 0,
+    'weight' => 3,
+    'customized' => 1,
+  );
+  // Exported menu link: main-menu_tasks:tasks-and-documents.
+  $menu_links['main-menu_tasks:tasks-and-documents'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'tasks-and-documents',
+    'router_path' => 'tasks-and-documents',
+    'link_title' => 'Tasks',
+    'options' => array(
+      'attributes' => array(
+        'class' => array(
+          0 => 'fa',
+          1 => 'fa-list-ul',
+        ),
+      ),
+      'item_attributes' => array(
+        'id' => '',
+        'class' => '',
+        'style' => '',
+      ),
+      'identifier' => 'main-menu_tasks:tasks-and-documents',
+    ),
+    'module' => 'system',
+    'hidden' => 0,
+    'external' => 0,
+    'has_children' => 0,
+    'expanded' => 0,
+    'weight' => 4,
+    'customized' => 1,
+  );
+  // Exported menu link: main-menu_vacancies:hr-vacancies.
+  $menu_links['main-menu_vacancies:hr-vacancies'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'hr-vacancies',
+    'router_path' => 'hr-vacancies',
+    'link_title' => 'Vacancies',
+    'options' => array(
+      'attributes' => array(
+        'class' => array(
+          0 => 'fa',
+          1 => 'fa-user-plus',
+        ),
+      ),
+      'item_attributes' => array(
+        'id' => '',
+        'class' => '',
+        'style' => '',
+      ),
+      'identifier' => 'main-menu_vacancies:hr-vacancies',
+    ),
+    'module' => 'system',
+    'hidden' => 0,
+    'external' => 0,
+    'has_children' => 0,
+    'expanded' => 0,
+    'weight' => 7,
+    'customized' => 1,
+  );
 
   // Translatables
   // Included for use with string extractors like potx.
   t('Age groups');
-  t('CiviHR SSP');
-  t('CiviHR admin');
+  t('HR admin');
+  t('HR Resources');
+  t('Help');
   t('Home');
+  t('Manager Leave');
   t('My Details');
+  t('My Leave');
   t('Report 1: People');
   t('Report 2: Leave and Absence');
   t('Reports');
+  t('Staff Directory');
+  t('Tasks');
+  t('Vacancies');
 
   return $menu_links;
 }

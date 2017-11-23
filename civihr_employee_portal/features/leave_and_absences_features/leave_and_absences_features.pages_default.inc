@@ -33,7 +33,7 @@ function leave_and_absences_features_default_page_manager_pages() {
     'type' => 'normal',
     'title' => 'Manager Leave',
     'name' => 'main-menu',
-    'weight' => '4',
+    'weight' => '6',
     'parent' => array(
       'type' => 'none',
       'title' => '',
@@ -135,7 +135,7 @@ function leave_and_absences_features_default_page_manager_pages() {
     'type' => 'normal',
     'title' => 'My Leave',
     'name' => 'main-menu',
-    'weight' => '4',
+    'weight' => '5',
     'parent' => array(
       'type' => 'none',
       'title' => '',

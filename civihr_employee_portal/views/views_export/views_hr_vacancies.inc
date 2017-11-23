@@ -300,7 +300,7 @@ $handler->display->display_options['filters']['location']['expose']['autocomplet
 $handler->display->display_options['path'] = 'hr-vacancies';
 $handler->display->display_options['menu']['type'] = 'normal';
 $handler->display->display_options['menu']['title'] = 'Vacancies';
-$handler->display->display_options['menu']['weight'] = '6';
+$handler->display->display_options['menu']['weight'] = '7';
 $handler->display->display_options['menu']['name'] = 'main-menu';
 $handler->display->display_options['menu']['context'] = 0;
 $handler->display->display_options['menu']['context_only_inline'] = 0;
