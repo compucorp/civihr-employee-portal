@@ -360,10 +360,15 @@ $handler->display->display_options['fields']['absence_end_date_month']['field'] 
 $handler->display->display_options['fields']['absence_end_date_month']['relationship'] = 'absence_activity';
 $handler->display->display_options['fields']['absence_end_date_month']['label'] = 'Absence end month';
 /* Field: Absence Activity entity: Absence duration in days */
-$handler->display->display_options['fields']['absence_duration']['id'] = 'absence_duration';
-$handler->display->display_options['fields']['absence_duration']['table'] = 'absence_activity';
-$handler->display->display_options['fields']['absence_duration']['field'] = 'absence_duration';
-$handler->display->display_options['fields']['absence_duration']['relationship'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_duration_days']['id'] = 'absence_duration_days';
+$handler->display->display_options['fields']['absence_duration_days']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_duration_days']['field'] = 'absence_duration_days';
+$handler->display->display_options['fields']['absence_duration_days']['relationship'] = 'absence_activity';
+/* Field: Absence Activity entity: Absence duration in hours */
+$handler->display->display_options['fields']['absence_duration_hours']['id'] = 'absence_duration_hours';
+$handler->display->display_options['fields']['absence_duration_hours']['table'] = 'absence_activity';
+$handler->display->display_options['fields']['absence_duration_hours']['field'] = 'absence_duration_hours';
+$handler->display->display_options['fields']['absence_duration_hours']['relationship'] = 'absence_activity';
 /* Field: Absence Activity entity: Absence_type */
 $handler->display->display_options['fields']['absence_type']['id'] = 'absence_type';
 $handler->display->display_options['fields']['absence_type']['table'] = 'absence_activity';
@@ -988,6 +993,7 @@ $translatables['civihr_report_leave_and_absence'] = array(
   t('Absence end date'),
   t('Absence end month'),
   t('Absence duration in days'),
+  t('Absence duration in hours'),
   t('Absence type'),
   t('Sickness reason'),
   t('Absence status'),

@@ -249,7 +249,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
   $page->api_version = 1;
   $page->name = 'tasks_and_documents';
   $page->task = 'page';
-  $page->admin_title = 'Tasks and Documents';
+  $page->admin_title = 'Tasks';
   $page->admin_description = '';
   $page->path = 'tasks-and-documents';
   $page->access = array(
@@ -269,9 +269,9 @@ function civihr_employee_portal_features_default_page_manager_pages() {
   );
   $page->menu = array(
     'type' => 'normal',
-    'title' => 'Tasks and Documents',
+    'title' => 'Tasks',
     'name' => 'main-menu',
-    'weight' => '10',
+    'weight' => '4',
     'parent' => array(
       'type' => 'none',
       'title' => '',
@@ -329,7 +329,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
     ),
   );
   $display->cache = array();
-  $display->title = 'Tasks and Documents';
+  $display->title = 'Tasks';
   $display->uuid = '091af8a4-cb6d-45b4-8946-1016cd5fb4d8';
   $display->storage_type = 'page_manager';
   $display->storage_id = 'page_dashboard_panel_context';

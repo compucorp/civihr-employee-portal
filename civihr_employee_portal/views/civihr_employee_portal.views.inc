@@ -2,6 +2,9 @@
 
 // This file must be at civihr_employee_portal/views directory.
 
+use Drupal\civihr_employee_portal\View\StaffDirectoryView;
+use Drupal\civihr_employee_portal\View\MyDetailsView;
+
 /**
  * @file
  * Views definitions for civihr_employee_portal module.
@@ -34,6 +37,14 @@ function civihr_employee_portal_views_data_alter(&$data) {
     ),
     'sort' => array('handler' => 'views_handler_sort'),
   );
+
+  $data['civicrm_contact']['aggregated_address'] = [
+    'title' => t('Aggregated Contact Address'),
+    'help' => t('Displays aggregated address for the contact'),
+    'field' => [
+      'handler' => 'civihr_employee_portal_handler_aggregated_address',
+    ],
+  ];
 
   /**
    * Custom field handler which will create age group based on the contact birth date
@@ -693,15 +704,15 @@ function civihr_employee_portal_views_data_alter(&$data) {
     'sort' => array('handler' => 'views_json_query_handler_sort'),
   );
 
-  $data['absence_activity']['absence_duration'] = array(
+  $data['absence_activity']['absence_duration_days'] = array(
     'title' => t('Absence duration in days'),
-    'real field' => 'absence_duration',
+    'real field' => 'absence_duration_days',
     'field' => array(
       'click sortable' => TRUE,
     ),
     'argument' => array(
       'handler' => 'views_json_query_argument_request_handler',
-      'name_field' => 'absence_duration',
+      'name_field' => 'absence_duration_days',
       'string' => TRUE
     ),
     'filter' => array(
@@ -710,6 +721,25 @@ function civihr_employee_portal_views_data_alter(&$data) {
     ),
     'sort' => array('handler' => 'views_json_query_handler_sort'),
   );
+
+  $data['absence_activity']['absence_duration_hours'] = array(
+    'title' => t('Absence duration in hours'),
+    'real field' => 'absence_duration_hours',
+    'field' => array(
+      'click sortable' => TRUE,
+    ),
+    'argument' => array(
+      'handler' => 'views_json_query_argument_request_handler',
+      'name_field' => 'absence_duration_hours',
+      'string' => TRUE
+    ),
+    'filter' => array(
+      'handler' => 'views_json_query_handler_filter',
+      'help' => t('Filter results to a particular result set'),
+    ),
+    'sort' => array('handler' => 'views_json_query_handler_sort'),
+  );
+  
   $data['absence_activity']['absence_amount_taken'] = array(
     'title' => t('Absence amount taken'),
     'real field' => 'absence_amount_taken',
@@ -835,13 +865,50 @@ function civihr_employee_portal_views_data_alter(&$data) {
     ),
   );
 
-  // Add custom date handler
-//    $data['absence_activity']['absence_date']['field']['handler'] = 'views_handler_field_date';
-//    $data['absence_activity']['absence_date']['sort']['handler'] = 'views_handler_sort_date';
-//    $data['absence_activity']['absence_date']['filter']['handler'] = 'views_handler_filter_date';
-//    $data['absence_activity']['absence_date']['argument']['handler'] = 'views_handler_argument_date';
+  // Add link to contact ID
+  $data['civicrm_value_emergency_contacts_21']['entity_id'] = [
+    'title' => t('Entity ID'),
+    'real field' => 'entity_id',
+    'help' => t('The contact ID this emergency contact is related to.'),
+    'field' => [
+      'handler' => 'views_handler_field',
+      'click sortable' => FALSE,
+    ],
+    'argument' => [
+      'handler' => 'views_handler_argument',
+    ],
+    'relationship' => [
+      'base' => 'civicrm_contact',
+      'base field' => 'id',
+      'handler' => 'views_handler_relationship',
+      'label' => t('CiviCRM Contact ID'),
+    ],
+    'filter' => [
+      'handler' => 'views_handler_filter_numeric',
+      'allow empty' => TRUE,
+    ]
+  ];
+
+  // Emergency contact aggregated address
+  $data['civicrm_value_emergency_contacts_21']['emergency_contact_aggregated_address'] = [
+    'title' => t('Aggregated Emergency Contact Address'),
+    'help' => t('Displays aggregated address for the emergency contact'),
+    'field' => [
+      'handler' => 'civihr_employee_portal_handler_emergency_contact_aggregated_address',
+    ],
+  ];
 
   $data['hrjc_contact_details']['work_email']['field']['handler'] = 'civihr_employee_portal_handler_email';
+
+  /**
+   * Required to show entity in views list.
+   * @see views_fetch_base_tables
+   */
+  $data['civicrm_value_emergency_contacts_21']['table']['base'] = [
+    'field' => 'id',
+    'title' => 'CiviHR Emergency Contacts',
+    'help' => 'emergency_contacts'
+  ];
 
   return $data;
 }
@@ -1035,21 +1102,19 @@ function removeInactiveRoleDetails($results = []) {
  * @param views_plugin_query_default $query
  */
 function civihr_employee_portal_views_query_alter(&$view, &$query) {
-  if ($view->name !== 'civihr_staff_directory') {
-    return;
+
+  switch ($view->name) {
+    case StaffDirectoryView::getName():
+      $viewClass = new StaffDirectoryView();
+      break;
+    case MyDetailsView::getName():
+      $viewClass = new MyDetailsView();
+      break;
+    default:
+      return;
   }
 
-  $queryParts = [];
-  getWhereFields($query->where, $queryParts);
-  $departmentField = 'hrjc_role_hrjc_revision.role_department';
-  $roleEndField = 'hrjc_role_hrjc_revision.role_end_date';
-
-  // if department is set we must limit to only current roles
-  if (!empty($queryParts[$departmentField])) {
-    $group = $query->set_where_group('OR'); // add a new WHERE group
-    $query->add_where($group, $roleEndField, date('Y-m-d'), '>=');
-    $query->add_where($group, $roleEndField, NULL, 'IS');
-  }
+  $viewClass->alter($view, $query);
 }
 
 /**
@@ -1074,29 +1139,3 @@ function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
     );
   }
 }
-
-/**
- * Takes the where part of a query and returns an array of fields => values
- *
- * @param mixed $part
- *  The $query->where part
- * @param array $fields
- *  An array to store the fields
- */
-function getWhereFields($part, &$fields) {
-  if (isset($part['conditions'])) {
-    $part = $part['conditions'];
-  }
-  if (isset($part['field']) && $part['field'] instanceof DatabaseCondition) {
-    $part = $part['field']->conditions();
-  }
-
-  if (isset($part['field'])) {
-    $fields[$part['field']] = $part['value'];
-  }
-  elseif (is_array($part)) {
-    foreach ($part as $item) {
-      getWhereFields($item, $fields);
-    }
-  }
-};

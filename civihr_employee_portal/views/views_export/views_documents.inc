@@ -112,7 +112,7 @@ $handler->display->display_options['fields']['activity_type_id']['element_wrappe
 $handler->display->display_options['fields']['case_id']['id'] = 'case_id';
 $handler->display->display_options['fields']['case_id']['table'] = 'documents';
 $handler->display->display_options['fields']['case_id']['field'] = 'case_id';
-$handler->display->display_options['fields']['case_id']['label'] = 'Assignment';
+$handler->display->display_options['fields']['case_id']['label'] = 'Workflow';
 $handler->display->display_options['fields']['case_id']['exclude'] = TRUE;
 $handler->display->display_options['fields']['case_id']['element_type'] = 'div';
 $handler->display->display_options['fields']['case_id']['element_label_type'] = 'strong';
@@ -328,7 +328,7 @@ $translatables['Documents'] = array(
   t('Document ID'),
   t('.'),
   t('Type'),
-  t('Assignment'),
+  t('Workflow'),
   t('Subject'),
   t('Due Date'),
   t('Expire Date'),

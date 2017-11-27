@@ -719,7 +719,6 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer permissions',
     'roles' => array(
       'administrator' => 'administrator',
-      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'user',
   );
@@ -903,7 +902,6 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'assign all roles',
     'roles' => array(
       'administrator' => 'administrator',
-      'civihr_admin_local' => 'civihr_admin_local',
     ),
     'module' => 'role_delegation',
   );
@@ -2285,6 +2283,26 @@ function civihr_default_permissions_user_default_permissions() {
       'civihr_staff' => 'civihr_staff',
     ),
     'module' => 'civihr_employee_portal',
+  );
+
+  // Exported permission: 'customize welcome wizard'.
+  $permissions['customize welcome wizard'] = array(
+    'name' => 'customize welcome wizard',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'civihr_admin' => 'civihr_admin',
+      'civihr_admin_local' => 'civihr_admin_local',
+    ),
+    'module' => 'civihr_employee_portal',
+  );
+
+  // Exported permission: 'access CiviCRM developer menu and tools'.
+  $permissions['access CiviCRM developer menu and tools'] = array(
+    'name' => 'access CiviCRM developer menu and tools',
+    'roles' => array(
+      'administrator' => 'administrator'
+    ),
+    'module' => 'civicrm',
   );
 
   return $permissions;
