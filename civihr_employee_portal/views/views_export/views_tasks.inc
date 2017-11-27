@@ -51,7 +51,7 @@ $handler->display->display_options['fields']['activity_type_id']['field'] = 'act
 $handler->display->display_options['fields']['case_id']['id'] = 'case_id';
 $handler->display->display_options['fields']['case_id']['table'] = 'tasks';
 $handler->display->display_options['fields']['case_id']['field'] = 'case_id';
-$handler->display->display_options['fields']['case_id']['label'] = 'Assignment';
+$handler->display->display_options['fields']['case_id']['label'] = 'Workflow';
 $handler->display->display_options['fields']['case_id']['exclude'] = TRUE;
 $handler->display->display_options['fields']['case_id']['element_type'] = 'div';
 $handler->display->display_options['fields']['case_id']['element_label_type'] = 'strong';
@@ -166,7 +166,7 @@ $handler->display->display_options['fields']['activity_type_id']['field'] = 'act
 $handler->display->display_options['fields']['case_id']['id'] = 'case_id';
 $handler->display->display_options['fields']['case_id']['table'] = 'tasks';
 $handler->display->display_options['fields']['case_id']['field'] = 'case_id';
-$handler->display->display_options['fields']['case_id']['label'] = 'Assignment';
+$handler->display->display_options['fields']['case_id']['label'] = 'Workflow';
 $handler->display->display_options['fields']['case_id']['exclude'] = TRUE;
 $handler->display->display_options['fields']['case_id']['element_type'] = 'div';
 $handler->display->display_options['fields']['case_id']['element_label_type'] = 'strong';
@@ -284,7 +284,7 @@ $handler->display->display_options['fields']['activity_type_id']['field'] = 'act
 $handler->display->display_options['fields']['case_id']['id'] = 'case_id';
 $handler->display->display_options['fields']['case_id']['table'] = 'tasks';
 $handler->display->display_options['fields']['case_id']['field'] = 'case_id';
-$handler->display->display_options['fields']['case_id']['label'] = 'Assignment';
+$handler->display->display_options['fields']['case_id']['label'] = 'Workflow';
 $handler->display->display_options['fields']['case_id']['exclude'] = TRUE;
 $handler->display->display_options['fields']['case_id']['element_type'] = 'div';
 $handler->display->display_options['fields']['case_id']['element_label_type'] = 'strong';
@@ -387,7 +387,7 @@ $translatables['tasks'] = array(
   t('Task ID'),
   t('.'),
   t('Task type'),
-  t('Assignment'),
+  t('Workflow'),
   t('Subject'),
   t('Due date'),
   t('Status'),
