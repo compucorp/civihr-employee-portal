@@ -704,15 +704,15 @@ function civihr_employee_portal_views_data_alter(&$data) {
     'sort' => array('handler' => 'views_json_query_handler_sort'),
   );
 
-  $data['absence_activity']['absence_duration'] = array(
+  $data['absence_activity']['absence_duration_days'] = array(
     'title' => t('Absence duration in days'),
-    'real field' => 'absence_duration',
+    'real field' => 'absence_duration_days',
     'field' => array(
       'click sortable' => TRUE,
     ),
     'argument' => array(
       'handler' => 'views_json_query_argument_request_handler',
-      'name_field' => 'absence_duration',
+      'name_field' => 'absence_duration_days',
       'string' => TRUE
     ),
     'filter' => array(
@@ -721,6 +721,25 @@ function civihr_employee_portal_views_data_alter(&$data) {
     ),
     'sort' => array('handler' => 'views_json_query_handler_sort'),
   );
+
+  $data['absence_activity']['absence_duration_hours'] = array(
+    'title' => t('Absence duration in hours'),
+    'real field' => 'absence_duration_hours',
+    'field' => array(
+      'click sortable' => TRUE,
+    ),
+    'argument' => array(
+      'handler' => 'views_json_query_argument_request_handler',
+      'name_field' => 'absence_duration_hours',
+      'string' => TRUE
+    ),
+    'filter' => array(
+      'handler' => 'views_json_query_handler_filter',
+      'help' => t('Filter results to a particular result set'),
+    ),
+    'sort' => array('handler' => 'views_json_query_handler_sort'),
+  );
+  
   $data['absence_activity']['absence_amount_taken'] = array(
     'title' => t('Absence amount taken'),
     'real field' => 'absence_amount_taken',
