@@ -273,8 +273,7 @@ function civihr_employee_portal_update_7016() {
   $homeAddress[$locationKey] = $homeTypeID;
   $workInstantMessenger[$locationKey] = $workTypeID;
 
-  // todo not saving :-(
-  node_save($onboardingForm);
+  drupal_write_record('webform_civicrm_forms', $civicrmWebform, 'nid');
 }
 
 /**
