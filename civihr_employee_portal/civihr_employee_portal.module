@@ -11,8 +11,8 @@ use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
 use Drupal\civihr_employee_portal\Helpers\ImageResizer;
 use Drupal\civihr_employee_portal\Forms\ContactForm;
 use CRM_HRLeaveAndAbsences_BAO_AbsenceType as AbsenceType;
-use Drupal\civihr_employee_portal\Helpers\Webform\WebformExportCustomFieldConvertor;
 use Drupal\civihr_employee_portal\Page\HRDetailsPage;
+use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 
 /**
  * Implements hook_css_alter().
@@ -6294,8 +6294,8 @@ function _civihr_employee_portal_clear_contact_cache($contactID) {
 /**
  * Implements hook_node_export_alter().
  *
- * Add some metadata to the exported nodes to allow importing of custom fields
- * based on name, and not ID.
+ * Add some metadata to the exported nodes to allow importing based on name,
+ * and not ID, increasing portability across systems.
  *
  * @param array $nodes
  *   The array of nodes to alter.
@@ -6304,14 +6304,15 @@ function _civihr_employee_portal_clear_contact_cache($contactID) {
  */
 function civihr_employee_portal_node_export_alter(&$nodes, $format) {
   foreach ($nodes as &$node) {
-    WebformExportCustomFieldConvertor::addCustomMappingForExport($node);
+    WebformTransferService::preExport($node);
   }
 }
 
 /**
  * Implements hook_node_export_import_alter().
  *
- * Alter the field keys for webform components using CiviCRM custom data.
+ * Alter the field keys for webform components using the mapping from
+ * @see civihr_employee_portal_node_export_alter
  *
  * @param array $nodes
  *   The array of nodes to alter.
@@ -6322,6 +6323,6 @@ function civihr_employee_portal_node_export_alter(&$nodes, $format) {
  */
 function civihr_employee_portal_node_export_import_alter(&$nodes, $format, $save) {
   foreach ($nodes as &$node) {
-    WebformExportCustomFieldConvertor::replaceCustomDataForImport($node);
+    WebformTransferService::preImport($node);
   }
 }
