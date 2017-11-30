@@ -1,6 +1,6 @@
 <?php
 
-use Drupal\civihr_employee_portal\Helpers\Webform\CustomComponentKeyHelper as KeyHelper;
+use Drupal\civihr_employee_portal\Webform\CustomComponentKeyHelper as KeyHelper;
 
 class CustomComponentKeyHelperTest extends \PHPUnit_Framework_TestCase {
 
