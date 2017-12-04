@@ -1,6 +1,7 @@
 <?php
 
 use Drupal\civihr_employee_portal\Helpers\HelperClass;
+use Drupal\civihr_employee_portal\Helpers\NodeHelper;
 
 /**
  * Implements hook_drush_help().
@@ -70,27 +71,41 @@ function civihr_employee_portal_drush_command() {
 }
 
 /**
- * Callback function for drush refresh-node-export-files.
- * Callback is called by using drush_hook_command() where the Drush command with
- * all "-" characters converted to "_" characters (refresh-node-export-files)
+ * Callback function for 'drush refresh-node-export-files'
+ *
+ * Takes all files in the features/node_export_files and refreshes them.
  */
 function drush_civihr_employee_portal_refresh_node_export_files() {
-
-  // Check for all node export files
   $moduleRoot = drupal_get_path('module', 'civihr_employee_portal');
   $exportFilesDir = $moduleRoot . '/features/node_export_files';
   $files = file_scan_directory($exportFilesDir, '/.*\.export$/');
+  $count = 0;
 
-  // Loop the export files, import them, and set the config variable
   foreach ($files as $filepath => $file) {
-    $info = node_export_import(file_get_contents($filepath));
+    $contents = file_get_contents($filepath);
+    $importData = node_export_import($contents, 't', FALSE);
+    $importNodes = CRM_Utils_Array::value('nodes', $importData);
 
-    variable_set($file->name . '_webform_nid', $info['nids'][0]);
-    drush_log($file->name . ' webform imported and nid set as variable', 'ok');
+    foreach ($importNodes as $importNode) {
+      $existingNode = NodeHelper::findOneBy([
+        'title' => $importNode->title,
+        'type' => $importNode->type,
+      ]);
+
+      // Set these to update existing instead of creating new node
+      if ($existingNode) {
+        $importNode->nid = $existingNode->nid;
+        $importNode->vid = $existingNode->vid;
+        $importNode->is_new = FALSE;
+      }
+
+      node_export_save($importNode);
+      variable_set($file->name . '_webform_nid', $importNode->nid);
+      $count++;
+    }
   }
 
-  // Log to the command line with an OK status
-  drush_log('Node Webform refresh finished', 'ok');
+   drush_log(sprintf('%d nodes were updated', $count), 'ok');
 }
 
 /**
