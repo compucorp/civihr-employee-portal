@@ -11,9 +11,14 @@ class LocationTypeIDConvertor implements WebformTransferConvertor {
    */
   public static function preExport(\stdClass $node) {
     $locationTypeIDs = self::getLocationTypeIDsByRef($node);
-    $params = ['id' => ['IN' => $locationTypeIDs]];
-    $locationTypes = civicrm_api3('LocationType', 'get', $params)['values'];
-    $locationTypes = array_column($locationTypes, 'name', 'id');
+    $locationTypes = [];
+
+    if (!empty($locationTypeIDs)) {
+      $params = ['id' => ['IN' => $locationTypeIDs]];
+      $locationTypes = civicrm_api3('LocationType', 'get', $params)['values'];
+      $locationTypes = array_column($locationTypes, 'name', 'id');
+    }
+
     $node->customMapping[self::MAPPING_KEY] = $locationTypes;
   }
 
