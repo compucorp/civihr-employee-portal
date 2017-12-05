@@ -31,7 +31,6 @@ class LocationTypeIDConvertor implements WebformTransferConvertor {
     }
 
     $oldMapping = $node->customMapping[self::MAPPING_KEY];
-
     $oldToNewMapping = self::reverseMapping($oldMapping);
 
     foreach (self::getLocationTypeIDsByRef($node) as &$locationTypeID) {
