@@ -100,6 +100,14 @@ function drush_civihr_employee_portal_refresh_node_export_files() {
       }
 
       node_export_save($importNode);
+
+      // Need to manually update webform_civicrm_form record
+      if ($importNode->type === 'webform' && !$importNode->is_new) {
+        $civicrmWebform = $importNode->webform_civicrm;
+        $civicrmWebform['nid'] = $existingNode->nid;
+        drupal_write_record('webform_civicrm_forms', $civicrmWebform, ['nid']);
+      }
+
       variable_set($file->name . '_webform_nid', $importNode->nid);
       $count++;
     }
