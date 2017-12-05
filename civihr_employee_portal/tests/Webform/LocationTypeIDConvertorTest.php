@@ -18,7 +18,7 @@ class LocationTypeIDConvertorTest extends PHPUnit_Framework_TestCase {
     civicrm_api3('LocationType', 'delete', ['id' => $this->locationType['id']]);
   }
 
-  public function testEmptyMapping() {
+  public function testLocationTypeMappingIsNotEmpty() {
     $node = new \stdClass();
     LocationTypeIDConvertor::preExport($node);
 

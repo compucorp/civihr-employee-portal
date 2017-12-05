@@ -12,6 +12,8 @@ namespace Drupal\civihr_employee_portal\Webform;
 class WebformTransferService {
 
   /**
+   * Runs the preExport method on all convertors.
+   *
    * @param \stdClass $node
    */
   public static function preExport(\stdClass $node) {
@@ -20,10 +22,12 @@ class WebformTransferService {
   }
 
   /**
+   * Runs the preEmport method on all convertors.
+   *
    * @param \stdClass $node
    */
   public static function preImport(\stdClass $node) {
-    WebformExportCustomFieldConvertor::preExport($node);
+    WebformExportCustomFieldConvertor::preImport($node);
     LocationTypeIDConvertor::preImport($node);
   }
 }

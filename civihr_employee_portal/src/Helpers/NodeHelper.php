@@ -11,12 +11,12 @@ class NodeHelper {
    *   The criteria for searching for the node
    *
    * @return \stdClass|null
-   *   The node, if found. NULL if not found or more than one exist.
+   *   The first node matching the criteria, if found. NULL if not found.
    */
   public static function findOneBy($criteria = []) {
     $nodes = node_load_multiple(NULL, $criteria);
 
-    if (count($nodes) !== 1) {
+    if (!$nodes) {
       return NULL;
     }
 

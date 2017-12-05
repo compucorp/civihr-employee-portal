@@ -65,7 +65,7 @@ class WebformExportCustomFieldConvertor implements WebformTransferConvertor {
     }
 
     // Node was not exported since this change was applied
-    if (!isset($node->customMapping)) {
+    if (empty($node->customMapping['customGroups'])) {
       return;
     }
 

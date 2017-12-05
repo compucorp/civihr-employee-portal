@@ -7,6 +7,8 @@ class LocationTypeIDConvertor implements WebformTransferConvertor {
   const MAPPING_KEY = 'locationTypes';
 
   /**
+   * Adds mapping of ID to name for all location type IDs included in the export
+   *
    * @inheritdoc
    */
   public static function preExport(\stdClass $node) {
@@ -23,6 +25,9 @@ class LocationTypeIDConvertor implements WebformTransferConvertor {
   }
 
   /**
+   * Uses the mapping from preExport to match the location types by name instead
+   * of ID.
+   *
    * @inheritdoc
    */
   public static function preImport(\stdClass $node) {
@@ -45,6 +50,7 @@ class LocationTypeIDConvertor implements WebformTransferConvertor {
    * Results are returned by reference to allow easier modification.
    *
    * @param \stdClass $node
+   *
    * @return array
    */
   private static function getLocationTypeIDsByRef(\stdClass $node) {
@@ -77,7 +83,8 @@ class LocationTypeIDConvertor implements WebformTransferConvertor {
   /**
    * Gets a mapping of old location type IDs to their new ID.
    *
-   * @param $oldMapping
+   * @param array $oldMapping
+   *
    * @return array
    */
   private static function reverseMapping($oldMapping) {

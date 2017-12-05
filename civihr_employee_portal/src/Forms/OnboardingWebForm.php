@@ -195,13 +195,14 @@ class OnboardingWebForm {
    * Unfortunately for us the contact profile page will expect an image URL
    * using the civicrm/file?photo=foo.jpg style. Since our contact images are
    * created using webform they won't match this so to avoid the warnings about
-   * 'Undefined index: photo' we append photo=0 here. I need a shower.
+   * 'Undefined index: photo' we append photo=0 here.
+   *
    * @see CRM_Utils_File::getImageURL
    *
    * @param int $contactID
    */
   private function hackyFixForImageURL($contactID) {
-    $params = ['return' => "image_URL", 'id' => $contactID];
+    $params = ['return' => 'image_URL', 'id' => $contactID];
     /** @var string $current */
     $current = civicrm_api3('Contact', 'getvalue', $params);
 
