@@ -135,7 +135,18 @@ span.appraisals-employee-legend {
 }
 
 .report-tabs {
+  font-size: 0; /* Removes gap between inline-block elements */
   margin-top: 12px;
+}
+
+.report-tabs.nav-tabs.nav-justified > li {
+  display: inline-block;
+  font-size: 0px;
+  min-width: 15%;
+}
+
+.report-tabs.nav-justified > li:first-child {
+  min-width: 85%;
 }
 
 .report-content {
