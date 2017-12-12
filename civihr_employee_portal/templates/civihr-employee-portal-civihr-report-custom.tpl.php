@@ -29,12 +29,18 @@
   <ul class="nav nav-tabs nav-justified nav-tabs-header report-tabs">
     <?php if (!empty($jsonUrl)): ?>
       <li role="presentation" class="active">
-        <a data-tab="report-builder" href="#report-builder">Report Builder</a>
+        <a data-tab="report-builder" href="#report-builder">
+          <i class="fa fa-bar-chart"></i>
+          Report Builder
+        </a>
       </li>
     <?php endif; ?>
     <?php if (!empty($tableUrl)): ?>
       <li role="presentation">
-        <a data-tab="view-data" href="#view-data">View Data</a>
+        <a data-tab="view-data" href="#view-data">
+          <i class="fa fa-table"></i>
+          View Data
+        </a>
       </li>
     <?php endif; ?>
   </ul>
