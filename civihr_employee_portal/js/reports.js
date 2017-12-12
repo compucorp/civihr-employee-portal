@@ -1,3 +1,5 @@
+/* global angular, Drupal, jQuery, moment, Ps, swal */
+
 (function ($) {
   'use strict';
 
@@ -379,6 +381,7 @@
    * @param string viewReportDataTableId
    */
   HRReport.prototype.refreshReportTableViewInstance = function (viewReportDataTableId) {
+    var AjaxViews = Drupal.views.ajaxView;
     var viewReportDataTableSettings = Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableId];
     var viewReportDataTableNewId = this.getReportTableDomID();
 
@@ -387,7 +390,7 @@
 
     viewReportDataTableSettings.view_dom_id = viewReportDataTableNewId;
     Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableNewId] = viewReportDataTableSettings;
-    Drupal.views.instances['views_dom_id:' + viewReportDataTableNewId] = new Drupal.views.ajaxView(Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableNewId]);
+    Drupal.views.instances['views_dom_id:' + viewReportDataTableNewId] = new AjaxViews(Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableNewId]);
   };
 
   /**
