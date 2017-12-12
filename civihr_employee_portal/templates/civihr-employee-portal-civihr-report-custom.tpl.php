@@ -55,35 +55,77 @@
         </div>
         <div id="reportPivotTableConfiguration">
           <form>
-            <div class="form-item">
-              Configuration:
-            </div>
-            <div class="form-item">
-              <div class="crm_custom-select">
-                <select name="id" class="report-config-select skip-js-custom-select">
-                  <option value=""><?php print t('-- select configuration --'); ?></option>
-                  <?php if (!empty($configurationList)): ?>
-                    <?php foreach ($configurationList as $key => $value): ?>
-                      <option value="<?php print $key; ?>"><?php print $value; ?></option>
-                    <?php endforeach; ?>
-                  <?php endif; ?>
-                </select>
-                <span class="crm_custom-select__arrow"></span>
+            <div class="row">
+              <div class="col-md-2">
+                <div>Configuration</div>
+              </div>
+              <div class="col-md-5">
+                <div class="crm_custom-select">
+                  <select name="id" class="report-config-select skip-js-custom-select">
+                    <option value=""><?php print t('-- select configuration --'); ?></option>
+                    <?php if (!empty($configurationList)): ?>
+                      <?php foreach ($configurationList as $key => $value): ?>
+                        <option value="<?php print $key; ?>"><?php print $value; ?></option>
+                      <?php endforeach; ?>
+                    <?php endif; ?>
+                  </select>
+                  <span class="crm_custom-select__arrow"></span>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <?php if (user_access('manage hrreports configuration')): ?>
+                  <div class="form-item">
+                    <input type="button" class="report-config-save-btn btn btn-primary" value="<?php print t('Save Report'); ?>">
+                  </div>
+                  <div class="form-item">
+                    <input type="button" class="report-config-save-new-btn btn btn-primary" value="<?php print t('Save As New'); ?>">
+                  </div>
+                  <div class="form-item">
+                    <input type="button" class="report-config-delete-btn btn btn-danger" value="<?php print t('Delete'); ?>">
+                  </div>
+                <?php endif; ?>
               </div>
             </div>
-            <?php if (user_access('manage hrreports configuration')): ?>
-              <div class="form-item">
-                <input type="button" class="report-config-save-btn btn btn-primary" value="<?php print t('Save Report'); ?>">
+            <div class="row">
+              <div class="col-md-2">
+                Chart Type
               </div>
-              <div class="form-item">
-                <input type="button" class="report-config-save-new-btn btn btn-primary" value="<?php print t('Save As New'); ?>">
+              <div class="chart-type-select col-md-5">
               </div>
-              <div class="form-item">
-                <input type="button" class="report-config-delete-btn btn btn-danger" value="<?php print t('Delete'); ?>">
-              </div>
-            <?php endif; ?>
+            </div>
           </form>
         </div>
+        <div class="row">
+          <div class="report-filters col-md-2">
+          </div>
+          <div class="report-function col-md-2">
+          </div>
+          <div class="report-columns col-md-8">
+            <table>
+              <tr>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="row">
+        <div class="fields-selection col-md-2">
+            Select fields:
+          <div class="fields-selection-list">
+            <table>
+              <tr>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="report-rows col-md-2">
+          <table>
+            <tr>
+            </tr>
+          </table>
+        </div>
+        <div class="report-area col-md-8">
+        </div>
+      </div>
         <div id="reportPivotTable" class="pvtTable-civi"></div>
       </div>
     <?php endif; ?>
