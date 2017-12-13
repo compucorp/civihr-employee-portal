@@ -68,29 +68,6 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 0,
     'customized' => 1,
   );
-  // Exported menu link: main-menu_civihr-admin:civicrm.
-  $menu_links['main-menu_civihr-admin:civicrm'] = array(
-    'menu_name' => 'main-menu',
-    'link_path' => 'civicrm',
-    'router_path' => 'civicrm',
-    'link_title' => 'HR admin',
-    'options' => array(
-      'attributes' => array(
-        'class' => array(
-          0 => 'fa',
-          1 => 'fa-tachometer',
-        ),
-      ),
-      'identifier' => 'main-menu_civihr-admin:civicrm',
-    ),
-    'module' => 'menu',
-    'hidden' => 0,
-    'external' => 0,
-    'has_children' => 0,
-    'expanded' => 0,
-    'weight' => -1,
-    'customized' => 1,
-  );
   // Exported menu link: main-menu_help://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/.
   $menu_links['main-menu_help://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/'] = array(
     'menu_name' => 'main-menu',
@@ -153,6 +130,38 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'has_children' => 0,
     'expanded' => 0,
     'weight' => 0,
+    'customized' => 1,
+  );
+  // Exported menu link: main-menu_hr-admin:civicrm.
+  $menu_links['main-menu_hr-admin:civicrm'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'civicrm',
+    'router_path' => 'civicrm',
+    'link_title' => 'HR admin',
+    'options' => array(
+      'identifier' => 'main-menu_hr-admin:civicrm',
+      'roles_for_menu' => array(
+        'show' => array(),
+        'hide' => array(),
+      ),
+      'attributes' => array(
+        'class' => array(
+          0 => 'fa',
+          1 => 'fa-tachometer',
+        ),
+      ),
+      'item_attributes' => array(
+        'id' => '',
+        'class' => '',
+        'style' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => 0,
+    'external' => 0,
+    'has_children' => 0,
+    'expanded' => 0,
+    'weight' => -1,
     'customized' => 1,
   );
   // Exported menu link: main-menu_hr-resources:hr-resources.
@@ -383,8 +392,8 @@ function civihr_employee_portal_features_menu_default_menu_links() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Age groups');
-  t('HR admin');
   t('HR Resources');
+  t('HR admin');
   t('Help');
   t('Home');
   t('Manager Leave');

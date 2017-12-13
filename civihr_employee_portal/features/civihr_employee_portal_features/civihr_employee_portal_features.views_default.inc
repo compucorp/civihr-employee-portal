@@ -382,12 +382,11 @@ function civihr_employee_portal_features_views_default_views() {
   $handler->display->display_options['fields']['absence_type']['field'] = 'absence_type';
   $handler->display->display_options['fields']['absence_type']['relationship'] = 'absence_activity';
   $handler->display->display_options['fields']['absence_type']['label'] = 'Absence type';
-  /* Field: Absence Activity entity: Sickness Reason */
+  /* Field: Absence Activity entity: Sickness reason */
   $handler->display->display_options['fields']['sickness_reason']['id'] = 'absence_type';
   $handler->display->display_options['fields']['sickness_reason']['table'] = 'absence_activity';
   $handler->display->display_options['fields']['sickness_reason']['field'] = 'sickness_reason';
   $handler->display->display_options['fields']['sickness_reason']['relationship'] = 'absence_activity';
-  $handler->display->display_options['fields']['sickness_reason']['label'] = 'Sickness reason';
   /* Field: Absence Activity entity: Absence status */
   $handler->display->display_options['fields']['absence_status']['id'] = 'absence_status';
   $handler->display->display_options['fields']['absence_status']['table'] = 'absence_activity';
