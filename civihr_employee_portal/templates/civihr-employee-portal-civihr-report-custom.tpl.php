@@ -1,31 +1,4 @@
 <div id="civihrReports">
-  <?php if (!empty($filters)): ?>
-    <div
-      ng-controller="FiltersController as filters"
-      id="report-filters"
-      class="panel panel-pane pane-block chr_panel chr_panel--no-padding panel--sliding-body"
-      ng-class="{ 'panel--sliding-body': filters.filtersCollapsed }">
-      <div class="pane-content">
-        <div class="chr_search-result__header" ng-click="filters.filtersCollapsed = !filters.filtersCollapsed">
-          <div class="chr_search-result__total">
-            <i
-              class="chr_search-result__icon glyphicon glyphicon-chevron-right"
-              ng-class="{ 'glyphicon-chevron-right': filters.filtersCollapsed, 'glyphicon-chevron-down': !filters.filtersCollapsed }">
-            </i>
-            <span ng-class="{ 'hide': !filters.filtersCollapsed }">Show Filters</span>
-            <span class="hide" ng-class="{ 'hide': filters.filtersCollapsed }">Hide Filters</span>
-          </div>
-        </div>
-
-        <div
-          class="panel-body-wrap panel-body-wrap--collapse"
-          ng-class="{ 'panel-body-wrap--collapse': filters.filtersCollapsed }">
-            <?php print render($filters); ?>
-        </div>
-      </div>
-    </div>
-  <?php endif; ?>
-
   <ul class="nav nav-tabs nav-justified nav-tabs-header report-tabs">
     <?php if (!empty($jsonUrl)): ?>
       <li role="presentation" class="active">
@@ -96,11 +69,16 @@
           </form>
         </div>
         <div class="row">
-          <div class="report-filters col-md-2">
+          <div class="report-filters col-md-3">
+            <?php if (!empty($filters)): ?>
+              <div id="report-filters">
+                <?php print render($filters); ?>
+              </div>
+            <?php endif; ?>
           </div>
-          <div class="report-function col-md-2">
+          <div class="report-function col-md-3">
           </div>
-          <div class="report-columns col-md-8">
+          <div class="report-columns col-md-6">
             <table>
               <tr>
               </tr>
@@ -108,7 +86,7 @@
           </div>
         </div>
         <div class="row">
-        <div class="fields-selection col-md-2">
+        <div class="fields-selection col-md-3">
             Select fields:
           <div class="fields-selection-list">
             <table>
@@ -117,13 +95,13 @@
             </table>
           </div>
         </div>
-        <div class="report-rows col-md-2">
+        <div class="report-rows col-md-3">
           <table>
             <tr>
             </tr>
           </table>
         </div>
-        <div class="report-area col-md-8">
+        <div class="report-area col-md-6">
         </div>
       </div>
         <div id="reportPivotTable" class="pvtTable-civi"></div>

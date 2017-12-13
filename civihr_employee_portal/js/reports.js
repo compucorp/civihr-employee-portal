@@ -152,8 +152,26 @@
    *
    */
   HRReport.prototype.updateCustomTemplate = function () {
+    this.moveReportElementFromTo('.pvtRenderer', '.chart-type-select');
+    this.moveReportElementFromTo('.pvtAggregator', '.report-function');
+    this.moveReportElementFromTo('.pvtCols', '.report-columns table tr');
+    this.moveReportElementFromTo('.pvtRows', '.report-rows table tr');
+    this.moveReportElementFromTo('.pvtUnused', '.fields-selection-list table tr');
+    this.moveReportElementFromTo('.pvtRendererArea', '.report-area');
     this.updateDropdown();
     this.updateFilterbox();
+  };
+
+  HRReport.prototype.moveReportElementFromTo = function (fromSelector, toSelector) {
+    var fromElement = this.pivotTableContainer.find(fromSelector);
+    var toElement = jQuery(toSelector);
+
+    if (!fromElement.length) {
+      return;
+    }
+
+    toElement.empty();
+    fromElement.detach().appendTo(toElement);
   };
 
   /**
