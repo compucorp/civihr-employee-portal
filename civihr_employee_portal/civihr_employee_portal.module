@@ -529,8 +529,29 @@ function civihr_employee_portal_init() {
     _rebuild_view('tasks');
     _rebuild_view('documents');
 
-    _load_ta_settings();
+    $taskAssignmentsKey = 'uk.co.compucorp.civicrm.tasksassignments';
+    if (_civihr_employee_portal_is_extension_enabled($taskAssignmentsKey)) {
+      _load_ta_settings();
+    }
   }
+}
+
+/**
+ * Checks whether a given extension is enabled.
+ *
+ * @param string $extensionKey
+ *
+ * @return bool
+ */
+function _civihr_employee_portal_is_extension_enabled($extensionKey) {
+  $isEnabled = CRM_Core_DAO::getFieldValue(
+    'CRM_Core_DAO_Extension',
+    $extensionKey,
+    'is_active',
+    'full_name'
+  );
+
+  return !empty($isEnabled) ? TRUE : FALSE;
 }
 
 /**
