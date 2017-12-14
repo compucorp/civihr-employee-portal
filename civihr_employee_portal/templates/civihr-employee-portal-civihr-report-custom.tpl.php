@@ -28,19 +28,29 @@
 
   <ul class="nav nav-tabs nav-justified nav-tabs-header report-tabs">
     <?php if (!empty($jsonUrl)): ?>
-      <li role="presentation" class="active"><a data-tab="pivot-table" href="#pivot-table">Pivot Table</a></li>
+      <li role="presentation" class="active">
+        <a data-tab="report-builder" href="#report-builder">
+          <i class="fa fa-bar-chart"></i>
+          Report Builder
+        </a>
+      </li>
     <?php endif; ?>
     <?php if (!empty($tableUrl)): ?>
-      <li role="presentation"><a data-tab="data" href="#data">Data</a></li>
+      <li role="presentation">
+        <a data-tab="view-data" href="#view-data">
+          <i class="fa fa-table"></i>
+          View Data
+        </a>
+      </li>
     <?php endif; ?>
   </ul>
 
   <div class="report-content panel-pane pane-block chr_panel chr_panel--no-padding">
     <?php if (!empty($jsonUrl)): ?>
-      <div class="report-block pivot-table tab-pane">
+      <div class="report-block report-builder tab-pane">
         <div class="chr_search-result__header">
           <div class="chr_search-result__total">
-            Pivot Table
+            Report Builder
           </div>
         </div>
         <div id="reportPivotTableConfiguration">
@@ -78,7 +88,7 @@
       </div>
     <?php endif; ?>
     <?php if (!empty($tableUrl)): ?>
-      <div class="report-block data pane-content hidden">
+      <div class="report-block view-data pane-content hidden">
         <div id="reportTable"><?php print $table; ?></div>
         <?php if (!empty($exportUrl)): ?>
           <div class="chr_panel__footer">
