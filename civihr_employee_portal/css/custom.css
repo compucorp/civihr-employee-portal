@@ -135,18 +135,17 @@ span.appraisals-employee-legend {
 }
 
 .report-tabs {
-  font-size: 0; /* Removes gap between inline-block elements */
+  display: table;
   margin-top: 12px;
 }
 
 .report-tabs.nav-tabs.nav-justified > li {
-  display: inline-block;
-  font-size: 0px;
-  min-width: 15%;
+  width: 15%;
+  white-space: nowrap;
 }
 
 .report-tabs.nav-justified > li:first-child {
-  min-width: 85%;
+  width: 85%;
 }
 
 .report-content {
@@ -204,4 +203,10 @@ span.appraisals-employee-legend {
 
 .footer-logo {
   margin-top: 25px;
+}
+
+@media (max-width: 768px) {
+  .report-tabs.nav-tabs.nav-justified > li {
+    width: 100%;
+  }
 }
