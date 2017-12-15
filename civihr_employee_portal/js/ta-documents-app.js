@@ -1,7 +1,7 @@
 /* globals angular */
 
 (function (angular) {
-  angular.module('taDocuments', ['civitasks.appDocuments', 'civitasks.directives'])
+  angular.module('taDocuments', ['tasks-assignments.documents', 'tasks-assignments.directives'])
     .config(function ($urlRouterProvider, $locationProvider) {
       $locationProvider.html5Mode(true); // This is required to remove # for the URL
       $urlRouterProvider.otherwise('/tasks-and-documents');
@@ -9,9 +9,9 @@
     .controller('ModalController', ModalController);
 
   ModalController.$inject = ['$scope', '$rootScope', '$window', '$rootElement', '$log', '$uibModal',
-    'DocumentService', 'FileService', 'config', 'settings', 'DateFormat'];
+    'documentService', 'fileServiceTA', 'config', 'settings', 'DateFormat'];
 
-  function ModalController ($scope, $rootScope, $window, $rootElement, $log, $modal, DocumentService, FileService, config,
+  function ModalController ($scope, $rootScope, $window, $rootElement, $log, $modal, documentService, fileService, config,
     settings, DateFormat) {
     var vm = this;
 
@@ -29,7 +29,7 @@
      * @return {promise}
      */
     function cacheContacts (documents) {
-      return DocumentService.cacheContactsAndAssignments(documents, 'contacts');
+      return documentService.cacheContactsAndAssignments(documents, 'contacts');
     }
 
     /**
@@ -41,7 +41,7 @@
      * @param {string} mode
      */
     function modalDocument (id, role, mode) {
-      DocumentService.get({ id: id })
+      documentService.get({ id: id })
         .then(function (data) {
           return {
             data: data,
@@ -88,7 +88,7 @@
               return [];
             }
 
-            return FileService.get(data.id, 'civicrm_activity');
+            return fileService.get(data.id, 'civicrm_activity');
           }
         }
       });
