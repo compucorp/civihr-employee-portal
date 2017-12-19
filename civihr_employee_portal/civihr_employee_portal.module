@@ -33,7 +33,9 @@ function civihr_employee_portal_css_alter(&$css) {
 
     _remove_resources($css, $removeFiles);
   } else {
-    _remove_shoreditch_resources($css);
+    if (drupal_get_path_alias() !== 'onboarding-form') {
+      _remove_shoreditch_resources($css);
+    }
   }
 }
 
