@@ -26,6 +26,9 @@
             Report Builder
           </div>
         </div>
+        <div id="report-filters" ng-controller="FiltersController as filters">
+          <?php print render($filters); ?>
+        </div>
         <div id="reportPivotTableConfiguration">
           <form>
             <div class="row">
@@ -68,44 +71,8 @@
             </div>
           </form>
         </div>
-        <div class="row">
-          <div class="report-filters col-md-3">
-            <?php if (!empty($filters)): ?>
-              <div id="report-filters">
-                <?php print render($filters); ?>
-              </div>
-            <?php endif; ?>
-          </div>
-          <div class="report-function col-md-3">
-          </div>
-          <div class="report-columns col-md-6">
-            <table>
-              <tr>
-              </tr>
-            </table>
-          </div>
-        </div>
-        <div class="row">
-        <div class="fields-selection col-md-3">
-            Select fields:
-          <div class="fields-selection-list">
-            <table>
-              <tr>
-              </tr>
-            </table>
-          </div>
-        </div>
-        <div class="report-rows col-md-3">
-          <table>
-            <tr>
-            </tr>
-          </table>
-        </div>
-        <div class="report-area col-md-6">
-        </div>
       </div>
-        <div id="reportPivotTable" class="pvtTable-civi"></div>
-      </div>
+      <div id="reportPivotTable" class="pvtTable-civi"></div>
     <?php endif; ?>
     <?php if (!empty($tableUrl)): ?>
       <div class="report-block view-data pane-content hidden">

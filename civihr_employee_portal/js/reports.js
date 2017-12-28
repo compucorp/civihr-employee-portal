@@ -2,6 +2,7 @@
 
 (function ($) {
   'use strict';
+  var compileAngularElement;
 
   /**
    * Define HRReport object.
@@ -18,6 +19,43 @@
   HRReport.prototype.init = function (options) {
     $.extend(this, options);
     this.processData(this.data);
+    this.originalFilterElement = jQuery('#report-filters').detach();
+  };
+
+  /**
+   * Compiles the filters element into an angular component. This is done for
+   * elements created outside of the Angular cycle (ie: created using jQuery, etc.)
+   */
+  HRReport.prototype.appendFilters = function () {
+    var element = this.originalFilterElement.clone();
+    var filtersContainer = this.pivotTableContainer.find('.report-filters');
+
+    compileAngularElement(element);
+    filtersContainer.empty();
+    element.appendTo(filtersContainer);
+  };
+
+  /**
+   * Creates a new layout for the report elements.
+   */
+  HRReport.prototype.createReportSectionElement = function () {
+    var html = '<div class="report-section">' +
+      '<div class="row report-header-section">' +
+        '<div class="report-filters col-sm-3"></div>' +
+        '<div class="report-function col-sm-2">' +
+          '<div class="report-function-select"></div>' +
+          '<div class="report-function-group"></div>' +
+        '</div>' +
+        '<div class="report-field-columns col-sm-7"><table><tr></tr></table></div>' +
+      '</div>' +
+      '<div class="row report-content-section">' +
+        '<div class="report-fields-selection col-sm-3"><table><tr></tr></table></div>' +
+        '<div class="report-field-rows col-sm-2"><table><tr></tr></table></div>' +
+        '<div class="report-area col-sm-7"></div>' +
+      '</div>' +
+    '</div>';
+
+    this.pivotTableContainer.append(html);
   };
 
   /**
@@ -130,6 +168,37 @@
   };
 
   /**
+   * Moves elements inside the report into a new element.
+   *
+   * @param {String} fromSelector - the path for the source element to move.
+   * @param {String} toSelector - the path for the container element.
+   */
+  HRReport.prototype.moveReportElementFromTo = function (fromSelector, toSelector) {
+    var fromElement = this.pivotTableContainer.find(fromSelector);
+    var toElement = jQuery(toSelector);
+
+    if (!fromElement.length) {
+      return;
+    }
+
+    toElement.empty();
+    fromElement.detach().appendTo(toElement);
+  };
+
+  /**
+   * Move the report original elements into new layout elements.
+   */
+  HRReport.prototype.moveReportElements = function () {
+    this.moveReportElementFromTo('.pvtCols', '.report-field-columns table tr');
+    this.moveReportElementFromTo('.pvtRows', '.report-field-rows table tr');
+    this.moveReportElementFromTo('.pvtUnused', '.report-fields-selection table tr');
+    this.moveReportElementFromTo('.pvtRenderer', '.chart-type-select');
+    this.moveReportElementFromTo('.pvtAggregator', '.report-function-select');
+    this.moveReportElementFromTo('.pvtVals', '.report-function-group');
+    this.moveReportElementFromTo('.pvtRendererArea', '.report-area');
+  };
+
+  /**
    * Do additional required operations on data returned from backend.
    *
    * @param array data
@@ -148,30 +217,21 @@
   };
 
   /**
-   * Update the pivot table dropdown and filter box
-   *
+   * Updates the layout of the pivot tablet and form element styles.
    */
   HRReport.prototype.updateCustomTemplate = function () {
-    this.moveReportElementFromTo('.pvtRenderer', '.chart-type-select');
-    this.moveReportElementFromTo('.pvtAggregator', '.report-function');
-    this.moveReportElementFromTo('.pvtCols', '.report-columns table tr');
-    this.moveReportElementFromTo('.pvtRows', '.report-rows table tr');
-    this.moveReportElementFromTo('.pvtUnused', '.fields-selection-list table tr');
-    this.moveReportElementFromTo('.pvtRendererArea', '.report-area');
-    this.updateDropdown();
-    this.updateFilterbox();
-  };
+    var hasReportSectionElement = this.pivotTableContainer.find('.report-section').length;
 
-  HRReport.prototype.moveReportElementFromTo = function (fromSelector, toSelector) {
-    var fromElement = this.pivotTableContainer.find(fromSelector);
-    var toElement = jQuery(toSelector);
-
-    if (!fromElement.length) {
+    if (hasReportSectionElement) {
       return;
     }
 
-    toElement.empty();
-    fromElement.detach().appendTo(toElement);
+    this.createReportSectionElement();
+    this.moveReportElements();
+    this.appendFilters();
+    this.bindFilters();
+    this.updateDropdown();
+    this.updateFilterbox();
   };
 
   /**
@@ -300,7 +360,6 @@
    */
   HRReport.prototype.show = function () {
     this.initPivotTable();
-    this.bindFilters();
     this.applyFilters();
   };
 
@@ -421,7 +480,7 @@
       return;
     }
 
-    CRM.$('#report-filters input[type="submit"]').bind('click', function (e) {
+    CRM.$('.report-filters input[type="submit"]').bind('click', function (e) {
       e.preventDefault();
       that.applyFilters();
     });
@@ -429,7 +488,7 @@
 
   HRReport.prototype.applyFilters = function () {
     var that = this;
-    var formSerialize = CRM.$('#report-filters form:first').serializeArray();
+    var formSerialize = CRM.$('.report-filters form:first').serializeArray();
 
     formSerialize.map(function (input) {
       input.value = that.formatDate(input.value, 'DD/MM/YYYY', 'YYYY-MM-DD');
@@ -666,6 +725,15 @@
         'ui.bootstrap',
         'common.angularDate'
       ])
+      .run(['$compile', '$rootScope', function ($compile, $rootScope) {
+        compileAngularElement = function (html) {
+          var element = angular.element(html);
+          var scope = $rootScope.$new();
+
+          $compile(element)(scope);
+          return element;
+        };
+      }])
       .directive('uibDatepickerPopupWrap', function sectionDirective () {
         return ({
           link: function (scope, element, attributes) {
@@ -683,7 +751,7 @@
         this.isCollapsed = true;
       });
 
-      angular.bootstrap(document.getElementById('civihrReports'), ['civihrReports']);
+      angular.bootstrap(jQuery('#civihrReports')[0], ['civihrReports']);
     });
   };
 
