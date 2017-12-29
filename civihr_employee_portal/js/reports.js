@@ -222,14 +222,13 @@
   HRReport.prototype.updateCustomTemplate = function () {
     var hasReportSectionElement = this.pivotTableContainer.find('.report-section').length;
 
-    if (hasReportSectionElement) {
-      return;
+    if (!hasReportSectionElement) {
+      this.createReportSectionElement();
+      this.moveReportElements();
+      this.appendFilters();
+      this.bindFilters();
     }
 
-    this.createReportSectionElement();
-    this.moveReportElements();
-    this.appendFilters();
-    this.bindFilters();
     this.updateDropdown();
     this.updateFilterbox();
   };
@@ -239,7 +238,7 @@
    *
    */
   HRReport.prototype.updateDropdown = function () {
-    $('.pvtUi select').each(function () {
+    $('.report-content select').each(function () {
       var selectClass = 'crm_custom-select crm_custom-select--full';
 
       if (!$(this).parent().hasClass('crm_custom-select')) {
