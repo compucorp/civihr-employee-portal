@@ -162,7 +162,6 @@ span.appraisals-employee-legend {
 }
 
 #reportPivotTableConfiguration {
-  border-bottom: 1px solid #ddd;
   padding: 10px 10px;
   margin-top: 12px;
 }
@@ -179,6 +178,68 @@ span.appraisals-employee-legend {
 
 .view-id-hr_resource_types_list .add-button-icon {
   margin-right: 10px;
+}
+
+#reportPivotTable .report-filters, .report-function {
+  position: relative;
+}
+
+#reportPivotTable .report-filters:before {
+  border: 1px solid #c3cbd6;
+  content: '';
+  display: block;
+  height: 100%;
+  left: 15px;
+  position: absolute;
+  top: 0;
+  width: calc(100% - 30px);
+}
+
+#reportPivotTable .report-function {
+  padding-top: 20px;
+}
+
+#civihrReports .report-block, .report-filters:before, .report-function,
+#reportPivotTable .pvtAxisContainer {
+  border: 1px solid #c3cbd6;
+}
+
+#reportPivotTable .row {
+  display: table;
+  margin-bottom: 15px;
+}
+
+#reportPivotTable .row:last-child {
+  margin-bottom: 0;
+}
+
+#reportPivotTable .row > [class*="col-"] {
+  display: table-cell;
+  float: none;
+  vertical-align: top;
+}
+
+#reportPivotTable .report-field-columns {
+  position: relative;
+}
+
+#reportPivotTable .report-field-columns table {
+  bottom: 0;
+  min-height: 80px;
+  position: absolute;
+  width: calc(100% - 30px);
+}
+
+#reportPivotTable .report-field-rows {
+  padding: 0;
+}
+
+#reportPivotTable .report-field-rows table {
+  min-height: 80px;
+}
+
+#reportPivotTable .pvtRendererArea {
+  padding: 0;
 }
 
 #footer {
