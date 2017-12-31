@@ -230,6 +230,29 @@ span.appraisals-employee-legend {
   width: calc(100% - 30px);
 }
 
+#reportPivotTable .report-fields-selection table li {
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+#reportPivotTable .report-fields-selection table li span.pvtAttr,
+#reportPivotTable .report-field-rows table li span.pvtAttr {
+  height: auto;
+  line-height: 1.2em;
+  padding: 8px 20px 8px 15px;
+  padding-right: 20px;
+  position: relative;
+  white-space: normal;
+  width: 100%;
+}
+
+#reportPivotTable .report-fields-selection table li span.pvtTriangle,
+#reportPivotTable .report-field-rows table li span.pvtTriangle {
+  position: absolute;
+  top: calc(50% - 1px);
+  right: 10px;
+}
+
 #reportPivotTable .report-field-rows {
   padding: 0;
 }
