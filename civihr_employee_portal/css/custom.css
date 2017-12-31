@@ -193,6 +193,16 @@ span.appraisals-employee-legend {
   position: absolute;
   top: 0;
   width: calc(100% - 30px);
+  z-index: 0;
+}
+
+#reportPivotTable .report-filters #report-filters {
+  position: relative;
+  z-index: 1;
+}
+
+#reportPivotTable .report-filters .panel-body {
+  background: none;
 }
 
 #reportPivotTable .report-function {
