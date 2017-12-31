@@ -180,8 +180,17 @@ span.appraisals-employee-legend {
   margin-right: 10px;
 }
 
-#reportPivotTable .report-filters, .report-function {
+#reportPivotTable .report-filters, #reportPivotTable .report-function {
   position: relative;
+}
+
+#reportPivotTable .report-function-group .pvtVals {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#reportPivotTable .report-function-group .pvtAttrDropdown {
+  margin-top: 0;
 }
 
 #reportPivotTable .report-filters:before {
