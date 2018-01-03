@@ -8,7 +8,8 @@ and open the template in the editor.
     Author     : gergelymeszaros
 */
 
-.view-absence-list .views-field, .view-absence-list th {
+.view-absence-list .views-field,
+.view-absence-list th {
   width: 15%;
 }
 
@@ -34,7 +35,8 @@ and open the template in the editor.
   }
 }
 
-.table-up, .table-down {
+.table-up,
+.table-down {
   color: #007;
   cursor: pointer;
 
@@ -180,7 +182,8 @@ span.appraisals-employee-legend {
   margin-right: 10px;
 }
 
-#reportPivotTable .report-filters, #reportPivotTable .report-function {
+#reportPivotTable .report-filters,
+#reportPivotTable .report-function {
   position: relative;
 }
 
@@ -206,7 +209,8 @@ span.appraisals-employee-legend {
   padding-top: 20px;
 }
 
-#civihrReports .report-block, .report-filters:before, .report-function,
+#civihrReports .report-block,
+#reportPivotTable .report-function,
 #reportPivotTable #report-filters,
 #reportPivotTable .report-fields-selection table,
 #reportPivotTable .report-field-rows table,
