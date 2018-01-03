@@ -318,6 +318,14 @@ span.appraisals-employee-legend {
   padding: 0;
 }
 
+#reportPivotTable [uib-datepicker-popup-wrap] table {
+  margin: 0;
+}
+
+#reportPivotTable table.uib-daypicker tbody td {
+  padding: 7px 0;
+}
+
 #footer {
   height: 250px;
   color: #727e8a;
