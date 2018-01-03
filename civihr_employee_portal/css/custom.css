@@ -193,18 +193,6 @@ span.appraisals-employee-legend {
   margin-top: 0;
 }
 
-#reportPivotTable .report-filters:before {
-  border: 1px solid #c3cbd6;
-  content: '';
-  display: block;
-  height: 100%;
-  left: 15px;
-  position: absolute;
-  top: 0;
-  width: calc(100% - 30px);
-  z-index: 0;
-}
-
 #reportPivotTable .report-filters #report-filters {
   position: relative;
   z-index: 1;
@@ -219,6 +207,7 @@ span.appraisals-employee-legend {
 }
 
 #civihrReports .report-block, .report-filters:before, .report-function,
+#reportPivotTable #report-filters,
 #reportPivotTable .report-fields-selection table,
 #reportPivotTable .report-field-rows table,
 #reportPivotTable .report-field-columns table {
