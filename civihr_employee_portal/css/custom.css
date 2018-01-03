@@ -272,8 +272,8 @@ span.appraisals-employee-legend {
   display: block;
   width: 100%;
   max-height: 50vh;
-  overflow-x: hidden;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 #reportPivotTable .report-fields-selection table li {
@@ -286,10 +286,9 @@ span.appraisals-employee-legend {
   height: auto;
   line-height: 1.2em;
   padding: 8px 20px 8px 15px;
-  padding-right: 20px;
   position: relative;
   white-space: normal;
-  width: 100%;
+  width: inherit;
 }
 
 #reportPivotTable .report-fields-selection table li span.pvtTriangle,
@@ -299,16 +298,13 @@ span.appraisals-employee-legend {
   right: 10px;
 }
 
-#reportPivotTable .report-field-rows {
+#reportPivotTable .report-field-rows,
+#reportPivotTable .pvtRendererArea {
   padding: 0;
 }
 
 #reportPivotTable .report-field-rows table {
   min-height: 50vh;
-}
-
-#reportPivotTable .pvtRendererArea {
-  padding: 0;
 }
 
 #reportPivotTable [uib-datepicker-popup-wrap] table {
