@@ -223,6 +223,26 @@ span.appraisals-employee-legend {
   border: 1px solid #c3cbd6;
 }
 
+#reportPivotTable .pvtAxisContainer.highlight {
+  background: #fbfbfc;
+  border-width: 2px;
+}
+
+#reportPivotTable .pvtAxisContainer::after {
+  content: 'Drop here';
+  line-height: 33px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+#reportPivotTable .pvtAxisContainer.highlight::after {
+  opacity: 1;
+}
+
+#reportPivotTable .pvtAxisContainer.highlight .drop-here-message {
+  content: 'Drop Here';
+}
+
 #reportPivotTable .row {
   display: table;
   margin-bottom: 15px;

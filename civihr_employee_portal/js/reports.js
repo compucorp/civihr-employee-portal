@@ -168,6 +168,23 @@
   };
 
   /**
+   * Highlights droppable containers when report fields are dragged
+   */
+  HRReport.prototype.highlightDroppableContainersOnFieldsDrag = function () {
+    var draggableItems = this.pivotTableContainer.find('.report-fields-selection .pvtAxisContainer');
+    var droppableContainers = this.pivotTableContainer.find('.report-field-columns .pvtAxisContainer, .report-field-rows .pvtAxisContainer');
+    var highlightClass = 'highlight';
+
+    draggableItems.on('sortstart', function () {
+      droppableContainers.addClass(highlightClass);
+    });
+
+    draggableItems.on('sortstop', function () {
+      droppableContainers.removeClass(highlightClass);
+    });
+  };
+
+  /**
    * Moves elements inside the report into a new element.
    *
    * @param {String} fromSelector - the path for the source element to move.
@@ -237,6 +254,7 @@
       this.moveReportElements();
       this.appendFilters();
       this.bindFilters();
+      this.highlightDroppableContainersOnFieldsDrag();
     }
 
     this.updateDropdown();
