@@ -300,7 +300,7 @@ span.appraisals-employee-legend {
 }
 
 #reportPivotTable .report-field-rows table {
-  min-height: 80px;
+  min-height: 50vh;
 }
 
 #reportPivotTable .pvtRendererArea {

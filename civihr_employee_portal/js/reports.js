@@ -203,16 +203,6 @@
   };
 
   /**
-   * Make the report field rows container at least the same height as the field
-   * selection.
-   */
-  HRReport.prototype.makeReportFieldRowsContainerFullHeight = function () {
-    var fullHeight = this.pivotTableContainer.find('.report-fields-selection table').height();
-
-    this.pivotTableContainer.find('.report-field-rows table').css('min-height', fullHeight);
-  };
-
-  /**
    * Move the report original elements into new layout elements.
    */
   HRReport.prototype.moveReportElements = function () {
@@ -259,7 +249,6 @@
 
     this.updateDropdown();
     this.updateFilterbox();
-    this.makeReportFieldRowsContainerFullHeight();
   };
 
   /**
