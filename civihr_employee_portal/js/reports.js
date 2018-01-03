@@ -19,7 +19,7 @@
   HRReport.prototype.init = function (options) {
     $.extend(this, options);
     this.processData(this.data);
-    this.originalFilterElement = jQuery('#report-filters').detach();
+    this.originalFilterElement = $('#report-filters').detach();
   };
 
   /**
@@ -192,7 +192,7 @@
    */
   HRReport.prototype.moveReportElementFromTo = function (fromSelector, toSelector) {
     var fromElement = this.pivotTableContainer.find(fromSelector);
-    var toElement = jQuery(toSelector);
+    var toElement = $(toSelector);
 
     if (!fromElement.length) {
       return;
@@ -768,7 +768,7 @@
         this.isCollapsed = true;
       });
 
-      angular.bootstrap(jQuery('#civihrReports')[0], ['civihrReports']);
+      angular.bootstrap($('#civihrReports')[0], ['civihrReports']);
     });
   };
 
