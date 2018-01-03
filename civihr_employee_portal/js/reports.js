@@ -234,7 +234,7 @@
   };
 
   /**
-   * Updates the layout of the pivot tablet and form element styles.
+   * Updates the layout of the pivot table and form element styles.
    */
   HRReport.prototype.updateCustomTemplate = function () {
     var hasReportSectionElement = this.pivotTableContainer.find('.report-section').length;
