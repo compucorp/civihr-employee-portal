@@ -65,7 +65,7 @@
     var that = this;
     this.pivotTableContainer.pivotUI(this.data, {
       rendererName: 'Table',
-      renderers: CRM.$.extend(
+      renderers: $.extend(
         jQuery.pivotUtilities.renderers,
         jQuery.pivotUtilities.c3_renderers,
         jQuery.pivotUtilities.export_renderers
@@ -402,7 +402,7 @@
     if (!this.jsonUrl) {
       return;
     }
-    CRM.$.ajax({
+    $.ajax({
       url: this.jsonUrl + filterValues,
       error: function () {
         console.log('Error refreshing Report JSON data.');
@@ -413,7 +413,7 @@
         that.data = data;
         that.pivotTableContainer.pivotUI(data, {
           rendererName: 'Table',
-          renderers: CRM.$.extend(
+          renderers: $.extend(
             jQuery.pivotUtilities.renderers,
             jQuery.pivotUtilities.c3_renderers
           ),
@@ -441,7 +441,7 @@
       return;
     }
     var tableDomId = this.getReportTableDomID();
-    CRM.$.ajax({
+    $.ajax({
       url: that.tableUrl + filterValues,
       error: function () {
         console.log('Error refreshing Report data table.');
@@ -459,7 +459,7 @@
    * Return unique Drupal View's DOM ID of data table
    */
   HRReport.prototype.getReportTableDomID = function () {
-    var reportTableDiv = CRM.$('#reportTable > div.view:first');
+    var reportTableDiv = $('#reportTable > div.view:first');
     var reportTableClasses = reportTableDiv.attr('class').split(' ');
     for (var i in reportTableClasses) {
       if (reportTableClasses[i].substring(0, 12) === 'view-dom-id-') {
@@ -497,7 +497,7 @@
       return;
     }
 
-    CRM.$('.report-filters input[type="submit"]').bind('click', function (e) {
+    $('.report-filters input[type="submit"]').bind('click', function (e) {
       e.preventDefault();
       that.applyFilters();
     });
@@ -505,13 +505,13 @@
 
   HRReport.prototype.applyFilters = function () {
     var that = this;
-    var formSerialize = CRM.$('.report-filters form:first').serializeArray();
+    var formSerialize = $('.report-filters form:first').serializeArray();
 
     formSerialize.map(function (input) {
       input.value = that.formatDate(input.value, 'DD/MM/YYYY', 'YYYY-MM-DD');
     });
 
-    formSerialize = CRM.$.param(formSerialize);
+    formSerialize = $.param(formSerialize);
 
     if (that.jsonUrl) {
       that.refreshJson('?' + formSerialize);
@@ -551,7 +551,7 @@
       return false;
     }
 
-    CRM.$.ajax({
+    $.ajax({
       url: '/reports/' + that.reportName + '/configuration/' + configId,
       error: function () {
         swal('Failed', 'Error loading Report configuration!', 'error');
@@ -627,7 +627,7 @@
     var that = this;
     var reportName = this.reportName;
 
-    CRM.$.ajax({
+    $.ajax({
       url: '/reports/' + reportName + '/configuration/' + configId + '/save',
       data: {
         label: configName,
@@ -640,20 +640,20 @@
         if (data.status === 'success') {
           // Update select with new option if we saved a new configuration:
           if (data['id']) {
-            CRM.$('.report-config-select').append('<option value="' + data['id'] + '">' + data['label'] + '</option>');
+            $('.report-config-select').append('<option value="' + data['id'] + '">' + data['label'] + '</option>');
             // Sort options by their labels alphabetically.
-            CRM.$('.report-config-select').append(CRM.$('.report-config-select option').remove().sort(function (a, b) {
+            $('.report-config-select').append($('.report-config-select option').remove().sort(function (a, b) {
               var aText = $(a).text();
               var bText = $(b).text();
 
               return (aText > bText) ? 1 : ((aText < bText) ? -1 : 0);
             }));
-            CRM.$('.report-config-select').val(data['id']);
+            $('.report-config-select').val(data['id']);
           }
           swal('Success', 'Report configuration has been saved', 'success');
         } else if (data.status === 'already_exists') {
           // If there is already a configuration with this label then we ask for overwriting it.
-          CRM.$('.report-config-select').val(data['id']);
+          $('.report-config-select').val(data['id']);
           that.configSave('Configuration with this name already exists. Do you want to modify it?');
         } else {
           swal('Failed', 'Error saving Report configuration!', 'error');
@@ -683,14 +683,14 @@
       confirmButtonText: 'Yes',
       closeOnConfirm: false
     }, function () {
-      CRM.$.ajax({
+      $.ajax({
         url: '/reports/' + reportName + '/configuration/' + configId + '/delete',
         error: function () {
           swal('Failed', 'Error deleting Report configuration!', 'error');
         },
         success: function (data) {
           if (data.status === 'success') {
-            CRM.$('.report-config-select option[value=' + configId + ']').remove();
+            $('.report-config-select option[value=' + configId + ']').remove();
             swal('Success', 'Report configuration has been deleted', 'success');
           } else {
             swal('Failed', 'Error deleting Report configuration!', 'error');
@@ -707,7 +707,7 @@
    * @returns {Integer}
    */
   HRReport.prototype.getReportConfigurationId = function () {
-    return CRM.$('.report-config-select').val();
+    return $('.report-config-select').val();
   };
 
   /**
@@ -783,26 +783,26 @@
       this.instance.initAngular();
 
       // Tabs bindings
-      CRM.$('.report-tabs a').bind('click', function (e) {
-        CRM.$('.report-tabs li').removeClass('active');
-        CRM.$(this).parent().addClass('active');
-        CRM.$('.report-block').addClass('hidden');
-        CRM.$('.report-block.' + CRM.$(this).data('tab')).removeClass('hidden');
+      $('.report-tabs a').bind('click', function (e) {
+        $('.report-tabs li').removeClass('active');
+        $(this).parent().addClass('active');
+        $('.report-block').addClass('hidden');
+        $('.report-block.' + $(this).data('tab')).removeClass('hidden');
       });
 
       switchTabsOnLoad();
 
       // Reports configuration bindings
-      CRM.$('.report-config-select').bind('change', function (e) {
+      $('.report-config-select').bind('change', function (e) {
         that.instance.configGet();
       });
-      CRM.$('.report-config-save-btn').bind('click', function (e) {
+      $('.report-config-save-btn').bind('click', function (e) {
         that.instance.configSave();
       });
-      CRM.$('.report-config-save-new-btn').bind('click', function (e) {
+      $('.report-config-save-new-btn').bind('click', function (e) {
         that.instance.configSaveNew();
       });
-      CRM.$('.report-config-delete-btn').bind('click', function (e) {
+      $('.report-config-delete-btn').bind('click', function (e) {
         that.instance.configDelete();
       });
 
@@ -815,7 +815,7 @@
 
         hash ? tabSelector += '[data-tab="' + hash.substr(1) + '"]' : tabSelector += ':first';
 
-        CRM.$(tabSelector).click();
+        $(tabSelector).click();
       }
     }
   };
