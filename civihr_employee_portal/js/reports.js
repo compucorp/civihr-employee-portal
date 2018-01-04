@@ -42,7 +42,8 @@
     var html = '<div class="report-section">' +
       '<div class="row report-header-section">' +
         '<div class="report-filters col-sm-3"></div>' +
-        '<div class="report-function col-sm-2">' +
+        '<div class="report-function col-sm-2 form-group">' +
+          '<label>Chart Functions</label>' +
           '<div class="report-function-select"></div>' +
           '<div class="report-function-group"></div>' +
         '</div>' +

@@ -31,9 +31,9 @@
         </div>
         <div id="reportPivotTableConfiguration">
           <form>
-            <div class="row">
+            <div class="row form-group">
               <div class="col-md-2">
-                <div>Configuration</div>
+                <label>Configuration</label>
               </div>
               <div class="col-md-5">
                 <div class="crm_custom-select">
@@ -62,9 +62,9 @@
                 <?php endif; ?>
               </div>
             </div>
-            <div class="row">
+            <div class="row form-group">
               <div class="col-md-2">
-                Chart Type
+                <label>Chart Type</label>
               </div>
               <div class="chart-type-select col-md-5">
               </div>
