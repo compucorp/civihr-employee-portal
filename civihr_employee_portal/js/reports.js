@@ -796,45 +796,43 @@
   Drupal.behaviors.civihr_employee_portal_reports = {
     instance: null,
     attach: function (context, settings) {
-      var that = this;
       this.instance = new HRReport();
       this.instance.initAngular();
-
-      // Tabs bindings
+      this.bindReportConfigurationEvents();
+      this.bindTabsEvents();
+      this.switchToTabSpecifiedOnTheUrl();
+    },
+    bindReportConfigurationEvents: function () {
       $('.report-tabs a').bind('click', function (e) {
         $('.report-tabs li').removeClass('active');
         $(this).parent().addClass('active');
         $('.report-block').addClass('hidden');
         $('.report-block.' + $(this).data('tab')).removeClass('hidden');
       });
+    },
+    bindTabsEvents: function () {
+      var self = this;
 
-      switchTabsOnLoad();
-
-      // Reports configuration bindings
       $('.report-config-select').bind('change', function (e) {
-        that.instance.configGet();
+        self.instance.configGet();
       });
       $('.report-config-save-btn').bind('click', function (e) {
-        that.instance.configSave();
+        self.instance.configSave();
       });
       $('.report-config-save-new-btn').bind('click', function (e) {
-        that.instance.configSaveNew();
+        self.instance.configSaveNew();
       });
       $('.report-config-delete-btn').bind('click', function (e) {
-        that.instance.configDelete();
+        self.instance.configDelete();
       });
+    },
+    switchToTabSpecifiedOnTheUrl: function () {
+      var tabSelector = '.report-tabs a';
+      var hash = window.location.hash;
 
-      /**
-       * Switch to correct tab, on page load
-       */
-      function switchTabsOnLoad () {
-        var tabSelector = '.report-tabs a';
-        var hash = window.location.hash;
+      hash ? tabSelector += '[data-tab="' + hash.substr(1) + '"]' : tabSelector += ':first';
 
-        hash ? tabSelector += '[data-tab="' + hash.substr(1) + '"]' : tabSelector += ':first';
-
-        $(tabSelector).click();
-      }
+      $(tabSelector).click();
     }
   };
 })(jQuery);
