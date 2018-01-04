@@ -15,14 +15,14 @@ function civihr_employee_portal_features_views_default_views() {
   $view->description = '';
   $view->tag = 'default';
   $view->base_table = 'civicrm_contact';
-  $view->human_name = 'CiviHR Report - Leave and Absence';
+  $view->human_name = 'Leave Reports';
   $view->core = 7;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'CiviHR Report - Leave and Absence';
+  $handler->display->display_options['title'] = 'Leave Reports';
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'perm';
   $handler->display->display_options['access']['perm'] = 'access hrreports';
@@ -382,12 +382,11 @@ function civihr_employee_portal_features_views_default_views() {
   $handler->display->display_options['fields']['absence_type']['field'] = 'absence_type';
   $handler->display->display_options['fields']['absence_type']['relationship'] = 'absence_activity';
   $handler->display->display_options['fields']['absence_type']['label'] = 'Absence type';
-  /* Field: Absence Activity entity: Sickness Reason */
+  /* Field: Absence Activity entity: Sickness reason */
   $handler->display->display_options['fields']['sickness_reason']['id'] = 'absence_type';
   $handler->display->display_options['fields']['sickness_reason']['table'] = 'absence_activity';
   $handler->display->display_options['fields']['sickness_reason']['field'] = 'sickness_reason';
   $handler->display->display_options['fields']['sickness_reason']['relationship'] = 'absence_activity';
-  $handler->display->display_options['fields']['sickness_reason']['label'] = 'Sickness reason';
   /* Field: Absence Activity entity: Absence status */
   $handler->display->display_options['fields']['absence_status']['id'] = 'absence_status';
   $handler->display->display_options['fields']['absence_status']['table'] = 'absence_activity';
@@ -931,7 +930,7 @@ function civihr_employee_portal_features_views_default_views() {
   $handler->display->display_options['path'] = 'civihr_report_export_leave_and_absence';
   $translatables['civihr_report_leave_and_absence'] = array(
     t('Master'),
-    t('CiviHR Report - Leave and Absence'),
+    t('Leave Reports'),
     t('more'),
     t('Apply'),
     t('Reset'),
@@ -1027,14 +1026,14 @@ function civihr_employee_portal_features_views_default_views() {
   $view->description = '';
   $view->tag = 'default';
   $view->base_table = 'civicrm_contact';
-  $view->human_name = 'CiviHR Report - People';
+  $view->human_name = 'People Reports';
   $view->core = 7;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'CiviHR Report - People';
+  $handler->display->display_options['title'] = 'People Reports';
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'perm';
   $handler->display->display_options['access']['perm'] = 'access hrreports';
@@ -1871,7 +1870,7 @@ return date(\'Y-m-d\');';
   $handler->display->display_options['path'] = 'civihr_report_export_people';
   $translatables['civihr_report_people'] = array(
     t('Master'),
-    t('CiviHR Report - People'),
+    t('People Reports'),
     t('more'),
     t('Apply'),
     t('Reset'),

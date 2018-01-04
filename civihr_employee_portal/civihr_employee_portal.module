@@ -5442,6 +5442,8 @@ function civihr_employee_portal_hrreport_custom($reportName) {
   ];
   $filters = drupal_build_form('views_exposed_form', $form_state);
 
+  drupal_set_title($view->human_name);
+
   return theme('civihr_employee_portal_civihr_report_custom', [
     'reportName' => $reportName,
     'configurationList' => civihr_employee_portal_get_report_configuration_list($reportName),

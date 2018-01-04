@@ -22,8 +22,8 @@ function civihr_employee_portal_features_default_rules_configuration() {
             "active" : "1",
             "from_mail" : "[site:mail]",
             "subject" : "Employee Access Request",
-            "body" : "User [current-user:contact_display_name] with username: [current-user:name] ([current-user:mail]) has requested access to your CiviHR Self Service Portal.\\r\\n<a href = \'[site:url]admin/people\'>Please login to activate this account and assign appropriate access level</a>.",
-            "plaintext" : "User [current-user:contact_display_name] with username: [current-user:name] ([current-user:mail]) has requested access to your CiviHR Self Service Portal.\\r\\n<a href = \'[site:url]admin/people\'>Please login to activate this account and assign appropriate access level</a>.",
+            "body" : "User [current-user:contact_display_name] with username: [current-user:name] ([current-user:mail]) has requested access to your CiviHR Self Service Portal.\\r\\n\\u003Ca href = \\u0027[site:url]admin\\/people\\u0027\\u003EPlease login to activate this account and assign appropriate access level\\u003C\\/a\\u003E.",
+            "plaintext" : "User [current-user:contact_display_name] with username: [current-user:name] ([current-user:mail]) has requested access to your CiviHR Self Service Portal.\\r\\n\\u003Ca href = \\u0027[site:url]admin\\/people\\u0027\\u003EPlease login to activate this account and assign appropriate access level\\u003C\\/a\\u003E.",
             "language_user" : "1",
             "language" : [ "current-user:language" ]
           }

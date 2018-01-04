@@ -22,20 +22,20 @@ function civihr_employee_portal_features_default_fe_block_settings() {
     'roles' => array(),
     'themes' => array(
       'bartik' => array(
-        'region' => 'content',
-        'status' => 1,
+        'region' => '',
+        'status' => 0,
         'theme' => 'bartik',
         'weight' => 1,
       ),
       'civihr_default_theme' => array(
-        'region' => 'content',
-        'status' => 1,
+        'region' => '',
+        'status' => 0,
         'theme' => 'civihr_default_theme',
         'weight' => 1,
       ),
       'seven' => array(
-        'region' => 'content',
-        'status' => 1,
+        'region' => '',
+        'status' => 0,
         'theme' => 'seven',
         'weight' => 1,
       ),
