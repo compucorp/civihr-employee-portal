@@ -227,23 +227,12 @@ span.appraisals-employee-legend {
   border: none;
 }
 
-#reportPivotTable .highlight {
+#reportPivotTable .pvtAxisContainer {
+  transition: background 0.4s ease;
+}
+
+#reportPivotTable .pvtAxisContainer.highlight {
   background: #fbfbfc;
-}
-
-#reportPivotTable .pvtAxisContainer::after {
-  content: 'Drop here';
-  line-height: 33px;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-#reportPivotTable .pvtAxisContainer.highlight::after {
-  opacity: 1;
-}
-
-#reportPivotTable .pvtAxisContainer.highlight .drop-here-message {
-  content: 'Drop Here';
 }
 
 #reportPivotTable .row {

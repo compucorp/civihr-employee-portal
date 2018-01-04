@@ -23,6 +23,17 @@
   };
 
   /**
+   * Appends drag and drop instructions for the field rows and columns.
+   */
+  HRReport.prototype.appendFieldsDraggingInstructions = function () {
+    var columnsMessage = 'Drag and drop a field here from the list on the left to add as a column heading / horizontal axis in the report.';
+    var rowsMessage = 'Drag and drop a field here from the list on the left to add as a row heading / vertical axis in the report.';
+
+    $('.report-field-columns .pvtAxisContainer').append('<p class="instructions">' + columnsMessage + '</p>');
+    $('.report-field-rows .pvtAxisContainer').append('<p class="instructions">' + rowsMessage + '</p>');
+  };
+
+  /**
    * Compiles the filters element into an angular component. This is done for
    * elements created outside of the Angular cycle (ie: created using jQuery, etc.)
    */
@@ -169,23 +180,6 @@
   };
 
   /**
-   * Highlights droppable containers when report fields are dragged
-   */
-  HRReport.prototype.highlightDroppableContainersOnFieldsDrag = function () {
-    var draggableItems = this.pivotTableContainer.find('.report-fields-selection .pvtAxisContainer');
-    var droppableContainers = this.pivotTableContainer.find('.report-field-columns .pvtAxisContainer, .report-field-rows .pvtAxisContainer');
-    var highlightClass = 'highlight';
-
-    draggableItems.on('sortstart', function () {
-      droppableContainers.addClass(highlightClass);
-    });
-
-    draggableItems.on('sortstop', function () {
-      droppableContainers.removeClass(highlightClass);
-    });
-  };
-
-  /**
    * Moves elements inside the report into a new element.
    *
    * @param {String} fromSelector - the path for the source element to move.
@@ -245,7 +239,8 @@
       this.moveReportElements();
       this.appendFilters();
       this.bindFilters();
-      this.highlightDroppableContainersOnFieldsDrag();
+      this.appendFieldsDraggingInstructions();
+      this.bindDragAndDropEventListeners();
     }
 
     this.updateDropdown();
@@ -486,6 +481,28 @@
     viewReportDataTableSettings.view_dom_id = viewReportDataTableNewId;
     Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableNewId] = viewReportDataTableSettings;
     Drupal.views.instances['views_dom_id:' + viewReportDataTableNewId] = new AjaxViews(Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableNewId]);
+  };
+
+  /**
+   * Binds drag and drop event listeners for the field containers. These are
+   * used for highlighting the droppable containers and removing instructions
+   * once a field is dropped in a column or row container.
+   */
+  HRReport.prototype.bindDragAndDropEventListeners = function () {
+    var draggableItems = this.pivotTableContainer.find('.report-fields-selection .pvtAxisContainer');
+    var droppableContainers = this.pivotTableContainer.find('.report-field-columns .pvtAxisContainer, .report-field-rows .pvtAxisContainer');
+    var highlightClass = 'highlight';
+
+    draggableItems.on('sortstart', function () {
+      droppableContainers.addClass(highlightClass);
+    });
+
+    draggableItems.on('sortstop', function (event) {
+      var targetContainer = $(event.toElement).parents('.pvtAxisContainer');
+
+      droppableContainers.removeClass(highlightClass);
+      targetContainer.find('.instructions').slideUp();
+    });
   };
 
   /**
