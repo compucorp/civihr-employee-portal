@@ -33,7 +33,7 @@
           <form>
             <div class="row form-group">
               <div class="col-md-2">
-                <label>Configuration</label>
+                <label>Select existing report:</label>
               </div>
               <div class="col-md-5">
                 <div class="crm_custom-select">
