@@ -489,7 +489,7 @@
    * once a field is dropped in a column or row container.
    */
   HRReport.prototype.bindDragAndDropEventListeners = function () {
-    var draggableItems = this.pivotTableContainer.find('.report-fields-selection .pvtAxisContainer');
+    var draggableItems = this.pivotTableContainer.find('.report-fields-selection .pvtAxisContainer, .report-field-columns .pvtAxisContainer, .report-field-rows .pvtAxisContainer');
     var droppableContainers = this.pivotTableContainer.find('.report-field-columns .pvtAxisContainer, .report-field-rows .pvtAxisContainer');
     var highlightClass = 'highlight';
 
