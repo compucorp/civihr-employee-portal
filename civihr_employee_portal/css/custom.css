@@ -168,7 +168,7 @@ span.appraisals-employee-legend {
 }
 
 #reportPivotTableConfiguration {
-  padding: 10px 10px;
+  padding: 10px 20px;
   margin-top: 12px;
 }
 
@@ -176,6 +176,10 @@ span.appraisals-employee-legend {
   display: inline-block;
   vertical-align: middle;
   padding-left: 10px;
+}
+
+#reportPivotTableConfiguration .crm_custom-select {
+  width: 100%;
 }
 
 .view-id-hr_resource_types_list .add-button {
