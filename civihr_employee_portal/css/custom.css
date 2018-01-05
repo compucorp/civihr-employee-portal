@@ -285,7 +285,7 @@ span.appraisals-employee-legend {
   padding: 8px 20px 8px 15px;
   position: relative;
   white-space: normal;
-  width: inherit;
+  width: 100%;
 }
 
 #reportPivotTable .report-fields-selection table li span.pvtTriangle,
