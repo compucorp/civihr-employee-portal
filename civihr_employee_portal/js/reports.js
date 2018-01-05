@@ -814,7 +814,7 @@
       this.bindReportConfigurationEvents();
       this.bindTabsEvents();
       this.switchToTabSpecifiedOnTheUrl();
-      this.displayConfigurationOptionsAccordingToAvailableConfigurations();
+      this.displayConfigurationOptionsIfConfigurationsHaveBeenSaved();
     },
     bindReportConfigurationEvents: function () {
       $('.report-tabs a').bind('click', function (e) {
@@ -824,7 +824,7 @@
         $('.report-block.' + $(this).data('tab')).removeClass('hidden');
       });
     },
-    displayConfigurationOptionsAccordingToAvailableConfigurations: function () {
+    displayConfigurationOptionsIfConfigurationsHaveBeenSaved: function () {
       var deleteOption, hasSavedConfigurations, updateOption;
 
       deleteOption = $('.report-config-delete-btn');
@@ -850,12 +850,12 @@
       });
       $('.report-config-save-new-btn').bind('click', function (e) {
         self.instance.configSaveNew(function () {
-          self.displayConfigurationOptionsAccordingToAvailableConfigurations();
+          self.displayConfigurationOptionsIfConfigurationsHaveBeenSaved();
         });
       });
       $('.report-config-delete-btn').bind('click', function (e) {
         self.instance.configDelete(function () {
-          self.displayConfigurationOptionsAccordingToAvailableConfigurations();
+          self.displayConfigurationOptionsIfConfigurationsHaveBeenSaved();
         });
       });
     },
