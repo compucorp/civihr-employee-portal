@@ -240,6 +240,7 @@
       this.appendFilters();
       this.bindFilters();
       this.appendFieldsDraggingInstructions();
+      this.displayInstructionsIfDroppableHasNoFields();
       this.bindDragAndDropEventListeners();
     }
 
@@ -498,10 +499,20 @@
     });
 
     draggableItems.on('sortstop', function (event) {
-      var targetContainer = $(event.toElement).parents('.pvtAxisContainer');
-
       droppableContainers.removeClass(highlightClass);
-      targetContainer.find('.instructions').slideUp();
+      this.displayInstructionsIfDroppableHasNoFields();
+    }.bind(this));
+  };
+
+  HRReport.prototype.displayInstructionsIfDroppableHasNoFields = function () {
+    $('.pvtAxisContainer .instructions').each(function () {
+      var hasFields = $(this).siblings().length;
+
+      if (hasFields) {
+        $(this).slideUp();
+      } else {
+        $(this).slideDown();
+      }
     });
   };
 
