@@ -71,6 +71,22 @@
   };
 
   /**
+   * Hides the report rows and columns instructions if there are fields inside
+   * of their container, otherwise displays the instructions.
+   */
+  HRReport.prototype.displayInstructionsIfDroppableHasNoFields = function () {
+    $('.pvtAxisContainer .instructions').each(function () {
+      var hasFields = $(this).siblings().length;
+
+      if (hasFields) {
+        $(this).slideUp();
+      } else {
+        $(this).slideDown();
+      }
+    });
+  };
+
+  /**
    * Init PivotTable.js library
    */
   HRReport.prototype.initPivotTable = function () {
@@ -504,18 +520,6 @@
     }.bind(this));
   };
 
-  HRReport.prototype.displayInstructionsIfDroppableHasNoFields = function () {
-    $('.pvtAxisContainer .instructions').each(function () {
-      var hasFields = $(this).siblings().length;
-
-      if (hasFields) {
-        $(this).slideUp();
-      } else {
-        $(this).slideDown();
-      }
-    });
-  };
-
   /**
    * Bind filters UI events
    */
@@ -808,6 +812,16 @@
    */
   Drupal.behaviors.civihr_employee_portal_reports = {
     instance: null,
+    /**
+     * This method runs when the page is ready. The method is executed by Drupal.
+     * More information:
+     * https://www.drupal.org/docs/7/api/javascript-api/managing-javascript-in-drupal-7
+     *
+     * @param {Element} context - A reference to the document where the script is
+     *   being executed.
+     * @param {Object} settings - A map of configuration options shared between
+     *   all behaviours.
+     */
     attach: function (context, settings) {
       this.instance = new HRReport();
       this.instance.initAngular();
@@ -816,30 +830,11 @@
       this.switchToTabSpecifiedOnTheUrl();
       this.displayConfigurationOptionsIfConfigurationsHaveBeenSaved();
     },
+    /**
+     * Binds report configuration events for changing, saving, updating and
+     * deleting them.
+     */
     bindReportConfigurationEvents: function () {
-      $('.report-tabs a').bind('click', function (e) {
-        $('.report-tabs li').removeClass('active');
-        $(this).parent().addClass('active');
-        $('.report-block').addClass('hidden');
-        $('.report-block.' + $(this).data('tab')).removeClass('hidden');
-      });
-    },
-    displayConfigurationOptionsIfConfigurationsHaveBeenSaved: function () {
-      var deleteOption, hasSavedConfigurations, updateOption;
-
-      deleteOption = $('.report-config-delete-btn');
-      updateOption = $('.report-config-save-btn');
-      hasSavedConfigurations = $('.report-config-select option').length >= 2;
-
-      if (hasSavedConfigurations) {
-        deleteOption.fadeIn('fast');
-        updateOption.fadeIn('fast');
-      } else {
-        deleteOption.fadeOut('fast');
-        updateOption.fadeOut('fast');
-      }
-    },
-    bindTabsEvents: function () {
       var self = this;
 
       $('.report-config-select').bind('change', function (e) {
@@ -859,6 +854,41 @@
         });
       });
     },
+    /**
+     * Bind tab switching events for the report tabs.
+     */
+    bindTabsEvents: function () {
+      $('.report-tabs a').bind('click', function (e) {
+        $('.report-tabs li').removeClass('active');
+        $(this).parent().addClass('active');
+        $('.report-block').addClass('hidden');
+        $('.report-block.' + $(this).data('tab')).removeClass('hidden');
+      });
+    },
+    /**
+     * Displays the Report Configuration's save/update/delete options depending
+     * on the availability of configurations. If no configurations are available
+     * only the save option is available and the others are hidden.
+     */
+    displayConfigurationOptionsIfConfigurationsHaveBeenSaved: function () {
+      var deleteOption, hasSavedConfigurations, updateOption;
+
+      deleteOption = $('.report-config-delete-btn');
+      updateOption = $('.report-config-save-btn');
+      hasSavedConfigurations = $('.report-config-select option').length >= 2;
+
+      if (hasSavedConfigurations) {
+        deleteOption.fadeIn('fast');
+        updateOption.fadeIn('fast');
+      } else {
+        deleteOption.fadeOut('fast');
+        updateOption.fadeOut('fast');
+      }
+    },
+    /**
+     * Automatically switches the current selected tab depending on the tab class
+     * provided in the URL.
+     */
     switchToTabSpecifiedOnTheUrl: function () {
       var tabSelector = '.report-tabs a';
       var hash = window.location.hash;
