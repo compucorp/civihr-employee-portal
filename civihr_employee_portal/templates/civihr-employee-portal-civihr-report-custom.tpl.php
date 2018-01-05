@@ -71,8 +71,9 @@
             </div>
           </form>
         </div>
+        <hr />
+        <div id="reportPivotTable" class="pvtTable-civi"></div>
       </div>
-      <div id="reportPivotTable" class="pvtTable-civi"></div>
     <?php endif; ?>
     <?php if (!empty($tableUrl)): ?>
       <div class="report-block view-data pane-content hidden">
