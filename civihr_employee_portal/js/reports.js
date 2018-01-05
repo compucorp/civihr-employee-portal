@@ -615,7 +615,7 @@
   /**
    * Save new Report configuration basing on currently set configuration.
    */
-  HRReport.prototype.configSaveNew = function () {
+  HRReport.prototype.configSaveNew = function (callback) {
     var that = this;
 
     swal({
@@ -631,7 +631,7 @@
         swal.showInputError('Configuration name cannot be empty.');
         return false;
       }
-      that.configSaveProcess(0, inputValue);
+      that.configSaveProcess(0, inputValue, callback);
     });
   };
 
@@ -641,7 +641,7 @@
    * @param {Integer} configId
    * @param {String} configName
    */
-  HRReport.prototype.configSaveProcess = function (configId, configName) {
+  HRReport.prototype.configSaveProcess = function (configId, configName, callback) {
     var that = this;
     var reportName = this.reportName;
 
@@ -667,6 +667,7 @@
               return (aText > bText) ? 1 : ((aText < bText) ? -1 : 0);
             }));
             $('.report-config-select').val(data['id']);
+            callback && callback();
           }
           swal('Success', 'Report configuration has been saved', 'success');
         } else if (data.status === 'already_exists') {
@@ -684,7 +685,7 @@
   /**
    * Delete currently active configuration.
    */
-  HRReport.prototype.configDelete = function () {
+  HRReport.prototype.configDelete = function (callback) {
     var configId = this.getReportConfigurationId();
     if (!configId) {
       swal('No configuration selected', 'Please choose configuration to delete.', 'error');
@@ -710,6 +711,7 @@
           if (data.status === 'success') {
             $('.report-config-select option[value=' + configId + ']').remove();
             swal('Success', 'Report configuration has been deleted', 'success');
+            callback && callback();
           } else {
             swal('Failed', 'Error deleting Report configuration!', 'error');
           }
@@ -836,10 +838,14 @@
         self.instance.configSave();
       });
       $('.report-config-save-new-btn').bind('click', function (e) {
-        self.instance.configSaveNew();
+        self.instance.configSaveNew(function () {
+          self.displayConfigurationOptionsAccordingToAvailableConfigurations();
+        });
       });
       $('.report-config-delete-btn').bind('click', function (e) {
-        self.instance.configDelete();
+        self.instance.configDelete(function () {
+          self.displayConfigurationOptionsAccordingToAvailableConfigurations();
+        });
       });
     },
     switchToTabSpecifiedOnTheUrl: function () {
