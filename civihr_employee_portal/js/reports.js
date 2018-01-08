@@ -71,10 +71,21 @@
   };
 
   /**
+   * Hides the report rows and columns instructions if there are fields inside
+   * of their container, otherwise displays the instructions.
+   */
+  HRReport.prototype.displayInstructionsIfDroppableHasNoFields = function () {
+    $('.pvtAxisContainer .instructions').each(function () {
+      var hasFields = $(this).siblings().length;
+
+      hasFields ? $(this).slideUp() : $(this).slideDown();
+    });
+  };
+
+  /**
    * Init PivotTable.js library
    */
   HRReport.prototype.initPivotTable = function () {
-    var that = this;
     this.pivotTableContainer.pivotUI(this.data, {
       rendererName: 'Table',
       renderers: $.extend(
@@ -87,15 +98,15 @@
       cols: [],
       aggregatorName: 'Count',
       unusedAttrsVertical: false,
-      aggregators: that.getAggregators(),
+      aggregators: this.getAggregators(),
       derivedAttributes: this.derivedAttributes,
 
       // It's necessary to make all the DOM changes here
       // because the library doesn't have support to custom template
       // https://github.com/nicolaskruchten/pivottable/issues/484
       onRefresh: function (config) {
-        return that.pivotTableOnRefresh(config);
-      }
+        return this.pivotTableOnRefresh(config);
+      }.bind(this)
     }, false);
   };
 
@@ -240,6 +251,7 @@
       this.appendFilters();
       this.bindFilters();
       this.appendFieldsDraggingInstructions();
+      this.displayInstructionsIfDroppableHasNoFields();
       this.bindDragAndDropEventListeners();
     }
 
@@ -498,11 +510,9 @@
     });
 
     draggableItems.on('sortstop', function (event) {
-      var targetContainer = $(event.toElement).parents('.pvtAxisContainer');
-
       droppableContainers.removeClass(highlightClass);
-      targetContainer.find('.instructions').slideUp();
-    });
+      this.displayInstructionsIfDroppableHasNoFields();
+    }.bind(this));
   };
 
   /**
@@ -615,7 +625,7 @@
   /**
    * Save new Report configuration basing on currently set configuration.
    */
-  HRReport.prototype.configSaveNew = function () {
+  HRReport.prototype.configSaveNew = function (callback) {
     var that = this;
 
     swal({
@@ -631,7 +641,7 @@
         swal.showInputError('Configuration name cannot be empty.');
         return false;
       }
-      that.configSaveProcess(0, inputValue);
+      that.configSaveProcess(0, inputValue, callback);
     });
   };
 
@@ -641,7 +651,7 @@
    * @param {Integer} configId
    * @param {String} configName
    */
-  HRReport.prototype.configSaveProcess = function (configId, configName) {
+  HRReport.prototype.configSaveProcess = function (configId, configName, callback) {
     var that = this;
     var reportName = this.reportName;
 
@@ -667,6 +677,7 @@
               return (aText > bText) ? 1 : ((aText < bText) ? -1 : 0);
             }));
             $('.report-config-select').val(data['id']);
+            callback && callback();
           }
           swal('Success', 'Report configuration has been saved', 'success');
         } else if (data.status === 'already_exists') {
@@ -684,7 +695,7 @@
   /**
    * Delete currently active configuration.
    */
-  HRReport.prototype.configDelete = function () {
+  HRReport.prototype.configDelete = function (callback) {
     var configId = this.getReportConfigurationId();
     if (!configId) {
       swal('No configuration selected', 'Please choose configuration to delete.', 'error');
@@ -710,6 +721,7 @@
           if (data.status === 'success') {
             $('.report-config-select option[value=' + configId + ']').remove();
             swal('Success', 'Report configuration has been deleted', 'success');
+            callback && callback();
           } else {
             swal('Failed', 'Error deleting Report configuration!', 'error');
           }
@@ -795,46 +807,86 @@
    */
   Drupal.behaviors.civihr_employee_portal_reports = {
     instance: null,
+    /**
+     * This method runs when the page is ready. The method is executed by Drupal.
+     * More information:
+     * https://www.drupal.org/docs/7/api/javascript-api/managing-javascript-in-drupal-7
+     *
+     * @param {Element} context - A reference to the document where the script is
+     *   being executed.
+     * @param {Object} settings - A map of configuration options shared between
+     *   all behaviours.
+     */
     attach: function (context, settings) {
-      var that = this;
       this.instance = new HRReport();
       this.instance.initAngular();
-
-      // Tabs bindings
+      this.bindReportConfigurationEvents();
+      this.bindTabsEvents();
+      this.switchToTabSpecifiedOnTheUrl();
+      this.displayConfigurationOptionsIfConfigurationsHaveBeenSaved();
+    },
+    /**
+     * Binds report configuration events for changing, saving, updating and
+     * deleting them.
+     */
+    bindReportConfigurationEvents: function () {
+      $('.report-config-select').bind('change', function (e) {
+        this.instance.configGet();
+      }.bind(this));
+      $('.report-config-save-btn').bind('click', function (e) {
+        this.instance.configSave();
+      }.bind(this));
+      $('.report-config-save-new-btn').bind('click', function (e) {
+        this.instance.configSaveNew(function () {
+          this.displayConfigurationOptionsIfConfigurationsHaveBeenSaved();
+        }.bind(this));
+      }.bind(this));
+      $('.report-config-delete-btn').bind('click', function (e) {
+        this.instance.configDelete(function () {
+          this.displayConfigurationOptionsIfConfigurationsHaveBeenSaved();
+        }.bind(this));
+      }.bind(this));
+    },
+    /**
+     * Bind tab switching events for the report tabs.
+     */
+    bindTabsEvents: function () {
       $('.report-tabs a').bind('click', function (e) {
         $('.report-tabs li').removeClass('active');
         $(this).parent().addClass('active');
         $('.report-block').addClass('hidden');
         $('.report-block.' + $(this).data('tab')).removeClass('hidden');
       });
+    },
+    /**
+     * Displays the Report Configuration's save/update/delete options depending
+     * on the availability of configurations. If no configurations are available
+     * only the save option is available and the others are hidden.
+     */
+    displayConfigurationOptionsIfConfigurationsHaveBeenSaved: function () {
+      var deleteOption = $('.report-config-delete-btn');
+      var updateOption = $('.report-config-save-btn');
+      var hasSavedConfigurations = $('.report-config-select option').length >= 2;
 
-      switchTabsOnLoad();
-
-      // Reports configuration bindings
-      $('.report-config-select').bind('change', function (e) {
-        that.instance.configGet();
-      });
-      $('.report-config-save-btn').bind('click', function (e) {
-        that.instance.configSave();
-      });
-      $('.report-config-save-new-btn').bind('click', function (e) {
-        that.instance.configSaveNew();
-      });
-      $('.report-config-delete-btn').bind('click', function (e) {
-        that.instance.configDelete();
-      });
-
-      /**
-       * Switch to correct tab, on page load
-       */
-      function switchTabsOnLoad () {
-        var tabSelector = '.report-tabs a';
-        var hash = window.location.hash;
-
-        hash ? tabSelector += '[data-tab="' + hash.substr(1) + '"]' : tabSelector += ':first';
-
-        $(tabSelector).click();
+      if (hasSavedConfigurations) {
+        deleteOption.fadeIn('fast');
+        updateOption.fadeIn('fast');
+      } else {
+        deleteOption.fadeOut('fast');
+        updateOption.fadeOut('fast');
       }
+    },
+    /**
+     * Automatically switches the current selected tab depending on the tab class
+     * provided in the URL.
+     */
+    switchToTabSpecifiedOnTheUrl: function () {
+      var tabSelector = '.report-tabs a';
+      var hash = window.location.hash;
+
+      tabSelector += hash ? '[data-tab="' + hash.substr(1) + '"]' : ':first';
+
+      $(tabSelector).click();
     }
   };
 })(jQuery);
