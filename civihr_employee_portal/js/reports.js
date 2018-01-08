@@ -78,11 +78,7 @@
     $('.pvtAxisContainer .instructions').each(function () {
       var hasFields = $(this).siblings().length;
 
-      if (hasFields) {
-        $(this).slideUp();
-      } else {
-        $(this).slideDown();
-      }
+      hasFields ? $(this).slideUp() : $(this).slideDown();
     });
   };
 
@@ -90,7 +86,6 @@
    * Init PivotTable.js library
    */
   HRReport.prototype.initPivotTable = function () {
-    var that = this;
     this.pivotTableContainer.pivotUI(this.data, {
       rendererName: 'Table',
       renderers: $.extend(
@@ -103,15 +98,15 @@
       cols: [],
       aggregatorName: 'Count',
       unusedAttrsVertical: false,
-      aggregators: that.getAggregators(),
+      aggregators: this.getAggregators(),
       derivedAttributes: this.derivedAttributes,
 
       // It's necessary to make all the DOM changes here
       // because the library doesn't have support to custom template
       // https://github.com/nicolaskruchten/pivottable/issues/484
       onRefresh: function (config) {
-        return that.pivotTableOnRefresh(config);
-      }
+        return this.pivotTableOnRefresh(config);
+      }.bind(this)
     }, false);
   };
 
@@ -835,24 +830,22 @@
      * deleting them.
      */
     bindReportConfigurationEvents: function () {
-      var self = this;
-
       $('.report-config-select').bind('change', function (e) {
-        self.instance.configGet();
-      });
+        this.instance.configGet();
+      }.bind(this));
       $('.report-config-save-btn').bind('click', function (e) {
-        self.instance.configSave();
-      });
+        this.instance.configSave();
+      }.bind(this));
       $('.report-config-save-new-btn').bind('click', function (e) {
-        self.instance.configSaveNew(function () {
-          self.displayConfigurationOptionsIfConfigurationsHaveBeenSaved();
-        });
-      });
+        this.instance.configSaveNew(function () {
+          this.displayConfigurationOptionsIfConfigurationsHaveBeenSaved();
+        }.bind(this));
+      }.bind(this));
       $('.report-config-delete-btn').bind('click', function (e) {
-        self.instance.configDelete(function () {
-          self.displayConfigurationOptionsIfConfigurationsHaveBeenSaved();
-        });
-      });
+        this.instance.configDelete(function () {
+          this.displayConfigurationOptionsIfConfigurationsHaveBeenSaved();
+        }.bind(this));
+      }.bind(this));
     },
     /**
      * Bind tab switching events for the report tabs.
