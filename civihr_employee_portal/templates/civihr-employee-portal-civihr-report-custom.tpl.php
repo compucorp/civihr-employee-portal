@@ -36,7 +36,7 @@
                 <label>Select existing report:</label>
               </div>
               <div class="col-md-5">
-                <div class="crm_custom-select">
+                <div class="crm_custom-select crm_custom-select--full">
                   <select name="id" class="report-config-select skip-js-custom-select">
                     <option value=""><?php print t('-- select configuration --'); ?></option>
                     <?php if (!empty($configurationList)): ?>
