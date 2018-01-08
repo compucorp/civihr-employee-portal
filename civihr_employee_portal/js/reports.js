@@ -864,11 +864,9 @@
      * only the save option is available and the others are hidden.
      */
     displayConfigurationOptionsIfConfigurationsHaveBeenSaved: function () {
-      var deleteOption, hasSavedConfigurations, updateOption;
-
-      deleteOption = $('.report-config-delete-btn');
-      updateOption = $('.report-config-save-btn');
-      hasSavedConfigurations = $('.report-config-select option').length >= 2;
+      var deleteOption = $('.report-config-delete-btn');
+      var updateOption = $('.report-config-save-btn');
+      var hasSavedConfigurations = $('.report-config-select option').length >= 2;
 
       if (hasSavedConfigurations) {
         deleteOption.fadeIn('fast');
@@ -886,7 +884,7 @@
       var tabSelector = '.report-tabs a';
       var hash = window.location.hash;
 
-      hash ? tabSelector += '[data-tab="' + hash.substr(1) + '"]' : tabSelector += ':first';
+      tabSelector += hash ? '[data-tab="' + hash.substr(1) + '"]' : ':first';
 
       $(tabSelector).click();
     }
