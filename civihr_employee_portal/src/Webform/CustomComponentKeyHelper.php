@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\civihr_employee_portal\Helpers\Webform;
+namespace Drupal\civihr_employee_portal\Webform;
 
 use CRM_Utils_Array as ArrayHelper;
 
