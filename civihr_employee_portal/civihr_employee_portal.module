@@ -529,8 +529,29 @@ function civihr_employee_portal_init() {
     _rebuild_view('tasks');
     _rebuild_view('documents');
 
-    _load_ta_settings();
+    $taskAssignmentsKey = 'uk.co.compucorp.civicrm.tasksassignments';
+    if (_civihr_employee_portal_is_extension_enabled($taskAssignmentsKey)) {
+      _load_ta_settings();
+    }
   }
+}
+
+/**
+ * Checks whether a given extension is enabled.
+ *
+ * @param string $extensionKey
+ *
+ * @return bool
+ */
+function _civihr_employee_portal_is_extension_enabled($extensionKey) {
+  $isEnabled = CRM_Core_DAO::getFieldValue(
+    'CRM_Core_DAO_Extension',
+    $extensionKey,
+    'is_active',
+    'full_name'
+  );
+
+  return !empty($isEnabled) ? TRUE : FALSE;
 }
 
 /**
@@ -5023,7 +5044,7 @@ function civihr_employee_portal_my_details() {
 function civihr_employee_portal_hrreport_landing_page() {
   $jsOptions = ['type' => 'file', 'scope' => 'footer'];
 
-  if (CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Extension', 'org.civicrm.reqangular', 'is_active', 'full_name')) {
+  if (_civihr_employee_portal_is_extension_enabled('org.civicrm.reqangular')) {
     drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "dist/reqangular.min.js", $jsOptions);
   }
 
@@ -5385,7 +5406,7 @@ function _civihr_employee_portal_add_report_scripts() {
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js', $jsOptions);
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/moment/moment.min.js', $jsOptions);
 
-  if (CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Extension', 'org.civicrm.reqangular', 'is_active', 'full_name')) {
+  if (_civihr_employee_portal_is_extension_enabled('org.civicrm.reqangular')) {
     drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "dist/reqangular.min.js", $jsOptions);
   }
 
