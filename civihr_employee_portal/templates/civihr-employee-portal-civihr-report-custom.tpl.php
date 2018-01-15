@@ -21,11 +21,6 @@
   <div class="report-content panel-pane pane-block chr_panel chr_panel--no-padding">
     <?php if (!empty($jsonUrl)): ?>
       <div class="report-block report-builder tab-pane">
-        <div class="chr_search-result__header">
-          <div class="chr_search-result__total">
-            Report Builder
-          </div>
-        </div>
         <div id="report-filters" ng-controller="FiltersController as filters">
           <?php print render($filters); ?>
         </div>
