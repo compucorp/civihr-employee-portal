@@ -5537,50 +5537,59 @@ function civihr_employee_portal_hrreport_custom_printtable($reportName, $dateFil
  * @param $form_state
  */
 function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {
-  /**
-   *  Staff Directory filters form, HR Documents filters form
-   */
-  $exposed_filters_forms = ['views-exposed-form-civihr-staff-directory-page', 'views-exposed-form-hr-documents-hr-resources'];
-
-  if (isset($form['#id']) && in_array($form['#id'], $exposed_filters_forms)) {
-    $form['#attributes']['class'][] = 'row';
-
-    $form['submit']['#attributes'] = ['class' => ['chr_action']];
-    $form['submit']['#prefix'] = '<div class="col-sm-12"><div class="chr_panel__footer"><div class="chr_actions-wrapper">';
-    $form['submit']['#suffix'] = '</div></div></div>';
-
-    foreach ($form as $key => $value) {
-      if (isset($form['#info']["filter-$key"])) {
-        $form[$key]['#prefix'] = '<div class="col-sm-6">';
-        $form[$key]['#suffix'] = '</div>';
-
-        // Take the <label> value and use it as placeholder instead
-        if ($value['#type'] == 'textfield') {
-          $form[$key]['#attributes'] = ['placeholder' => $form['#info']["filter-$key"]['label']];
-        }
-
-        $form['#info']["filter-$key"]['label'] = '';
-      }
-    }
-  }
-
-  if(strpos($form['#id'], 'views-exposed-form-civihr-report-') !== false) {
-    foreach ($form as $key => $value) {
-      if (isset($form[$key]['value'])) {
-        $form[$key]['value'] = setInputDatepickerForm($form['#info']["filter-$key"]['label']);
-      }
-
-      if (isset($form[$key]['min'])) {
-        $form[$key]['min'] = setInputDatepickerForm($form[$key]['min']['#title']);
-      }
-
-      if (isset($form[$key]['max'])) {
-        $form[$key]['max'] = setInputDatepickerForm($form[$key]['max']['#title']);
-      }
-    }
+  switch ($form['#id']) {
+    // People's report filters:
+    case 'views-exposed-form-civihr-report-people-default':
+      _civihr_employee_portal_form_view_exposed_form_alter_people_report($form, $form_state, $form_id);
+      break;
+    // Leave and Absence's report filters:
+    case 'views-exposed-form-civihr-report-leave-and-absence-default':
+      _civihr_employee_portal_form_view_exposed_form_alter_leave_report($form, $form_state, $form_id);
+      break;
+    // Staff Directory and HR Document's form filters:
+    case 'views-exposed-form-civihr-staff-directory-page':
+    case 'views-exposed-form-hr-documents-hr-resources':
+      _civihr_employee_portal_form_view_exposed_form_alter_actions_wrapper($form, $form_state, $form_id);
+      _civihr_employee_portal_form_view_exposed_form_alter_labels_as_placeholders($form, $form_state, $form_id);
+      break;
   }
 
   $form['submit']['#value'] = 'Filter';
+}
+
+function _civihr_employee_portal_form_view_exposed_form_alter_people_report(&$form, $form_state, $form_id) {
+  $key = 'between_date_filter';
+  $form[$key]['value'] = setInputDatepickerForm($form['#info']["filter-$key"]['label']);
+}
+
+function _civihr_employee_portal_form_view_exposed_form_alter_leave_report(&$form, $form_state, $form_id) {
+  $key = 'absence_date_filter';
+  $form[$key]['min'] = setInputDatepickerForm($form[$key]['min']['#title']);
+  $form[$key]['max'] = setInputDatepickerForm($form[$key]['max']['#title']);
+}
+
+function _civihr_employee_portal_form_view_exposed_form_alter_actions_wrapper(&$form, $form_state, $form_id) {
+  $form['#attributes']['class'][] = 'row';
+
+  $form['submit']['#attributes'] = ['class' => ['chr_action']];
+  $form['submit']['#prefix'] = '<div class="col-sm-12"><div class="chr_panel__footer"><div class="chr_actions-wrapper">';
+  $form['submit']['#suffix'] = '</div></div></div>';
+}
+
+function _civihr_employee_portal_form_view_exposed_form_alter_labels_as_placeholders(&$form, $form_state, $form_id) {
+  foreach ($form as $key => $value) {
+    if (isset($form['#info']["filter-$key"])) {
+      $form[$key]['#prefix'] = '<div class="col-sm-6">';
+      $form[$key]['#suffix'] = '</div>';
+
+      // Take the <label> value and use it as placeholder instead
+      if ($value['#type'] == 'textfield') {
+        $form[$key]['#attributes'] = ['placeholder' => $form['#info']["filter-$key"]['label']];
+      }
+
+      $form['#info']["filter-$key"]['label'] = '';
+    }
+  }
 }
 
 /**
