@@ -5567,8 +5567,8 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
  * @param string $form_id
  */
 function _civihr_employee_portal_form_view_exposed_form_alter_people_report(&$form, $form_state, $form_id) {
-  $key = 'between_date_filter';
-  $form[$key]['value'] = setInputDatepickerForm($form['#info']["filter-$key"]['label']);
+  $form['between_date_filter']['value'] = setInputDatepickerForm();
+  $form['between_date_filter']['#prefix'] = '<div class="form-group"><label>Headcount on date:</label></div>';
 }
 
 /**
@@ -5652,7 +5652,7 @@ function _civihr_employee_portal_get_view_csv_export_paths($view) {
  *
  * @return array
  */
-function setInputDatepickerForm($title) {
+function setInputDatepickerForm($title = null) {
   $idxKey = 'id_' . uniqid();
 
   return [
