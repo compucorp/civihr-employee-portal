@@ -4233,7 +4233,7 @@ array(
             'wrapper_classes' => 'onboarding_wizard_profile_pic_upload_image',
             'css_classes' => '',
             'filtering' => array(
-              'size' => '2 MB',
+              'size' => '10 MB',
               'types' => array(
                 'gif',
                 'jpg',
