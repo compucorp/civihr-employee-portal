@@ -64,7 +64,7 @@
             </div>
             <div class="row form-group">
               <div class="col-md-2">
-                <label>Chart Type</label>
+                <label>Chart Type:</label>
               </div>
               <div class="chart-type-select col-md-5">
               </div>
