@@ -132,10 +132,6 @@ span.appraisals-employee-legend {
   margin-right: 8px;
 }
 
-#civihrReports .crm_custom-select {
-  z-index: 0;
-}
-
 .report-filters .btn-report-date-filter {
   float: none;
 }
@@ -198,11 +194,6 @@ span.appraisals-employee-legend {
 
 #reportPivotTable .report-function-group .pvtAttrDropdown {
   margin-top: 0;
-}
-
-#reportPivotTable .report-filters #report-filters {
-  position: relative;
-  z-index: 1;
 }
 
 #reportPivotTable .report-filters .panel-body {
