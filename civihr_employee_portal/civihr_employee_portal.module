@@ -5566,7 +5566,7 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
  * @param array $form_state
  * @param string $form_id
  */
-function _civihr_employee_portal_form_view_exposed_form_alter_people_report(&$form, $form_state, $form_id) {
+function _civihr_employee_portal_form_view_exposed_form_alter_people_report(&$form, &$form_state, $form_id) {
   $form['between_date_filter']['value'] = setInputDatepickerForm();
   $form['between_date_filter']['#prefix'] = '<header class="form-group"><label>Headcount on date:</label></header>';
 }
@@ -5578,7 +5578,7 @@ function _civihr_employee_portal_form_view_exposed_form_alter_people_report(&$fo
  * @param array $form_state
  * @param string $form_id
  */
-function _civihr_employee_portal_form_view_exposed_form_alter_leave_report(&$form, $form_state, $form_id) {
+function _civihr_employee_portal_form_view_exposed_form_alter_leave_report(&$form, &$form_state, $form_id) {
   $dateFields = &$form['absence_date_filter'];
   $dateFields['min'] = setInputDatepickerForm('From:');
   $dateFields['max'] = setInputDatepickerForm('To:');
@@ -5592,7 +5592,7 @@ function _civihr_employee_portal_form_view_exposed_form_alter_leave_report(&$for
  * @param array $form_state
  * @param string $form_id
  */
-function _civihr_employee_portal_form_view_exposed_form_alter_actions_wrapper(&$form, $form_state, $form_id) {
+function _civihr_employee_portal_form_view_exposed_form_alter_actions_wrapper(&$form, &$form_state, $form_id) {
   $form['#attributes']['class'][] = 'row';
 
   $form['submit']['#attributes'] = ['class' => ['chr_action']];
@@ -5608,7 +5608,7 @@ function _civihr_employee_portal_form_view_exposed_form_alter_actions_wrapper(&$
  * @param array $form_state
  * @param string $form_id
  */
-function _civihr_employee_portal_form_view_exposed_form_alter_labels_as_placeholders(&$form, $form_state, $form_id) {
+function _civihr_employee_portal_form_view_exposed_form_alter_labels_as_placeholders(&$form, &$form_state, $form_id) {
   foreach ($form as $key => $value) {
     if (isset($form['#info']["filter-$key"])) {
       $form[$key]['#prefix'] = '<div class="col-sm-6">';
