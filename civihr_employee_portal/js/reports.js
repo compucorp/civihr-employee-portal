@@ -797,9 +797,6 @@
         this.placeholderFormat = 'dd/MM/yyyy';
         this.date = new Date();
         this.filtersCollapsed = true;
-      })
-      .controller('SettingsController', function () {
-        this.isCollapsed = true;
       });
 
       angular.bootstrap($('#civihrReports')[0], ['civihrReports']);
