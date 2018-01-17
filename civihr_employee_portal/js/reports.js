@@ -18,6 +18,7 @@
    */
   HRReport.prototype.init = function (options) {
     $.extend(this, options);
+    this.initAngular();
     this.processData(this.data);
     this.originalFilterElement = $('#report-filters').detach();
   };
@@ -760,6 +761,8 @@
    *
    */
   HRReport.prototype.initAngular = function () {
+    var hrReportInstance = this;
+
     require([
       'common/angular',
       'common/services/angular-date/date-format',
@@ -781,6 +784,7 @@
           return element;
         };
       }])
+      .constant('REPORT_NAME', hrReportInstance.reportName)
       .directive('uibDatepickerPopupWrap', function sectionDirective () {
         return ({
           link: function (scope, element, attributes) {
@@ -819,7 +823,6 @@
      */
     attach: function (context, settings) {
       this.instance = new HRReport();
-      this.instance.initAngular();
       this.bindReportConfigurationEvents();
       this.bindTabsEvents();
       this.switchToTabSpecifiedOnTheUrl();
