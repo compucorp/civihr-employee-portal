@@ -784,7 +784,6 @@
           return element;
         };
       }])
-      .constant('REPORT_NAME', hrReportInstance.reportName)
       .directive('uibDatepickerPopupWrap', function sectionDirective () {
         return ({
           link: function (scope, element, attributes) {
@@ -792,23 +791,25 @@
           }
         });
       })
-      .controller('FiltersController', ['REPORT_NAME', 'AbsencePeriod',
-        function (REPORT_NAME, AbsencePeriod) {
+      .constant('REPORT_NAME', hrReportInstance.reportName)
+      .value('formFiltersStore', {
+        initialized: false,
+        values: {}
+      })
+      .controller('FiltersController', ['$q', 'REPORT_NAME', 'AbsencePeriod',
+        'formFiltersStore', function ($q, REPORT_NAME, AbsencePeriod,
+          formFiltersStore) {
           var vm = this;
 
           vm.dateFormat = 'dd/MM/yyyy';
-          vm.filters = {};
+          vm.filters = formFiltersStore.values;
           vm.loading = { dates: false };
 
           (function init () {
-            if (REPORT_NAME === 'leave_and_absence') {
-              vm.loading.dates = true;
-              initCurrentAbsencePeriodFilterDates().finally(function () {
-                vm.loading.dates = false;
-              });
-            } else {
-              vm.filters.date = new Date();
-            }
+            vm.loading.dates = true;
+            initFormFilterValues().finally(function () {
+              vm.loading.dates = false;
+            });
           })();
 
           /**
@@ -823,8 +824,32 @@
                 return;
               }
 
-              vm.filters.fromDate = moment(currentPeriod.start_date).toDate();
-              vm.filters.toDate = moment(currentPeriod.end_date).toDate();
+              formFiltersStore.values.fromDate = moment(currentPeriod.start_date).toDate();
+              formFiltersStore.values.toDate = moment(currentPeriod.end_date).toDate();
+            });
+          }
+
+          /**
+           * If form filters have not been initialized, they'll get their default
+           * values depending on the current report.
+           *
+           * @return {Promise}
+           */
+          function initFormFilterValues () {
+            return $q(function (resolve, reject) {
+              if (formFiltersStore.initialized) {
+                return resolve();
+              }
+
+              if (REPORT_NAME === 'leave_and_absence') {
+                initCurrentAbsencePeriodFilterDates().then(resolve, reject);
+              } else {
+                formFiltersStore.values.date = new Date();
+                resolve();
+              }
+            })
+            .then(function () {
+              formFiltersStore.initialized = true;
             });
           }
         }
