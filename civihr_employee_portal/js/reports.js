@@ -829,21 +829,26 @@
           }
         }
       ])
-      .service('AbsencePeriod', function () {
+      .service('AbsencePeriod', ['$q', function ($q) {
         return {
+          /**
+           * Returns the current absence period or null if there is none.
+           */
           getCurrent: function () {
             var today = moment().format('YYYY-MM-DD');
 
-            return CRM.api3('AbsencePeriod', 'get', {
-              'start_date': { '<=': today },
-              'end_date': { '>=': today },
-              'sequential': 1
-            }).then(function (result) {
-              return result.values[0] || null;
+            return $q(function (resolve, reject) {
+              CRM.api3('AbsencePeriod', 'get', {
+                'start_date': { '<=': today },
+                'end_date': { '>=': today },
+                'sequential': 1
+              }).then(function (result) {
+                resolve(result.values[0] || null);
+              }, reject);
             });
           }
         };
-      });
+      }]);
 
       angular.bootstrap($('#civihrReports')[0], ['civihrReports']);
     });
