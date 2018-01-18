@@ -18,6 +18,7 @@
    */
   HRReport.prototype.init = function (options) {
     $.extend(this, options);
+    this.initAngular();
     this.processData(this.data);
     this.originalFilterElement = $('#report-filters').detach();
   };
@@ -760,6 +761,8 @@
    *
    */
   HRReport.prototype.initAngular = function () {
+    var hrReportInstance = this;
+
     require([
       'common/angular',
       'common/services/angular-date/date-format',
@@ -788,15 +791,97 @@
           }
         });
       })
-      .controller('FiltersController', function () {
-        this.format = 'dd/MM/yyyy';
-        this.placeholderFormat = 'dd/MM/yyyy';
-        this.date = new Date();
-        this.filtersCollapsed = true;
+      .constant('REPORT_NAME', hrReportInstance.reportName)
+      .value('formFiltersStore', {
+        initialized: false,
+        values: {}
       })
-      .controller('SettingsController', function () {
-        this.isCollapsed = true;
-      });
+      .controller('FiltersController', ['$q', 'REPORT_NAME', 'AbsencePeriod',
+        'formFiltersStore', function ($q, REPORT_NAME, AbsencePeriod,
+          formFiltersStore) {
+          var vm = this;
+
+          vm.dateFormat = 'dd/MM/yyyy';
+          vm.filters = formFiltersStore.values;
+          vm.loading = { dates: false };
+
+          (function init () {
+            vm.loading.dates = true;
+
+            initFormFilterValues()
+              .finally(function () {
+                vm.loading.dates = false;
+              });
+          })();
+
+          /**
+           * Loads and sets the dates in the date filters using the start and
+           * end dates for the current absence period.
+           *
+           * @return {Promise} - Resolves to an empty promise after the current
+           * period dates have been initialized.
+           */
+          function initCurrentAbsencePeriodFilterDates () {
+            return AbsencePeriod.getCurrent()
+              .then(function (currentPeriod) {
+                if (!currentPeriod) {
+                  return;
+                }
+
+                formFiltersStore.values.fromDate = moment(currentPeriod.start_date).toDate();
+                formFiltersStore.values.toDate = moment(currentPeriod.end_date).toDate();
+              });
+          }
+
+          /**
+           * If form filters have not been initialized, they'll get their default
+           * values depending on the current report.
+           *
+           * @return {Promise} - Resolves to an empty promise after the form
+           * filter values have been initialized.
+           */
+          function initFormFilterValues () {
+            return $q(function (resolve, reject) {
+              if (formFiltersStore.initialized) {
+                return resolve();
+              }
+
+              if (REPORT_NAME === 'leave_and_absence') {
+                initCurrentAbsencePeriodFilterDates().then(resolve, reject);
+              } else {
+                formFiltersStore.values.date = new Date();
+                resolve();
+              }
+            })
+            .then(function () {
+              formFiltersStore.initialized = true;
+            });
+          }
+        }
+      ])
+      .service('AbsencePeriod', ['$q', function ($q) {
+        return {
+          /**
+           * Returns the current absence period or null if there is none.
+           *
+           * @return {Promise} - resolves to the current absence period or NULL
+           * in case there is none.
+           */
+          getCurrent: function () {
+            var today = moment().format('YYYY-MM-DD');
+
+            return $q(function (resolve, reject) {
+              CRM.api3('AbsencePeriod', 'get', {
+                'start_date': { '<=': today },
+                'end_date': { '>=': today },
+                'sequential': 1
+              }).then(function (result) {
+                resolve(result.values[0] || null);
+              }, reject);
+            });
+          }
+        };
+      }]);
 
       angular.bootstrap($('#civihrReports')[0], ['civihrReports']);
     });
@@ -819,7 +904,6 @@
      */
     attach: function (context, settings) {
       this.instance = new HRReport();
-      this.instance.initAngular();
       this.bindReportConfigurationEvents();
       this.bindTabsEvents();
       this.switchToTabSpecifiedOnTheUrl();

@@ -5604,6 +5604,8 @@ function _civihr_employee_portal_form_view_exposed_form_alter_leave_report(&$for
   $dateFields['min'] = setInputDatepickerForm('From:');
   $dateFields['max'] = setInputDatepickerForm('To:');
   $dateFields['#prefix'] = '<header class="form-group"><label>Leave dates:</label></header>';
+  $dateFields['min']['#attributes']['ng-model'] = 'filters.filters.fromDate';
+  $dateFields['max']['#attributes']['ng-model'] = 'filters.filters.toDate';
 }
 
 /**
@@ -5684,11 +5686,12 @@ function setInputDatepickerForm($title = null) {
     '#description' => getCalendarButtonMarkup($idxKey),
     '#date_label_position' => 'within',
     '#attributes' => [
-      'ng-init' => "$idxKey = false; filters.dt$idxKey=filters.date",
-      'placeholder' => '{{filters.placeholderFormat}}',
-      'uib-datepicker-popup' => '{{filters.format}}',
+      'ng-init' => "filters.$idxKey = false",
+      'placeholder' => '{{filters.dateFormat}}',
+      'uib-datepicker-popup' => '{{filters.dateFormat}}',
       'close-text' => 'Close',
-      'ng-model' => "filters.dt$idxKey",
+      'ng-model' => 'filters.filters.date',
+      'ng-disabled' => 'filters.loading.dates',
       'is-open' => "filters.$idxKey",
       'ng-click' => "filters.$idxKey = !filters.$idxKey"
     ],
