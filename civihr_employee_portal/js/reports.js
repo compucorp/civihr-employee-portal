@@ -807,9 +807,11 @@
 
           (function init () {
             vm.loading.dates = true;
-            initFormFilterValues().finally(function () {
-              vm.loading.dates = false;
-            });
+
+            initFormFilterValues()
+              .finally(function () {
+                vm.loading.dates = false;
+              });
           })();
 
           /**
@@ -820,14 +822,15 @@
            * period dates have been initialized.
            */
           function initCurrentAbsencePeriodFilterDates () {
-            return AbsencePeriod.getCurrent().then(function (currentPeriod) {
-              if (!currentPeriod) {
-                return;
-              }
+            return AbsencePeriod.getCurrent()
+              .then(function (currentPeriod) {
+                if (!currentPeriod) {
+                  return;
+                }
 
-              formFiltersStore.values.fromDate = moment(currentPeriod.start_date).toDate();
-              formFiltersStore.values.toDate = moment(currentPeriod.end_date).toDate();
-            });
+                formFiltersStore.values.fromDate = moment(currentPeriod.start_date).toDate();
+                formFiltersStore.values.toDate = moment(currentPeriod.end_date).toDate();
+              });
           }
 
           /**
