@@ -21,3 +21,4 @@ if (!defined('DRUPAL_ROOT')) {
 require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 $_SERVER['REMOTE_ADDR'] = 'localhost';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+civicrm_initialize();

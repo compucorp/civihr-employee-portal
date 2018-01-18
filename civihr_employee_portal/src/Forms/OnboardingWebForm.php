@@ -30,6 +30,17 @@ class OnboardingWebForm {
     }
 
     $this->setWorkEmailAsPrimary($node, $values, $contactID);
+    $this->hackyFixForImageURL($contactID);
+  }
+
+  /**
+   * Handles all alterations from hook_form_alter().
+   *
+   * @param array $form
+   */
+  public function alter(&$form) {
+    $this->removeEmptyKeys($form);
+    $this->addHelpText($form);
   }
 
   /**
@@ -112,16 +123,6 @@ class OnboardingWebForm {
   }
 
   /**
-   * Handles all alterations from hook_form_alter().
-   *
-   * @param array $form
-   */
-  public function alter(&$form) {
-    $this->removeEmptyKeys($form);
-    $this->addHelpText($form);
-  }
-
-  /**
    * Remove empty components keys from $form['submitted'] as they break markup.
    * @see https://www.drupal.org/node/2916491
    *
@@ -188,6 +189,33 @@ class OnboardingWebForm {
     $onboardingRelease = $onboardingForm->created;
 
     return $user->created > $onboardingRelease;
+  }
+
+  /**
+   * Unfortunately for us the contact profile page will expect an image URL
+   * using the civicrm/file?photo=foo.jpg style. Since our contact images are
+   * created using webform they won't match this so to avoid the warnings about
+   * 'Undefined index: photo' we append photo=0 here.
+   *
+   * @see CRM_Utils_File::getImageURL
+   *
+   * @param int $contactID
+   */
+  private function hackyFixForImageURL($contactID) {
+    $params = ['return' => 'image_URL', 'id' => $contactID];
+    /** @var string $current */
+    $current = civicrm_api3('Contact', 'getvalue', $params);
+
+    if (empty($current)) {
+      return;
+    }
+
+    $operator = FALSE === strpos($current, '?') ? '?' : '&';
+    $current .= $operator . 'photo=0';
+
+    unset($params['return']);
+    $params['image_URL']  = $current;
+    civicrm_api3('Contact', 'create', $params);
   }
 
 }

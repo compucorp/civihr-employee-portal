@@ -11,8 +11,8 @@ use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
 use Drupal\civihr_employee_portal\Helpers\ImageResizer;
 use Drupal\civihr_employee_portal\Forms\ContactForm;
 use CRM_HRLeaveAndAbsences_BAO_AbsenceType as AbsenceType;
-use Drupal\civihr_employee_portal\Helpers\Webform\WebformExportCustomFieldConvertor;
 use Drupal\civihr_employee_portal\Page\HRDetailsPage;
+use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 
 /**
  * Implements hook_css_alter().
@@ -529,8 +529,29 @@ function civihr_employee_portal_init() {
     _rebuild_view('tasks');
     _rebuild_view('documents');
 
-    _load_ta_settings();
+    $taskAssignmentsKey = 'uk.co.compucorp.civicrm.tasksassignments';
+    if (_civihr_employee_portal_is_extension_enabled($taskAssignmentsKey)) {
+      _load_ta_settings();
+    }
   }
+}
+
+/**
+ * Checks whether a given extension is enabled.
+ *
+ * @param string $extensionKey
+ *
+ * @return bool
+ */
+function _civihr_employee_portal_is_extension_enabled($extensionKey) {
+  $isEnabled = CRM_Core_DAO::getFieldValue(
+    'CRM_Core_DAO_Extension',
+    $extensionKey,
+    'is_active',
+    'full_name'
+  );
+
+  return !empty($isEnabled) ? TRUE : FALSE;
 }
 
 /**
@@ -5023,7 +5044,7 @@ function civihr_employee_portal_my_details() {
 function civihr_employee_portal_hrreport_landing_page() {
   $jsOptions = ['type' => 'file', 'scope' => 'footer'];
 
-  if (CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Extension', 'org.civicrm.reqangular', 'is_active', 'full_name')) {
+  if (_civihr_employee_portal_is_extension_enabled('org.civicrm.reqangular')) {
     drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "dist/reqangular.min.js", $jsOptions);
   }
 
@@ -5385,7 +5406,7 @@ function _civihr_employee_portal_add_report_scripts() {
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js', $jsOptions);
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/moment/moment.min.js', $jsOptions);
 
-  if (CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Extension', 'org.civicrm.reqangular', 'is_active', 'full_name')) {
+  if (_civihr_employee_portal_is_extension_enabled('org.civicrm.reqangular')) {
     drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "dist/reqangular.min.js", $jsOptions);
   }
 
@@ -6337,8 +6358,8 @@ function _civihr_employee_portal_clear_contact_cache($contactID) {
 /**
  * Implements hook_node_export_alter().
  *
- * Add some metadata to the exported nodes to allow importing of custom fields
- * based on name, and not ID.
+ * Add some metadata to the exported nodes to allow importing based on name,
+ * and not ID, increasing portability across systems.
  *
  * @param array $nodes
  *   The array of nodes to alter.
@@ -6347,14 +6368,15 @@ function _civihr_employee_portal_clear_contact_cache($contactID) {
  */
 function civihr_employee_portal_node_export_alter(&$nodes, $format) {
   foreach ($nodes as &$node) {
-    WebformExportCustomFieldConvertor::addCustomMappingForExport($node);
+    WebformTransferService::preExport($node);
   }
 }
 
 /**
  * Implements hook_node_export_import_alter().
  *
- * Alter the field keys for webform components using CiviCRM custom data.
+ * Alter the field keys for webform components using the mapping from
+ * @see civihr_employee_portal_node_export_alter
  *
  * @param array $nodes
  *   The array of nodes to alter.
@@ -6365,6 +6387,6 @@ function civihr_employee_portal_node_export_alter(&$nodes, $format) {
  */
 function civihr_employee_portal_node_export_import_alter(&$nodes, $format, $save) {
   foreach ($nodes as &$node) {
-    WebformExportCustomFieldConvertor::replaceCustomDataForImport($node);
+    WebformTransferService::preImport($node);
   }
 }

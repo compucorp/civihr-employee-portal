@@ -1,7 +1,7 @@
 <?php
 
-use Drupal\civihr_employee_portal\Helpers\Webform\WebformExportCustomFieldConvertor as Convertor;
-use Drupal\civihr_employee_portal\Helpers\Webform\CustomComponentKeyHelper as KeyHelper;
+use Drupal\civihr_employee_portal\Webform\WebformExportCustomFieldConvertor as Convertor;
+use Drupal\civihr_employee_portal\Webform\CustomComponentKeyHelper as KeyHelper;
 
 class WebformExportCustomFieldConvertorTest extends PHPUnit_Framework_TestCase {
 
@@ -11,7 +11,7 @@ class WebformExportCustomFieldConvertorTest extends PHPUnit_Framework_TestCase {
   public function testEmptyMapping() {
     $node = new \stdClass();
     $node->type = 'webform';
-    Convertor::addCustomMappingForExport($node);
+    Convertor::preExport($node);
 
     $this->assertObjectHasAttribute('customMapping', $node);
   }
@@ -21,7 +21,7 @@ class WebformExportCustomFieldConvertorTest extends PHPUnit_Framework_TestCase {
    */
   public function testMappingAddsCorrectNames() {
     $node = $this->getNodeWithMapping(2);
-    Convertor::addCustomMappingForExport($node);
+    Convertor::preExport($node);
 
     $mapping = $node->customMapping;
     $groupID = key($mapping['customGroups']);
@@ -46,7 +46,7 @@ class WebformExportCustomFieldConvertorTest extends PHPUnit_Framework_TestCase {
   public function testConversionWhenIDsHaveChanged() {
     // get a node and add mapping before corrupting it
     $node = $this->getNodeWithMapping(2);
-    Convertor::addCustomMappingForExport($node);
+    Convertor::preExport($node);
     $webformCount = &$node->webform_civicrm['data']['contact'][0];
 
     $sampleComponent = &$node->webform['components'][0];
@@ -77,7 +77,7 @@ class WebformExportCustomFieldConvertorTest extends PHPUnit_Framework_TestCase {
     $fieldMapping[$wrongFieldID] = $fieldMapping[$correctFieldID];
     unset($fieldMapping[$correctFieldID]);
 
-    Convertor::replaceCustomDataForImport($node);
+    Convertor::preImport($node);
 
     $this->assertEquals($correctKey, $sampleComponent['form_key']);
     $this->assertArrayHasKey($correctCountKey, $webformCount);

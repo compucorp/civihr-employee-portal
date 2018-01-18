@@ -277,9 +277,18 @@ function civihr_employee_portal_update_7016() {
 }
 
 /**
- * Remove old and unused links from the Reports menu
+ * Refreshes the node export files since the onboarding form file upload limit
+ * was increased.
  */
 function civihr_employee_portal_update_7017() {
+  civicrm_initialize();
+  drush_civihr_employee_portal_refresh_node_export_files();
+}
+
+/**
+ * Remove old and unused links from the Reports menu
+ */
+function civihr_employee_portal_update_7018() {
   db_delete('menu_links')
     ->condition('menu_name', 'hr-reports')
     ->condition(
