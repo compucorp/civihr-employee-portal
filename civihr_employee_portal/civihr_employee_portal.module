@@ -5665,7 +5665,7 @@ function setInputDatepickerForm($title = null) {
     '#description' => getCalendarButtonMarkup($idxKey),
     '#date_label_position' => 'within',
     '#attributes' => [
-      'ng-init' => "ilters.$idxKey = false",
+      'ng-init' => "filters.$idxKey = false",
       'placeholder' => '{{filters.dateFormat}}',
       'uib-datepicker-popup' => '{{filters.dateFormat}}',
       'close-text' => 'Close',
