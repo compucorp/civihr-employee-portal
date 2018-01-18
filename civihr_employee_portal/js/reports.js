@@ -815,8 +815,8 @@
           })();
 
           /**
-           * Initializes the date filters using the start and end dates for the
-           * current absence period.
+           * Loads and sets the dates in the date filters using the start and
+           * end dates for the current absence period.
            *
            * @return {Promise} - Resolves to an empty promise after the current
            * period dates have been initialized.
