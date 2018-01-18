@@ -792,12 +792,43 @@
           }
         });
       })
-      .controller('FiltersController', function (AbsencePeriod) {
-        this.format = 'dd/MM/yyyy';
-        this.placeholderFormat = 'dd/MM/yyyy';
-        this.date = new Date();
-        this.filtersCollapsed = true;
-      })
+      .controller('FiltersController', ['REPORT_NAME', 'AbsencePeriod',
+        function (REPORT_NAME, AbsencePeriod) {
+          var vm = this;
+
+          vm.dateFormat = 'dd/MM/yyyy';
+          vm.filters = {};
+          vm.loading = { dates: false };
+
+          (function init () {
+            if (REPORT_NAME === 'leave_and_absence') {
+              vm.loading.dates = true;
+              initCurrentAbsencePeriodFilterDates().finally(function () {
+                vm.loading.dates = false;
+              });
+            } else {
+              vm.filters.date = new Date();
+            }
+          })();
+
+          /**
+           * Initializes the date filters using the start and end dates for the
+           * current absence period.
+           *
+           * @return {Promise}
+           */
+          function initCurrentAbsencePeriodFilterDates () {
+            return AbsencePeriod.getCurrent().then(function (currentPeriod) {
+              if (!currentPeriod) {
+                return;
+              }
+
+              vm.filters.fromDate = moment(currentPeriod.start_date).toDate();
+              vm.filters.toDate = moment(currentPeriod.end_date).toDate();
+            });
+          }
+        }
+      ])
       .service('AbsencePeriod', function () {
         return {
           getCurrent: function () {
