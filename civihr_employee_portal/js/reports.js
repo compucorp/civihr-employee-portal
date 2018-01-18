@@ -816,7 +816,8 @@
            * Initializes the date filters using the start and end dates for the
            * current absence period.
            *
-           * @return {Promise}
+           * @return {Promise} - Resolves to an empty promise after the current
+           * period dates have been initialized.
            */
           function initCurrentAbsencePeriodFilterDates () {
             return AbsencePeriod.getCurrent().then(function (currentPeriod) {
@@ -833,7 +834,8 @@
            * If form filters have not been initialized, they'll get their default
            * values depending on the current report.
            *
-           * @return {Promise}
+           * @return {Promise} - Resolves to an empty promise after the form
+           * filter values have been initialized.
            */
           function initFormFilterValues () {
             return $q(function (resolve, reject) {
@@ -858,6 +860,9 @@
         return {
           /**
            * Returns the current absence period or null if there is none.
+           *
+           * @return {Promise} - resolves to the current absence period or NULL
+           * in case there is none.
            */
           getCurrent: function () {
             var today = moment().format('YYYY-MM-DD');
