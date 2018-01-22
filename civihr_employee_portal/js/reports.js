@@ -53,18 +53,18 @@
   HRReport.prototype.createReportSectionElement = function () {
     var html = '<div class="report-section">' +
       '<div class="row report-header-section">' +
-        '<div class="report-filters col-sm-3"></div>' +
-        '<div class="report-function col-sm-2 form-group">' +
+        '<div class="report-filters col-md-3"></div>' +
+        '<div class="report-function col-md-2 form-group">' +
           '<label>Chart Functions:</label>' +
           '<div class="report-function-select"></div>' +
           '<div class="report-function-group"></div>' +
         '</div>' +
-        '<div class="report-field-columns col-sm-7"><table><tr></tr></table></div>' +
+        '<div class="report-field-columns col-md-7"><table><tr></tr></table></div>' +
       '</div>' +
       '<div class="row report-content-section">' +
-        '<div class="report-fields-selection col-sm-3"><table><tr></tr></table></div>' +
-        '<div class="report-field-rows col-sm-2"><table><tr></tr></table></div>' +
-        '<div class="report-area col-sm-7"></div>' +
+        '<div class="report-fields-selection col-md-3"><table><tr></tr></table></div>' +
+        '<div class="report-field-rows col-md-2"><table><tr></tr></table></div>' +
+        '<div class="report-area col-md-7"></div>' +
       '</div>' +
     '</div>';
 
