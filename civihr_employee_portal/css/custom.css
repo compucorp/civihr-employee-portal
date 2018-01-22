@@ -226,21 +226,6 @@ span.appraisals-employee-legend {
   background: #fbfbfc;
 }
 
-#reportPivotTable .row {
-  display: table;
-  margin-bottom: 15px;
-}
-
-#reportPivotTable .row:last-child {
-  margin-bottom: 0;
-}
-
-#reportPivotTable .row > [class*="col-"] {
-  display: table-cell;
-  float: none;
-  vertical-align: top;
-}
-
 #reportPivotTable .report-field-columns {
   position: relative;
 }
