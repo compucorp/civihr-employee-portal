@@ -258,6 +258,7 @@
 
     this.updateDropdown();
     this.updateFilterbox();
+    this.adaptSvgProportionsToContainer();
   };
 
   /**
@@ -321,6 +322,17 @@
         });
       }
     });
+  };
+
+  /**
+   * Updates the SVG element proportions so it adapts them to its
+   * parent container. This helps the SVG charts to display their information
+   * without breaking.
+   */
+  HRReport.prototype.adaptSvgProportionsToContainer = function () {
+    this.pivotTableContainer.find('svg').attr('viewBox', '0 0 800 800')
+      .removeAttr('width')
+      .removeAttr('height');
   };
 
   /*
