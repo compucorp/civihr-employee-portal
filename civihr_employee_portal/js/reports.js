@@ -17,7 +17,6 @@
   HRReport.prototype.init = function (options) {
     $.extend(this, options);
     this.initAngular();
-    this.initScrollbarFallbackOnTabChange();
     this.processData(this.data);
     this.originalFilterElement = $('#report-filters').detach();
   };
@@ -405,20 +404,6 @@
   HRReport.prototype.show = function () {
     this.initPivotTable();
     this.applyFilters();
-  };
-
-  /**
-   * Init the scrollbar fallback
-   *
-   */
-  HRReport.prototype.initScrollbarFallbackOnTabChange = function () {
-    var el = document.querySelector('.chr_custom-scrollbar');
-
-    $('[data-tab="view-data"]').click(function () {
-      setTimeout(function () {
-        Ps.initialize(el);
-      }, 0);
-    });
   };
 
   /**
@@ -954,11 +939,14 @@
      * Bind tab switching events for the report tabs.
      */
     bindTabsEvents: function () {
+      var self = this;
+
       $('.report-tabs a').bind('click', function (e) {
         $('.report-tabs li').removeClass('active');
         $(this).parent().addClass('active');
         $('.report-block').addClass('hidden');
         $('.report-block.' + $(this).data('tab')).removeClass('hidden');
+        self.initScrollbarFallbackOnTabChange();
       });
     },
     /**
@@ -978,6 +966,15 @@
         deleteOption.fadeOut('fast');
         updateOption.fadeOut('fast');
       }
+    },
+    /**
+     * initializes the scrollbar fallback
+     *
+     */
+    initScrollbarFallbackOnTabChange: function () {
+      var el = document.querySelector('.chr_custom-scrollbar');
+
+      Ps.initialize(el);
     },
     /**
      * Automatically switches the current selected tab depending on the tab class
