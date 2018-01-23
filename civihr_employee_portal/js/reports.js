@@ -939,15 +939,13 @@
      * Bind tab switching events for the report tabs.
      */
     bindTabsEvents: function () {
-      var self = this;
-
-      $('.report-tabs a').bind('click', function (e) {
+      $('.report-tabs a').on('click', function (e) {
         $('.report-tabs li').removeClass('active');
-        $(this).parent().addClass('active');
+        $(e.target).parent().addClass('active');
         $('.report-block').addClass('hidden');
-        $('.report-block.' + $(this).data('tab')).removeClass('hidden');
-        self.initScrollbarFallbackOnTabChange();
-      });
+        $('.report-block.' + $(e.target).data('tab')).removeClass('hidden');
+        this.initScrollbarFallbackOnTabChange();
+      }.bind(this));
     },
     /**
      * Displays the Report Configuration's save/update/delete options depending
