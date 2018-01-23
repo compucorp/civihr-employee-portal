@@ -7,9 +7,7 @@
   /**
    * Define HRReport object.
    */
-  function HRReport () {
-    this.initScrollbarFallback();
-  }
+  function HRReport () {}
 
   /**
    * Initialization function.
@@ -19,6 +17,7 @@
   HRReport.prototype.init = function (options) {
     $.extend(this, options);
     this.initAngular();
+    this.initScrollbarFallbackOnTabChange();
     this.processData(this.data);
     this.originalFilterElement = $('#report-filters').detach();
   };
@@ -408,12 +407,14 @@
    * Init the scrollbar fallback
    *
    */
-  HRReport.prototype.initScrollbarFallback = function () {
+  HRReport.prototype.initScrollbarFallbackOnTabChange = function () {
     var el = document.querySelector('.chr_custom-scrollbar');
 
-    if (el) {
-      Ps.initialize(el);
-    }
+    $('[data-tab="view-data"]').click(function () {
+      setTimeout(function () {
+        Ps.initialize(el);
+      }, 0);
+    });
   };
 
   /**
@@ -473,7 +474,6 @@
       success: function (data) {
         that.tableContainer.html(data);
         that.refreshReportTableViewInstance(tableDomId);
-        that.initScrollbarFallback();
       },
       type: 'GET'
     });
