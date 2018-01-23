@@ -7,9 +7,7 @@
   /**
    * Define HRReport object.
    */
-  function HRReport () {
-    this.initScrollbarFallback();
-  }
+  function HRReport () {}
 
   /**
    * Initialization function.
@@ -53,18 +51,18 @@
   HRReport.prototype.createReportSectionElement = function () {
     var html = '<div class="report-section">' +
       '<div class="row report-header-section">' +
-        '<div class="report-filters col-sm-3"></div>' +
-        '<div class="report-function col-sm-2 form-group">' +
+        '<div class="report-filters col-md-3"></div>' +
+        '<div class="report-function col-md-2 form-group">' +
           '<label>Chart Functions:</label>' +
           '<div class="report-function-select"></div>' +
           '<div class="report-function-group"></div>' +
         '</div>' +
-        '<div class="report-field-columns col-sm-7"><table><tr></tr></table></div>' +
+        '<div class="report-field-columns col-md-7"><table><tr></tr></table></div>' +
       '</div>' +
       '<div class="row report-content-section">' +
-        '<div class="report-fields-selection col-sm-3"><table><tr></tr></table></div>' +
-        '<div class="report-field-rows col-sm-2"><table><tr></tr></table></div>' +
-        '<div class="report-area col-sm-7"></div>' +
+        '<div class="report-fields-selection col-md-3"><table><tr></tr></table></div>' +
+        '<div class="report-field-rows col-md-2"><table><tr></tr></table></div>' +
+        '<div class="report-area col-md-7"></div>' +
       '</div>' +
     '</div>';
 
@@ -258,6 +256,7 @@
 
     this.updateDropdown();
     this.updateFilterbox();
+    this.adaptSvgProportionsToContainer();
   };
 
   /**
@@ -321,6 +320,24 @@
         });
       }
     });
+  };
+
+  /**
+   * Updates the SVG element proportions so it adapts them to its
+   * parent container. This helps the SVG charts to display their information
+   * without breaking.
+   */
+  HRReport.prototype.adaptSvgProportionsToContainer = function () {
+    this.pivotTableContainer.find('svg')
+      .removeAttr('width')
+      .removeAttr('height')
+      .each(function () {
+        // The viewBox attribute is done ins this way because jQuery doesn't
+        // set it properly.
+        // The value of 800 800 was chosen because it gives the best ratio
+        // for displaying the charts.
+        $(this)[0].setAttribute('viewBox', '0 0 800 800');
+      });
   };
 
   /*
@@ -390,18 +407,6 @@
   };
 
   /**
-   * Init the scrollbar fallback
-   *
-   */
-  HRReport.prototype.initScrollbarFallback = function () {
-    var el = document.querySelector('.chr_custom-scrollbar');
-
-    if (el) {
-      Ps.initialize(el);
-    }
-  };
-
-  /**
    * Refresh JSON data and Pivot Tables using provided filter values
    *
    * @param string filterValues
@@ -458,7 +463,6 @@
       success: function (data) {
         that.tableContainer.html(data);
         that.refreshReportTableViewInstance(tableDomId);
-        that.initScrollbarFallback();
       },
       type: 'GET'
     });
@@ -935,12 +939,13 @@
      * Bind tab switching events for the report tabs.
      */
     bindTabsEvents: function () {
-      $('.report-tabs a').bind('click', function (e) {
+      $('.report-tabs a').on('click', function (e) {
         $('.report-tabs li').removeClass('active');
-        $(this).parent().addClass('active');
+        $(e.target).parent().addClass('active');
         $('.report-block').addClass('hidden');
-        $('.report-block.' + $(this).data('tab')).removeClass('hidden');
-      });
+        $('.report-block.' + $(e.target).data('tab')).removeClass('hidden');
+        this.initScrollbarFallbackOnTabChange();
+      }.bind(this));
     },
     /**
      * Displays the Report Configuration's save/update/delete options depending
@@ -959,6 +964,15 @@
         deleteOption.fadeOut('fast');
         updateOption.fadeOut('fast');
       }
+    },
+    /**
+     * initializes the scrollbar fallback
+     *
+     */
+    initScrollbarFallbackOnTabChange: function () {
+      var el = document.querySelector('.chr_custom-scrollbar');
+
+      Ps.initialize(el);
     },
     /**
      * Automatically switches the current selected tab depending on the tab class
