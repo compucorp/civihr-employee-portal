@@ -333,6 +333,10 @@
       .removeAttr('width')
       .removeAttr('height')
       .each(function () {
+        // The viewBox attribute is done ins this way because jQuery doesn't
+        // set it properly.
+        // The value of 800 800 was chosen because it gives the best ratio
+        // for displaying the charts.
         $(this)[0].setAttribute('viewBox', '0 0 800 800');
       });
   };
