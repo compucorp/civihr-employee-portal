@@ -5048,7 +5048,7 @@ function civihr_employee_portal_hrreport_landing_page() {
     drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "dist/reqangular.min.js", $jsOptions);
   }
 
-  // Base reports.js script
+  drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . '/css/reports.css');
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js', $jsOptions);
 
   $menu = civihr_employee_portal_get_drupal_menu_items('hr-reports');
@@ -5395,6 +5395,7 @@ function _civihr_employee_portal_add_report_scripts() {
   drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable/pivot.css");
   drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable/c3.min.css");
   drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/perfect-scrollbar/perfect-scrollbar.min.css");
+  drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/reports.css");
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/jquery-2.1.1.min.js', $jsOptions);
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivot.min.js', $jsOptions);
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/perfect-scrollbar/perfect-scrollbar.min.js', $jsOptions);
