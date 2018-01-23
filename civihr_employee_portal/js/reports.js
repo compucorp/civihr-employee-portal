@@ -330,9 +330,12 @@
    * without breaking.
    */
   HRReport.prototype.adaptSvgProportionsToContainer = function () {
-    this.pivotTableContainer.find('svg').attr('viewBox', '0 0 800 800')
+    this.pivotTableContainer.find('svg')
       .removeAttr('width')
-      .removeAttr('height');
+      .removeAttr('height')
+      .each(function () {
+        $(this)[0].setAttribute('viewBox', '0 0 800 800');
+      });
   };
 
   /*
