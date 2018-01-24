@@ -5,6 +5,7 @@ namespace Drupal\civihr_employee_portal\Forms;
 use Drupal\civihr_employee_portal\Helpers\WebformHelper;
 use Drupal\civihr_employee_portal\Service\ContactService;
 use Drupal\civihr_employee_portal\Service\TaskCreationService;
+use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 
 class OnboardingWebForm {
 
@@ -157,25 +158,15 @@ class OnboardingWebForm {
       return;
     }
 
-    if ($this->userCreatedAfterOnboardingReleased()) {
-      $helpText = 'Please complete your details using the onboarding wizard. '
-      . 'The data is saved directly onto your profile. You can always update '
-      . 'your details at a later date using the self service portal. You can '
-      . 'optionally skip this wizard and be reminded next time you login.';
-    } else {
-      $helpText = 'CiviHR users can now complete a quick and easy'
-        . ' wizard to enter their details into the system.<br/>Any information '
-        . 'that you have already provided to the system will be shown in the '
-        . 'wizard and can be updated.<br/><br/>You can optionally skip this '
-        . 'wizard and be reminded next time you login';
-    }
+    $helpText = $this->getHelpText();
+    $skipButtonMarkup = $this->getSkipButtonMarkup();
 
     // create a 'markup' element to show message
     $progressBarWeight = $form['progressbar']['#weight'];
     $classes = 'alert alert-success';
     $style = 'display: inline-block';
-    $format = '<p class="%s" style="%s">%s</p>';
-    $markup = sprintf($format, $classes, $style, $helpText);
+    $format = '<div class="%s" style="%s"><p>%s</p>%s</div>';
+    $markup = sprintf($format, $classes, $style, $helpText, $skipButtonMarkup);
 
     $form['submitted']['onboarding_explanation'] = [
       '#weight' => $progressBarWeight + 1,
@@ -184,20 +175,6 @@ class OnboardingWebForm {
       '#prefix' => '<div style="text-align: center;">',
       '#suffix' => '</div>'
     ];
-  }
-
-  /**
-   * Checks if the current logged in user was created after the onboarding
-   * feature was released.
-   *
-   * @return bool
-   */
-  private function userCreatedAfterOnboardingReleased() {
-    global $user;
-    $onboardingForm = WebformHelper::findOneByTitle(self::NAME);
-    $onboardingRelease = $onboardingForm->created;
-
-    return $user->created > $onboardingRelease;
   }
 
   /**
@@ -225,6 +202,62 @@ class OnboardingWebForm {
     unset($params['return']);
     $params['image_URL']  = $current;
     civicrm_api3('Contact', 'create', $params);
+  }
+
+  /**
+   * Gets the help text to show the user at the beginning of the onboarding
+   * form. Differs depending on whether they've been created before the
+   * onboarding feature was released.
+   *
+   * @return string
+   */
+  private function getHelpText() {
+    if ($this->userCreatedAfterOnboardingReleased()) {
+      return 'Please complete your details using the onboarding wizard. '
+        . 'The data is saved directly onto your profile. You can always update '
+        . 'your details at a later date using the self service portal.'
+        . '<br/><br/>You can optionally skip this wizard and be reminded next '
+        . 'time you login.';
+    } else {
+      return 'CiviHR users can now complete a quick and easy'
+        . ' wizard to enter their details into the system.<br/>Any information '
+        . 'that you have already provided to the system will be shown in the '
+        . 'wizard and can be updated.<br/><br/>You can optionally skip this '
+        . 'wizard and be reminded next time you login.';
+    }
+  }
+
+  /**
+   * Gets the markup for the button to skip the onboarding form. The button
+   * itself is wrapped in a link to the landing page for the user.
+   *
+   * @return string
+   */
+  private function getSkipButtonMarkup() {
+    $classes = 'btn btn-default-outline';
+    $style = 'float:none;';
+    $format = '<button type="button" style="%s" class="%s">%s</button>';
+    $buttonText = ts('Skip this step');
+    $buttonMarkup = sprintf($format, $style, $classes, $buttonText);
+
+    global $user;
+    $link = LinkProvider::getLandingPageLink($user);
+
+    return sprintf('<a href="%s">%s</a>', $link, $buttonMarkup);
+  }
+
+  /**
+   * Checks if the current logged in user was created after the onboarding
+   * feature was released.
+   *
+   * @return bool
+   */
+  private function userCreatedAfterOnboardingReleased() {
+    global $user;
+    $onboardingForm = WebformHelper::findOneByTitle(self::NAME);
+    $onboardingRelease = $onboardingForm->created;
+
+    return $user->created > $onboardingRelease;
   }
 
 }
