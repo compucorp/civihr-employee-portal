@@ -4578,16 +4578,6 @@ array(
             array(
               'nid' => '2',
               'rgid' => '12',
-              'aid' => '0',
-              'target_type' => 'component',
-              'target' => '150',
-              'invert' => '1',
-              'action' => 'show',
-              'argument' => '',
-            ),
-            array(
-              'nid' => '2',
-              'rgid' => '12',
               'aid' => '1',
               'target_type' => 'component',
               'target' => '6',
