@@ -235,9 +235,9 @@ class OnboardingWebForm {
    */
   private function getSkipButtonMarkup() {
     $classes = 'btn btn-default chr_onboarding-wizard_remind-me-later';
-    $format = '<button type="button" style="%s" class="%s">%s</button>';
+    $format = '<button type="button" class="%s">%s</button>';
     $buttonText = ts('Skip and Remind Me Later');
-    $buttonMarkup = sprintf($format, null, $classes, $buttonText);
+    $buttonMarkup = sprintf($format, $classes, $buttonText);
 
     global $user;
     $link = LinkProvider::getLandingPageLink($user);
