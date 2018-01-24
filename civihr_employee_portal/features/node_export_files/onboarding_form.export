@@ -811,7 +811,7 @@ array(
             'description_above' => 0,
             'private' => 0,
             'wrapper_classes' => '',
-            'css_classes' => 'onboarding_wizard_payroll_skip_checkbox',
+            'css_classes' => 'onboarding_wizard_payroll_skip_radio',
             'aslist' => 0,
             'items' => "1|Yes\n2|No\n",
             'multiple' => 0,
