@@ -5049,6 +5049,7 @@ function civihr_employee_portal_hrreport_landing_page() {
 
   drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . '/css/reports.css');
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js', $jsOptions);
+  drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/iframeResizer.contentWindow.min.js');
 
   $menu = civihr_employee_portal_get_drupal_menu_items('hr-reports');
 
@@ -5404,6 +5405,7 @@ function _civihr_employee_portal_add_report_scripts() {
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/export_renderers.js', $jsOptions);
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/jquery-ui-1.9.2.custom.min.js', $jsOptions);
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js', $jsOptions);
+  drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/iframeResizer.contentWindow.min.js');
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/moment/moment.min.js', $jsOptions);
 
   if (_civihr_employee_portal_is_extension_enabled('org.civicrm.reqangular')) {
