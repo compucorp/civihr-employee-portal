@@ -1,12 +1,13 @@
+/* global angular, Drupal, jQuery, moment, Ps, swal */
+
 (function ($) {
   'use strict';
+  var compileAngularElement;
 
   /**
    * Define HRReport object.
    */
-  function HRReport () {
-    this.initScrollbarFallback();
-  }
+  function HRReport () {}
 
   /**
    * Initialization function.
@@ -15,17 +16,78 @@
    */
   HRReport.prototype.init = function (options) {
     $.extend(this, options);
+    this.initAngular();
     this.processData(this.data);
+    this.originalFilterElement = $('#report-filters').detach();
+  };
+
+  /**
+   * Appends drag and drop instructions for the field rows and columns.
+   */
+  HRReport.prototype.appendFieldsDraggingInstructions = function () {
+    var columnsMessage = 'Drag and drop a field here from the list on the left to add as a column heading / horizontal axis in the report.';
+    var rowsMessage = 'Drag and drop a field here from the list on the left to add as a row heading / vertical axis in the report.';
+
+    $('.report-field-columns .pvtAxisContainer').append('<p class="instructions">' + columnsMessage + '</p>');
+    $('.report-field-rows .pvtAxisContainer').append('<p class="instructions">' + rowsMessage + '</p>');
+  };
+
+  /**
+   * Compiles the filters element into an angular component. This is done for
+   * elements created outside of the Angular cycle (ie: created using jQuery, etc.)
+   */
+  HRReport.prototype.appendFilters = function () {
+    var element = this.originalFilterElement.clone();
+    var filtersContainer = this.pivotTableContainer.find('.report-filters');
+
+    compileAngularElement(element);
+    filtersContainer.empty();
+    element.appendTo(filtersContainer);
+  };
+
+  /**
+   * Creates a new layout for the report elements.
+   */
+  HRReport.prototype.createReportSectionElement = function () {
+    var html = '<div class="report-section">' +
+      '<div class="row report-header-section">' +
+        '<div class="report-filters col-md-3"></div>' +
+        '<div class="report-function col-md-2 form-group">' +
+          '<label>Chart Functions:</label>' +
+          '<div class="report-function-select"></div>' +
+          '<div class="report-function-group"></div>' +
+        '</div>' +
+        '<div class="report-field-columns col-md-7"><table><tr></tr></table></div>' +
+      '</div>' +
+      '<div class="row report-content-section">' +
+        '<div class="report-fields-selection col-md-3"><table><tr></tr></table></div>' +
+        '<div class="report-field-rows col-md-2"><table><tr></tr></table></div>' +
+        '<div class="report-area col-md-7"></div>' +
+      '</div>' +
+    '</div>';
+
+    this.pivotTableContainer.append(html);
+  };
+
+  /**
+   * Hides the report rows and columns instructions if there are fields inside
+   * of their container, otherwise displays the instructions.
+   */
+  HRReport.prototype.displayInstructionsIfDroppableHasNoFields = function () {
+    $('.pvtAxisContainer .instructions').each(function () {
+      var hasFields = $(this).siblings().length;
+
+      hasFields ? $(this).slideUp() : $(this).slideDown();
+    });
   };
 
   /**
    * Init PivotTable.js library
    */
   HRReport.prototype.initPivotTable = function () {
-    var that = this;
     this.pivotTableContainer.pivotUI(this.data, {
       rendererName: 'Table',
-      renderers: CRM.$.extend(
+      renderers: $.extend(
         jQuery.pivotUtilities.renderers,
         jQuery.pivotUtilities.c3_renderers,
         jQuery.pivotUtilities.export_renderers
@@ -35,15 +97,15 @@
       cols: [],
       aggregatorName: 'Count',
       unusedAttrsVertical: false,
-      aggregators: that.getAggregators(),
+      aggregators: this.getAggregators(),
       derivedAttributes: this.derivedAttributes,
 
       // It's necessary to make all the DOM changes here
       // because the library doesn't have support to custom template
       // https://github.com/nicolaskruchten/pivottable/issues/484
       onRefresh: function (config) {
-        return that.pivotTableOnRefresh(config);
-      }
+        return this.pivotTableOnRefresh(config);
+      }.bind(this)
     }, false);
   };
 
@@ -128,6 +190,37 @@
   };
 
   /**
+   * Moves elements inside the report into a new element.
+   *
+   * @param {String} fromSelector - the path for the source element to move.
+   * @param {String} toSelector - the path for the container element.
+   */
+  HRReport.prototype.moveReportElementFromTo = function (fromSelector, toSelector) {
+    var fromElement = this.pivotTableContainer.find(fromSelector);
+    var toElement = $(toSelector);
+
+    if (!fromElement.length) {
+      return;
+    }
+
+    toElement.empty();
+    fromElement.detach().appendTo(toElement);
+  };
+
+  /**
+   * Move the report original elements into new layout elements.
+   */
+  HRReport.prototype.moveReportElements = function () {
+    this.moveReportElementFromTo('.pvtCols', '.report-field-columns table tr');
+    this.moveReportElementFromTo('.pvtRows', '.report-field-rows table tr');
+    this.moveReportElementFromTo('.pvtUnused', '.report-fields-selection table tr');
+    this.moveReportElementFromTo('.pvtRenderer', '.chart-type-select');
+    this.moveReportElementFromTo('.pvtAggregator', '.report-function-select');
+    this.moveReportElementFromTo('.pvtVals', '.report-function-group');
+    this.moveReportElementFromTo('.pvtRendererArea', '.report-area');
+  };
+
+  /**
    * Do additional required operations on data returned from backend.
    *
    * @param array data
@@ -146,12 +239,24 @@
   };
 
   /**
-   * Update the pivot table dropdown and filter box
-   *
+   * Updates the layout of the pivot table and form element styles.
    */
   HRReport.prototype.updateCustomTemplate = function () {
+    var hasReportSectionElement = this.pivotTableContainer.find('.report-section').length;
+
+    if (!hasReportSectionElement) {
+      this.createReportSectionElement();
+      this.moveReportElements();
+      this.appendFilters();
+      this.bindFilters();
+      this.appendFieldsDraggingInstructions();
+      this.displayInstructionsIfDroppableHasNoFields();
+      this.bindDragAndDropEventListeners();
+    }
+
     this.updateDropdown();
     this.updateFilterbox();
+    this.adaptSvgProportionsToContainer();
   };
 
   /**
@@ -159,7 +264,7 @@
    *
    */
   HRReport.prototype.updateDropdown = function () {
-    $('.pvtUi select').each(function () {
+    $('.report-content select').each(function () {
       var selectClass = 'crm_custom-select crm_custom-select--full';
 
       if (!$(this).parent().hasClass('crm_custom-select')) {
@@ -215,6 +320,24 @@
         });
       }
     });
+  };
+
+  /**
+   * Updates the SVG element proportions so it adapts them to its
+   * parent container. This helps the SVG charts to display their information
+   * without breaking.
+   */
+  HRReport.prototype.adaptSvgProportionsToContainer = function () {
+    this.pivotTableContainer.find('svg')
+      .removeAttr('width')
+      .removeAttr('height')
+      .each(function () {
+        // The viewBox attribute is done ins this way because jQuery doesn't
+        // set it properly.
+        // The value of 800 800 was chosen because it gives the best ratio
+        // for displaying the charts.
+        $(this)[0].setAttribute('viewBox', '0 0 800 800');
+      });
   };
 
   /*
@@ -280,20 +403,7 @@
    */
   HRReport.prototype.show = function () {
     this.initPivotTable();
-    this.bindFilters();
     this.applyFilters();
-  };
-
-  /**
-   * Init the scrollbar fallback
-   *
-   */
-  HRReport.prototype.initScrollbarFallback = function () {
-    var el = document.querySelector('.chr_custom-scrollbar');
-
-    if (el) {
-      Ps.initialize(el);
-    }
   };
 
   /**
@@ -306,7 +416,7 @@
     if (!this.jsonUrl) {
       return;
     }
-    CRM.$.ajax({
+    $.ajax({
       url: this.jsonUrl + filterValues,
       error: function () {
         console.log('Error refreshing Report JSON data.');
@@ -317,7 +427,7 @@
         that.data = data;
         that.pivotTableContainer.pivotUI(data, {
           rendererName: 'Table',
-          renderers: CRM.$.extend(
+          renderers: $.extend(
             jQuery.pivotUtilities.renderers,
             jQuery.pivotUtilities.c3_renderers
           ),
@@ -345,7 +455,7 @@
       return;
     }
     var tableDomId = this.getReportTableDomID();
-    CRM.$.ajax({
+    $.ajax({
       url: that.tableUrl + filterValues,
       error: function () {
         console.log('Error refreshing Report data table.');
@@ -353,7 +463,6 @@
       success: function (data) {
         that.tableContainer.html(data);
         that.refreshReportTableViewInstance(tableDomId);
-        that.initScrollbarFallback();
       },
       type: 'GET'
     });
@@ -363,7 +472,7 @@
    * Return unique Drupal View's DOM ID of data table
    */
   HRReport.prototype.getReportTableDomID = function () {
-    var reportTableDiv = CRM.$('#reportTable > div.view:first');
+    var reportTableDiv = $('#reportTable > div.view:first');
     var reportTableClasses = reportTableDiv.attr('class').split(' ');
     for (var i in reportTableClasses) {
       if (reportTableClasses[i].substring(0, 12) === 'view-dom-id-') {
@@ -379,6 +488,7 @@
    * @param string viewReportDataTableId
    */
   HRReport.prototype.refreshReportTableViewInstance = function (viewReportDataTableId) {
+    var AjaxViews = Drupal.views.ajaxView;
     var viewReportDataTableSettings = Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableId];
     var viewReportDataTableNewId = this.getReportTableDomID();
 
@@ -387,7 +497,27 @@
 
     viewReportDataTableSettings.view_dom_id = viewReportDataTableNewId;
     Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableNewId] = viewReportDataTableSettings;
-    Drupal.views.instances['views_dom_id:' + viewReportDataTableNewId] = new Drupal.views.ajaxView(Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableNewId]);
+    Drupal.views.instances['views_dom_id:' + viewReportDataTableNewId] = new AjaxViews(Drupal.settings.views.ajaxViews['views_dom_id:' + viewReportDataTableNewId]);
+  };
+
+  /**
+   * Binds drag and drop event listeners for the field containers. These are
+   * used for highlighting the droppable containers and removing instructions
+   * once a field is dropped in a column or row container.
+   */
+  HRReport.prototype.bindDragAndDropEventListeners = function () {
+    var draggableItems = this.pivotTableContainer.find('.report-fields-selection .pvtAxisContainer, .report-field-columns .pvtAxisContainer, .report-field-rows .pvtAxisContainer');
+    var droppableContainers = this.pivotTableContainer.find('.report-field-columns .pvtAxisContainer, .report-field-rows .pvtAxisContainer');
+    var highlightClass = 'highlight';
+
+    draggableItems.on('sortstart', function () {
+      droppableContainers.addClass(highlightClass);
+    });
+
+    draggableItems.on('sortstop', function (event) {
+      droppableContainers.removeClass(highlightClass);
+      this.displayInstructionsIfDroppableHasNoFields();
+    }.bind(this));
   };
 
   /**
@@ -400,7 +530,7 @@
       return;
     }
 
-    CRM.$('#report-filters input[type="submit"]').bind('click', function (e) {
+    $('.report-filters input[type="submit"]').bind('click', function (e) {
       e.preventDefault();
       that.applyFilters();
     });
@@ -408,13 +538,13 @@
 
   HRReport.prototype.applyFilters = function () {
     var that = this;
-    var formSerialize = CRM.$('#report-filters form:first').serializeArray();
+    var formSerialize = $('.report-filters form:first').serializeArray();
 
     formSerialize.map(function (input) {
       input.value = that.formatDate(input.value, 'DD/MM/YYYY', 'YYYY-MM-DD');
     });
 
-    formSerialize = CRM.$.param(formSerialize);
+    formSerialize = $.param(formSerialize);
 
     if (that.jsonUrl) {
       that.refreshJson('?' + formSerialize);
@@ -454,7 +584,7 @@
       return false;
     }
 
-    CRM.$.ajax({
+    $.ajax({
       url: '/reports/' + that.reportName + '/configuration/' + configId,
       error: function () {
         swal('Failed', 'Error loading Report configuration!', 'error');
@@ -500,7 +630,7 @@
   /**
    * Save new Report configuration basing on currently set configuration.
    */
-  HRReport.prototype.configSaveNew = function () {
+  HRReport.prototype.configSaveNew = function (callback) {
     var that = this;
 
     swal({
@@ -516,7 +646,7 @@
         swal.showInputError('Configuration name cannot be empty.');
         return false;
       }
-      that.configSaveProcess(0, inputValue);
+      that.configSaveProcess(0, inputValue, callback);
     });
   };
 
@@ -526,11 +656,11 @@
    * @param {Integer} configId
    * @param {String} configName
    */
-  HRReport.prototype.configSaveProcess = function (configId, configName) {
+  HRReport.prototype.configSaveProcess = function (configId, configName, callback) {
     var that = this;
     var reportName = this.reportName;
 
-    CRM.$.ajax({
+    $.ajax({
       url: '/reports/' + reportName + '/configuration/' + configId + '/save',
       data: {
         label: configName,
@@ -543,20 +673,21 @@
         if (data.status === 'success') {
           // Update select with new option if we saved a new configuration:
           if (data['id']) {
-            CRM.$('.report-config-select').append('<option value="' + data['id'] + '">' + data['label'] + '</option>');
+            $('.report-config-select').append('<option value="' + data['id'] + '">' + data['label'] + '</option>');
             // Sort options by their labels alphabetically.
-            CRM.$('.report-config-select').append(CRM.$('.report-config-select option').remove().sort(function (a, b) {
+            $('.report-config-select').append($('.report-config-select option').remove().sort(function (a, b) {
               var aText = $(a).text();
               var bText = $(b).text();
 
               return (aText > bText) ? 1 : ((aText < bText) ? -1 : 0);
             }));
-            CRM.$('.report-config-select').val(data['id']);
+            $('.report-config-select').val(data['id']);
+            callback && callback();
           }
           swal('Success', 'Report configuration has been saved', 'success');
         } else if (data.status === 'already_exists') {
           // If there is already a configuration with this label then we ask for overwriting it.
-          CRM.$('.report-config-select').val(data['id']);
+          $('.report-config-select').val(data['id']);
           that.configSave('Configuration with this name already exists. Do you want to modify it?');
         } else {
           swal('Failed', 'Error saving Report configuration!', 'error');
@@ -569,7 +700,7 @@
   /**
    * Delete currently active configuration.
    */
-  HRReport.prototype.configDelete = function () {
+  HRReport.prototype.configDelete = function (callback) {
     var configId = this.getReportConfigurationId();
     if (!configId) {
       swal('No configuration selected', 'Please choose configuration to delete.', 'error');
@@ -586,15 +717,16 @@
       confirmButtonText: 'Yes',
       closeOnConfirm: false
     }, function () {
-      CRM.$.ajax({
+      $.ajax({
         url: '/reports/' + reportName + '/configuration/' + configId + '/delete',
         error: function () {
           swal('Failed', 'Error deleting Report configuration!', 'error');
         },
         success: function (data) {
           if (data.status === 'success') {
-            CRM.$('.report-config-select option[value=' + configId + ']').remove();
+            $('.report-config-select option[value=' + configId + ']').remove();
             swal('Success', 'Report configuration has been deleted', 'success');
+            callback && callback();
           } else {
             swal('Failed', 'Error deleting Report configuration!', 'error');
           }
@@ -610,7 +742,7 @@
    * @returns {Integer}
    */
   HRReport.prototype.getReportConfigurationId = function () {
-    return CRM.$('.report-config-select').val();
+    return $('.report-config-select').val();
   };
 
   /**
@@ -633,6 +765,8 @@
    *
    */
   HRReport.prototype.initAngular = function () {
+    var hrReportInstance = this;
+
     require([
       'common/angular',
       'common/services/angular-date/date-format',
@@ -645,6 +779,15 @@
         'ui.bootstrap',
         'common.angularDate'
       ])
+      .run(['$compile', '$rootScope', function ($compile, $rootScope) {
+        compileAngularElement = function (html) {
+          var element = angular.element(html);
+          var scope = $rootScope.$new();
+
+          $compile(element)(scope);
+          return element;
+        };
+      }])
       .directive('uibDatepickerPopupWrap', function sectionDirective () {
         return ({
           link: function (scope, element, attributes) {
@@ -652,17 +795,99 @@
           }
         });
       })
-      .controller('FiltersController', function () {
-        this.format = 'dd/MM/yyyy';
-        this.placeholderFormat = 'dd/MM/yyyy';
-        this.date = new Date();
-        this.filtersCollapsed = true;
+      .constant('REPORT_NAME', hrReportInstance.reportName)
+      .value('formFiltersStore', {
+        initialized: false,
+        values: {}
       })
-      .controller('SettingsController', function () {
-        this.isCollapsed = true;
-      });
+      .controller('FiltersController', ['$q', 'REPORT_NAME', 'AbsencePeriod',
+        'formFiltersStore', function ($q, REPORT_NAME, AbsencePeriod,
+          formFiltersStore) {
+          var vm = this;
 
-      angular.bootstrap(document.getElementById('civihrReports'), ['civihrReports']);
+          vm.dateFormat = 'dd/MM/yyyy';
+          vm.filters = formFiltersStore.values;
+          vm.loading = { dates: false };
+
+          (function init () {
+            vm.loading.dates = true;
+
+            initFormFilterValues()
+              .finally(function () {
+                vm.loading.dates = false;
+              });
+          })();
+
+          /**
+           * Loads and sets the dates in the date filters using the start and
+           * end dates for the current absence period.
+           *
+           * @return {Promise} - Resolves to an empty promise after the current
+           * period dates have been initialized.
+           */
+          function initCurrentAbsencePeriodFilterDates () {
+            return AbsencePeriod.getCurrent()
+              .then(function (currentPeriod) {
+                if (!currentPeriod) {
+                  return;
+                }
+
+                formFiltersStore.values.fromDate = moment(currentPeriod.start_date).toDate();
+                formFiltersStore.values.toDate = moment(currentPeriod.end_date).toDate();
+              });
+          }
+
+          /**
+           * If form filters have not been initialized, they'll get their default
+           * values depending on the current report.
+           *
+           * @return {Promise} - Resolves to an empty promise after the form
+           * filter values have been initialized.
+           */
+          function initFormFilterValues () {
+            return $q(function (resolve, reject) {
+              if (formFiltersStore.initialized) {
+                return resolve();
+              }
+
+              if (REPORT_NAME === 'leave_and_absence') {
+                initCurrentAbsencePeriodFilterDates().then(resolve, reject);
+              } else {
+                formFiltersStore.values.date = new Date();
+                resolve();
+              }
+            })
+            .then(function () {
+              formFiltersStore.initialized = true;
+            });
+          }
+        }
+      ])
+      .service('AbsencePeriod', ['$q', function ($q) {
+        return {
+          /**
+           * Returns the current absence period or null if there is none.
+           *
+           * @return {Promise} - resolves to the current absence period or NULL
+           * in case there is none.
+           */
+          getCurrent: function () {
+            var today = moment().format('YYYY-MM-DD');
+
+            return $q(function (resolve, reject) {
+              CRM.api3('AbsencePeriod', 'get', {
+                'start_date': { '<=': today },
+                'end_date': { '>=': today },
+                'sequential': 1
+              }).then(function (result) {
+                resolve(result.values[0] || null);
+              }, reject);
+            });
+          }
+        };
+      }]);
+
+      angular.bootstrap($('#civihrReports')[0], ['civihrReports']);
     });
   };
 
@@ -671,46 +896,95 @@
    */
   Drupal.behaviors.civihr_employee_portal_reports = {
     instance: null,
+    /**
+     * This method runs when the page is ready. The method is executed by Drupal.
+     * More information:
+     * https://www.drupal.org/docs/7/api/javascript-api/managing-javascript-in-drupal-7
+     *
+     * @param {Element} context - A reference to the document where the script is
+     *   being executed.
+     * @param {Object} settings - A map of configuration options shared between
+     *   all behaviours.
+     */
     attach: function (context, settings) {
-      var that = this;
       this.instance = new HRReport();
-      this.instance.initAngular();
+      this.bindReportConfigurationEvents();
+      this.bindTabsEvents();
+      this.switchToTabSpecifiedOnTheUrl();
+      this.displayConfigurationOptionsIfConfigurationsHaveBeenSaved();
+    },
+    /**
+     * Binds report configuration events for changing, saving, updating and
+     * deleting them.
+     */
+    bindReportConfigurationEvents: function () {
+      $('.report-config-select').bind('change', function (e) {
+        this.instance.configGet();
+      }.bind(this));
+      $('.report-config-save-btn').bind('click', function (e) {
+        this.instance.configSave();
+      }.bind(this));
+      $('.report-config-save-new-btn').bind('click', function (e) {
+        this.instance.configSaveNew(function () {
+          this.displayConfigurationOptionsIfConfigurationsHaveBeenSaved();
+        }.bind(this));
+      }.bind(this));
+      $('.report-config-delete-btn').bind('click', function (e) {
+        this.instance.configDelete(function () {
+          this.displayConfigurationOptionsIfConfigurationsHaveBeenSaved();
+        }.bind(this));
+      }.bind(this));
+    },
+    /**
+     * Bind tab switching events for the report tabs.
+     */
+    bindTabsEvents: function () {
+      $('.report-tabs a').on('click', function (e) {
+        $('.report-tabs li').removeClass('active');
+        $(e.target).parent().addClass('active');
+        $('.report-block').addClass('hidden');
+        $('.report-block.' + $(e.target).data('tab')).removeClass('hidden');
+        this.initScrollbarFallbackOnTabChange();
+      }.bind(this));
+    },
+    /**
+     * Displays the Report Configuration's save/update/delete options depending
+     * on the availability of configurations. If no configurations are available
+     * only the save option is available and the others are hidden.
+     */
+    displayConfigurationOptionsIfConfigurationsHaveBeenSaved: function () {
+      var deleteOption = $('.report-config-delete-btn');
+      var updateOption = $('.report-config-save-btn');
+      var hasSavedConfigurations = $('.report-config-select option').length >= 2;
 
-      // Tabs bindings
-      CRM.$('.report-tabs a').bind('click', function (e) {
-        CRM.$('.report-tabs li').removeClass('active');
-        CRM.$(this).parent().addClass('active');
-        CRM.$('.report-block').addClass('hidden');
-        CRM.$('.report-block.' + CRM.$(this).data('tab')).removeClass('hidden');
-      });
-
-      switchTabsOnLoad();
-
-      // Reports configuration bindings
-      CRM.$('.report-config-select').bind('change', function (e) {
-        that.instance.configGet();
-      });
-      CRM.$('.report-config-save-btn').bind('click', function (e) {
-        that.instance.configSave();
-      });
-      CRM.$('.report-config-save-new-btn').bind('click', function (e) {
-        that.instance.configSaveNew();
-      });
-      CRM.$('.report-config-delete-btn').bind('click', function (e) {
-        that.instance.configDelete();
-      });
-
-      /**
-       * Switch to correct tab, on page load
-       */
-      function switchTabsOnLoad () {
-        var tabSelector = '.report-tabs a';
-        var hash = window.location.hash;
-
-        hash ? tabSelector += '[data-tab="' + hash.substr(1) + '"]' : tabSelector += ':first';
-
-        CRM.$(tabSelector).click();
+      if (hasSavedConfigurations) {
+        deleteOption.fadeIn('fast');
+        updateOption.fadeIn('fast');
+      } else {
+        deleteOption.fadeOut('fast');
+        updateOption.fadeOut('fast');
       }
+    },
+    /**
+     * initializes the scrollbar fallback
+     *
+     */
+    initScrollbarFallbackOnTabChange: function () {
+      var el = document.querySelector('.chr_custom-scrollbar');
+
+      Ps.initialize(el);
+    },
+    /**
+     * Automatically switches the current selected tab depending on the tab class
+     * provided in the URL.
+     */
+    switchToTabSpecifiedOnTheUrl: function () {
+      var tabSelector = '.report-tabs a';
+      var hash = window.location.hash;
+
+      tabSelector += hash ? '[data-tab="' + hash.substr(1) + '"]' : ':first';
+
+      $(tabSelector).click();
     }
   };
 })(jQuery);

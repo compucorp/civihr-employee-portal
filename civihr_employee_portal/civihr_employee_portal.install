@@ -286,6 +286,22 @@ function civihr_employee_portal_update_7017() {
 }
 
 /**
+ * Remove old and unused links from the Reports menu
+ */
+function civihr_employee_portal_update_7018() {
+  db_delete('menu_links')
+    ->condition('menu_name', 'hr-reports')
+    ->condition(
+      'link_title',
+      ['Report 1: People', 'Report 2: Leave and Absence'],
+      'IN'
+    )
+    ->execute();
+
+  cache_clear_all();
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string

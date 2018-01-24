@@ -8,7 +8,8 @@ and open the template in the editor.
     Author     : gergelymeszaros
 */
 
-.view-absence-list .views-field, .view-absence-list th {
+.view-absence-list .views-field,
+.view-absence-list th {
   width: 15%;
 }
 
@@ -34,7 +35,8 @@ and open the template in the editor.
   }
 }
 
-.table-up, .table-down {
+.table-up,
+.table-down {
   color: #007;
   cursor: pointer;
 
@@ -135,7 +137,17 @@ span.appraisals-employee-legend {
 }
 
 .report-tabs {
+  display: table;
   margin-top: 12px;
+}
+
+.report-tabs.nav-tabs.nav-justified > li {
+  width: 15%;
+  white-space: nowrap;
+}
+
+.report-tabs.nav-justified > li:first-child {
+  width: 85%;
 }
 
 .report-content {
@@ -152,8 +164,7 @@ span.appraisals-employee-legend {
 }
 
 #reportPivotTableConfiguration {
-  border-bottom: 1px solid #ddd;
-  padding: 10px 10px;
+  padding: 10px 20px;
   margin-top: 12px;
 }
 
@@ -169,6 +180,89 @@ span.appraisals-employee-legend {
 
 .view-id-hr_resource_types_list .add-button-icon {
   margin-right: 10px;
+}
+
+#reportPivotTable .report-filters,
+#reportPivotTable .report-function {
+  position: relative;
+}
+
+#reportPivotTable .report-function-group .pvtVals {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#reportPivotTable .report-function-group .pvtAttrDropdown {
+  margin-top: 0;
+}
+
+#reportPivotTable .report-filters .panel-body {
+  background: none;
+}
+
+#reportPivotTable .report-function {
+  padding-top: 20px;
+}
+
+#civihrReports .report-block,
+#reportPivotTable .report-function,
+#reportPivotTable #report-filters,
+#reportPivotTable .report-fields-selection table,
+#reportPivotTable .report-field-rows table,
+#reportPivotTable .report-field-columns table {
+  border: 1px solid #c3cbd6;
+}
+
+#reportPivotTable .pvtAxisContainer,
+#reportPivotTable .report-fields-selection tbody {
+  border: none;
+}
+
+#reportPivotTable .pvtAxisContainer {
+  transition: background 0.4s ease;
+}
+
+#reportPivotTable .pvtAxisContainer.highlight {
+  background: #fbfbfc;
+}
+
+#reportPivotTable .report-field-columns {
+  position: relative;
+}
+
+#reportPivotTable .report-fields-selection table li {
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+#reportPivotTable .report-fields-selection table li span.pvtAttr,
+#reportPivotTable .report-field-rows table li span.pvtAttr {
+  height: auto;
+  line-height: 1.2em;
+  padding: 8px 20px 8px 15px;
+  position: relative;
+  white-space: normal;
+  width: 100%;
+}
+
+#reportPivotTable .report-fields-selection table li span.pvtTriangle,
+#reportPivotTable .report-field-rows table li span.pvtTriangle {
+  position: absolute;
+  top: calc(50% - 1px);
+  right: 10px;
+}
+
+#reportPivotTable .report-field-rows,
+#reportPivotTable .pvtRendererArea {
+  padding: 0;
+}
+
+#reportPivotTable [uib-datepicker-popup-wrap] table {
+  margin: 0;
+}
+
+#reportPivotTable table.uib-daypicker tbody td {
+  padding: 7px 0;
 }
 
 #footer {
@@ -193,4 +287,14 @@ span.appraisals-employee-legend {
 
 .footer-logo {
   margin-top: 25px;
+}
+
+/**
+ * 768px correspond to the small devices and tablets breakpoint from bootstrap:
+ * https://getbootstrap.com/docs/3.3/css/#grid-options
+ */
+@media (max-width: 768px) {
+  .report-tabs.nav-tabs.nav-justified > li {
+    width: 100%;
+  }
 }
