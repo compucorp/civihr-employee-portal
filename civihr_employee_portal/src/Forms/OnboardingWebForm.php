@@ -237,7 +237,7 @@ class OnboardingWebForm {
     $classes = 'btn btn-default-outline';
     $style = 'float:none;';
     $format = '<button type="button" style="%s" class="%s">%s</button>';
-    $buttonText = ts('Skip this step');
+    $buttonText = ts('Skip and Remind Me Later');
     $buttonMarkup = sprintf($format, $style, $classes, $buttonText);
 
     global $user;
