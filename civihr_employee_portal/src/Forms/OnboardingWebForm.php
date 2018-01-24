@@ -213,7 +213,7 @@ class OnboardingWebForm {
    */
   private function getHelpText() {
     if ($this->userCreatedAfterOnboardingReleased()) {
-      return 'Please complete your details using the onboarding wizard. '
+      return 'Please complete your details using the onboarding wizard.<br/>'
         . 'The data is saved directly onto your profile. You can always update '
         . 'your details at a later date using the self service portal.'
         . '<br/><br/>You can optionally skip this wizard and be reminded next '
