@@ -145,10 +145,6 @@ class OnboardingWebForm {
    * @param array $form
    */
   private function addHelpText(&$form) {
-    $helpText = 'CiviHR users can now complete a quick and easy'
-      . ' wizard to enter their details into the system.<br/>Any information '
-      . 'that you have already provided to the system will be shown in the '
-      . 'wizard and can be updated.';
 
     if (!isset($form['progressbar']['#page_num'])) {
       return;
@@ -157,8 +153,21 @@ class OnboardingWebForm {
     $currentPage = $form['progressbar']['#page_num'];
     $isFirstPage = $currentPage === 1;
 
-    if (!$isFirstPage || $this->userCreatedAfterOnboardingReleased()) {
+    if (!$isFirstPage) {
       return;
+    }
+
+    if ($this->userCreatedAfterOnboardingReleased()) {
+      $helpText = 'Please complete your details using the onboarding wizard. '
+      . 'The data is saved directly onto your profile. You can always update '
+      . 'your details at a later date using the self service portal. You can '
+      . 'optionally skip this wizard and be reminded next time you login.';
+    } else {
+      $helpText = 'CiviHR users can now complete a quick and easy'
+        . ' wizard to enter their details into the system.<br/>Any information '
+        . 'that you have already provided to the system will be shown in the '
+        . 'wizard and can be updated.<br/><br/>You can optionally skip this '
+        . 'wizard and be reminded next time you login';
     }
 
     // create a 'markup' element to show message
