@@ -302,6 +302,15 @@ function civihr_employee_portal_update_7018() {
 }
 
 /**
+ * Refreshes the node export files since the onboarding form required fields
+ * were changed.
+ */
+function civihr_employee_portal_update_7019() {
+  civicrm_initialize();
+  drush_civihr_employee_portal_refresh_node_export_files();
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string
