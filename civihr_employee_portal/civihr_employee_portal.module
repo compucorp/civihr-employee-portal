@@ -13,6 +13,7 @@ use Drupal\civihr_employee_portal\Forms\ContactForm;
 use CRM_HRLeaveAndAbsences_BAO_AbsenceType as AbsenceType;
 use Drupal\civihr_employee_portal\Page\HRDetailsPage;
 use Drupal\civihr_employee_portal\Webform\WebformTransferService;
+use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 
 /**
  * Implements hook_css_alter().
@@ -4940,13 +4941,12 @@ function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
  */
 function civihr_employee_portal_user_login(&$edit, $account) {
   if (!isset($_POST['form_id']) || $_POST['form_id'] != 'user_pass_reset') {
-    $sspEntryPath = 'dashboard';
-    $civicrmEntryPath = 'civicrm/tasksassignments/dashboard#/tasks';
-    $onboardingFormPath = 'onboarding-form';
 
     if (current_path() == drupal_get_destination()['destination']) {
-      $_GET['destination'] = user_access('access CiviCRM') ? $civicrmEntryPath : $sspEntryPath;
+      $_GET['destination'] = LinkProvider::getLandingPageLink($account);
     }
+
+    $onboardingFormPath = 'onboarding-form';
 
     if (_civihr_employee_portal_should_do_onboarding($account)) {
       $_GET['destination'] = $onboardingFormPath;
