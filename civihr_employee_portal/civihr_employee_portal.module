@@ -13,6 +13,7 @@ use Drupal\civihr_employee_portal\Forms\ContactForm;
 use CRM_HRLeaveAndAbsences_BAO_AbsenceType as AbsenceType;
 use Drupal\civihr_employee_portal\Page\HRDetailsPage;
 use Drupal\civihr_employee_portal\Webform\WebformTransferService;
+use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 
 /**
  * Implements hook_css_alter().
@@ -4940,13 +4941,12 @@ function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
  */
 function civihr_employee_portal_user_login(&$edit, $account) {
   if (!isset($_POST['form_id']) || $_POST['form_id'] != 'user_pass_reset') {
-    $sspEntryPath = 'dashboard';
-    $civicrmEntryPath = 'civicrm/tasksassignments/dashboard#/tasks';
-    $onboardingFormPath = 'onboarding-form';
 
     if (current_path() == drupal_get_destination()['destination']) {
-      $_GET['destination'] = user_access('access CiviCRM') ? $civicrmEntryPath : $sspEntryPath;
+      $_GET['destination'] = LinkProvider::getLandingPageLink($account);
     }
+
+    $onboardingFormPath = 'onboarding-form';
 
     if (_civihr_employee_portal_should_do_onboarding($account)) {
       $_GET['destination'] = $onboardingFormPath;
@@ -5464,6 +5464,8 @@ function civihr_employee_portal_hrreport_custom($reportName) {
   ];
   $filters = drupal_build_form('views_exposed_form', $form_state);
 
+  drupal_set_title($view->human_name);
+
   return theme('civihr_employee_portal_civihr_report_custom', [
     'reportName' => $reportName,
     'configurationList' => civihr_employee_portal_get_report_configuration_list($reportName),
@@ -5551,56 +5553,99 @@ function civihr_employee_portal_hrreport_custom_printtable($reportName, $dateFil
 }
 
 /**
- * Implement form_views_exposed_form_alter()
+ * Implement form_views_exposed_form_alter(). It executes form alterations
+ * depending on the form id.
  *
- * @param $form
- * @param $form_state
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
  */
 function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {
-  /**
-   *  Staff Directory filters form, HR Documents filters form
-   */
-  $exposed_filters_forms = ['views-exposed-form-civihr-staff-directory-page', 'views-exposed-form-hr-documents-hr-resources'];
-
-  if (isset($form['#id']) && in_array($form['#id'], $exposed_filters_forms)) {
-    $form['#attributes']['class'][] = 'row';
-
-    $form['submit']['#attributes'] = ['class' => ['chr_action']];
-    $form['submit']['#prefix'] = '<div class="col-sm-12"><div class="chr_panel__footer"><div class="chr_actions-wrapper">';
-    $form['submit']['#suffix'] = '</div></div></div>';
-
-    foreach ($form as $key => $value) {
-      if (isset($form['#info']["filter-$key"])) {
-        $form[$key]['#prefix'] = '<div class="col-sm-6">';
-        $form[$key]['#suffix'] = '</div>';
-
-        // Take the <label> value and use it as placeholder instead
-        if ($value['#type'] == 'textfield') {
-          $form[$key]['#attributes'] = ['placeholder' => $form['#info']["filter-$key"]['label']];
-        }
-
-        $form['#info']["filter-$key"]['label'] = '';
-      }
-    }
-  }
-
-  if(strpos($form['#id'], 'views-exposed-form-civihr-report-') !== false) {
-    foreach ($form as $key => $value) {
-      if (isset($form[$key]['value'])) {
-        $form[$key]['value'] = setInputDatepickerForm($form['#info']["filter-$key"]['label']);
-      }
-
-      if (isset($form[$key]['min'])) {
-        $form[$key]['min'] = setInputDatepickerForm($form[$key]['min']['#title']);
-      }
-
-      if (isset($form[$key]['max'])) {
-        $form[$key]['max'] = setInputDatepickerForm($form[$key]['max']['#title']);
-      }
-    }
+  switch ($form['#id']) {
+    // People's report filters:
+    case 'views-exposed-form-civihr-report-people-default':
+      _civihr_employee_portal_form_view_exposed_form_alter_people_report($form, $form_state, $form_id);
+      break;
+    // Leave and Absence's report filters:
+    case 'views-exposed-form-civihr-report-leave-and-absence-default':
+      _civihr_employee_portal_form_view_exposed_form_alter_leave_report($form, $form_state, $form_id);
+      break;
+    // Staff Directory and HR Document's form filters:
+    case 'views-exposed-form-civihr-staff-directory-page':
+    case 'views-exposed-form-hr-documents-hr-resources':
+      _civihr_employee_portal_form_view_exposed_form_alter_actions_wrapper($form, $form_state, $form_id);
+      _civihr_employee_portal_form_view_exposed_form_alter_labels_as_placeholders($form, $form_state, $form_id);
+      break;
   }
 
   $form['submit']['#value'] = 'Filter';
+}
+
+/**
+ * Defines the alterations for the People's report filters.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
+ */
+function _civihr_employee_portal_form_view_exposed_form_alter_people_report(&$form, &$form_state, $form_id) {
+  $form['between_date_filter']['value'] = setInputDatepickerForm();
+  $form['between_date_filter']['#prefix'] = '<header class="form-group"><label>Headcount on date:</label></header>';
+}
+
+/**
+ * Defines the alterations for the Leave and Absence's report filters.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
+ */
+function _civihr_employee_portal_form_view_exposed_form_alter_leave_report(&$form, &$form_state, $form_id) {
+  $dateFields = &$form['absence_date_filter'];
+  $dateFields['min'] = setInputDatepickerForm('From:');
+  $dateFields['max'] = setInputDatepickerForm('To:');
+  $dateFields['#prefix'] = '<header class="form-group"><label>Leave dates:</label></header>';
+  $dateFields['min']['#attributes']['ng-model'] = 'filters.filters.fromDate';
+  $dateFields['max']['#attributes']['ng-model'] = 'filters.filters.toDate';
+}
+
+/**
+ * Wraps the form actions inside a panel footer and actions wrapper elements.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
+ */
+function _civihr_employee_portal_form_view_exposed_form_alter_actions_wrapper(&$form, &$form_state, $form_id) {
+  $form['#attributes']['class'][] = 'row';
+
+  $form['submit']['#attributes'] = ['class' => ['chr_action']];
+  $form['submit']['#prefix'] = '<div class="col-sm-12"><div class="chr_panel__footer"><div class="chr_actions-wrapper">';
+  $form['submit']['#suffix'] = '</div></div></div>';
+}
+
+/**
+ * Wraps each form element inside a Bootstrap column element and changes the label
+ * to a placeholder.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
+ */
+function _civihr_employee_portal_form_view_exposed_form_alter_labels_as_placeholders(&$form, &$form_state, $form_id) {
+  foreach ($form as $key => $value) {
+    if (isset($form['#info']["filter-$key"])) {
+      $form[$key]['#prefix'] = '<div class="col-sm-6">';
+      $form[$key]['#suffix'] = '</div>';
+
+      // Take the <label> value and use it as placeholder instead
+      if ($value['#type'] == 'textfield') {
+        $form[$key]['#attributes'] = ['placeholder' => $form['#info']["filter-$key"]['label']];
+      }
+
+      $form['#info']["filter-$key"]['label'] = '';
+    }
+  }
 }
 
 /**
@@ -5632,7 +5677,7 @@ function _civihr_employee_portal_get_view_csv_export_paths($view) {
  *
  * @return array
  */
-function setInputDatepickerForm($title) {
+function setInputDatepickerForm($title = null) {
   $idxKey = 'id_' . uniqid();
 
   return [
@@ -5642,11 +5687,12 @@ function setInputDatepickerForm($title) {
     '#description' => getCalendarButtonMarkup($idxKey),
     '#date_label_position' => 'within',
     '#attributes' => [
-      'ng-init' => "$idxKey = false; filters.dt$idxKey=filters.date",
-      'placeholder' => '{{filters.placeholderFormat}}',
-      'uib-datepicker-popup' => '{{filters.format}}',
+      'ng-init' => "filters.$idxKey = false",
+      'placeholder' => '{{filters.dateFormat}}',
+      'uib-datepicker-popup' => '{{filters.dateFormat}}',
       'close-text' => 'Close',
-      'ng-model' => "filters.dt$idxKey",
+      'ng-model' => 'filters.filters.date',
+      'ng-disabled' => 'filters.loading.dates',
       'is-open' => "filters.$idxKey",
       'ng-click' => "filters.$idxKey = !filters.$idxKey"
     ],
