@@ -155,7 +155,7 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'menu_name' => 'main-menu',
     'link_path' => 'civicrm',
     'router_path' => 'civicrm',
-    'link_title' => 'HR admin',
+    'link_title' => 'HR Admin',
     'options' => array(
       'identifier' => 'main-menu_hr-admin:civicrm',
       'roles_for_menu' => array(
@@ -410,8 +410,8 @@ function civihr_employee_portal_features_menu_default_menu_links() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Age groups');
+  t('HR Admin');
   t('HR Resources');
-  t('HR admin');
   t('Help');
   t('Home');
   t('Leave Reports');
