@@ -5,6 +5,7 @@ namespace Drupal\civihr_employee_portal\Forms;
 use Drupal\civihr_employee_portal\Helpers\WebformHelper;
 use Drupal\civihr_employee_portal\Service\ContactService;
 use Drupal\civihr_employee_portal\Service\TaskCreationService;
+use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 
 class OnboardingWebForm {
 
@@ -30,6 +31,17 @@ class OnboardingWebForm {
     }
 
     $this->setWorkEmailAsPrimary($node, $values, $contactID);
+    $this->hackyFixForImageURL($contactID);
+  }
+
+  /**
+   * Handles all alterations from hook_form_alter().
+   *
+   * @param array $form
+   */
+  public function alter(&$form) {
+    $this->removeEmptyKeys($form);
+    $this->addHelpText($form);
   }
 
   /**
@@ -112,16 +124,6 @@ class OnboardingWebForm {
   }
 
   /**
-   * Handles all alterations from hook_form_alter().
-   *
-   * @param array $form
-   */
-  public function alter(&$form) {
-    $this->removeEmptyKeys($form);
-    $this->addHelpText($form);
-  }
-
-  /**
    * Remove empty components keys from $form['submitted'] as they break markup.
    * @see https://www.drupal.org/node/2916491
    *
@@ -144,10 +146,6 @@ class OnboardingWebForm {
    * @param array $form
    */
   private function addHelpText(&$form) {
-    $helpText = 'CiviHR users can now complete a quick and easy'
-      . ' wizard to enter their details into the system.<br/>Any information '
-      . 'that you have already provided to the system will be shown in the '
-      . 'wizard and can be updated.';
 
     if (!isset($form['progressbar']['#page_num'])) {
       return;
@@ -156,16 +154,19 @@ class OnboardingWebForm {
     $currentPage = $form['progressbar']['#page_num'];
     $isFirstPage = $currentPage === 1;
 
-    if (!$isFirstPage || $this->userCreatedAfterOnboardingReleased()) {
+    if (!$isFirstPage) {
       return;
     }
+
+    $helpText = $this->getHelpText();
+    $skipButtonMarkup = $this->getSkipButtonMarkup();
 
     // create a 'markup' element to show message
     $progressBarWeight = $form['progressbar']['#weight'];
     $classes = 'alert alert-success';
     $style = 'display: inline-block';
-    $format = '<p class="%s" style="%s">%s</p>';
-    $markup = sprintf($format, $classes, $style, $helpText);
+    $format = '<div class="%s" style="%s"><p>%s</p>%s</div>';
+    $markup = sprintf($format, $classes, $style, $helpText, $skipButtonMarkup);
 
     $form['submitted']['onboarding_explanation'] = [
       '#weight' => $progressBarWeight + 1,
@@ -174,6 +175,74 @@ class OnboardingWebForm {
       '#prefix' => '<div style="text-align: center;">',
       '#suffix' => '</div>'
     ];
+  }
+
+  /**
+   * Unfortunately for us the contact profile page will expect an image URL
+   * using the civicrm/file?photo=foo.jpg style. Since our contact images are
+   * created using webform they won't match this so to avoid the warnings about
+   * 'Undefined index: photo' we append photo=0 here.
+   *
+   * @see CRM_Utils_File::getImageURL
+   *
+   * @param int $contactID
+   */
+  private function hackyFixForImageURL($contactID) {
+    $params = ['return' => 'image_URL', 'id' => $contactID];
+    /** @var string $current */
+    $current = civicrm_api3('Contact', 'getvalue', $params);
+
+    if (empty($current)) {
+      return;
+    }
+
+    $operator = FALSE === strpos($current, '?') ? '?' : '&';
+    $current .= $operator . 'photo=0';
+
+    unset($params['return']);
+    $params['image_URL']  = $current;
+    civicrm_api3('Contact', 'create', $params);
+  }
+
+  /**
+   * Gets the help text to show the user at the beginning of the onboarding
+   * form. Differs depending on whether they've been created before the
+   * onboarding feature was released.
+   *
+   * @return string
+   */
+  private function getHelpText() {
+    if ($this->userCreatedAfterOnboardingReleased()) {
+      return 'Please complete your details using the onboarding wizard.<br/>'
+        . 'The data is saved directly onto your profile. You can always update '
+        . 'your details at a later date using the self service portal.'
+        . '<br/><br/>You can optionally skip this wizard and be reminded next '
+        . 'time you login.';
+    } else {
+      return 'CiviHR users can now complete a quick and easy'
+        . ' wizard to enter their details into the system.<br/>Any information '
+        . 'that you have already provided to the system will be shown in the '
+        . 'wizard and can be updated.<br/><br/>You can optionally skip this '
+        . 'wizard and be reminded next time you login.';
+    }
+  }
+
+  /**
+   * Gets the markup for the button to skip the onboarding form. The button
+   * itself is wrapped in a link to the landing page for the user.
+   *
+   * @return string
+   */
+  private function getSkipButtonMarkup() {
+    $classes = 'btn btn-default chr_onboarding-wizard_remind-me-later';
+    $format = '<button type="button" class="%s">%s</button>';
+    $buttonText = ts('Skip and Remind Me Later');
+    $buttonMarkup = sprintf($format, $classes, $buttonText);
+
+    global $user;
+    $link = LinkProvider::getLandingPageLink($user);
+
+    return sprintf('<a href="%s">%s</a>', $link, $buttonMarkup);
   }
 
   /**

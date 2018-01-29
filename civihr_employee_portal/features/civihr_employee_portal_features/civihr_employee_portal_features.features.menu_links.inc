@@ -28,37 +28,26 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 0,
     'customized' => 1,
   );
-  // Exported menu link: hr-reports_report-1-people:reports/people/.
-  $menu_links['hr-reports_report-1-people:reports/people/'] = array(
-    'menu_name' => 'hr-reports',
-    'link_path' => 'reports/people/',
-    'router_path' => 'reports/%',
-    'link_title' => 'Report 1: People',
-    'options' => array(
-      'attributes' => array(
-        'title' => 'CiviHR Report containing Employee, Contract and Role data.',
-      ),
-      'identifier' => 'hr-reports_report-1-people:reports/people/',
-    ),
-    'module' => 'menu',
-    'hidden' => 0,
-    'external' => 0,
-    'has_children' => 0,
-    'expanded' => 0,
-    'weight' => 0,
-    'customized' => 1,
-  );
-  // Exported menu link: hr-reports_report-2-leave-and-absence:reports/leave_and_absence/.
-  $menu_links['hr-reports_report-2-leave-and-absence:reports/leave_and_absence/'] = array(
+  // Exported menu link: hr-reports_leave-reports:reports/leave_and_absence/.
+  $menu_links['hr-reports_leave-reports:reports/leave_and_absence/'] = array(
     'menu_name' => 'hr-reports',
     'link_path' => 'reports/leave_and_absence/',
     'router_path' => 'reports/%',
-    'link_title' => 'Report 2: Leave and Absence',
+    'link_title' => 'Leave Reports',
     'options' => array(
-      'attributes' => array(
-        'title' => 'CiviHR Report containing Employee, Contract, Role and Absence Activity data.',
+      'identifier' => 'hr-reports_leave-reports:reports/leave_and_absence/',
+      'roles_for_menu' => array(
+        'show' => array(),
+        'hide' => array(),
       ),
-      'identifier' => 'hr-reports_report-2-leave-and-absence:reports/leave_and_absence/',
+      'attributes' => array(
+        'title' => 'Create reports showing the analysis of Leave taken for Holiday/Vacation, Sickness, TOIL and other leave types.',
+      ),
+      'item_attributes' => array(
+        'id' => '',
+        'class' => '',
+        'style' => '',
+      ),
     ),
     'module' => 'menu',
     'hidden' => 0,
@@ -68,27 +57,33 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 0,
     'customized' => 1,
   );
-  // Exported menu link: main-menu_civihr-admin:civicrm.
-  $menu_links['main-menu_civihr-admin:civicrm'] = array(
-    'menu_name' => 'main-menu',
-    'link_path' => 'civicrm',
-    'router_path' => 'civicrm',
-    'link_title' => 'HR admin',
+  // Exported menu link: hr-reports_people-reports:reports/people/.
+  $menu_links['hr-reports_people-reports:reports/people/'] = array(
+    'menu_name' => 'hr-reports',
+    'link_path' => 'reports/people/',
+    'router_path' => 'reports/%',
+    'link_title' => 'People Reports',
     'options' => array(
-      'attributes' => array(
-        'class' => array(
-          0 => 'fa',
-          1 => 'fa-tachometer',
-        ),
+      'identifier' => 'hr-reports_people-reports:reports/people/',
+      'roles_for_menu' => array(
+        'show' => array(),
+        'hide' => array(),
       ),
-      'identifier' => 'main-menu_civihr-admin:civicrm',
+      'attributes' => array(
+        'title' => 'Create reports showing analysis of Headcount and FTE by Department, Role, Contract Type and other staff data.',
+      ),
+      'item_attributes' => array(
+        'id' => '',
+        'class' => '',
+        'style' => '',
+      ),
     ),
     'module' => 'menu',
     'hidden' => 0,
     'external' => 0,
     'has_children' => 0,
     'expanded' => 0,
-    'weight' => -1,
+    'weight' => 0,
     'customized' => 1,
   );
   // Exported menu link: main-menu_help://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/.
@@ -153,6 +148,38 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'has_children' => 0,
     'expanded' => 0,
     'weight' => 0,
+    'customized' => 1,
+  );
+  // Exported menu link: main-menu_hr-admin:civicrm.
+  $menu_links['main-menu_hr-admin:civicrm'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'civicrm',
+    'router_path' => 'civicrm',
+    'link_title' => 'HR Admin',
+    'options' => array(
+      'identifier' => 'main-menu_hr-admin:civicrm',
+      'roles_for_menu' => array(
+        'show' => array(),
+        'hide' => array(),
+      ),
+      'attributes' => array(
+        'class' => array(
+          0 => 'fa',
+          1 => 'fa-tachometer',
+        ),
+      ),
+      'item_attributes' => array(
+        'id' => '',
+        'class' => '',
+        'style' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => 0,
+    'external' => 0,
+    'has_children' => 0,
+    'expanded' => 0,
+    'weight' => -1,
     'customized' => 1,
   );
   // Exported menu link: main-menu_hr-resources:hr-resources.
@@ -383,15 +410,15 @@ function civihr_employee_portal_features_menu_default_menu_links() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Age groups');
-  t('HR admin');
+  t('HR Admin');
   t('HR Resources');
   t('Help');
   t('Home');
+  t('Leave Reports');
   t('Manager Leave');
   t('My Details');
   t('My Leave');
-  t('Report 1: People');
-  t('Report 2: Leave and Absence');
+  t('People Reports');
   t('Reports');
   t('Staff Directory');
   t('Tasks');

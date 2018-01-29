@@ -1,16 +1,16 @@
 <?php
 
-namespace Drupal\civihr_employee_portal\Helpers\Webform;
+namespace Drupal\civihr_employee_portal\Webform;
 
 use CRM_Utils_Array as ArrayHelper;
-use Drupal\civihr_employee_portal\Helpers\Webform\CustomComponentKeyHelper as KeyHelper;
+use Drupal\civihr_employee_portal\Webform\CustomComponentKeyHelper as KeyHelper;
 
 /**
  * Responsible for adding metadata on custom fields when exporting webforms and
  * using that metadata to correct cross-system changes in custom field IDs when
  * importing webforms.
  */
-class WebformExportCustomFieldConvertor {
+class WebformExportCustomFieldConvertor implements WebformTransferConvertor {
 
   /**
    * Supplements the node data with a snapshot of a mapping of custom group and
@@ -18,7 +18,7 @@ class WebformExportCustomFieldConvertor {
    *
    * @param \stdClass $node
    */
-  public static function addCustomMappingForExport(\stdClass $node) {
+  public static function preExport(\stdClass $node) {
     if ($node->type !== 'webform') {
       return;
     }
@@ -59,13 +59,13 @@ class WebformExportCustomFieldConvertor {
    *
    * @param \stdClass $node
    */
-  public static function replaceCustomDataForImport(\stdClass $node) {
+  public static function preImport(\stdClass $node) {
     if ($node->type !== 'webform') {
       return;
     }
 
     // Node was not exported since this change was applied
-    if (!isset($node->customMapping)) {
+    if (empty($node->customMapping['customGroups'])) {
       return;
     }
 

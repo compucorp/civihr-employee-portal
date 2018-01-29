@@ -277,6 +277,47 @@ function civihr_employee_portal_update_7016() {
 }
 
 /**
+ * Refreshes the node export files since the onboarding form file upload limit
+ * was increased.
+ */
+function civihr_employee_portal_update_7017() {
+  civicrm_initialize();
+  drush_civihr_employee_portal_refresh_node_export_files();
+}
+
+/**
+ * Remove old and unused links from the Reports menu
+ */
+function civihr_employee_portal_update_7018() {
+  db_delete('menu_links')
+    ->condition('menu_name', 'hr-reports')
+    ->condition(
+      'link_title',
+      ['Report 1: People', 'Report 2: Leave and Absence'],
+      'IN'
+    )
+    ->execute();
+
+  cache_clear_all();
+}
+
+/**
+ * Refreshes the node export files since the onboarding form required fields
+ * were changed.
+ */
+function civihr_employee_portal_update_7019() {
+  civicrm_initialize();
+  drush_civihr_employee_portal_refresh_node_export_files();
+}
+
+/**
+ * Imports the default report configurations
+ */
+function civihr_employee_portal_update_7020() {
+  _civihr_employee_portal_create_default_reports_configuration();
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string

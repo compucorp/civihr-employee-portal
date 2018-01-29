@@ -11,8 +11,16 @@ use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
 use Drupal\civihr_employee_portal\Helpers\ImageResizer;
 use Drupal\civihr_employee_portal\Forms\ContactForm;
 use CRM_HRLeaveAndAbsences_BAO_AbsenceType as AbsenceType;
-use Drupal\civihr_employee_portal\Helpers\Webform\WebformExportCustomFieldConvertor;
 use Drupal\civihr_employee_portal\Page\HRDetailsPage;
+use Drupal\civihr_employee_portal\Webform\WebformTransferService;
+use Drupal\civihr_employee_portal\Helpers\LinkProvider;
+
+/**
+ * Implements hook_install().
+ */
+function civihr_employee_portal_install() {
+  _civihr_employee_portal_create_default_reports_configuration();
+}
 
 /**
  * Implements hook_css_alter().
@@ -529,8 +537,29 @@ function civihr_employee_portal_init() {
     _rebuild_view('tasks');
     _rebuild_view('documents');
 
-    _load_ta_settings();
+    $taskAssignmentsKey = 'uk.co.compucorp.civicrm.tasksassignments';
+    if (_civihr_employee_portal_is_extension_enabled($taskAssignmentsKey)) {
+      _load_ta_settings();
+    }
   }
+}
+
+/**
+ * Checks whether a given extension is enabled.
+ *
+ * @param string $extensionKey
+ *
+ * @return bool
+ */
+function _civihr_employee_portal_is_extension_enabled($extensionKey) {
+  $isEnabled = CRM_Core_DAO::getFieldValue(
+    'CRM_Core_DAO_Extension',
+    $extensionKey,
+    'is_active',
+    'full_name'
+  );
+
+  return !empty($isEnabled) ? TRUE : FALSE;
 }
 
 /**
@@ -4919,13 +4948,12 @@ function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
  */
 function civihr_employee_portal_user_login(&$edit, $account) {
   if (!isset($_POST['form_id']) || $_POST['form_id'] != 'user_pass_reset') {
-    $sspEntryPath = 'dashboard';
-    $civicrmEntryPath = 'civicrm/tasksassignments/dashboard#/tasks';
-    $onboardingFormPath = 'onboarding-form';
 
     if (current_path() == drupal_get_destination()['destination']) {
-      $_GET['destination'] = user_access('access CiviCRM') ? $civicrmEntryPath : $sspEntryPath;
+      $_GET['destination'] = LinkProvider::getLandingPageLink($account);
     }
+
+    $onboardingFormPath = 'onboarding-form';
 
     if (_civihr_employee_portal_should_do_onboarding($account)) {
       $_GET['destination'] = $onboardingFormPath;
@@ -5023,7 +5051,7 @@ function civihr_employee_portal_my_details() {
 function civihr_employee_portal_hrreport_landing_page() {
   $jsOptions = ['type' => 'file', 'scope' => 'footer'];
 
-  if (CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Extension', 'org.civicrm.reqangular', 'is_active', 'full_name')) {
+  if (_civihr_employee_portal_is_extension_enabled('org.civicrm.reqangular')) {
     drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "dist/reqangular.min.js", $jsOptions);
   }
 
@@ -5385,7 +5413,7 @@ function _civihr_employee_portal_add_report_scripts() {
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js', $jsOptions);
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/moment/moment.min.js', $jsOptions);
 
-  if (CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Extension', 'org.civicrm.reqangular', 'is_active', 'full_name')) {
+  if (_civihr_employee_portal_is_extension_enabled('org.civicrm.reqangular')) {
     drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "dist/reqangular.min.js", $jsOptions);
   }
 
@@ -5441,6 +5469,8 @@ function civihr_employee_portal_hrreport_custom($reportName) {
     'no_redirect' => TRUE,
   ];
   $filters = drupal_build_form('views_exposed_form', $form_state);
+
+  drupal_set_title($view->human_name);
 
   return theme('civihr_employee_portal_civihr_report_custom', [
     'reportName' => $reportName,
@@ -5529,56 +5559,99 @@ function civihr_employee_portal_hrreport_custom_printtable($reportName, $dateFil
 }
 
 /**
- * Implement form_views_exposed_form_alter()
+ * Implement form_views_exposed_form_alter(). It executes form alterations
+ * depending on the form id.
  *
- * @param $form
- * @param $form_state
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
  */
 function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {
-  /**
-   *  Staff Directory filters form, HR Documents filters form
-   */
-  $exposed_filters_forms = ['views-exposed-form-civihr-staff-directory-page', 'views-exposed-form-hr-documents-hr-resources'];
-
-  if (isset($form['#id']) && in_array($form['#id'], $exposed_filters_forms)) {
-    $form['#attributes']['class'][] = 'row';
-
-    $form['submit']['#attributes'] = ['class' => ['chr_action']];
-    $form['submit']['#prefix'] = '<div class="col-sm-12"><div class="chr_panel__footer"><div class="chr_actions-wrapper">';
-    $form['submit']['#suffix'] = '</div></div></div>';
-
-    foreach ($form as $key => $value) {
-      if (isset($form['#info']["filter-$key"])) {
-        $form[$key]['#prefix'] = '<div class="col-sm-6">';
-        $form[$key]['#suffix'] = '</div>';
-
-        // Take the <label> value and use it as placeholder instead
-        if ($value['#type'] == 'textfield') {
-          $form[$key]['#attributes'] = ['placeholder' => $form['#info']["filter-$key"]['label']];
-        }
-
-        $form['#info']["filter-$key"]['label'] = '';
-      }
-    }
-  }
-
-  if(strpos($form['#id'], 'views-exposed-form-civihr-report-') !== false) {
-    foreach ($form as $key => $value) {
-      if (isset($form[$key]['value'])) {
-        $form[$key]['value'] = setInputDatepickerForm($form['#info']["filter-$key"]['label']);
-      }
-
-      if (isset($form[$key]['min'])) {
-        $form[$key]['min'] = setInputDatepickerForm($form[$key]['min']['#title']);
-      }
-
-      if (isset($form[$key]['max'])) {
-        $form[$key]['max'] = setInputDatepickerForm($form[$key]['max']['#title']);
-      }
-    }
+  switch ($form['#id']) {
+    // People's report filters:
+    case 'views-exposed-form-civihr-report-people-default':
+      _civihr_employee_portal_form_view_exposed_form_alter_people_report($form, $form_state, $form_id);
+      break;
+    // Leave and Absence's report filters:
+    case 'views-exposed-form-civihr-report-leave-and-absence-default':
+      _civihr_employee_portal_form_view_exposed_form_alter_leave_report($form, $form_state, $form_id);
+      break;
+    // Staff Directory and HR Document's form filters:
+    case 'views-exposed-form-civihr-staff-directory-page':
+    case 'views-exposed-form-hr-documents-hr-resources':
+      _civihr_employee_portal_form_view_exposed_form_alter_actions_wrapper($form, $form_state, $form_id);
+      _civihr_employee_portal_form_view_exposed_form_alter_labels_as_placeholders($form, $form_state, $form_id);
+      break;
   }
 
   $form['submit']['#value'] = 'Filter';
+}
+
+/**
+ * Defines the alterations for the People's report filters.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
+ */
+function _civihr_employee_portal_form_view_exposed_form_alter_people_report(&$form, &$form_state, $form_id) {
+  $form['between_date_filter']['value'] = setInputDatepickerForm();
+  $form['between_date_filter']['#prefix'] = '<header class="form-group"><label>Headcount on date:</label></header>';
+}
+
+/**
+ * Defines the alterations for the Leave and Absence's report filters.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
+ */
+function _civihr_employee_portal_form_view_exposed_form_alter_leave_report(&$form, &$form_state, $form_id) {
+  $dateFields = &$form['absence_date_filter'];
+  $dateFields['min'] = setInputDatepickerForm('From:');
+  $dateFields['max'] = setInputDatepickerForm('To:');
+  $dateFields['#prefix'] = '<header class="form-group"><label>Leave dates:</label></header>';
+  $dateFields['min']['#attributes']['ng-model'] = 'filters.filters.fromDate';
+  $dateFields['max']['#attributes']['ng-model'] = 'filters.filters.toDate';
+}
+
+/**
+ * Wraps the form actions inside a panel footer and actions wrapper elements.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
+ */
+function _civihr_employee_portal_form_view_exposed_form_alter_actions_wrapper(&$form, &$form_state, $form_id) {
+  $form['#attributes']['class'][] = 'row';
+
+  $form['submit']['#attributes'] = ['class' => ['chr_action']];
+  $form['submit']['#prefix'] = '<div class="col-sm-12"><div class="chr_panel__footer"><div class="chr_actions-wrapper">';
+  $form['submit']['#suffix'] = '</div></div></div>';
+}
+
+/**
+ * Wraps each form element inside a Bootstrap column element and changes the label
+ * to a placeholder.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
+ */
+function _civihr_employee_portal_form_view_exposed_form_alter_labels_as_placeholders(&$form, &$form_state, $form_id) {
+  foreach ($form as $key => $value) {
+    if (isset($form['#info']["filter-$key"])) {
+      $form[$key]['#prefix'] = '<div class="col-sm-6">';
+      $form[$key]['#suffix'] = '</div>';
+
+      // Take the <label> value and use it as placeholder instead
+      if ($value['#type'] == 'textfield') {
+        $form[$key]['#attributes'] = ['placeholder' => $form['#info']["filter-$key"]['label']];
+      }
+
+      $form['#info']["filter-$key"]['label'] = '';
+    }
+  }
 }
 
 /**
@@ -5610,7 +5683,7 @@ function _civihr_employee_portal_get_view_csv_export_paths($view) {
  *
  * @return array
  */
-function setInputDatepickerForm($title) {
+function setInputDatepickerForm($title = null) {
   $idxKey = 'id_' . uniqid();
 
   return [
@@ -5620,11 +5693,12 @@ function setInputDatepickerForm($title) {
     '#description' => getCalendarButtonMarkup($idxKey),
     '#date_label_position' => 'within',
     '#attributes' => [
-      'ng-init' => "$idxKey = false; filters.dt$idxKey=filters.date",
-      'placeholder' => '{{filters.placeholderFormat}}',
-      'uib-datepicker-popup' => '{{filters.format}}',
+      'ng-init' => "filters.$idxKey = false",
+      'placeholder' => '{{filters.dateFormat}}',
+      'uib-datepicker-popup' => '{{filters.dateFormat}}',
       'close-text' => 'Close',
-      'ng-model' => "filters.dt$idxKey",
+      'ng-model' => 'filters.filters.date',
+      'ng-disabled' => 'filters.loading.dates',
       'is-open' => "filters.$idxKey",
       'ng-click' => "filters.$idxKey = !filters.$idxKey"
     ],
@@ -6294,8 +6368,8 @@ function _civihr_employee_portal_clear_contact_cache($contactID) {
 /**
  * Implements hook_node_export_alter().
  *
- * Add some metadata to the exported nodes to allow importing of custom fields
- * based on name, and not ID.
+ * Add some metadata to the exported nodes to allow importing based on name,
+ * and not ID, increasing portability across systems.
  *
  * @param array $nodes
  *   The array of nodes to alter.
@@ -6304,14 +6378,15 @@ function _civihr_employee_portal_clear_contact_cache($contactID) {
  */
 function civihr_employee_portal_node_export_alter(&$nodes, $format) {
   foreach ($nodes as &$node) {
-    WebformExportCustomFieldConvertor::addCustomMappingForExport($node);
+    WebformTransferService::preExport($node);
   }
 }
 
 /**
  * Implements hook_node_export_import_alter().
  *
- * Alter the field keys for webform components using CiviCRM custom data.
+ * Alter the field keys for webform components using the mapping from
+ * @see civihr_employee_portal_node_export_alter
  *
  * @param array $nodes
  *   The array of nodes to alter.
@@ -6322,6 +6397,100 @@ function civihr_employee_portal_node_export_alter(&$nodes, $format) {
  */
 function civihr_employee_portal_node_export_import_alter(&$nodes, $format, $save) {
   foreach ($nodes as &$node) {
-    WebformExportCustomFieldConvertor::replaceCustomDataForImport($node);
+    WebformTransferService::preImport($node);
+  }
+}
+
+/**
+ * Creates the default reports configuration in the database
+ */
+function _civihr_employee_portal_create_default_reports_configuration() {
+  $configurations = [
+    [
+      'report_name' => 'people',
+      'label' => 'Gender by Level',
+      'json_config' => '{"menuLimit":"200","cols":["Role level type"],"rows":["Employee gender"],"exclusions":{"Role location":["Clapham"]},"inclusions":{"Role location":["Hammersmith","Islington","Stratford","Victoria"]},"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Bar Chart","aggregatorName":"Count","inclusionsInfo":{"Role location":["Hammersmith","Islington","Stratford","Victoria"]}}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Gender by Department',
+      'json_config' => '{"menuLimit":"200","cols":["Role department"],"rows":["Employee gender"],"exclusions":{"Role location":["Clapham"]},"inclusions":{"Role location":["Hammersmith","Islington","Stratford","Victoria"]},"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Bar Chart","aggregatorName":"Count","inclusionsInfo":{"Role location":["Hammersmith","Islington","Stratford","Victoria"]}}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Gender by Location',
+      'json_config' => '{"menuLimit":"200","cols":["Employee gender"],"rows":["Role location"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Count"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Full-time Equivalence by Location and Department',
+      'json_config' => '{"menuLimit":"200","cols":["Role location"],"rows":["Role department"],"vals":["Contract hours FTE","Contract ID"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Sum field 1 by unique values of field 2"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Age Group by Location',
+      'json_config' => '{"menuLimit":"200","cols":["Role location"],"rows":["Employee age group"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Count"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Pay Parity by Gender and Contract Type',
+      'json_config' => '{"menuLimit":"200","cols":["Contract type"],"rows":["Employee gender"],"vals":["Contract pay amount"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Bar Chart","aggregatorName":"Average"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Age Group by Department',
+      'json_config' => '{"menuLimit":"200","cols":["Role department"],"rows":["Employee age group"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Count"}'
+    ],
+    [
+      'report_name' => 'leave_and_absence',
+      'label' => 'Total Sick Days by Location',
+      'json_config' => '{"menuLimit":"200","cols":["Role location"],"rows":["Absence type"],"vals":["Absence duration in days"],"exclusions":{"Absence type":["Compassionate_Leave","Paternity","TOIL","TOIL (Credit)","Vacation"]},"inclusions":{"Absence type":["Sick"]},"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Bar Chart","aggregatorName":"Sum","inclusionsInfo":{"Absence type":["Sick"]}}'
+    ],
+    [
+      'report_name' => 'leave_and_absence',
+      'label' => 'Total Sick Days by Month',
+      'json_config' => '{"menuLimit":"200","cols":["Group by month"],"rows":["Absence type"],"exclusions":{"Absence type":["Compassionate_Leave","Paternity","TOIL","TOIL (Credit)","Vacation"]},"inclusions":{"Absence type":["Sick"]},"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Line Chart","aggregatorName":"Count","inclusionsInfo":{"Absence type":["Sick"]}}'
+    ],
+    [
+      'report_name' => 'leave_and_absence',
+      'label' => 'Total Absence by Staff',
+      'json_config' => '{"menuLimit":"200","cols":["Absence type"],"rows":["Employee display name"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Count"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Headcount by Contract Type',
+      'json_config' => '{"menuLimit":"200","rows":["Contract type"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Count"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Average Pay Amount by Contract type and Department',
+      'json_config' => '{"menuLimit":"200","cols":["Role department"],"rows":["Contract type"],"vals":["Contract pay amount"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Average"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Current Headcount by Location and Department',
+      'json_config' => '{"menuLimit":"200","cols":["Role location"],"rows":["Role department"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Count"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'End of Contract till Date Report',
+      'json_config' => '{"menuLimit":"200","rows":["Contract end reason","Employee display name","Contract start date","Contract end date","Employee length of service","Role department","Role location"],"exclusions":{"Contract end date":["null"]},"inclusions":{"Contract end date":["2017-10-31","2017-11-24","2017-12-12","2017-12-31","2018-02-26","2018-07-11","2019-06-30","2019-08-15","2019-12-14","2020-03-15","2020-05-08","2020-11-17","2022-03-31"]},"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Count","inclusionsInfo":{"Contract end date":["2017-10-31","2017-11-24","2017-12-12","2017-12-31","2018-02-26","2018-07-11","2019-06-30","2019-08-15","2019-12-14","2020-03-15","2020-05-08","2020-11-17","2022-03-31"]}}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Full-time Equivalence by Contract type and Location',
+      'json_config' => '{"menuLimit":"200","cols":["Role location"],"rows":["Contract type"],"vals":["Contract hours FTE"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Sum"}'
+    ],
+    [
+      'report_name' => 'leave_and_absence',
+      'label' => 'Sickness Heatmap by Location',
+      'json_config' => '{"menuLimit":"200","cols":["Absence day of week"],"rows":["Absence type","Role location"],"exclusions":{"Absence type":["Annual Leave","Compassionate Leave","Time Off for Public Duties","TOIL"]},"inclusions":{"Absence type":["Sick"]},"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Heatmap","aggregatorName":"Count","inclusionsInfo":{"Absence type":["Sick"]}}'
+    ],
+  ];
+
+  foreach($configurations as $configuration) {
+    db_insert('reports_configuration')
+      ->fields($configuration)
+      ->execute();
   }
 }
