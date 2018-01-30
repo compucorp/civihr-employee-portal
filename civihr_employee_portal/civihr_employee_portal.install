@@ -311,6 +311,13 @@ function civihr_employee_portal_update_7019() {
 }
 
 /**
+ * Imports the default report configurations
+ */
+function civihr_employee_portal_update_7020() {
+  _civihr_employee_portal_create_default_reports_configuration();
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string

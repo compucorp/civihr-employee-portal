@@ -16,6 +16,13 @@ use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 
 /**
+ * Implements hook_install().
+ */
+function civihr_employee_portal_install() {
+  _civihr_employee_portal_create_default_reports_configuration();
+}
+
+/**
  * Implements hook_css_alter().
  */
 function civihr_employee_portal_css_alter(&$css) {
@@ -6392,5 +6399,99 @@ function civihr_employee_portal_node_export_alter(&$nodes, $format) {
 function civihr_employee_portal_node_export_import_alter(&$nodes, $format, $save) {
   foreach ($nodes as &$node) {
     WebformTransferService::preImport($node);
+  }
+}
+
+/**
+ * Creates the default reports configuration in the database
+ */
+function _civihr_employee_portal_create_default_reports_configuration() {
+  $configurations = [
+    [
+      'report_name' => 'people',
+      'label' => 'Gender by Level',
+      'json_config' => '{"menuLimit":"200","cols":["Role level type"],"rows":["Employee gender"],"exclusions":{"Role location":["Clapham"]},"inclusions":{"Role location":["Hammersmith","Islington","Stratford","Victoria"]},"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Bar Chart","aggregatorName":"Count","inclusionsInfo":{"Role location":["Hammersmith","Islington","Stratford","Victoria"]}}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Gender by Department',
+      'json_config' => '{"menuLimit":"200","cols":["Role department"],"rows":["Employee gender"],"exclusions":{"Role location":["Clapham"]},"inclusions":{"Role location":["Hammersmith","Islington","Stratford","Victoria"]},"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Bar Chart","aggregatorName":"Count","inclusionsInfo":{"Role location":["Hammersmith","Islington","Stratford","Victoria"]}}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Gender by Location',
+      'json_config' => '{"menuLimit":"200","cols":["Employee gender"],"rows":["Role location"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Count"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Full-time Equivalence by Location and Department',
+      'json_config' => '{"menuLimit":"200","cols":["Role location"],"rows":["Role department"],"vals":["Contract hours FTE","Contract ID"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Sum field 1 by unique values of field 2"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Age Group by Location',
+      'json_config' => '{"menuLimit":"200","cols":["Role location"],"rows":["Employee age group"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Count"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Pay Parity by Gender and Contract Type',
+      'json_config' => '{"menuLimit":"200","cols":["Contract type"],"rows":["Employee gender"],"vals":["Contract pay amount"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Bar Chart","aggregatorName":"Average"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Age Group by Department',
+      'json_config' => '{"menuLimit":"200","cols":["Role department"],"rows":["Employee age group"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Count"}'
+    ],
+    [
+      'report_name' => 'leave_and_absence',
+      'label' => 'Total Sick Days by Location',
+      'json_config' => '{"menuLimit":"200","cols":["Role location"],"rows":["Absence type"],"vals":["Absence duration in days"],"exclusions":{"Absence type":["Compassionate_Leave","Paternity","TOIL","TOIL (Credit)","Vacation"]},"inclusions":{"Absence type":["Sick"]},"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Bar Chart","aggregatorName":"Sum","inclusionsInfo":{"Absence type":["Sick"]}}'
+    ],
+    [
+      'report_name' => 'leave_and_absence',
+      'label' => 'Total Sick Days by Month',
+      'json_config' => '{"menuLimit":"200","cols":["Group by month"],"rows":["Absence type"],"exclusions":{"Absence type":["Compassionate_Leave","Paternity","TOIL","TOIL (Credit)","Vacation"]},"inclusions":{"Absence type":["Sick"]},"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Line Chart","aggregatorName":"Count","inclusionsInfo":{"Absence type":["Sick"]}}'
+    ],
+    [
+      'report_name' => 'leave_and_absence',
+      'label' => 'Total Absence by Staff',
+      'json_config' => '{"menuLimit":"200","cols":["Absence type"],"rows":["Employee display name"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Count"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Headcount by Contract Type',
+      'json_config' => '{"menuLimit":"200","rows":["Contract type"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Count"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Average Pay Amount by Contract type and Department',
+      'json_config' => '{"menuLimit":"200","cols":["Role department"],"rows":["Contract type"],"vals":["Contract pay amount"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Average"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Current Headcount by Location and Department',
+      'json_config' => '{"menuLimit":"200","cols":["Role location"],"rows":["Role department"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Count"}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'End of Contract till Date Report',
+      'json_config' => '{"menuLimit":"200","rows":["Contract end reason","Employee display name","Contract start date","Contract end date","Employee length of service","Role department","Role location"],"exclusions":{"Contract end date":["null"]},"inclusions":{"Contract end date":["2017-10-31","2017-11-24","2017-12-12","2017-12-31","2018-02-26","2018-07-11","2019-06-30","2019-08-15","2019-12-14","2020-03-15","2020-05-08","2020-11-17","2022-03-31"]},"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Count","inclusionsInfo":{"Contract end date":["2017-10-31","2017-11-24","2017-12-12","2017-12-31","2018-02-26","2018-07-11","2019-06-30","2019-08-15","2019-12-14","2020-03-15","2020-05-08","2020-11-17","2022-03-31"]}}'
+    ],
+    [
+      'report_name' => 'people',
+      'label' => 'Full-time Equivalence by Contract type and Location',
+      'json_config' => '{"menuLimit":"200","cols":["Role location"],"rows":["Contract type"],"vals":["Contract hours FTE"],"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Table","aggregatorName":"Sum"}'
+    ],
+    [
+      'report_name' => 'leave_and_absence',
+      'label' => 'Sickness Heatmap by Location',
+      'json_config' => '{"menuLimit":"200","cols":["Absence day of week"],"rows":["Absence type","Role location"],"exclusions":{"Absence type":["Annual Leave","Compassionate Leave","Time Off for Public Duties","TOIL"]},"inclusions":{"Absence type":["Sick"]},"unusedAttrsVertical":"false","autoSortUnusedAttrs":"false","rendererName":"Heatmap","aggregatorName":"Count","inclusionsInfo":{"Absence type":["Sick"]}}'
+    ],
+  ];
+
+  foreach($configurations as $configuration) {
+    db_insert('reports_configuration')
+      ->fields($configuration)
+      ->execute();
   }
 }
