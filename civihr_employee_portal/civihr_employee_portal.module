@@ -1583,9 +1583,7 @@ function civihr_employee_portal_menu() {
     'title' => 'Reports',
     'page callback' => 'civihr_employee_portal_hrreport_landing_page',
     'access arguments' => ['access hrreports'],
-    'type' => MENU_NORMAL_ITEM,
-    'menu_name' => 'main-menu',
-    'weight' => 5,
+    'type' => MENU_CALLBACK
   ];
   $items['reports/%'] = [
     'title' => 'CiviHR Custom Report',
