@@ -267,6 +267,15 @@ $handler->display->display_options['filters']['status_id']['value'] = '2';
 $handler = $view->new_display('block', 'Completed Tasks block', 'block_1');
 $handler->display->display_options['defaults']['title'] = FALSE;
 $handler->display->display_options['title'] = 'Completed Tasks';
+$handler->display->display_options['defaults']['empty'] = FALSE;
+/* No results behavior: Global: Text area */
+$handler->display->display_options['empty']['area']['id'] = 'area';
+$handler->display->display_options['empty']['area']['table'] = 'views';
+$handler->display->display_options['empty']['area']['field'] = 'area';
+$handler->display->display_options['empty']['area']['label'] = 'No Results: Completed Tasks';
+$handler->display->display_options['empty']['area']['empty'] = TRUE;
+$handler->display->display_options['empty']['area']['content'] = '<div class="text-center"><p>No completed tasks available.</p></div>';
+$handler->display->display_options['empty']['area']['format'] = 'full_html';
 $handler->display->display_options['defaults']['fields'] = FALSE;
 /* Field: Task entity: Task entity ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
@@ -375,7 +384,7 @@ $handler->display->display_options['filters']['status_id']['id'] = 'status_id';
 $handler->display->display_options['filters']['status_id']['table'] = 'tasks';
 $handler->display->display_options['filters']['status_id']['field'] = 'status_id';
 $handler->display->display_options['filters']['status_id']['value'] = '2';
-$translatables['tasks'] = array(
+$translatables['Tasks'] = array(
   t('Master'),
   t('My Tasks'),
   t('more'),
@@ -400,4 +409,6 @@ $translatables['tasks'] = array(
   t('<a href="/civi_tasks/nojs/view_completed" class="ctools-use-modal ctools-modal-civihr-custom-large-style ctools-use-modal-processed chr_action--transparent chr_action--icon--list chr_action--icon--responsive show-complete-tasks"><span>Show completed tasks</span></a>'),
   t('Completed Tasks block'),
   t('Completed Tasks'),
+  t('No Results: Completed Tasks'),
+  t('<div class="text-center"><p>No completed tasks available.</p></div>'),
 );
