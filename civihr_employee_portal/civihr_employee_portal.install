@@ -318,6 +318,37 @@ function civihr_employee_portal_update_7020() {
 }
 
 /**
+ * Renames some roles. Basically the civihr_admin, civihr_staff
+ * civihr_manager and civihr_admin_local roles.
+ */
+function civihr_employee_portal_update_7021() {
+  $oldToNewNames = [
+    'civihr_admin' => 'HR Admin',
+    'civihr_staff' => 'Staff',
+    'civihr_manager' => 'Manager',
+    'civihr_admin_local' => 'Regional HR Admin'
+  ];
+
+  $roles = user_roles();
+
+  foreach ($roles as $id => $roleName) {
+    if (array_key_exists($roleName, $oldToNewNames)) {
+      $roleObject = user_role_load($id);
+      $roleObject->name = $oldToNewNames[$roleName];
+      user_role_save($roleObject);
+
+      //The role delegation module has dynamic permissions that changes
+      //when a role name is updated in UI via hook form_user_admin_role_submit
+      //We need to update it manually here.
+
+      db_update('role_permission')
+        ->condition('permission', "assign $roleName role")
+        ->fields(array('permission' => "assign $oldToNewNames[$roleName] role"))
+        ->execute();
+    }
+  }
+}
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string
