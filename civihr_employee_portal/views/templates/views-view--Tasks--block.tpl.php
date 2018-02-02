@@ -38,7 +38,7 @@
       <div class="chr_panel__toolbar__actions">
       <?php print $header; ?>
       </div>
-  <?php if ($rows && _user_has_role(array('civihr_manager', 'civihr_admin', 'administrator'))): ?>
+  <?php if ($rows && _user_has_role(array('Manager', 'HR Admin', 'administrator'))): ?>
         <div class="chr_panel__toolbar__filter">
           <div class="input-group">
             <div class="btn input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
