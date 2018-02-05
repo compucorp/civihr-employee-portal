@@ -39,8 +39,46 @@ class CustomComponentKeyHelperTest extends \PHPUnit_Framework_TestCase {
   public function testRebuildingKey($original, $groupID, $fieldID, $expected) {
     $this->assertEquals(
       $expected,
-      KeyHelper::rebuildKey($groupID, $fieldID, $original)
+      KeyHelper::rebuildCustomFieldKey($groupID, $fieldID, $original)
     );
+  }
+
+  /**
+   * @dataProvider fieldsetKeyProvider
+   *
+   * @param string $key
+   * @param string $expected
+   */
+  public function testGettingGroupIdWillReturnExpectedGroup($key, $expected) {
+    $this->assertEquals($expected, KeyHelper::getCustomFieldsetGroupId($key));
+  }
+
+  /**
+   * @dataProvider fieldsetKeyProvider
+   *
+   * @param string $key
+   * @param bool $expected
+   */
+  public function testCustomFieldsetKeysWillBeDetectedCorrectly($key, $expected) {
+    $expected = !is_null($expected); // if expected not null it is custom field
+    $this->assertEquals($expected, KeyHelper::isCustomFieldsetKey($key));
+  }
+
+  /**
+   * @dataProvider rebuildCustomFieldsetKeyProvider
+   *
+   * @param $original
+   * @param $newGroup
+   * @param $expected
+   */
+  public function testRebuildingKeyWillReplaceCustomGroupId(
+    $original,
+    $newGroup,
+    $expected
+  ) {
+    $newKey = KeyHelper::rebuildCustomFieldsetKey($original, $newGroup);
+
+    $this->assertEquals($expected, $newKey);
   }
 
   /**
@@ -86,4 +124,47 @@ class CustomComponentKeyHelperTest extends \PHPUnit_Framework_TestCase {
       ]
     ];
   }
+
+  /**
+   * @return array
+   */
+  public function fieldsetKeyProvider() {
+    return [
+      [
+        'civicrm_',
+        NULL
+      ],
+      [
+        'civicrm_1_contact_1_cg9999_fieldset',
+        '9999'
+      ],
+      [
+        'civicrm_1_contact_1_cg9999_faldset',
+        NULL
+      ],
+      [
+        'civicrm_1_contact_1_cg1_fieldset',
+        '1'
+      ],
+    ];
+  }
+
+  /**
+   * @return array
+   */
+  public function rebuildCustomFieldsetKeyProvider() {
+    return [
+      [
+        'civicrm_1_contact_1_cg9999_fieldset',
+        '21',
+        'civicrm_1_contact_1_cg21_fieldset',
+      ],
+      [
+        'civicrm_1_contact_1_cg9_fieldset',
+        '111111111111',
+        'civicrm_1_contact_1_cg111111111111_fieldset',
+      ],
+    ];
+  }
+
 }
