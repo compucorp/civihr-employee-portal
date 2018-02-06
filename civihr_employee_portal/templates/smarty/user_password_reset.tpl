@@ -7,7 +7,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width">
     <title>Password Reset</title>
-    <style>@media only screen {
+    {literal}
+    <style>
+        @media only screen {
             html {
                 min-height: 100%;
                 background: #E8EEF0;
@@ -80,7 +82,9 @@
             .request-data .row .columns {
                 padding-bottom: 10px !important;
             }
-        }</style>
+        }
+    </style>
+    {/literal}
 </head>
 <body style="-moz-box-sizing: border-box; -ms-text-size-adjust: 100%; -webkit-box-sizing: border-box; -webkit-text-size-adjust: 100%; Margin: 0; box-sizing: border-box; color: #727E8A; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 13px; font-weight: normal; line-height: 1.53846; margin: 0; min-width: 100%; padding: 0; text-align: left; width: 100% !important;">
 <table class="body" style="Margin: 0; background: #E8EEF0; border-collapse: collapse; border-spacing: 0; color: #727E8A; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 13px; font-weight: normal; height: 100%; line-height: 1.53846; margin: 0; padding: 0; text-align: left; vertical-align: top; width: 100%;">
