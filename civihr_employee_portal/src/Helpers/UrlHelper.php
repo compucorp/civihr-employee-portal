@@ -2,6 +2,9 @@
 
 namespace Drupal\civihr_employee_portal\Helpers;
 
+/**
+ * Helper class for operations on URLs
+ */
 class UrlHelper {
 
   /**
