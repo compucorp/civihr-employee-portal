@@ -20,8 +20,14 @@ class UrlHelper {
     $queryParts = explode('&', $origQueryString);
 
     $queryPartsUnique = [];
-    foreach ($queryParts as $queryPart) {
+    foreach ($queryParts as $index => $queryPart) {
       list($key) = explode('=', $queryPart);
+
+      // give unique key to query params like foo[]=bar
+      if (substr($key, -2) === '[]') {
+        $key = $key . $index;
+      }
+
       if (!isset($queryPartsUnique[$key])) {
         $queryPartsUnique[$key] = $queryPart;
       }

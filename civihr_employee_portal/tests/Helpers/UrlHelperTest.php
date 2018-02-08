@@ -43,6 +43,26 @@ class UrlHelperTest extends \PHPUnit_Framework_TestCase {
         'http://www.civihr.net?foo=bar&bar=car&foo=bar2&bar=car2#someanchor',
         'http://www.civihr.net?foo=bar&bar=car#someanchor',
       ],
+      [
+        'http://www.civihr.net?foo[]=1&foo[]=2&bar[a]=3',
+        'http://www.civihr.net?foo[]=1&foo[]=2&bar[a]=3',
+      ],
+      [
+        'http://www.civihr.net?foo[]=1&foo[]=2&1=a',
+        'http://www.civihr.net?foo[]=1&foo[]=2&1=a',
+      ],
+      [
+        'http://www.civihr.net?foo[]=1&foo[]=2&foo[a]=1&foo[a]=2',
+        'http://www.civihr.net?foo[]=1&foo[]=2&foo[a]=1',
+      ],
+      [
+        'http://www.civihr.net?foo[a][]=1&foo[a][]=2',
+        'http://www.civihr.net?foo[a][]=1&foo[a][]=2',
+      ],
+      [
+        'http://www.civihr.net?foo[a][b]=1&foo[a][b]=2',
+        'http://www.civihr.net?foo[a][b]=1',
+      ],
     ];
   }
 
