@@ -196,6 +196,11 @@ class OnboardingWebForm {
       return;
     }
 
+    parse_str(parse_url($current, PHP_URL_QUERY), $queryParts);
+    if (isset($queryParts['photo'])) {
+      return;
+    }
+
     $operator = FALSE === strpos($current, '?') ? '?' : '&';
     $current .= $operator . 'photo=0';
 
