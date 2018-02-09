@@ -1,5 +1,12 @@
 {
   "semistandard": {
-    "globals": [ "CRM" ]
+    "globals": [
+      "CRM"
+    ]
+  },
+  "devDependencies": {
+    "husky": "^0.14.3",
+    "lint-staged": "^6.1.0",
+    "semistandard": "^12.0.0"
   }
 }
