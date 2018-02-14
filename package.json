@@ -16,6 +16,10 @@
     "*.js": [
       "semistandard --fix",
       "git add"
+    ],
+    "*.css": [
+      "stylelint --fix",
+      "git add"
     ]
   },
   "semistandard": {
