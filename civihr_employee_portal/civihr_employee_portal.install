@@ -318,6 +318,15 @@ function civihr_employee_portal_update_7020() {
 }
 
 /**
+ * Remove the "Reports" link from the main navigation menu
+ */
+function civihr_employee_portal_update_7021() {
+  db_delete('menu_links')
+    ->condition('link_path', 'reports')
+    ->execute();
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string
