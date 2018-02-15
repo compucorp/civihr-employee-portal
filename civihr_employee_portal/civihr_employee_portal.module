@@ -5039,6 +5039,11 @@ function civihr_employee_portal_my_details() {
  * CiviHR Report - Landing page
  */
 function civihr_employee_portal_hrreport_landing_page() {
+  // This page can only be accessed via the CiviHR admin
+  if(empty($_GET['iframe'])) {
+    drupal_goto('/civicrm/reports');
+  }
+
   $jsOptions = ['type' => 'file', 'scope' => 'footer'];
 
   if (_civihr_employee_portal_is_extension_enabled('org.civicrm.reqangular')) {
@@ -5436,6 +5441,11 @@ function civihr_employee_portal_hrreport_printtable($viewName) {
  * @return array
  */
 function civihr_employee_portal_hrreport_custom($reportName) {
+  // This page can only be accessed via the CiviHR admin
+  if(empty($_GET['iframe'])) {
+    drupal_goto("/civicrm/reports/{$reportName}");
+  }
+
   _rebuild_reports_views();
 
   $view = views_get_view('civihr_report_' . $reportName);
