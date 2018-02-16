@@ -3,7 +3,7 @@
 foreach ($menu as $item):
 ?>
     <li class="panel-pane pane-block chr_panel chr_panel--small-text">
-        <a href="<?php print $item['link_path']; ?>">
+        <a href="<?php print $item['link_path']; ?>?iframe=1">
             <h2 class="chr_panel__header chr_panel__header--with-border panel-title u-font-size-big">
               <span class="chr_panel__header-subtitle">
                 <?php print $item['link_title']; ?>

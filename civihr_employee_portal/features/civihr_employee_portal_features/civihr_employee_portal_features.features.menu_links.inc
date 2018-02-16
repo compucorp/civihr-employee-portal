@@ -294,34 +294,6 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 5,
     'customized' => 1,
   );
-  // Exported menu link: main-menu_reports:reports.
-  $menu_links['main-menu_reports:reports'] = array(
-    'menu_name' => 'main-menu',
-    'link_path' => 'reports',
-    'router_path' => 'reports',
-    'link_title' => 'Reports',
-    'options' => array(
-      'identifier' => 'main-menu_reports:reports',
-      'attributes' => array(
-        'class' => array(
-          0 => 'fa',
-          1 => 'fa-table',
-        ),
-      ),
-      'item_attributes' => array(
-        'id' => '',
-        'class' => '',
-        'style' => '',
-      ),
-    ),
-    'module' => 'system',
-    'hidden' => 0,
-    'external' => 0,
-    'has_children' => 0,
-    'expanded' => 0,
-    'weight' => 10,
-    'customized' => 1,
-  );
   // Exported menu link: main-menu_staff-directory:staff-directory.
   $menu_links['main-menu_staff-directory:staff-directory'] = array(
     'menu_name' => 'main-menu',
@@ -419,7 +391,6 @@ function civihr_employee_portal_features_menu_default_menu_links() {
   t('My Details');
   t('My Leave');
   t('People Reports');
-  t('Reports');
   t('Staff Directory');
   t('Tasks');
   t('Vacancies');

@@ -318,10 +318,19 @@ function civihr_employee_portal_update_7020() {
 }
 
 /**
+ * Remove the "Reports" link from the main navigation menu
+ */
+function civihr_employee_portal_update_7021() {
+  db_delete('menu_links')
+    ->condition('link_path', 'reports')
+    ->execute();
+}
+
+/**
  * Renames some roles. Basically the civihr_admin, civihr_staff
  * civihr_manager and civihr_admin_local roles.
  */
-function civihr_employee_portal_update_7021() {
+function civihr_employee_portal_update_7022() {
   $oldToNewNames = [
     'civihr_admin' => 'HR Admin',
     'civihr_staff' => 'Staff',
