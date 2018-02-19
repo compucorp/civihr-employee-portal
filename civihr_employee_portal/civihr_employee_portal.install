@@ -2,6 +2,7 @@
 
 use Drupal\civihr_employee_portal\Helpers\WebformHelper;
 use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
+use Drupal\civihr_employee_portal\Helpers\UrlHelper;
 
 /**
  * Create Report Pages and Report Age Settings menu links.
@@ -327,9 +328,28 @@ function civihr_employee_portal_update_7021() {
 }
 
 /**
+ * Fixes contact images that have multiple 'photo' query params.
+ */
+function civihr_employee_portal_update_7022() {
+  civicrm_initialize();
+  $params = ['return' => ['image_URL']];
+  $contacts = civicrm_api3('Contact', 'get', $params)['values'];
+
+  foreach ($contacts as $contact) {
+    $imageUrl = $contact['image_URL'];
+    $dedupedImageUrl = UrlHelper::dedupeUrlQueryParams($imageUrl);
+
+    if ($imageUrl !== $dedupedImageUrl) {
+      $params = ['image_URL' => $dedupedImageUrl, 'id' => $contact['id']];
+      civicrm_api3('Contact', 'create', $params);
+    }
+  }
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
- * @param string
+ * @param string $path
  *   Path of the menu link.
  *
  * @return bool
