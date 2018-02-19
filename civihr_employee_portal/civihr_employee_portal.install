@@ -330,7 +330,7 @@ function civihr_employee_portal_update_7021() {
 /**
  * Fixes contact images that have multiple 'photo' query params.
  */
-function civihr_employee_portal_update_7021() {
+function civihr_employee_portal_update_7022() {
   civicrm_initialize();
   $params = ['return' => ['image_URL']];
   $contacts = civicrm_api3('Contact', 'get', $params)['values'];
