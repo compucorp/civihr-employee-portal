@@ -70,7 +70,7 @@ $handler->display->display_options['fields']['rid']['field'] = 'rid';
 $handler->display->display_options['fields']['created']['id'] = 'created';
 $handler->display->display_options['fields']['created']['table'] = 'users';
 $handler->display->display_options['fields']['created']['field'] = 'created';
-$handler->display->display_options['fields']['created']['label'] = 'Member For';
+$handler->display->display_options['fields']['created']['label'] = 'Duration';
 $handler->display->display_options['fields']['created']['date_format'] = 'raw time ago';
 $handler->display->display_options['fields']['created']['second_date_format'] = 'long';
 /* Field: User: Last access */
