@@ -347,6 +347,15 @@ function civihr_employee_portal_update_7022() {
 }
 
 /**
+ * Uninstall the views_json_query module
+ */
+function civihr_employee_portal_update_7023() {
+  $modules = ['views_json_query'];
+  module_disable(['views_json_query']);
+  drupal_uninstall_modules($modules);
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string $path
