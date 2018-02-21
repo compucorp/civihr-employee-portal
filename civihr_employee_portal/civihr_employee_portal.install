@@ -347,10 +347,19 @@ function civihr_employee_portal_update_7022() {
 }
 
 /**
+ * Uninstall the views_json_query module
+ */
+function civihr_employee_portal_update_7023() {
+  $modules = ['views_json_query'];
+  module_disable(['views_json_query']);
+  drupal_uninstall_modules($modules);
+}
+
+/**
  * Renames some roles. Basically the civihr_admin, civihr_staff
  * civihr_manager and civihr_admin_local roles.
  */
-function civihr_employee_portal_update_7023() {
+function civihr_employee_portal_update_7024() {
   $oldToNewNames = [
     'civihr_admin' => 'HR Admin',
     'civihr_staff' => 'Staff',
