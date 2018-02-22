@@ -1965,7 +1965,21 @@ return date(\'Y-m-d\');';
   $handler->display->display_options['exposed_form']['type'] = 'basic';
   $handler->display->display_options['pager']['type'] = 'full';
   $handler->display->display_options['pager']['options']['items_per_page'] = '10';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['quantity'] = '9';
+  $handler->display->display_options['pager']['options']['tags']['first'] = 'First';
+  $handler->display->display_options['pager']['options']['tags']['previous'] = 'Previous';
+  $handler->display->display_options['pager']['options']['tags']['next'] = 'Next';
+  $handler->display->display_options['pager']['options']['tags']['last'] = 'Last';
   $handler->display->display_options['style_plugin'] = 'table';
+  /* No results behavior: Global: Text area */
+  $handler->display->display_options['empty']['area']['id'] = 'area';
+  $handler->display->display_options['empty']['area']['table'] = 'views';
+  $handler->display->display_options['empty']['area']['field'] = 'area';
+  $handler->display->display_options['empty']['area']['empty'] = TRUE;
+  $handler->display->display_options['empty']['area']['content'] = '<div class="text-center">No Results</div>';
+  $handler->display->display_options['empty']['area']['format'] = 'full_html';
   /* Field: Bulk operations: User */
   $handler->display->display_options['fields']['views_bulk_operations']['id'] = 'views_bulk_operations';
   $handler->display->display_options['fields']['views_bulk_operations']['table'] = 'users';
@@ -2035,7 +2049,7 @@ return date(\'Y-m-d\');';
   $handler->display->display_options['fields']['uid']['field'] = 'uid';
   $handler->display->display_options['fields']['uid']['label'] = 'Operations';
   $handler->display->display_options['fields']['uid']['alter']['alter_text'] = TRUE;
-  $handler->display->display_options['fields']['uid']['alter']['text'] = '<a href="/user/[uid]/edit">Edit User Account</a> | <a href="/civicrm/contact/view?reset=1&cid=[id]">View Staff Record</a>';
+  $handler->display->display_options['fields']['uid']['alter']['text'] = '<a href="/user/[uid]/edit">Edit User Account</a><span class="chr_divider"> | </span><a href="/civicrm/contact/view?reset=1&cid=[id]">View Staff Record</a>';
   $handler->display->display_options['fields']['uid']['link_to_user'] = FALSE;
   /* Sort criterion: User: Created date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
@@ -2094,7 +2108,6 @@ return date(\'Y-m-d\');';
   $handler->display->display_options['filters']['access']['expose']['operator'] = 'access_op';
   $handler->display->display_options['filters']['access']['expose']['identifier'] = 'access';
 
-
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
   $handler->display->display_options['path'] = 'users-list';
@@ -2110,10 +2123,11 @@ return date(\'Y-m-d\');';
     t('Items per page'),
     t('- All -'),
     t('Offset'),
-    t('« first'),
-    t('‹ previous'),
-    t('next ›'),
-    t('last »'),
+    t('First'),
+    t('Previous'),
+    t('Next'),
+    t('Last'),
+    t('<div class="text-center">No Results</div>'),
     t('User'),
     t('- Choose an operation -'),
     t('Block the selected users'),
@@ -2121,14 +2135,14 @@ return date(\'Y-m-d\');';
     t('Username'),
     t('Status'),
     t('Roles'),
-    t('Member For'),
+    t('Duration'),
     t('Last access'),
     t('never'),
     t('Contact ID'),
     t('.'),
     t(','),
     t('Operations'),
-    t('<a href="/user/[uid]/edit">Edit User Account</a> | <a href="/civicrm/contact/view?reset=1&cid=[id]">View Staff Record</a>'),
+    t('<a href="/user/[uid]/edit">Edit User Account</a><span class="chr_divider"> | </span><a href="/civicrm/contact/view?reset=1&cid=[id]">View Staff Record</a>'),
     t('Active'),
     t('Last access: Between'),
     t('Page'),
