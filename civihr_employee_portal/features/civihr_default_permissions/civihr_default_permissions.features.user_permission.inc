@@ -406,8 +406,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access users overview'] = array(
     'name' => 'access users overview',
     'roles' => array(
-      'HR Admin' => 'HR Admin',
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'administerusersbyrole',
@@ -806,6 +804,16 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'system',
   );
 
+  // Exported permission: 'administer staff accounts'.
+  $permissions['administer staff accounts'] = array(
+    'name' => 'administer staff accounts',
+    'roles' => array(
+      'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
+    ),
+    'module' => 'civicrm',
+  );
+
   // Exported permission: 'administer subpermission'.
   $permissions['administer subpermission'] = array(
     'name' => 'administer subpermission',
@@ -870,8 +878,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer users'] = array(
     'name' => 'administer users',
     'roles' => array(
-      'HR Admin' => 'HR Admin',
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'user',
