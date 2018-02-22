@@ -706,6 +706,10 @@ function civihr_employee_portal_permission() {
       'title' => t('Manage HR Reports configuration'),
       'description' => t('Availability to manage HR Reports configuration'),
     ],
+    'access advanced configuration options' => array(
+      'title' => t('Access advanced configuration options'),
+      'description' => t('Access advanced configuration options that could potentially impair site functionality')
+    ),
   ];
 }
 

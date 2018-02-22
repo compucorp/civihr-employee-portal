@@ -2305,5 +2305,14 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civicrm',
   );
 
+  // Exported permission: 'access advanced configuration options'.
+  $permissions['access advanced configuration options'] = array(
+    'name' => 'access advanced configuration options',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'civihr_employee_portal',
+  );
+
   return $permissions;
 }
