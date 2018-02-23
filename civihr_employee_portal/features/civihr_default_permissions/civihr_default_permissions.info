@@ -121,6 +121,7 @@ features[user_permission][] = administer rules
 features[user_permission][] = administer search
 features[user_permission][] = administer site configuration
 features[user_permission][] = administer software updates
+features[user_permission][] = administer staff accounts
 features[user_permission][] = administer subpermission
 features[user_permission][] = administer taxonomy
 features[user_permission][] = administer themes
