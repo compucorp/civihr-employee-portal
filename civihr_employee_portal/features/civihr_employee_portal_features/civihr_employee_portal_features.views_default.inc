@@ -1959,7 +1959,7 @@ return date(\'Y-m-d\');';
   $handler->display->display_options['title'] = 'Users List';
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'perm';
-  $handler->display->display_options['access']['perm'] = 'administer users';
+  $handler->display->display_options['access']['perm'] = 'administer staff accounts';
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
   $handler->display->display_options['exposed_form']['type'] = 'basic';
