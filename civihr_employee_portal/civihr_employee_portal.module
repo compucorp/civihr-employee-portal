@@ -706,9 +706,12 @@ function civihr_employee_portal_permission() {
       'title' => t('Manage HR Reports configuration'),
       'description' => t('Availability to manage HR Reports configuration'),
     ],
+    'civihr - access root menu items and configurations' => array(
+      'title' => t('CiviHR - Access root menu items and configurations'),
+      'description' => t('Access advanced configuration options that could potentially impair site functionality')
+    ),
   ];
 }
-
 
 /**
  * Implements hook_mail_alter().
