@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Main view template.
@@ -28,56 +29,60 @@
 ?>
 <div class="<?php print $classes; ?>">
   <?php print render($title_prefix); ?>
-  <?php if ($title) {
-    print $title;
-  } ?>
+  <?php if ($title): ?>
+    <?php print $title; ?>
+  <?php endif; ?>
   <?php print render($title_suffix); ?>
-
-<?php if ($header): ?>
-    <div class="chr_panel__toolbar">
-      <div class="chr_panel__toolbar__actions">
-      <?php print $header; ?>
-      </div>
-  <?php if ($rows && _user_has_role(array('Manager', 'HR Admin', 'administrator'))): ?>
-        <div class="chr_panel__toolbar__filter">
-          <div class="input-group">
-            <div class="btn input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
-            <input type="text" class="form-control" name="task-filter-contact" id="task-filter-contact" value="" placeholder="Enter name" />
-          </div>
-        </div>
-    <?php endif; ?>
+  <?php if ($exposed): ?>
+    <div class="view-filters well">
+      <?php print $exposed; ?>
     </div>
   <?php endif; ?>
 
-    <?php if ($exposed): ?>
-    <div class="view-filters">
-    <?php print $exposed; ?>
-    </div>
-  <?php endif; ?>
-
-    <?php if ($attachment_before): ?>
+  <?php if ($attachment_before): ?>
     <div class="attachment attachment-before">
-    <?php print $attachment_before; ?>
+      <?php print $attachment_before; ?>
     </div>
   <?php endif; ?>
 
-    <?php if ($rows): ?>
+  <?php if ($rows): ?>
     <div class="view-content">
-    <?php print $rows; ?>
+      <div class="chr_search-result">
+        <?php if ($header): ?>
+          <div class="chr_search-result__header">
+            <?php print $header; ?>
+          </div>
+        <?php endif; ?>
+
+        <div class="chr_search-result__content">
+          <?php print $rows; ?>
+        </div>
+
+        <div class="chr_search-result__footer">
+          <?php if ($pager): ?>
+            <div class="chr_search-result__pager chr_search-result__pager--full">
+              <?php print $pager; ?>
+            </div>
+            <div class="chr_search-result__pager chr_search-result__pager--mini">
+              <?php print $pager; ?>
+            </div>
+          <?php endif; ?>
+
+          <?php if ($footer): ?>
+            <?php print $footer; ?>
+          <?php endif; ?>
+        </div>
+      </div>
     </div>
-    <?php elseif ($empty): ?>
+  <?php elseif ($empty): ?>
     <div class="view-empty">
-    <?php print $empty; ?>
+      <?php print $empty; ?>
     </div>
   <?php endif; ?>
 
-  <?php if ($pager): ?>
-    <?php print $pager; ?>
-  <?php endif; ?>
-
-    <?php if ($attachment_after): ?>
+  <?php if ($attachment_after): ?>
     <div class="attachment attachment-after">
-    <?php print $attachment_after; ?>
+      <?php print $attachment_after; ?>
     </div>
   <?php endif; ?>
 
@@ -85,16 +90,9 @@
     <?php print $more; ?>
   <?php endif; ?>
 
-    <?php if ($footer): ?>
-    <div class="view-footer">
-    <?php print $footer; ?>
+  <?php if ($feed_icon): ?>
+    <div class="feed-icon">
+      <?php print $feed_icon; ?>
     </div>
   <?php endif; ?>
-
-    <?php if ($feed_icon): ?>
-    <div class="feed-icon">
-    <?php print $feed_icon; ?>
-    </div>
-<?php endif; ?>
-
 </div><?php /* class view */ ?>
