@@ -2305,9 +2305,9 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civicrm',
   );
 
-  // Exported permission: 'civihr - access root menu items and configurations'.
-  $permissions['civihr - access root menu items and configurations'] = array(
-    'name' => 'civihr - access root menu items and configurations',
+  // Exported permission: 'access root menu items and configurations'.
+  $permissions['access root menu items and configurations'] = array(
+    'name' => 'access root menu items and configurations',
     'roles' => array(
       'administrator' => 'administrator',
     ),
