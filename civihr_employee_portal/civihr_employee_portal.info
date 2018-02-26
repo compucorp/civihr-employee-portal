@@ -18,7 +18,6 @@ dependencies[] = panels
 dependencies[] = rules
 dependencies[] = rules_admin
 dependencies[] = entity
-dependencies[] = views_json_query
 dependencies[] = views_block_area
 dependencies[] = jquery_update
 dependencies[] = webform
@@ -61,7 +60,6 @@ files[] = views/includes/civihr_employee_portal_handler_appraisal_line_manager.i
 files[] = views/includes/civihr_employee_portal_handler_appraisal_due_date.inc
 files[] = views/includes/civihr_employee_portal_handler_tasks_date.inc
 files[] = views/includes/civihr_employee_portal_handler_documents_date.inc
-files[] = views/includes/views_json_query_argument_request_handler.inc
 files[] = views/includes/views_between_dates_filter_handler.inc
 
 ; Reports Views handlers

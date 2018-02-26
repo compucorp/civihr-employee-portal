@@ -1453,12 +1453,6 @@ function get_civihr_contact_data($contact_id = NULL, $user_id = '') {
  * Implementation of hook_menu()
  */
 function civihr_employee_portal_menu() {
-  //get all drupal roles except the default ones (anonymous user) and (authenticated user)
-  $all_roles = user_roles();
-  unset($all_roles[array_search('anonymous user', $all_roles)]);
-  unset($all_roles[array_search('authenticated user', $all_roles)]);
-  $all_roles = array_values($all_roles);
-
   $items = [];
   $items['request_new_account/%ctools_js'] = [
     'title' => 'Edit Document',
@@ -1555,14 +1549,12 @@ function civihr_employee_portal_menu() {
     'type' => MENU_CALLBACK,
   ];
 
-
-
-    $items['hr_resources/%ctools_js/resource/%'] = [
-        'page callback' => 'civihr_employee_portal_hr_resource_load_callback',
-        'page arguments' => [1, 3],
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
-    ];
+  $items['hr_resources/%ctools_js/resource/%'] = [
+    'page callback' => 'civihr_employee_portal_hr_resource_load_callback',
+    'page arguments' => [1, 3],
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  ];
 
   $items['my_details/%ctools_js/view'] = [
     'page callback' => 'civihr_employee_portal_my_details_callback',
@@ -1591,9 +1583,7 @@ function civihr_employee_portal_menu() {
     'title' => 'Reports',
     'page callback' => 'civihr_employee_portal_hrreport_landing_page',
     'access arguments' => ['access hrreports'],
-    'type' => MENU_NORMAL_ITEM,
-    'menu_name' => 'main-menu',
-    'weight' => 5,
+    'type' => MENU_CALLBACK
   ];
   $items['reports/%'] = [
     'title' => 'CiviHR Custom Report',
@@ -4725,6 +4715,22 @@ function civihr_employee_portal_form_user_profile_form_alter(&$form, &$form_stat
   $form['#submit'][] = 'civihr_employee_portal_form_user_profile_form_submit';
 }
 
+
+/**
+ * Implementation of hook_views_bulk_operations_form_alter.
+ *
+ * Performs alterations on the VBO form before it is rendered.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param object $vbo
+ */
+function civihr_employee_portal_views_bulk_operations_form_alter(&$form, &$form_state, $vbo) {
+  if ($form['#id'] == 'views-form-users-list-page') {
+    $form['select']['operation']['#options'][0] = '- Bulk edit -';
+  }
+}
+
 /**
  * Redirect the user to the onboarding form if they've just set their password.
  */
@@ -5049,14 +5055,20 @@ function civihr_employee_portal_my_details() {
  * CiviHR Report - Landing page
  */
 function civihr_employee_portal_hrreport_landing_page() {
+  // This page can only be accessed via the CiviHR admin
+  if(empty($_GET['iframe'])) {
+    drupal_goto('/civicrm/reports');
+  }
+
   $jsOptions = ['type' => 'file', 'scope' => 'footer'];
 
   if (_civihr_employee_portal_is_extension_enabled('org.civicrm.reqangular')) {
     drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "dist/reqangular.min.js", $jsOptions);
   }
 
-  // Base reports.js script
+  drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . '/css/reports.css');
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/reports.js', $jsOptions);
+  drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/iframeResizer.contentWindow.min.js');
 
   $menu = civihr_employee_portal_get_drupal_menu_items('hr-reports');
 
@@ -5402,6 +5414,7 @@ function _civihr_employee_portal_add_report_scripts() {
   drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable/pivot.css");
   drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/pivottable/c3.min.css");
   drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/js/perfect-scrollbar/perfect-scrollbar.min.css");
+  drupal_add_css(drupal_get_path('module', 'civihr_employee_portal') . "/css/reports.css");
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/jquery-2.1.1.min.js', $jsOptions);
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivot.min.js', $jsOptions);
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/perfect-scrollbar/perfect-scrollbar.min.js', $jsOptions);
@@ -5411,6 +5424,7 @@ function _civihr_employee_portal_add_report_scripts() {
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable/export_renderers.js', $jsOptions);
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/jquery-ui-1.9.2.custom.min.js', $jsOptions);
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/pivottable-nreco/nrecopivot.js', $jsOptions);
+  drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/js/iframeResizer.contentWindow.min.js');
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/moment/moment.min.js', $jsOptions);
 
   if (_civihr_employee_portal_is_extension_enabled('org.civicrm.reqangular')) {
@@ -5443,6 +5457,11 @@ function civihr_employee_portal_hrreport_printtable($viewName) {
  * @return array
  */
 function civihr_employee_portal_hrreport_custom($reportName) {
+  // This page can only be accessed via the CiviHR admin
+  if(empty($_GET['iframe'])) {
+    drupal_goto("/civicrm/reports/{$reportName}");
+  }
+
   _rebuild_reports_views();
 
   $view = views_get_view('civihr_report_' . $reportName);
@@ -5582,9 +5601,28 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
       _civihr_employee_portal_form_view_exposed_form_alter_actions_wrapper($form, $form_state, $form_id);
       _civihr_employee_portal_form_view_exposed_form_alter_labels_as_placeholders($form, $form_state, $form_id);
       break;
+    case 'views-exposed-form-users-list-page':
+      _civihr_employee_portal_form_view_exposed_form_alter_users_list($form, $form_state, $form_id);
+      break;
   }
 
   $form['submit']['#value'] = 'Filter';
+}
+
+/**
+ * Alters the Users List Exposed Filter
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
+ */
+function _civihr_employee_portal_form_view_exposed_form_alter_users_list(&$form, &$form_state, $form_id) {
+  $accessField = &$form['access'];
+  $form['#info']['filter-access']['label'] = '';
+  $accessField['min']['#prefix'] = $accessField['max']['#prefix'] = '<div class="col-sm-6">';
+  $accessField['min']['#suffix'] = $accessField['max']['#suffix'] = '</div>';
+  $accessField['min']['#title'] = 'Last Accessed From';
+  $accessField['max']['#title'] = 'To';
 }
 
 /**
@@ -6046,6 +6084,20 @@ function _is_hrreports_data_table_view($viewName) {
   }
 
   return FALSE;
+}
+
+/**
+ * Matches the $viewName to a list which should be scrollable and
+ * have no of records shown on top.
+ *
+ * @param string $viewName
+ *
+ * @return boolean
+ */
+function _is_scrollable_table_view_with_results($viewName) {
+  $viewsList = ['users_list'];
+
+  return in_array($viewName, $viewsList);
 }
 
 /**
