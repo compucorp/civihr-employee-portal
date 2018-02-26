@@ -4715,6 +4715,22 @@ function civihr_employee_portal_form_user_profile_form_alter(&$form, &$form_stat
   $form['#submit'][] = 'civihr_employee_portal_form_user_profile_form_submit';
 }
 
+
+/**
+ * Implementation of hook_views_bulk_operations_form_alter.
+ *
+ * Performs alterations on the VBO form before it is rendered.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param object $vbo
+ */
+function civihr_employee_portal_views_bulk_operations_form_alter(&$form, &$form_state, $vbo) {
+  if ($form['#id'] == 'views-form-users-list-page') {
+    $form['select']['operation']['#options'][0] = '- Bulk edit -';
+  }
+}
+
 /**
  * Redirect the user to the onboarding form if they've just set their password.
  */
