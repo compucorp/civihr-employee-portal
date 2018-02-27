@@ -356,9 +356,71 @@ function civihr_employee_portal_update_7023() {
 }
 
 /**
- * Reverts the default CiviHR user permissions because they were modified
+ * Renames some roles. Basically the civihr_admin, civihr_staff
+ * civihr_manager and civihr_admin_local roles.
  */
 function civihr_employee_portal_update_7024() {
+  $oldToNewNames = [
+    'civihr_admin' => 'HR Admin',
+    'civihr_staff' => 'Staff',
+    'civihr_manager' => 'Manager',
+    'civihr_admin_local' => 'Regional HR Admin'
+  ];
+
+  $roles = user_roles();
+
+  foreach ($roles as $id => $roleName) {
+    if (array_key_exists($roleName, $oldToNewNames)) {
+      $roleObject = user_role_load($id);
+      $roleObject->name = $oldToNewNames[$roleName];
+      user_role_save($roleObject);
+
+      //The role delegation module has dynamic permissions that changes
+      //when a role name is updated in UI via hook form_user_admin_role_submit
+      //We need to update it manually here.
+
+      db_update('role_permission')
+        ->condition('permission', "assign $roleName role")
+        ->fields(array('permission' => "assign $oldToNewNames[$roleName] role"))
+        ->execute();
+    }
+  }
+}
+
+/**
+ * Revokes the 'access users overview' and the 'administer users'
+ * permissions from the HR Admin and Regional HR Admin Role
+ */
+function civihr_employee_portal_update_7025() {
+  $permissionsToRevoke = ['access users overview', 'administer users'];
+  $roleNames = ['HR Admin', 'Regional HR Admin'];
+  $roles = user_roles();
+  $rolesToCheck  = array_intersect($roles, $roleNames);
+
+  foreach($rolesToCheck as $rid => $role) {
+    user_role_revoke_permissions($rid, $permissionsToRevoke);
+  }
+}
+
+/**
+ * Grants the 'administer staff accounts' permission to the
+ * the HR Admin and Regional HR Admin Role.
+ */
+function civihr_employee_portal_update_7026() {
+  $permissionsToAdd = ['administer staff accounts'];
+  $roleNames = ['HR Admin', 'Regional HR Admin'];
+  $roles = user_roles();
+  $rolesToCheck  = array_intersect($roles, $roleNames);
+
+  foreach($rolesToCheck as $rid => $role) {
+    user_role_grant_permissions($rid, $permissionsToAdd);
+  }
+}
+
+/**
+ * Reverts the default CiviHR user permissions because they were modified
+ */
+function civihr_employee_portal_update_7027() {
   features_revert(['civihr_default_permissions' => ['user_permission']]);
 }
 

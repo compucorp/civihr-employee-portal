@@ -4714,6 +4714,22 @@ function civihr_employee_portal_form_user_profile_form_alter(&$form, &$form_stat
   $form['#submit'][] = 'civihr_employee_portal_form_user_profile_form_submit';
 }
 
+
+/**
+ * Implementation of hook_views_bulk_operations_form_alter.
+ *
+ * Performs alterations on the VBO form before it is rendered.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param object $vbo
+ */
+function civihr_employee_portal_views_bulk_operations_form_alter(&$form, &$form_state, $vbo) {
+  if ($form['#id'] == 'views-form-users-list-page') {
+    $form['select']['operation']['#options'][0] = '- Bulk edit -';
+  }
+}
+
 /**
  * Redirect the user to the onboarding form if they've just set their password.
  */
@@ -5584,9 +5600,28 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
       _civihr_employee_portal_form_view_exposed_form_alter_actions_wrapper($form, $form_state, $form_id);
       _civihr_employee_portal_form_view_exposed_form_alter_labels_as_placeholders($form, $form_state, $form_id);
       break;
+    case 'views-exposed-form-users-list-page':
+      _civihr_employee_portal_form_view_exposed_form_alter_users_list($form, $form_state, $form_id);
+      break;
   }
 
   $form['submit']['#value'] = 'Filter';
+}
+
+/**
+ * Alters the Users List Exposed Filter
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
+ */
+function _civihr_employee_portal_form_view_exposed_form_alter_users_list(&$form, &$form_state, $form_id) {
+  $accessField = &$form['access'];
+  $form['#info']['filter-access']['label'] = '';
+  $accessField['min']['#prefix'] = $accessField['max']['#prefix'] = '<div class="col-sm-6">';
+  $accessField['min']['#suffix'] = $accessField['max']['#suffix'] = '</div>';
+  $accessField['min']['#title'] = 'Last Accessed From';
+  $accessField['max']['#title'] = 'To';
 }
 
 /**
@@ -6048,6 +6083,20 @@ function _is_hrreports_data_table_view($viewName) {
   }
 
   return FALSE;
+}
+
+/**
+ * Matches the $viewName to a list which should be scrollable and
+ * have no of records shown on top.
+ *
+ * @param string $viewName
+ *
+ * @return boolean
+ */
+function _is_scrollable_table_view_with_results($viewName) {
+  $viewsList = ['users_list'];
+
+  return in_array($viewName, $viewsList);
 }
 
 /**

@@ -10,7 +10,7 @@ function civihr_site_builder_menu() {
         'title' => 'Site Builder - New',
         'page callback' => '_civihr_site_builder_create',
         'access callback' => '_user_has_role',
-        'access arguments' => array(array('civihr_admin', 'administrator')),
+        'access arguments' => array(array('HR Admin', 'administrator')),
         'type' => MENU_CALLBACK,
     );
 
