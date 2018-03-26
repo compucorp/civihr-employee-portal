@@ -22,7 +22,7 @@
 <div class="chr_search-result__header">
   <div class="chr_search-result__total">
     Results
-    <span class="chr_search-result__total__count"><?php echo count($rows); ?></span>
+    <span class="chr_search-result__total__count"><?php echo $view->total_rows; ?></span>
   </div>
 </div>
 

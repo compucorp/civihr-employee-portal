@@ -82,6 +82,9 @@ class civihr_employee_portal_handler_emergency_contact_aggregated_address extend
     $query = sprintf($format, $selectFields, $table, $id);
     $result = CRM_Core_DAO::executeQuery($query);
     $result = current($result->fetchAll());
+    foreach ($result as $i => $value) {
+      $result[$i] = filter_xss($value);
+    }
 
     return array_filter($result);
   }

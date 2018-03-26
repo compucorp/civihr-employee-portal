@@ -72,12 +72,12 @@ class civihr_employee_portal_handler_aggregated_address extends views_handler_fi
 
     return sprintf(
       $format,
-      ArrayHelper::value('street_address', $address),
-      ArrayHelper::value('supplemental_address_1', $address),
-      ArrayHelper::value('city', $address),
-      ArrayHelper::value('state_province_id.name', $address),
-      ArrayHelper::value('postal_code', $address),
-      ArrayHelper::value('country_id.name', $address)
+      filter_xss(ArrayHelper::value('street_address', $address)),
+      filter_xss(ArrayHelper::value('supplemental_address_1', $address)),
+      filter_xss(ArrayHelper::value('city', $address)),
+      filter_xss(ArrayHelper::value('state_province_id.name', $address)),
+      filter_xss(ArrayHelper::value('postal_code', $address)),
+      filter_xss(ArrayHelper::value('country_id.name', $address))
     );
   }
 }
