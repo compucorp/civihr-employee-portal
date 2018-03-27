@@ -57,7 +57,7 @@ class CustomComponentKeyHelperTest extends \PHPUnit_Framework_TestCase {
    * @dataProvider fieldsetKeyProvider
    *
    * @param string $key
-   * @param bool $expected
+   * @param string $expected
    */
   public function testCustomFieldsetKeysWillBeDetectedCorrectly($key, $expected) {
     $expected = !is_null($expected); // if expected not null it is custom field
@@ -67,9 +67,9 @@ class CustomComponentKeyHelperTest extends \PHPUnit_Framework_TestCase {
   /**
    * @dataProvider rebuildCustomFieldsetKeyProvider
    *
-   * @param $original
-   * @param $newGroup
-   * @param $expected
+   * @param string $original
+   * @param string $newGroup
+   * @param string $expected
    */
   public function testRebuildingKeyWillReplaceCustomGroupId(
     $original,

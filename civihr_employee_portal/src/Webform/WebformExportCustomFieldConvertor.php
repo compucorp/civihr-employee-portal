@@ -221,6 +221,9 @@ class WebformExportCustomFieldConvertor implements WebformTransferConvertor {
   }
 
   /**
+   * Uses old-to-new mapping to replace custom group and field IDs in a
+   * provided form key
+   *
    * @param string $formKey
    *   The original form key
    * @param array $groupMapping
@@ -229,7 +232,7 @@ class WebformExportCustomFieldConvertor implements WebformTransferConvertor {
    *   Mapping of original custom field IDs to current ones on system
    *
    * @return string|null
-   *   The updated field key, or null if the custom group or field is unregonize
+   *   The updated field key, or null if the custom group/field is unrecognized
    */
   private static function getUpdatedCustomFieldKey(
     $formKey,
@@ -249,9 +252,16 @@ class WebformExportCustomFieldConvertor implements WebformTransferConvertor {
   }
 
   /**
-   * @param $formKey
-   * @param $groupMapping
-   * @return string
+   * Uses old-to-new custom group mapping to replace custom group ID in a
+   * provided form key
+   *
+   * @param string $formKey
+   *   The original form key
+   * @param array $groupMapping
+   *   Mapping of original custom group IDs to current ones on system
+   *
+   * @return string|null
+   *   The updated field key, or null if the custom group is unrecognized
    */
   private static function getUpdatedCustomFieldsetKey($formKey, $groupMapping) {
     $oldGroupId = KeyHelper::getCustomFieldsetGroupId($formKey);
