@@ -58,7 +58,7 @@ class WebformExportCustomFieldConvertorTest extends PHPUnit_Framework_TestCase {
     $wrongFieldID = $correctFieldID + 200;
 
     // Replace the form key with key using wrong group and field ID
-    $badKey = KeyHelper::rebuildKey($wrongGroupID, $wrongFieldID, $correctKey);
+    $badKey = KeyHelper::rebuildCustomFieldKey($wrongGroupID, $wrongFieldID, $correctKey);
     $sampleComponent['form_key'] = $badKey;
 
     // Replace CiviCRM webform count with keys using wrong group ID
@@ -119,4 +119,5 @@ class WebformExportCustomFieldConvertorTest extends PHPUnit_Framework_TestCase {
 
     return array_column($results['values'], 'id');
   }
+
 }
