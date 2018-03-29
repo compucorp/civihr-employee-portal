@@ -30,7 +30,7 @@ class WebformExportCustomFieldConvertor implements WebformTransferConvertor {
     foreach ($components as $key => $component) {
       $formKey = ArrayHelper::value('form_key', $component);
 
-      if (!self::isCustomFieldKey($formKey)) {
+      if (!KeyHelper::isCustomFieldKey($formKey)) {
         continue;
       }
 
@@ -75,29 +75,28 @@ class WebformExportCustomFieldConvertor implements WebformTransferConvertor {
     $fieldMapping = self::reverseNameMapping('CustomField', $fieldNameMapping);
     $components = ArrayHelper::value('components', $node->webform, []);
 
-    foreach ($components as $key => $component) {
+    foreach ($components as $index => $component) {
       $formKey = ArrayHelper::value('form_key', $component);
+      $newKey = NULL;
 
-      if (!self::isCustomFieldKey($formKey)) {
-        continue;
+      if (KeyHelper::isCustomFieldKey($formKey)) {
+        $newKey = self::getUpdatedCustomFieldKey(
+          $formKey,
+          $groupMapping,
+          $fieldMapping
+        );
+      }
+      elseif (KeyHelper::isCustomFieldsetKey($formKey)) {
+        $newKey = self::getUpdatedCustomFieldsetKey($formKey, $groupMapping);
       }
 
-      $oldGroupID = KeyHelper::getCustomGroupID($formKey);
-      $newGroupID = ArrayHelper::value($oldGroupID, $groupMapping);
-
-      $oldFieldID = KeyHelper::getCustomFieldID($formKey);
-      $newFieldID = ArrayHelper::value($oldFieldID, $fieldMapping);
-
-      if (is_null($newGroupID) || is_null($newFieldID)) {
-        continue;
+      if ($newKey) {
+        $node->webform['components'][$index]['form_key'] = $newKey;
       }
-
-      $newKey = KeyHelper::rebuildKey($newGroupID, $newFieldID, $formKey);
-
-      $node->webform['components'][$key]['form_key'] = $newKey;
     }
 
     self::replaceWebformCiviCRMCounts($node, $groupMapping);
+    self::replaceConfigCreateModeIds($node, $groupMapping);
   }
 
   /**
@@ -138,17 +137,6 @@ class WebformExportCustomFieldConvertor implements WebformTransferConvertor {
         }
       }
     }
-  }
-
-  /**
-   * Returns true if key matches the format cg<groupID>_custom_<fieldID>
-   *
-   * @param string $formKey
-   *
-   * @return bool
-   */
-  private static function isCustomFieldKey($formKey) {
-    return !empty(KeyHelper::getCustomGroupID($formKey));
   }
 
   /**
@@ -194,10 +182,96 @@ class WebformExportCustomFieldConvertor implements WebformTransferConvertor {
     $oldToNewMapping = [];
 
     foreach ($results as $result) {
-      $orignalID = ArrayHelper::key($result['name'], $originalMapping);
-      $oldToNewMapping[$orignalID] = $result['id'];
+      $originalID = ArrayHelper::key($result['name'], $originalMapping);
+      $oldToNewMapping[$originalID] = $result['id'];
     }
 
     return $oldToNewMapping;
   }
+
+  /**
+   * Fixes the create mode for webform configuration. The creation mode key
+   * references custom group ID, which can change on each system.
+   *
+   * @param \stdClass $node
+   * @param array $groupMapping
+   */
+  private static function replaceConfigCreateModeIds($node, $groupMapping) {
+    $civiWebform = isset($node->webform_civicrm) ? $node->webform_civicrm : [];
+    $data = ArrayHelper::value('data', $civiWebform, []);
+    $config = ArrayHelper::value('config', $data, []);
+    $createModes = ArrayHelper::value('create_mode', $config);
+    $fixedModes = [];
+    $groupPrefix = 'cg';
+
+    foreach ($createModes as $key => $mode) {
+      $parts = explode('_', $key);
+      $originalGroupId = ArrayHelper::value(4, $parts);
+      $originalGroupId = str_replace($groupPrefix, '', $originalGroupId);
+      if (!isset($groupMapping[$originalGroupId])) {
+        continue;
+      }
+      $newGroupId = $groupMapping[$originalGroupId];
+      $parts[4] = $groupPrefix . $newGroupId;
+      $fixedKey = implode('_', $parts);
+      $fixedModes[$fixedKey] = $mode;
+    }
+
+    $node->webform_civicrm['data']['config']['create_mode'] = $fixedModes;
+  }
+
+  /**
+   * Uses old-to-new mapping to replace custom group and field IDs in a
+   * provided form key
+   *
+   * @param string $formKey
+   *   The original form key
+   * @param array $groupMapping
+   *   Mapping of original custom group IDs to current ones on system
+   * @param $fieldMapping
+   *   Mapping of original custom field IDs to current ones on system
+   *
+   * @return string|null
+   *   The updated field key, or null if the custom group/field is unrecognized
+   */
+  private static function getUpdatedCustomFieldKey(
+    $formKey,
+    $groupMapping,
+    $fieldMapping
+  ) {
+    $oldGroupID = KeyHelper::getCustomGroupID($formKey);
+    $newGroupID = ArrayHelper::value($oldGroupID, $groupMapping);
+    $oldFieldID = KeyHelper::getCustomFieldID($formKey);
+    $newFieldID = ArrayHelper::value($oldFieldID, $fieldMapping);
+
+    if ($newGroupID && $newFieldID) {
+      return KeyHelper::rebuildCustomFieldKey($newGroupID, $newFieldID, $formKey);
+    }
+
+    return NULL;
+  }
+
+  /**
+   * Uses old-to-new custom group mapping to replace custom group ID in a
+   * provided form key
+   *
+   * @param string $formKey
+   *   The original form key
+   * @param array $groupMapping
+   *   Mapping of original custom group IDs to current ones on system
+   *
+   * @return string|null
+   *   The updated field key, or null if the custom group is unrecognized
+   */
+  private static function getUpdatedCustomFieldsetKey($formKey, $groupMapping) {
+    $oldGroupId = KeyHelper::getCustomFieldsetGroupId($formKey);
+    $newGroupId = ArrayHelper::value($oldGroupId, $groupMapping);
+
+    if ($newGroupId) {
+      return KeyHelper::rebuildCustomFieldsetKey($formKey, $newGroupId);
+    }
+
+    return NULL;
+  }
+
 }

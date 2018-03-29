@@ -6094,7 +6094,10 @@ function _is_hrreports_data_table_view($viewName) {
  * @return boolean
  */
 function _is_scrollable_table_view_with_results($viewName) {
-  $viewsList = ['users_list'];
+  $viewsList = [
+    'civihr_staff_directory',
+    'users_list'
+  ];
 
   return in_array($viewName, $viewsList);
 }

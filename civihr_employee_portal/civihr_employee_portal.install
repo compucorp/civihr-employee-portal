@@ -424,6 +424,15 @@ function civihr_employee_portal_update_7027() {
   features_revert(['civihr_default_permissions' => ['user_permission']]);
 }
 
+
+/**
+ * Refresh the node files as onboarding form node was altered
+ */
+function civihr_employee_portal_update_7028() {
+  civicrm_initialize();
+  drush_civihr_employee_portal_refresh_node_export_files();
+}
+
 /**
  * Function to determine whether menu link exists or not.
  *

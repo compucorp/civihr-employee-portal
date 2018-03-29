@@ -201,11 +201,6 @@ $handler->display->display_options['style_options']['info'] = array(
     'empty_column' => 0,
   ),
 );
-/* Header: Global: Result summary */
-$handler->display->display_options['header']['result']['id'] = 'result';
-$handler->display->display_options['header']['result']['table'] = 'views';
-$handler->display->display_options['header']['result']['field'] = 'result';
-$handler->display->display_options['header']['result']['content'] = '@total';
 /* Footer: Global: Unfiltered text */
 $handler->display->display_options['footer']['area_text_custom']['id'] = 'area_text_custom';
 $handler->display->display_options['footer']['area_text_custom']['table'] = 'views';
@@ -772,7 +767,6 @@ $translatables['civihr_staff_directory'] = array(
   t('‹ previous'),
   t('next ›'),
   t('last »'),
-  t('@total'),
   t('HRJobContract Revision entity'),
   t('HRJobContract Details entity'),
   t('HRJobContract Role entity'),

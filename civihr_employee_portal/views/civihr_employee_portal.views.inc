@@ -1109,8 +1109,7 @@ function civihr_employee_portal_views_query_alter(&$view, &$query) {
  */
 function civihr_employee_portal_views_pre_view(&$view, &$display_id, &$args) {
   // Custom configuration start for items per page
-  if (($view->name == 'civihr_staff_directory' && $display_id == 'page') ||
-          ($view->name == 'hr_documents' && $display_id == 'hr_resources')) {
+  if ($view->name == 'hr_documents' && $display_id == 'hr_resources') {
 
     // Set the custom header
     $view->set_item_option(
