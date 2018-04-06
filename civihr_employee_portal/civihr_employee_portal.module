@@ -6192,6 +6192,34 @@ function _get_task_filter_by_date($date, $normalize = false) {
 }
 
 /**
+ * Sets the maximum viewport scale to 1 to prevent auto zooming on input focus
+ * @see https://stackoverflow.com/questions/11064237/prevent-iphone-from-zooming-form
+ *
+ * @param object $head_elements
+ */
+function _set_maximum_scale_to_viewport_meta_tag(&$head_elements) {
+  foreach ($head_elements as $key => $tag) {
+    if (isset($tag['#attributes']['name']) && $tag['#attributes']['name'] === 'viewport') {
+      $head_elements[$key]['#attributes']['content'] .= ', maximum-scale=1';
+    }
+  }
+}
+
+/**
+ * Sets theme favicon
+ *
+ * @param object $head_elements
+ */
+function _set_favicon(&$head_elements) {
+  global $base_url;
+
+  $default_favicon_element = 'drupal_add_html_head_link:shortcut icon:' . $base_url . '/misc/favicon.ico';
+  $icoPath = drupal_get_path('module', 'civihr_employee_portal') . "/images/favicon.ico";
+
+  $head_elements[$default_favicon_element]['#attributes']['href'] = "{$base_url}/{$icoPath}";
+}
+
+/**
  * This method handle user redirection for special use cases
  *
  * The redirection is made by manually setting the Location header,
@@ -6375,12 +6403,8 @@ function civihr_employee_portal_delete_report_configuration_json($reportName, $c
  * Changes the favicon for both the SSP and CiviHR admin
  */
 function civihr_employee_portal_html_head_alter(&$head_elements) {
-  global $base_url;
-
-  $default_favicon_element = 'drupal_add_html_head_link:shortcut icon:' . $base_url . '/misc/favicon.ico';
-  $icoPath = drupal_get_path('module', 'civihr_employee_portal') . "/images/favicon.ico";
-
-  $head_elements[$default_favicon_element]['#attributes']['href'] = "{$base_url}/{$icoPath}";
+  _set_favicon($head_elements);
+  _set_maximum_scale_to_viewport_meta_tag($head_elements);
 }
 
 /**
