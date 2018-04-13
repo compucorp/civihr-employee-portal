@@ -6339,9 +6339,11 @@ function _user_redirection() {
   $publicFirewall = new PublicFirewall();
   global $user, $base_url;
 
-  // This function should only be executed in a non-cli environment.
-  // It calls exit() function, which causes errors when running drush commands
-  if (drupal_is_cli()) {
+  // This function should only be executed in a non-cli fully-installed environment,
+  // It calls exit() function, which causes errors when running drush commands.
+  // If the redirection is called during the installation, it makes the process
+  // to stop before it finishes
+  if (drupal_is_cli() || drupal_installation_attempted()) {
     return;
   }
 
