@@ -996,24 +996,25 @@ function _civihr_employee_portal_decode_vacancy_description_html(&$view, &$outpu
 }
 
 function removeAdditionalCommas($view) {
-  $fieldsToClean = array();
+  $replacements = [];
 
   foreach ($view->style_plugin->rendered_fields as $renderedField) {
-    $managerFieldValues = !empty($renderedField['last_name_1']) ? $renderedField['last_name_1'] : NULL;
-    $departmentFieldValues = !empty($renderedField['department']) ? $renderedField['department'] : NULL;
+    $fieldsToClean = [
+      'title', // role titles
+      'department', // departments
+      'display_name_2' // managers
+    ];
 
-    if ($managerFieldValues != NULL && trim($managerFieldValues) != "") {
-      $cleanedValue = preg_replace('/,( *,)+/', ',', trim($managerFieldValues, ', '));
-      $fieldsToClean[$managerFieldValues] = $cleanedValue;
-    }
-
-    if ($departmentFieldValues != NULL) {
-      $cleanedValue = preg_replace('/,( *,)+/', ',', trim($departmentFieldValues, ', '));
-      $fieldsToClean[$departmentFieldValues] = $cleanedValue;
+    foreach ($fieldsToClean as $fieldToClean) {
+      $fieldValue = CRM_Utils_Array::value($fieldToClean, $renderedField);
+      if (trim($fieldValue)) {
+        $cleanedValue = preg_replace('/,( *,)+/', ',', trim($fieldValue, ', '));
+        $replacements[$fieldValue] = $cleanedValue;
+      }
     }
   }
 
-  return $fieldsToClean;
+  return $replacements;
 }
 
 /**
