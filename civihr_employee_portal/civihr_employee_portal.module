@@ -709,7 +709,6 @@ function civihr_employee_portal_permission() {
   ];
 }
 
-
 /**
  * Implements hook_mail_alter().
  *
