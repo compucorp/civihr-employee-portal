@@ -318,12 +318,6 @@ $handler->display->display_options['fields']['role_location']['field'] = 'role_l
 $handler->display->display_options['fields']['role_location']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['fields']['role_location']['label'] = 'Location';
 $handler->display->display_options['fields']['role_location']['element_label_colon'] = FALSE;
-/* Field: HRJobContract Details entity: Contract_type */
-$handler->display->display_options['fields']['contract_type']['id'] = 'contract_type';
-$handler->display->display_options['fields']['contract_type']['table'] = 'hrjc_details';
-$handler->display->display_options['fields']['contract_type']['field'] = 'contract_type';
-$handler->display->display_options['fields']['contract_type']['relationship'] = 'details_revision_id';
-$handler->display->display_options['fields']['contract_type']['label'] = ' Contract Type ';
 /* Field: HRJobContract Role entity: Role_department */
 $handler->display->display_options['fields']['department']['id'] = 'department';
 $handler->display->display_options['fields']['department']['table'] = 'hrjc_role';
@@ -785,7 +779,6 @@ $translatables['civihr_staff_directory'] = array(
   t('Job Title'),
   t('Email'),
   t('Location'),
-  t(' Contract Type '),
   t('Role Department'),
   t('Departments'),
   t('End Date'),
