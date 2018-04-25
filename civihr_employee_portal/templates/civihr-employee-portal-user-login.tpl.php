@@ -24,6 +24,7 @@ $errors = form_get_errors();
         <?php print drupal_render($form['form_build_id']); ?>
         <?php print drupal_render($form['form_id']); ?>
         <?php print drupal_render($form['actions']); ?>
+        <input type="hidden" id="redirect_hash" name="redirect_hash"/>
     </div>
 </div>
 <?php
@@ -63,7 +64,7 @@ $errors = form_get_errors();
                 e.stopImmediatePropagation();
                 return false;
             });
-
+            $('#redirect_hash').val(window.location.hash);
         });
     }(CRM.$));
 </script>
