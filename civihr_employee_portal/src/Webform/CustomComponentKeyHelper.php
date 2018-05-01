@@ -54,9 +54,68 @@ class CustomComponentKeyHelper {
    *
    * @return string
    */
-  public static function rebuildKey($groupID, $fieldID, $formKey) {
+  public static function rebuildCustomFieldKey($groupID, $fieldID, $formKey) {
     $replacement = sprintf('${1}%d_custom_%d', $groupID, $fieldID);
 
     return preg_replace(self::$pattern, $replacement, $formKey);
   }
+
+  /**
+   * Returns true if key matches the format cg<groupID>_custom_<fieldID>
+   *
+   * @param string $formKey
+   *
+   * @return bool
+   */
+  public static function isCustomFieldKey($formKey) {
+    return !empty(self::getCustomGroupID($formKey));
+  }
+
+  /**
+   * Checks whether this key belongs to a fieldset containing a custom group
+   * entity
+   *
+   * @param string $formKey
+   *
+   * @return bool
+   */
+  public static function isCustomFieldsetKey($formKey) {
+    $parts = explode('_', $formKey);
+
+    return count($parts) === 6 && $parts[5] === 'fieldset';
+  }
+
+  /**
+   * Gets the custom group ID from a custom group fieldset key
+   *
+   * @param string $formKey
+   *
+   * @return int
+   */
+  public static function getCustomFieldsetGroupId($formKey) {
+    if (!self::isCustomFieldsetKey($formKey)) {
+      return NULL;
+    }
+
+    $parts = explode('_', $formKey);
+    $groupId = str_replace('cg', '', ArrayHelper::value(4, $parts));
+
+    return $groupId;
+  }
+
+  /**
+   * Rebuilds the key for a custom group fieldset using a new custom group ID
+   *
+   * @param string $originalKey
+   * @param int $newGroupId
+   *
+   * @return string
+   */
+  public static function rebuildCustomFieldsetKey($originalKey, $newGroupId) {
+    $parts = explode('_', $originalKey);
+    $parts[4] = 'cg' . $newGroupId;
+
+    return implode('_', $parts);
+  }
+
 }

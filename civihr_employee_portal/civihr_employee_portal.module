@@ -709,7 +709,6 @@ function civihr_employee_portal_permission() {
   ];
 }
 
-
 /**
  * Implements hook_mail_alter().
  *
@@ -4939,6 +4938,11 @@ function civihr_employee_portal_user_login_validate(&$form, &$form_state) {
 
 function civihr_employee_portal_user_login_submit(&$form, &$form_state) {
   $destination = !empty($_REQUEST['destination']) ? rawurldecode($_REQUEST['destination']) : '';
+
+  if (!empty($_REQUEST['redirect_hash'])) {
+    $destination .= $_REQUEST['redirect_hash'];
+    $_GET['destination'] = $destination;
+  }
 
   if ($form_state['input']['forgot-password']) {
     user_pass_submit($form, $form_state);
