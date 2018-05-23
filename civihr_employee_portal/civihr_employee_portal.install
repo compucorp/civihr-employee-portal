@@ -434,6 +434,14 @@ function civihr_employee_portal_update_7028() {
 }
 
 /**
+ * Refresh the node files as onboarding form node was altered
+ */
+function civihr_employee_portal_update_7029() {
+  civicrm_initialize();
+  drush_civihr_employee_portal_refresh_node_export_files();
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string $path
