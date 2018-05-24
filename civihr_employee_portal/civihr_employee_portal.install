@@ -442,6 +442,13 @@ function civihr_employee_portal_update_7029() {
 }
 
 /**
+ * Revert default mail content feature as content has changed
+ */
+function civihr_employee_portal_update_7030() {
+  features_revert(['civihr_default_mail_content' => ['variable']]);
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string $path
