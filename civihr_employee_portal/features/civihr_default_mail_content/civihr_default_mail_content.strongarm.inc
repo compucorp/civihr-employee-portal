@@ -40,7 +40,7 @@ function civihr_default_mail_content_strongarm() {
     Once you have set your password, you can access CiviHR via the logon page at <a href="[site:url]">[site:url]</a> - your username is [user:name]</p>
   </p>
   <p>
-    For instructions on how to use the system, please read the online user guide.
+    For instructions on how to use the system, please read the online <a href="https://civihr-documentation.readthedocs.io/en/latest/initial-setup-and-configuration/staff-managers-quickstart/">user guide</a>.
   </p>';
   $export['user_mail_register_admin_created_body'] = $strongarm;
 
@@ -62,7 +62,7 @@ function civihr_default_mail_content_strongarm() {
     Once you have set your password, you can access CiviHR via the logon page at <a href="[site:url]">[site:url]</a> - your username is [user:name]</p>
   </p>
   <p>
-    For instructions on how to use the system, please read the online user guide.
+    For instructions on how to use the system, please read the online <a href="https://civihr-documentation.readthedocs.io/en/latest/initial-setup-and-configuration/staff-managers-quickstart/">user guide</a>.
   </p>';
   $export['user_mail_status_activated_body'] = $strongarm;
 
