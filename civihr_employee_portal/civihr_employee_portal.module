@@ -6557,13 +6557,17 @@ function _civihr_employee_portal_create_default_reports_configuration() {
 /**
  * Internal function for fetching custom markup from template and Angular Js.
  *
- * @param String
+ * @param string
  *    Name of the resource to load template and angular js.
+ * @param string
+ *    Name of the extension from where scripts are to be loaded
+ * @param string
+ *    Name of the module from where html is to be loaded
  *
- * @return String
+ * @return string
  *    Custom markup from template file.
  */
-function civihr_tasks_documents_get_markup($resource = '') {
+function civihr_employee_portal_get_markup_for_extension($resource = '', $scriptExtensionKey, $markupModuleName) {
   $script = CRM_Core_Config::singleton()->debug ? "{$resource}.js" : "{$resource}.min.js";
 
   // Adds RequireJS + AngularJS dependencies only once
@@ -6571,24 +6575,26 @@ function civihr_tasks_documents_get_markup($resource = '') {
     civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
   }
 
-  civicrm_resources_load('uk.co.compucorp.civicrm.tasksassignments', [$script]);
+  civicrm_resources_load($scriptExtensionKey, [$script]);
 
-  return civihr_tasks_documents_load_file(str_replace('-', '_', $resource));
+  return civihr_employee_portal_load_html_file(str_replace('-', '_', $resource), $markupModuleName);
 }
 
 /**
  * Internal function to load predefined template file.
  *
- * @param String
+ * @param string
  *    File name to load the content.
+ * @param string
+ *    Module Name
  *
- * @return String
+ * @return string
  *    File Content.
  */
-function civihr_tasks_documents_load_file($template = '') {
+function civihr_employee_portal_load_html_file($template = '', $moduleName) {
 
   // Fetching custom markup from pre-defined template file.
-  $file_path = drupal_get_path('module', 'civihr_employee_portal') . '/views/templates/' . $template . '.html';
+  $file_path = drupal_get_path('module', $moduleName) . '/templates/' . $template . '.html';
 
   if (file_exists($file_path)) {
     return @file_get_contents($file_path);
