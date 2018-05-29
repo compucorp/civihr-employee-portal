@@ -191,6 +191,8 @@
             $navTaskFilter
               .find('[data-task-filter="all"]')
               .find('.task-counter-filter').text(sum);
+
+            document.dispatchEvent(new Event('TasksBadge:: Update Count'));
           }
 
           function buildTaskContactFilter() {
