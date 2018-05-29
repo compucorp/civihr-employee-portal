@@ -6146,6 +6146,7 @@ function _is_hrreports_data_table_view($viewName) {
 function _is_scrollable_table_view_with_results($viewName) {
   $viewsList = [
     'civihr_staff_directory',
+    'manage_hr_resources',
     'users_list'
   ];
 
