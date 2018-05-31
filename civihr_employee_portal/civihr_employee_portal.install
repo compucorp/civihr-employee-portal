@@ -255,23 +255,23 @@ function civihr_employee_portal_update_7016() {
   civicrm_initialize();
   $locationTypes = civicrm_api3('LocationType', 'get')['values'];
   $locationTypes = array_column($locationTypes, 'name', 'id');
-  $homeTypeID = array_search('Home', $locationTypes);
+  $personalTypeID = array_search('Personal', $locationTypes);
   $workTypeID = array_search('Work', $locationTypes);
 
   $workPhone = &$phoneData[1];
   $homePhone = &$phoneData[2];
-  $homeEmail = &$emailData[2];
+  $personalEmail = &$emailData[2];
   $workEmail = &$emailData[1];
-  $homeAddress = &$addressData[1];
+  $personalAddress = &$addressData[1];
   $workInstantMessenger = &$instantMessengerData[1];
 
   $locationKey = 'location_type_id';
 
   $workPhone[$locationKey] = $workTypeID;
-  $homePhone[$locationKey] = $homeTypeID;
+  $homePhone[$locationKey] = $personalTypeID;
   $workEmail[$locationKey] = $workTypeID;
-  $homeEmail[$locationKey] = $homeTypeID;
-  $homeAddress[$locationKey] = $homeTypeID;
+  $personalEmail[$locationKey] = $personalTypeID;
+  $personalAddress[$locationKey] = $personalTypeID;
   $workInstantMessenger[$locationKey] = $workTypeID;
 
   drupal_write_record('webform_civicrm_forms', $civicrmWebform, 'nid');
