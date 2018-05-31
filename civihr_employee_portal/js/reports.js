@@ -412,11 +412,11 @@
    * for fetching results for the last 30 days starting from current
    * date.
    *
-   * @returns {String}
+   * @return {String}
    */
   HRReport.prototype.getDefaultFilterQueryForLeaveReport = function () {
-    var toDate = moment().dayOfYear(1).add(1, 'year').subtract(1, 'day').format('YYYY-MM-DD');
     var fromDate = moment().dayOfYear(1).format('YYYY-MM-DD');
+    var toDate = moment().dayOfYear(1).add(1, 'year').subtract(1, 'day').format('YYYY-MM-DD');
     var defaultFilterValues = [
       { name: 'absence_date_filter[min]', value: fromDate },
       { name: 'absence_date_filter[max]', value: toDate }
@@ -430,14 +430,15 @@
    * Processes the filter values and replaces with default values
    * for the leave reports when the filter values does not have a
    * query parameter appended.
+   * On load of page the form values are not appended to query string
+   * hence filterValues has a value of '?'
    *
-   * @returns string {String}
+   * @param  {String} filterValues
+   * @return {String}
    */
   HRReport.prototype.processFilterValues = function (filterValues) {
-    var that = this;
-    //On load of page the form values are not appended to query string.
-    if (filterValues === '?' && that.reportName === 'leave_and_absence') {
-      return that.getDefaultFilterQueryForLeaveReport()
+    if (filterValues === '?' && this.reportName === 'leave_and_absence') {
+      return this.getDefaultFilterQueryForLeaveReport()
     }
 
     return filterValues;
