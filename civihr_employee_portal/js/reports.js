@@ -407,6 +407,25 @@
   };
 
   /**
+   * Gets the default query parameters for fetching results for the
+   * Leave and absence report. It basically defaults to parameters
+   * for fetching results for the last 30 days starting from current
+   * date.
+   *
+   * @returns {String}
+   */
+  HRReport.prototype.getDefaultFilterQueryForLeaveReport = function () {
+    var toDate = moment().format("YYYY-MM-DD");
+    var fromDate = moment().subtract(1, 'months').format("YYYY-MM-DD");
+    var defaultFilterValues = [
+      { name: "absence_date_filter[min]", value: fromDate },
+      { name: "absence_date_filter[max]", value: toDate }
+    ];
+
+    return '?' + $.param(defaultFilterValues);
+  }
+
+  /**
    * Refresh JSON data and Pivot Tables using provided filter values
    *
    * @param string filterValues
@@ -416,6 +435,12 @@
     if (!this.jsonUrl) {
       return;
     }
+
+    //On load of page the form values are not appended to query string.
+    if(filterValues === '?' && that.reportName === 'leave_and_absence') {
+      filterValues = that.getDefaultFilterQueryForLeaveReport()
+    }
+
     $.ajax({
       url: this.jsonUrl + filterValues,
       error: function () {
@@ -454,6 +479,12 @@
     if (!this.tableUrl) {
       return;
     }
+
+    //On load of page the form values are not appended to query string.
+    if(filterValues === '?' && that.reportName === 'leave_and_absence') {
+      filterValues = that.getDefaultFilterQueryForLeaveReport()
+    }
+
     var tableDomId = this.getReportTableDomID();
     $.ajax({
       url: that.tableUrl + filterValues,
@@ -851,7 +882,9 @@
               }
 
               if (REPORT_NAME === 'leave_and_absence') {
-                initCurrentAbsencePeriodFilterDates().then(resolve, reject);
+                formFiltersStore.values.fromDate = moment().subtract(1, 'months').toDate();
+                formFiltersStore.values.toDate = moment().toDate();
+                resolve();
               } else {
                 formFiltersStore.values.date = new Date();
                 resolve();
