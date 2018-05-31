@@ -425,6 +425,24 @@
     return '?' + $.param(defaultFilterValues);
   }
 
+
+  /**
+   * Processes the filter values and replaces with default values
+   * for the leave reports when the filter values does not have a
+   * query parameter appended.
+   *
+   * @returns string {String}
+   */
+  HRReport.prototype.processFilterValues = function (filterValues) {
+    var that = this;
+    //On load of page the form values are not appended to query string.
+    if (filterValues === '?' && that.reportName === 'leave_and_absence') {
+      return that.getDefaultFilterQueryForLeaveReport()
+    }
+
+    return filterValues;
+  }
+
   /**
    * Refresh JSON data and Pivot Tables using provided filter values
    *
@@ -436,10 +454,7 @@
       return;
     }
 
-    //On load of page the form values are not appended to query string.
-    if(filterValues === '?' && that.reportName === 'leave_and_absence') {
-      filterValues = that.getDefaultFilterQueryForLeaveReport()
-    }
+    filterValues = that.processFilterValues(filterValues);
 
     $.ajax({
       url: this.jsonUrl + filterValues,
@@ -480,10 +495,7 @@
       return;
     }
 
-    //On load of page the form values are not appended to query string.
-    if(filterValues === '?' && that.reportName === 'leave_and_absence') {
-      filterValues = that.getDefaultFilterQueryForLeaveReport()
-    }
+    filterValues = that.processFilterValues(filterValues);
 
     var tableDomId = this.getReportTableDomID();
     $.ajax({
@@ -848,25 +860,6 @@
                 vm.loading.dates = false;
               });
           })();
-
-          /**
-           * Loads and sets the dates in the date filters using the start and
-           * end dates for the current absence period.
-           *
-           * @return {Promise} - Resolves to an empty promise after the current
-           * period dates have been initialized.
-           */
-          function initCurrentAbsencePeriodFilterDates () {
-            return AbsencePeriod.getCurrent()
-              .then(function (currentPeriod) {
-                if (!currentPeriod) {
-                  return;
-                }
-
-                formFiltersStore.values.fromDate = moment(currentPeriod.start_date).toDate();
-                formFiltersStore.values.toDate = moment(currentPeriod.end_date).toDate();
-              });
-          }
 
           /**
            * If form filters have not been initialized, they'll get their default
