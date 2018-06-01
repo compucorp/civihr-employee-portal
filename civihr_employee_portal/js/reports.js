@@ -409,8 +409,7 @@
   /**
    * Gets the default query parameters for fetching results for the
    * Leave and absence report. It basically defaults to parameters
-   * for fetching results for the last 30 days starting from current
-   * date.
+   * for fetching results for the current year
    *
    * @return {String}
    */
@@ -425,11 +424,26 @@
     return '?' + $.param(defaultFilterValues);
   }
 
+  /**
+   * Gets the default query parameters for fetching results for the
+   * People report. It basically defaults the date parameter to the
+   * current date.
+   *
+   * @return {String}
+   */
+  HRReport.prototype.getDefaultFilterQueryForPeopleReport = function () {
+    var currentDate = moment().format('YYYY-MM-DD');
+    var defaultFilterValues = [
+      { name: 'between_date_filter[value]', value: currentDate }
+    ];
+
+    return '?' + $.param(defaultFilterValues);
+  }
 
   /**
    * Processes the filter values and replaces with default values
-   * for the leave reports when the filter values does not have a
-   * query parameter appended.
+   * for the people and leave reports when the filter values does
+   * not have a query parameter appended.
    * On load of page the form values are not appended to query string
    * hence filterValues has a value of '?'
    *
@@ -439,6 +453,10 @@
   HRReport.prototype.processFilterValues = function (filterValues) {
     if (filterValues === '?' && this.reportName === 'leave_and_absence') {
       return this.getDefaultFilterQueryForLeaveReport()
+    }
+
+    if (filterValues === '?' && this.reportName === 'people') {
+      return this.getDefaultFilterQueryForPeopleReport()
     }
 
     return filterValues;
