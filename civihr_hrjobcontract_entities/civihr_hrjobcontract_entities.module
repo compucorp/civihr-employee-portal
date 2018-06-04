@@ -215,8 +215,6 @@ function civihr_hrjobcontract_entities_init() {
                     t.job_contract_id AS jobcontract_id,
                     t.title AS role_title,
                     t.description AS role_description,
-                    t.hours AS role_hours,
-                    t.role_hours_unit AS role_hours_unit,
                     DATE_FORMAT(t.start_date, '%Y-%m-%d') AS role_start_date,
                     DATE_FORMAT(t.end_date, '%Y-%m-%d') AS role_end_date,
                     DATE_FORMAT(t.start_date, '%Y-%m') AS role_start_month,
@@ -225,7 +223,6 @@ function civihr_hrjobcontract_entities_init() {
                     ov_department.label AS role_department,
                     ov_level_type.label AS role_level_type,
                     t.manager_contact_id AS role_manager_contact_id,
-                    t.functional_area AS role_functional_area,
                     t.organization AS role_organization,
                     t.cost_center AS role_cost_center,
                     t.funder AS role_funder,
@@ -838,16 +835,6 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'not null' => FALSE,
         'description' => 'Description.',
     );
-    $schema['hrjc_role']['fields']['role_hours'] = array(
-        'type' => 'varchar',
-        'not null' => FALSE,
-        'description' => 'Hours.',
-    );
-    $schema['hrjc_role']['fields']['role_hours_unit'] = array(
-        'type' => 'varchar',
-        'not null' => FALSE,
-        'description' => 'Role hours unit.',
-    );
     $schema['hrjc_role']['fields']['role_region'] = array(
         'type' => 'varchar',
         'not null' => FALSE,
@@ -867,11 +854,6 @@ function civihr_hrjobcontract_entities_schema_alter(&$schema) {
         'type' => 'int',
         'not null' => FALSE,
         'description' => 'Manager contact ID.',
-    );
-    $schema['hrjc_role']['fields']['role_functional_area'] = array(
-        'type' => 'varchar',
-        'not null' => FALSE,
-        'description' => 'Functional area.',
     );
     $schema['hrjc_role']['fields']['role_organization'] = array(
         'type' => 'varchar',
