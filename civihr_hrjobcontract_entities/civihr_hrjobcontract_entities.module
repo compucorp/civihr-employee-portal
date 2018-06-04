@@ -262,29 +262,29 @@ function civihr_hrjobcontract_entities_init() {
             GROUP_CONCAT(DISTINCT CASE WHEN email_location.name = 'Work' THEN c_email.email ELSE '' END 
               ORDER BY c_email.email DESC SEPARATOR ' ') AS work_email,
 
-            GROUP_CONCAT(DISTINCT CASE WHEN phone_location.name = 'Home' THEN c_phone.phone ELSE '' END
+            GROUP_CONCAT(DISTINCT CASE WHEN phone_location.name = 'Personal' THEN c_phone.phone ELSE '' END
               ORDER BY c_phone.phone DESC SEPARATOR ' ') AS home_phone,
-            GROUP_CONCAT(DISTINCT CASE WHEN phone_location.name = 'Home' THEN c_phone.phone_ext ELSE '' END 
+            GROUP_CONCAT(DISTINCT CASE WHEN phone_location.name = 'Personal' THEN c_phone.phone_ext ELSE '' END 
               ORDER BY c_phone.phone_ext DESC SEPARATOR ' ') AS home_phone_ext,
-            GROUP_CONCAT(DISTINCT CASE WHEN email_location.name = 'Home' THEN c_email.email ELSE '' END 
+            GROUP_CONCAT(DISTINCT CASE WHEN email_location.name = 'Personal' THEN c_email.email ELSE '' END 
               ORDER BY c_email.email DESC SEPARATOR ' ') AS home_email
 
           FROM {$civi_db_name}.civicrm_contact c
           LEFT JOIN {$civi_db_name}.civicrm_phone c_phone ON c_phone.contact_id = c.id
           LEFT JOIN {$civi_db_name}.civicrm_location_type phone_location ON (
             c_phone.location_type_id = phone_location.id
-            AND (phone_location.name = 'Work' OR phone_location.name = 'Home')
+            AND (phone_location.name = 'Work' OR phone_location.name = 'Personal')
           )
           LEFT JOIN {$civi_db_name}.civicrm_email c_email ON c_email.contact_id = c.id
           LEFT JOIN {$civi_db_name}.civicrm_location_type email_location ON (
             c_email.location_type_id = email_location.id
-            AND (email_location.name = 'Work' OR email_location.name = 'Home')
+            AND (email_location.name = 'Work' OR email_location.name = 'Personal')
           )
 
           WHERE phone_location.name = 'Work'
           OR email_location.name = 'Work'
-          OR phone_location.name = 'Home'
-          OR email_location.name = 'Home'
+          OR phone_location.name = 'Personal'
+          OR email_location.name = 'Personal'
           GROUP BY contact_id
         ");
 
