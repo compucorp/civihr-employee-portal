@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * Implements CiviCRM hook : hook_civicrm_post() [https://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_post].
+ * This hook will check if any custom group get added and will create database prefix for it to be used in settings.php
+ * file automatically
+ */
+function civicrm_views_integration_civicrm_post($op, $objectName, $id, &$params) {
+  if ($objectName == 'CustomGroup' && $op == 'create') {
+    _civicrm_views_integrating_generate_db_prefixes();
+  }
+}
+
+/**
+ * Creates Views integration settings database prefix array to be used in settings.php 
+ * for connecting CiviCRM to views.
+ */
+function _civicrm_views_integrating_generate_db_prefixes(){
+  civicrm_initialize();
+  global $databases;
+
+  $config = CRM_Core_Config::singleton();
+
+  // Only add the prefix if civicrm and drupal database are not the same one
+  if ($config->dsn != $config->userFrameworkDSN) {
+    $tableNames = CRM_Core_DAO::GetStorageValues(NULL, 0, 'Name');
+
+    $tablePrefixes = [];
+    // add default prefix: the drupal database prefix
+    $tablePrefixes['default'] = '';
+
+    $dsnArray = DB::parseDSN($config->dsn);
+    $prefix = "`{$dsnArray['database']}`.";
+    
+    foreach ($tableNames as $tableName => $value) {
+      $tablePrefixes[$tableName] = "'" . $prefix . "',";;
+    }
+    // Generates JSON file.
+    _civicrm_views_integrating_generate_json($tablePrefixes);
+  }
+}
+
+/**
+ * Creates Json file to hold Views integration settings database prefix array to be used in settings.php 
+ *
+ * @param array $tablePrefixes
+ *      Database prefix array.
+ */
+function _civicrm_views_integrating_generate_json($tablePrefixes = []){
+  $json_data = json_encode($tablePrefixes);
+  $cmsSettingsPath = DRUPAL_ROOT . '/sites/default/files/civicrm/custom/views-mapping.json';
+  $myfile = fopen($cmsSettingsPath, 'w+');
+  fwrite($myfile, "\n" . $json_data);
+  fclose($myfile);
+}

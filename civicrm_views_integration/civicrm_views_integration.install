@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function civicrm_views_integration_install() {
+  global $databases;
+  // Don't do anything if there are prefixes already defined
+  if (!is_array($databases['default']['default']['prefix'])) {
+    // Appends settings.php file with prefixes for all current civicrm tables.
+    _civicrm_views_integrating_generate_db_prefixes();
+  }
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function civicrm_views_integration_requirements($phase) {
+  global $databases;
+  $requirements = []; 
+
+  if ($phase == 'runtime') {
+    if (!is_array($databases['default']['default']['prefix'])) {
+      // Provides Database prefix array for civicrm to be used in settings.php.
+      $settings_message = "
+        if (file_exists(DRUPAL_ROOT . '/sites/default/files/civicrm/custom/views-mapping.json')) {
+          \$databases['default']['default']['prefix'] = json_decode(file_get_contents(DRUPAL_ROOT . '/sites/default/files/civicrm/custom/views-mapping.json'), true);
+        }";
+
+      $message = "<fieldset>
+                    <legend>Views integration settings</legend>
+                      <div>To enable CiviCRM Views integration, add the following to the site <code>settings.php</code> file:</div>
+                      <pre>{$settings_message}</pre>
+                  </fieldset>";
+
+      $requirements['civicrm_db_prefix'] = array(
+        'title' => t('Views integration settings'),
+        'description' => $message,
+        'severity' => REQUIREMENT_INFO,
+      );
+    }
+  }
+
+  return $requirements;
+}
