@@ -124,6 +124,7 @@ $handler->display->display_options['fields']['cycle_end_date']['element_label_co
 
 /* Display: Page */
 $handler = $view->new_display('page', 'Page', 'appraisals_manager');
+$handler->display->display_options['enabled'] = FALSE;
 $handler->display->display_options['defaults']['arguments'] = FALSE;
 /* Contextual filter: Appraisal entity: Appraisal Manager ID */
 $handler->display->display_options['arguments']['manager_id']['id'] = 'manager_id';
@@ -180,3 +181,4 @@ $translatables['appraisals'] = array(
   t('All'),
   t('Block'),
 );
+
