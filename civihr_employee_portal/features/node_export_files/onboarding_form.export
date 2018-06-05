@@ -4730,7 +4730,7 @@ array(
             'number_of_cg99999' => '7',
             'address' => array(
               1 => array(
-                'location_type_id' => '1',
+                'location_type_id' => '6',
               ),
             ),
             'phone' => array(
@@ -4740,7 +4740,7 @@ array(
               ),
               2 => array(
                 'phone_type_id' => '1',
-                'location_type_id' => '1',
+                'location_type_id' => '6',
               ),
             ),
             'email' => array(
@@ -4748,7 +4748,7 @@ array(
                 'location_type_id' => '2',
               ),
               2 => array(
-                'location_type_id' => '1',
+                'location_type_id' => '6',
               ),
             ),
             'im' => array(
@@ -4828,8 +4828,8 @@ array(
         99999 => 'Emergency_Contacts',
       ),
       'locationTypes' => array(
-        1 => 'Home',
         2 => 'Work',
+        6 => 'Personal',
       ),
     ),
   ),
