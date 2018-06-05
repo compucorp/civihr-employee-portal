@@ -502,10 +502,10 @@ function civihr_employee_portal_features_views_default_views() {
   $handler->display->display_options['filters']['period_end_date']['relationship'] = 'details_revision_id';
   $handler->display->display_options['filters']['period_end_date']['operator'] = 'empty';
   $handler->display->display_options['filters']['period_end_date']['group'] = 3;
-  /* Filter criterion: Date: Date (absence_activity) */
+  /* Filter criterion: Absence Activity entity: Absence date */
   $handler->display->display_options['filters']['date_filter']['id'] = 'date_filter';
   $handler->display->display_options['filters']['date_filter']['table'] = 'absence_activity';
-  $handler->display->display_options['filters']['date_filter']['field'] = 'date_filter';
+  $handler->display->display_options['filters']['date_filter']['field'] = 'absence_date';
   $handler->display->display_options['filters']['date_filter']['relationship'] = 'absence_activity';
   $handler->display->display_options['filters']['date_filter']['operator'] = 'between';
   $handler->display->display_options['filters']['date_filter']['exposed'] = TRUE;
@@ -520,13 +520,6 @@ function civihr_employee_portal_features_views_default_views() {
     55120974 => 0,
     17087012 => 0,
     57573969 => 0,
-  );
-  $handler->display->display_options['filters']['date_filter']['form_type'] = 'date_popup';
-  $handler->display->display_options['filters']['date_filter']['default_date'] = 'now -10 year';
-  $handler->display->display_options['filters']['date_filter']['default_to_date'] = 'now +10 year';
-  $handler->display->display_options['filters']['date_filter']['year_range'] = '-10:+10';
-  $handler->display->display_options['filters']['date_filter']['date_fields'] = array(
-    'absence_activity.absence_date' => 'absence_activity.absence_date',
   );
   /* Filter criterion: Absence Activity entity: Absence activity entity ID */
   $handler->display->display_options['filters']['absence_activity_id']['id'] = 'absence_activity_id';

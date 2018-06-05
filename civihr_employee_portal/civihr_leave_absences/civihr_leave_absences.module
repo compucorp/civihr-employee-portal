@@ -30,10 +30,16 @@ function civihr_leave_absences_block_view($delta = '') {
   $block = [];
   switch ($delta) {
     case 'my_leave':
-      $block['content'] = civihr_leave_absences_get_markup('my-leave');
+      $block['content'] = civihr_employee_portal_get_markup_for_extension(
+        'my-leave',
+        'uk.co.compucorp.civicrm.hrleaveandabsences',
+        'civihr_leave_absences');
       break;
     case 'manager_leave':
-      $block['content'] = civihr_leave_absences_get_markup('manager-leave');
+      $block['content'] = civihr_employee_portal_get_markup_for_extension(
+        'manager-leave',
+        'uk.co.compucorp.civicrm.hrleaveandabsences',
+        'civihr_leave_absences');
       break;
   }
   return $block;
@@ -61,49 +67,6 @@ function civihr_leave_absences_init() {
     drupal_add_js($settings, 'setting');
 
     _civihr_leave_absences_push_permissions();
-  }
-}
-
-/**
- * Internal function for fetching custom markup from template and Angular Js.
- *
- * @param String
- *    Name of the resource to load template and angular js.
- *
- * @return String
- *    Custom markup from template file.
- */
-function civihr_leave_absences_get_markup($resource = '') {
-  $script = CRM_Core_Config::singleton()->debug ? "{$resource}.js" : "{$resource}.min.js";
-
-  // Adds RequireJS + AngularJS dependencies only once
-  if (!strpos(drupal_get_js('footer'), 'reqangular.min.js')) {
-    civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
-  }
-
-  civicrm_resources_load('uk.co.compucorp.civicrm.hrleaveandabsences', [$script]);
-
-  return civihr_leave_absences_load_file(str_replace('-', '_', $resource));
-}
-
-/**
- * Internal function to load predefined template file.
- *
- * @param String
- *    File name to load the content.
- *
- * @return String
- *    File Content.
- */
-function civihr_leave_absences_load_file($template = '') {
-
-  // Fetching custom markup from pre-defined template file.
-  $file_path = drupal_get_path('module', 'civihr_leave_absences') . '/templates/' . $template . '.html';
-  if (file_exists($file_path)) {
-    return @file_get_contents($file_path);
-  }
-  else {
-    return '';
   }
 }
 
