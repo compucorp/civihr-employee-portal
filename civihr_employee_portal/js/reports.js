@@ -414,8 +414,8 @@
    * @return {String}
    */
   HRReport.prototype.getDefaultFilterQueryForLeaveReport = function () {
-    var fromDate = moment().dayOfYear(1).format('YYYY-MM-DD');
-    var toDate = moment().dayOfYear(1).add(1, 'year').subtract(1, 'day').format('YYYY-MM-DD');
+    var fromDate = moment().startOf('month').format('YYYY-MM-DD');
+    var toDate = moment().endOf('month').format('YYYY-MM-DD');
     var defaultFilterValues = [
       { name: 'absence_date_filter[min]', value: fromDate },
       { name: 'absence_date_filter[max]', value: toDate }
@@ -894,8 +894,8 @@
               }
 
               if (REPORT_NAME === 'leave_and_absence') {
-                formFiltersStore.values.fromDate = moment().dayOfYear(1).toDate();
-                formFiltersStore.values.toDate = moment().dayOfYear(1).add(1, 'year').subtract(1, 'day').toDate();
+                formFiltersStore.values.fromDate = moment().startOf('month').toDate();
+                formFiltersStore.values.toDate = moment().endOf('month').toDate();
                 resolve();
               } else {
                 formFiltersStore.values.date = new Date();
