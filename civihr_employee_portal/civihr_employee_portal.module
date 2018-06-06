@@ -4681,6 +4681,12 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
     $onboardingForm = new OnboardingWebForm();
     $onboardingForm->alter($form);
   }
+
+  // Hide Relations and Description from hr_resource_type add screen
+  if ($form_id == 'taxonomy_form_term' && $form['#term']['vocabulary_machine_name'] == "hr_resource_type") {
+    $form['relations']['#access'] = FALSE;
+    $form['description']['#access'] = FALSE;
+  }
 }
 
 /**
