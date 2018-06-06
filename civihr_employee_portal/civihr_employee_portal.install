@@ -3,6 +3,7 @@
 use Drupal\civihr_employee_portal\Helpers\WebformHelper;
 use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
 use Drupal\civihr_employee_portal\Helpers\UrlHelper;
+use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
 
 /**
  * Create Report Pages and Report Age Settings menu links.
@@ -453,6 +454,13 @@ function civihr_employee_portal_update_7030() {
  */
 function civihr_employee_portal_update_7031() {
   features_revert(['civihr_default_mail_content' => ['variable']]);
+}
+
+/**
+ * Add default terms for HR Resource Type vocabulary
+ */
+function civihr_employee_portal_update_7032() {
+  TaxonomyHelper::createDefaultTerms();
 }
 
 /**
