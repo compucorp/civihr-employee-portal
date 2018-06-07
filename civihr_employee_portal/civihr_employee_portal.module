@@ -4716,6 +4716,8 @@ function civihr_employee_portal_form_user_profile_form_alter(&$form, &$form_stat
     drupal_set_title(t('My account'));
   }
 
+  // Follow better the style guide putting form inside panel
+  $form['#attributes']['class'][] = 'pane-block';
   $form['#submit'][] = 'civihr_employee_portal_form_user_profile_form_submit';
 }
 
