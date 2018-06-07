@@ -4711,6 +4711,11 @@ function civihr_employee_portal_form_user_profile_form_alter(&$form, &$form_stat
     }
   }
 
+  // Set title to "My account" if profile form belongs to logged in user
+  if (user_uid_optional_load()->uid === $form['#user']->uid) {
+    drupal_set_title(t('My account'));
+  }
+
   $form['#submit'][] = 'civihr_employee_portal_form_user_profile_form_submit';
 }
 
