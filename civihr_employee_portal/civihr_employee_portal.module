@@ -4687,6 +4687,9 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
  * Implements hook_form_FORM_ID_alter().
  */
 function civihr_employee_portal_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
+
+  $user_in_form_is_logged_in_user = user_uid_optional_load()->uid === $form['#user']->uid;
+
   // Adding Yoti Login fieldset with button.
   if (module_exists('yoti')) {
     // Fetching block id from block description.
@@ -4709,10 +4712,24 @@ function civihr_employee_portal_form_user_profile_form_alter(&$form, &$form_stat
         '#markup' => render($yoti_block_view['content']),
       ];
     }
+
+    // To show "Yoti Unlink" on user edit form
+    if ($user_in_form_is_logged_in_user && YotiHelper::getYotiUserProfile($form['#user']->uid)) {
+      $form['yoti_unlink'] = [
+        '#type' => 'item',
+        '#markup' => '<div class="yoti-connect">' .
+        '<a  class="button" onclick="return confirm(\'' .
+        t('This will unlink your account from Yoti.') .
+        '\')" id="yoti-unlink-button" href="' .
+        url('/yoti/unlink') . '">' .
+        t('Unlink Yoti Account') .
+        '</a></div>',
+      ];
+    }
   }
 
   // Set title to "My account" if profile form belongs to logged in user
-  if (user_uid_optional_load()->uid === $form['#user']->uid) {
+  if ($user_in_form_is_logged_in_user) {
     drupal_set_title(t('My account'));
   }
 
