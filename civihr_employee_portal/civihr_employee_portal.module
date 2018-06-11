@@ -4565,6 +4565,17 @@ function civihr_employee_portal_node_view($node, $view_mode, $langcode) {
   }
 }
 
+/**
+ * Implement hook_node_presave().
+ *
+ * @param object $node
+ */
+function civihr_employee_portal_node_presave($node) {
+  if($node->type === 'hr_documents') {
+    $node->status = $node->publish_status;
+  }
+}
+
 // Note: Under "Redirection location" NO redirect option should be select to get
 // the confirmation message with ajax.
 // We can use this trick to make it generic for all webforms those have
@@ -4592,6 +4603,13 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
   // Alter HR documents node creation page
   if ($form_id == 'hr_documents_node_form') {
+    $form['publish_status'] = array(
+      '#type' => 'checkbox',
+      '#access' => !user_access('administer-nodes') && _user_has_role(['HR Admin']),
+      '#title' => t('Published'),
+      '#default_value' => $form['options']['status']['#default_value'],
+      '#weight' => 3
+    );
     // Make the fields hidden -> https://compucorp.atlassian.net/browse/PCHR-358
     $form['field_download']['#attributes'] = ['style' => 'display:none'];
   }
