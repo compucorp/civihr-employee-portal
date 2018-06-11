@@ -441,7 +441,8 @@ function _rebuild_absence_activity_view() {
             FROM {$civi_db_name}.civicrm_hrleaveandabsences_leave_request lr
             INNER JOIN {$civi_db_name}.civicrm_hrleaveandabsences_leave_request_date lrd ON lr.id = lrd.leave_request_id
             INNER JOIN {$civi_db_name}.civicrm_hrleaveandabsences_absence_type at ON at.id = lr.type_id
-            INNER JOIN {$civi_db_name}.civicrm_hrleaveandabsences_leave_balance_change bc ON bc.source_id = lrd.id and bc.source_type = 'leave_request_day'");
+            INNER JOIN {$civi_db_name}.civicrm_hrleaveandabsences_leave_balance_change bc ON bc.source_id = lrd.id and bc.source_type = 'leave_request_day'
+            WHERE lr.is_deleted = 0");
 
   variable_set('rebuild_absence_activity', 'FALSE');
 
