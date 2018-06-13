@@ -2054,7 +2054,7 @@ return date(\'Y-m-d\');';
   $handler->display->display_options['header']['area_text_custom']['table'] = 'views';
   $handler->display->display_options['header']['area_text_custom']['field'] = 'area_text_custom';
   $handler->display->display_options['header']['area_text_custom']['empty'] = TRUE;
-  $handler->display->display_options['header']['area_text_custom']['content'] = '<a href="/node/add/hr-documents" class="btn btn-primary btn-lg"><i class="fa fa-plus-circle"></i>&nbsp;Add HR Document</a>';
+  $handler->display->display_options['header']['area_text_custom']['content'] = '<a href="/node/add/hr-documents" class="btn btn-primary btn-lg"><i class="fa fa-plus-circle"></i>&nbsp;Add HR Resource</a>';
   /* Relationship: Content: Author */
   $handler->display->display_options['relationships']['uid']['id'] = 'uid';
   $handler->display->display_options['relationships']['uid']['table'] = 'node';
@@ -2209,7 +2209,7 @@ return date(\'Y-m-d\');';
     t('Previous'),
     t('Next'),
     t('Last'),
-    t('<a href="/node/add/hr-documents" class="btn btn-primary btn-lg"><i class="fa fa-plus-circle"></i>&nbsp;Add HR Document</a>'),
+    t('<a href="/node/add/hr-documents" class="btn btn-primary btn-lg"><i class="fa fa-plus-circle"></i>&nbsp;Add HR Resource</a>'),
     t('author'),
     t('Nid'),
     t('Title'),
