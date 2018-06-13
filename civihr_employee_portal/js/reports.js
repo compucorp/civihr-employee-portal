@@ -407,6 +407,62 @@
   };
 
   /**
+   * Gets the default query parameters for fetching results for the
+   * Leave and absence report. It basically defaults to parameters
+   * for fetching results for the current year
+   *
+   * @return {String}
+   */
+  HRReport.prototype.getDefaultFilterQueryForLeaveReport = function () {
+    var fromDate = moment().startOf('month').format('YYYY-MM-DD');
+    var toDate = moment().endOf('month').format('YYYY-MM-DD');
+    var defaultFilterValues = [
+      { name: 'absence_date_filter[min]', value: fromDate },
+      { name: 'absence_date_filter[max]', value: toDate }
+    ];
+
+    return '?' + $.param(defaultFilterValues);
+  }
+
+  /**
+   * Gets the default query parameters for fetching results for the
+   * People report. It basically defaults the date parameter to the
+   * current date.
+   *
+   * @return {String}
+   */
+  HRReport.prototype.getDefaultFilterQueryForPeopleReport = function () {
+    var currentDate = moment().format('YYYY-MM-DD');
+    var defaultFilterValues = [
+      { name: 'between_date_filter[value]', value: currentDate }
+    ];
+
+    return '?' + $.param(defaultFilterValues);
+  }
+
+  /**
+   * Processes the filter values and replaces with default values
+   * for the people and leave reports when the filter values does
+   * not have a query parameter appended.
+   * On load of page the form values are not appended to query string
+   * hence filterValues has a value of '?'
+   *
+   * @param  {String} filterValues
+   * @return {String}
+   */
+  HRReport.prototype.processFilterValues = function (filterValues) {
+    if (filterValues === '?' && this.reportName === 'leave_and_absence') {
+      return this.getDefaultFilterQueryForLeaveReport()
+    }
+
+    if (filterValues === '?' && this.reportName === 'people') {
+      return this.getDefaultFilterQueryForPeopleReport()
+    }
+
+    return filterValues;
+  }
+
+  /**
    * Refresh JSON data and Pivot Tables using provided filter values
    *
    * @param string filterValues
@@ -416,6 +472,9 @@
     if (!this.jsonUrl) {
       return;
     }
+
+    filterValues = that.processFilterValues(filterValues);
+
     $.ajax({
       url: this.jsonUrl + filterValues,
       error: function () {
@@ -454,6 +513,9 @@
     if (!this.tableUrl) {
       return;
     }
+
+    filterValues = that.processFilterValues(filterValues);
+
     var tableDomId = this.getReportTableDomID();
     $.ajax({
       url: that.tableUrl + filterValues,
@@ -819,25 +881,6 @@
           })();
 
           /**
-           * Loads and sets the dates in the date filters using the start and
-           * end dates for the current absence period.
-           *
-           * @return {Promise} - Resolves to an empty promise after the current
-           * period dates have been initialized.
-           */
-          function initCurrentAbsencePeriodFilterDates () {
-            return AbsencePeriod.getCurrent()
-              .then(function (currentPeriod) {
-                if (!currentPeriod) {
-                  return;
-                }
-
-                formFiltersStore.values.fromDate = moment(currentPeriod.start_date).toDate();
-                formFiltersStore.values.toDate = moment(currentPeriod.end_date).toDate();
-              });
-          }
-
-          /**
            * If form filters have not been initialized, they'll get their default
            * values depending on the current report.
            *
@@ -851,7 +894,9 @@
               }
 
               if (REPORT_NAME === 'leave_and_absence') {
-                initCurrentAbsencePeriodFilterDates().then(resolve, reject);
+                formFiltersStore.values.fromDate = moment().startOf('month').toDate();
+                formFiltersStore.values.toDate = moment().endOf('month').toDate();
+                resolve();
               } else {
                 formFiltersStore.values.date = new Date();
                 resolve();
