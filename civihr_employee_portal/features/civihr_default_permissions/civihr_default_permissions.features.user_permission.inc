@@ -2251,6 +2251,7 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['view own unpublished content'] = array(
     'name' => 'view own unpublished content',
     'roles' => array(
+      'HR Admin' => 'HR Admin',
       'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
