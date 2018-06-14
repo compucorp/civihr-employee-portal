@@ -33,8 +33,7 @@ function civihr_hrjobcontract_entities_init() {
                     r.overrided
                     FROM {$civi_db_name}.civicrm_hrjobcontract_revision AS r
                     LEFT JOIN {$civi_db_name}.civicrm_hrjobcontract c ON r.jobcontract_id = c.id
-
-                    WHERE c.deleted = 0");
+                    WHERE c.deleted = 0 AND r.id IN (SELECT MAX(id) FROM {$civi_db_name}.civicrm_hrjobcontract_revision t GROUP BY t.jobcontract_id)");
 
         db_query('DROP VIEW IF EXISTS hrjc_details');
         // ov_location.label AS location, => t.location
