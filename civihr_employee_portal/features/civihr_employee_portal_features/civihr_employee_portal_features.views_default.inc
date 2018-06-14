@@ -2074,6 +2074,7 @@ return date(\'Y-m-d\');';
   $handler->display->display_options['fields']['field_resource_type']['id'] = 'field_resource_type';
   $handler->display->display_options['fields']['field_resource_type']['table'] = 'field_data_field_resource_type';
   $handler->display->display_options['fields']['field_resource_type']['field'] = 'field_resource_type';
+  $handler->display->display_options['fields']['field_resource_type']['type'] = 'taxonomy_term_reference_plain';
   /* Field: User: Name */
   $handler->display->display_options['fields']['name']['id'] = 'name';
   $handler->display->display_options['fields']['name']['table'] = 'users';
