@@ -209,7 +209,7 @@ function civihr_employee_portal_views_data_alter(&$data) {
       'handler' => 'views_handler_sort_date',
     ),
     'filter' => array(
-      'handler' => 'views_handler_filter_date',
+      'handler' => 'views_between_operation_dates_filter_handler',
     ),
   );
 

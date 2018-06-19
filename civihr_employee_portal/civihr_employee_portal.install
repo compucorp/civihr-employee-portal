@@ -397,11 +397,25 @@ function civihr_employee_portal_update_7028() {
 }
 
 /**
- * Refresh the node files as onboarding form node was altered
+ * Reverts the default CiviHR user permissions because they were modified
  */
 function civihr_employee_portal_update_7029() {
+  features_revert(['civihr_default_permissions' => ['user_permission']]);
+}
+
+/**
+ * Refresh the node files as onboarding form node was altered
+ */
+function civihr_employee_portal_update_7030() {
   civicrm_initialize();
   drush_civihr_employee_portal_refresh_node_export_files();
+}
+
+/**
+ * Revert default mail content feature as content has changed
+ */
+function civihr_employee_portal_update_7031() {
+  features_revert(['civihr_default_mail_content' => ['variable']]);
 }
 
 /**

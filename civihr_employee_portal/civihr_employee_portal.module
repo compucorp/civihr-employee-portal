@@ -441,7 +441,8 @@ function _rebuild_absence_activity_view() {
             FROM {$civi_db_name}.civicrm_hrleaveandabsences_leave_request lr
             INNER JOIN {$civi_db_name}.civicrm_hrleaveandabsences_leave_request_date lrd ON lr.id = lrd.leave_request_id
             INNER JOIN {$civi_db_name}.civicrm_hrleaveandabsences_absence_type at ON at.id = lr.type_id
-            INNER JOIN {$civi_db_name}.civicrm_hrleaveandabsences_leave_balance_change bc ON bc.source_id = lrd.id and bc.source_type = 'leave_request_day'");
+            INNER JOIN {$civi_db_name}.civicrm_hrleaveandabsences_leave_balance_change bc ON bc.source_id = lrd.id and bc.source_type = 'leave_request_day'
+            WHERE lr.is_deleted = 0");
 
   variable_set('rebuild_absence_activity', 'FALSE');
 
@@ -4687,6 +4688,9 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
  * Implements hook_form_FORM_ID_alter().
  */
 function civihr_employee_portal_form_user_profile_form_alter(&$form, &$form_state, $form_id) {
+
+  $user_in_form_is_logged_in_user = user_uid_optional_load()->uid === $form['#user']->uid;
+
   // Adding Yoti Login fieldset with button.
   if (module_exists('yoti')) {
     // Fetching block id from block description.
@@ -4709,11 +4713,42 @@ function civihr_employee_portal_form_user_profile_form_alter(&$form, &$form_stat
         '#markup' => render($yoti_block_view['content']),
       ];
     }
+
+    // To show "Yoti Unlink" on user edit form
+    if ($user_in_form_is_logged_in_user && YotiHelper::getYotiUserProfile($form['#user']->uid)) {
+      $form['yoti_unlink'] = [
+        '#type' => 'item',
+        '#markup' => '<div class="yoti-connect">' .
+        '<a  class="button" onclick="return confirm(\'' .
+        t('This will unlink your account from Yoti.') .
+        '\')" id="yoti-unlink-button" href="' .
+        url('/yoti/unlink') . '">' .
+        t('Unlink Yoti Account') .
+        '</a></div>',
+      ];
+    }
   }
 
+  // Set title to "My account" if profile form belongs to logged in user
+  if ($user_in_form_is_logged_in_user) {
+    drupal_set_title(t('My account'));
+  }
+
+  // Remove form elements not present in the form yet
+  $form['#after_build'][] = 'civihr_employee_portal_form_user_profile_after_build';
+  // Follow better the style guide putting form inside panel
+  $form['#attributes']['class'][] = 'pane-block';
   $form['#submit'][] = 'civihr_employee_portal_form_user_profile_form_submit';
 }
 
+/**
+ * After build callback for user_profile_form
+ */
+function civihr_employee_portal_form_user_profile_after_build($form, &$form_state) {
+  $form['timezone']['#access'] = false;
+  $form['mimemail']['#access'] = false;
+  return $form;
+}
 
 /**
  * Implementation of hook_views_bulk_operations_form_alter.
