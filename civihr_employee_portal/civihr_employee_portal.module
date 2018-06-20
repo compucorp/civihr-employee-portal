@@ -4578,7 +4578,7 @@ function civihr_employee_portal_node_presave($node) {
 }
 
 /**
- * Checks if oublish status checkbox is visible
+ * Checks if publish status checkbox is visible
  */
 function isPublishStatusCheckBoxVisible () {
   return !user_access('administer-nodes') && _user_has_role(['HR Admin']);
