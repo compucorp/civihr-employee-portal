@@ -5015,6 +5015,12 @@ function civihr_employee_portal_user_login(&$edit, $account) {
  * @return bool
  */
 function _civihr_employee_portal_should_do_onboarding($account) {
+  $userWantsToTest = isset($_GET['testing']) && $_GET['testing'] == 1;
+  // user who can edit its contact doesn't need this form
+  if (!$userWantsToTest && user_access('edit my contact')) {
+    return FALSE;
+  }
+
   $formName = OnboardingWebForm::NAME;
   $onboardingWebform = WebformHelper::findOneByTitle($formName);
 
@@ -5024,8 +5030,12 @@ function _civihr_employee_portal_should_do_onboarding($account) {
 
   $canViewOnboardingForm = node_access('view', $onboardingWebform, $account);
   $submissions = WebformHelper::getUserSubmissionsByTitle($account, $formName);
+  $shouldViewOnboardingForm = $canViewOnboardingForm && empty($submissions);
 
-  return $canViewOnboardingForm && empty($submissions);
+  $canCustomizeWizard = user_access('customize welcome wizard');
+  $isAdminTest = $userWantsToTest && $canCustomizeWizard;
+
+  return $shouldViewOnboardingForm || $isAdminTest;
 }
 
 /**
