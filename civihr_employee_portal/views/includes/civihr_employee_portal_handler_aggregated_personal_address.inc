@@ -3,9 +3,9 @@
 use CRM_Utils_Array as ArrayHelper;
 
 /**
- * Handles aggregation of a contacts different address fields
+ * Handles aggregation of a contacts different home address fields
  */
-class civihr_employee_portal_handler_aggregated_address extends views_handler_field {
+class civihr_employee_portal_handler_aggregated_personal_address extends views_handler_field {
 
   /**
    * @inheritdoc
@@ -49,8 +49,12 @@ class civihr_employee_portal_handler_aggregated_address extends views_handler_fi
       'country_id.name',
     ];
 
-    $params = ['is_primary' => 1, 'contact_id' => $contactID, 'return' => $return];
-    $address = civicrm_api3('Address', 'get', $params);
+    $address = civicrm_api3('Address', 'get', [
+      'location_type_id' => 'Personal',
+      'contact_id' => $contactID,
+      'return' => $return,
+      'options' => ['limit' => 1]
+    ]);
 
     if ($address['count'] != 1) {
       return NULL;

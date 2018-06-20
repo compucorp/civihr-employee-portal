@@ -201,11 +201,11 @@ $handler->display->display_options['fields']['home_email']['table'] = 'hrjc_cont
 $handler->display->display_options['fields']['home_email']['field'] = 'home_email';
 $handler->display->display_options['fields']['home_email']['relationship'] = 'hrjc_contact_details';
 $handler->display->display_options['fields']['home_email']['label'] = 'Personal E-mail';
-/* Field: CiviCRM Contacts: Aggregated Contact Address */
-$handler->display->display_options['fields']['aggregated_address']['id'] = 'aggregated_address';
-$handler->display->display_options['fields']['aggregated_address']['table'] = 'civicrm_contact';
-$handler->display->display_options['fields']['aggregated_address']['field'] = 'aggregated_address';
-$handler->display->display_options['fields']['aggregated_address']['label'] = 'Address';
+/* Field: CiviCRM Contacts: Aggregated Contact Home Address */
+$handler->display->display_options['fields']['aggregated_personal_address']['id'] = 'aggregated_personal_address';
+$handler->display->display_options['fields']['aggregated_personal_address']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['aggregated_personal_address']['field'] = 'aggregated_personal_address';
+$handler->display->display_options['fields']['aggregated_personal_address']['label'] = 'Home Address';
 $translatables['my_details_block'] = array(
   t('Master'),
   t('My Details Block'),

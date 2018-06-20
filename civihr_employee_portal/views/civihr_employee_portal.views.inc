@@ -38,11 +38,11 @@ function civihr_employee_portal_views_data_alter(&$data) {
     'sort' => array('handler' => 'views_handler_sort'),
   );
 
-  $data['civicrm_contact']['aggregated_address'] = [
-    'title' => t('Aggregated Contact Address'),
-    'help' => t('Displays aggregated address for the contact'),
+  $data['civicrm_contact']['aggregated_personal_address'] = [
+    'title' => t('Aggregated Contact Home Address'),
+    'help' => t('Displays aggregated personal address for the contact'),
     'field' => [
-      'handler' => 'civihr_employee_portal_handler_aggregated_address',
+      'handler' => 'civihr_employee_portal_handler_aggregated_personal_address',
     ],
   ];
 

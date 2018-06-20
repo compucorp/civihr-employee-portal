@@ -241,43 +241,6 @@ function civihr_employee_portal_update_7011() {
 }
 
 /**
- * Fixes location type IDs in the onboarding form.
- */
-function civihr_employee_portal_update_7016() {
-  $onboardingForm = WebformHelper::findOneByTitle(OnboardingWebForm::NAME);
-  $civicrmWebform = &$onboardingForm->webform_civicrm;
-  $contactData = &$civicrmWebform['data']['contact'][1];
-  $phoneData = &$contactData['phone'];
-  $addressData = &$contactData['address'];
-  $emailData = &$contactData['email'];
-  $instantMessengerData = &$contactData['im'];
-
-  civicrm_initialize();
-  $locationTypes = civicrm_api3('LocationType', 'get')['values'];
-  $locationTypes = array_column($locationTypes, 'name', 'id');
-  $homeTypeID = array_search('Home', $locationTypes);
-  $workTypeID = array_search('Work', $locationTypes);
-
-  $workPhone = &$phoneData[1];
-  $homePhone = &$phoneData[2];
-  $homeEmail = &$emailData[2];
-  $workEmail = &$emailData[1];
-  $homeAddress = &$addressData[1];
-  $workInstantMessenger = &$instantMessengerData[1];
-
-  $locationKey = 'location_type_id';
-
-  $workPhone[$locationKey] = $workTypeID;
-  $homePhone[$locationKey] = $homeTypeID;
-  $workEmail[$locationKey] = $workTypeID;
-  $homeEmail[$locationKey] = $homeTypeID;
-  $homeAddress[$locationKey] = $homeTypeID;
-  $workInstantMessenger[$locationKey] = $workTypeID;
-
-  drupal_write_record('webform_civicrm_forms', $civicrmWebform, 'nid');
-}
-
-/**
  * Refreshes the node export files since the onboarding form file upload limit
  * was increased.
  */
@@ -423,7 +386,6 @@ function civihr_employee_portal_update_7026() {
 function civihr_employee_portal_update_7027() {
   features_revert(['civihr_default_permissions' => ['user_permission']]);
 }
-
 
 /**
  * Refresh the node files as onboarding form node was altered
