@@ -4572,9 +4572,16 @@ function civihr_employee_portal_node_view($node, $view_mode, $langcode) {
  * @param object $node
  */
 function civihr_employee_portal_node_presave($node) {
-  if($node->type === 'hr_documents') {
+  if(isPublishStatusCheckBoxVisible() && $node->type === 'hr_documents') {
     $node->status = $node->publish_status;
   }
+}
+
+/**
+ * Checks if oublish status checkbox is visible
+ */
+function isPublishStatusCheckBoxVisible () {
+  return !user_access('administer-nodes') && _user_has_role(['HR Admin']);
 }
 
 // Note: Under "Redirection location" NO redirect option should be select to get
@@ -4606,7 +4613,7 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'hr_documents_node_form') {
     $form['publish_status'] = array(
       '#type' => 'checkbox',
-      '#access' => !user_access('administer-nodes') && _user_has_role(['HR Admin']),
+      '#access' => isPublishStatusCheckBoxVisible(),
       '#title' => t('Published'),
       '#default_value' => $form['options']['status']['#default_value'],
       '#weight' => 3
