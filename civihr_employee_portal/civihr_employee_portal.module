@@ -552,12 +552,12 @@ function civihr_employee_portal_init() {
 function _civihr_employee_portal_set_up_google_analytics_data_layer() {
   global $user;
 
-  datalayer_add(array(
+  datalayer_add([
     // The list of roles of the current user
     'userRoles' => join(';', array_filter($user->roles, function ($role) {
       return $role != 'authenticated user';
     })),
-  ));
+  ]);
 }
 
 /**
