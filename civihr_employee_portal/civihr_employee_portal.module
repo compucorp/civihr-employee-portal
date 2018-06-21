@@ -14,12 +14,17 @@ use CRM_HRLeaveAndAbsences_BAO_AbsenceType as AbsenceType;
 use Drupal\civihr_employee_portal\Page\HRDetailsPage;
 use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 use Drupal\civihr_employee_portal\Helpers\LinkProvider;
+use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
 
 /**
  * Implements hook_install().
  */
 function civihr_employee_portal_install() {
   _civihr_employee_portal_create_default_reports_configuration();
+
+  //Add HR Resource Types vocabulary and default terms
+  TaxonomyHelper::createHRResourceTypeVocabulary();
+  TaxonomyHelper::createDefaultTerms();
 }
 
 /**
@@ -4561,6 +4566,24 @@ function civihr_employee_portal_node_view($node, $view_mode, $langcode) {
   }
 }
 
+/**
+ * Implement hook_node_presave().
+ *
+ * @param object $node
+ */
+function civihr_employee_portal_node_presave($node) {
+  if(isPublishStatusCheckBoxVisible() && $node->type === 'hr_documents') {
+    $node->status = $node->publish_status;
+  }
+}
+
+/**
+ * Checks if publish status checkbox is visible
+ */
+function isPublishStatusCheckBoxVisible () {
+  return !user_access('administer-nodes') && _user_has_role(['HR Admin']);
+}
+
 // Note: Under "Redirection location" NO redirect option should be select to get
 // the confirmation message with ajax.
 // We can use this trick to make it generic for all webforms those have
@@ -4588,6 +4611,13 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
 
   // Alter HR documents node creation page
   if ($form_id == 'hr_documents_node_form') {
+    $form['publish_status'] = array(
+      '#type' => 'checkbox',
+      '#access' => isPublishStatusCheckBoxVisible(),
+      '#title' => t('Published'),
+      '#default_value' => $form['options']['status']['#default_value'],
+      '#weight' => 3
+    );
     // Make the fields hidden -> https://compucorp.atlassian.net/browse/PCHR-358
     $form['field_download']['#attributes'] = ['style' => 'display:none'];
   }
@@ -4681,6 +4711,12 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
   if (isset($form['#node']) && $form['#node']->title == OnboardingWebForm::NAME) {
     $onboardingForm = new OnboardingWebForm();
     $onboardingForm->alter($form);
+  }
+
+  // Hide Relations and Description from hr_resource_type add screen
+  if ($form_id == 'taxonomy_form_term' && $form['vocabulary_machine_name']['#value'] == "hr_resource_type") {
+    $form['relations']['#access'] = FALSE;
+    $form['description']['#access'] = FALSE;
   }
 }
 
@@ -5653,9 +5689,24 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
     case 'views-exposed-form-users-list-page':
       _civihr_employee_portal_form_view_exposed_form_alter_users_list($form, $form_state, $form_id);
       break;
+    case 'views-exposed-form-manage-hr-resources-manage-hr-resources-page':
+      _civihr_employee_portal_form_view_exposed_form_alter_manage_hr_resources($form, $form_state, $form_id);
+      break;
   }
 
   $form['submit']['#value'] = 'Filter';
+}
+
+/**
+ * Alters the Manage Hr Resources Exposed Filter
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
+ */
+function _civihr_employee_portal_form_view_exposed_form_alter_manage_hr_resources(&$form, $form_state, $form_id) {
+  $form['status']['#options']['1'] = t('Published');
+  $form['status']['#options']['0'] = t('Not Published');
 }
 
 /**
@@ -6146,6 +6197,7 @@ function _is_hrreports_data_table_view($viewName) {
 function _is_scrollable_table_view_with_results($viewName) {
   $viewsList = [
     'civihr_staff_directory',
+    'manage_hr_resources',
     'users_list'
   ];
 
