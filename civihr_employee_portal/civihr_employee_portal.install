@@ -426,6 +426,19 @@ function civihr_employee_portal_update_7032() {
 }
 
 /**
+ * Revert view "my_details_block" as it was altered
+ */
+function civihr_employee_portal_update_7033() {
+  // load the view
+  $view = views_get_view('my_details_block', true);
+  // Revert the view.
+  $view->delete();
+  // Clear its cache.
+  ctools_include('object-cache');
+  ctools_object_cache_clear('view', $view->name);
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string $path
