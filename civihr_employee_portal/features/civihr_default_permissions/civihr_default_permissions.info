@@ -139,6 +139,7 @@ features[user_permission][] = assign all roles
 features[user_permission][] = block IP addresses
 features[user_permission][] = bypass node access
 features[user_permission][] = bypass rules access
+features[user_permission][] = can administer calendar feeds
 features[user_permission][] = can create and edit tasks
 features[user_permission][] = cancel account
 features[user_permission][] = cancel users with role 17087012
