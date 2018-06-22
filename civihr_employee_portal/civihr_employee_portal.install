@@ -434,6 +434,14 @@ function civihr_employee_portal_update_7033() {
 }
 
 /**
+ * Refresh the node files as new webforms were created
+ */
+function civihr_employee_portal_update_7034() {
+  civicrm_initialize();
+  drush_civihr_employee_portal_refresh_node_export_files();
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string $path
