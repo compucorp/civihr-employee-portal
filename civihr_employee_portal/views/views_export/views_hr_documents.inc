@@ -65,7 +65,7 @@ $handler->display->display_options['fields']['nothing']['alter']['text'] = 'Read
 $handler->display->display_options['fields']['nothing']['alter']['make_link'] = TRUE;
 $handler->display->display_options['fields']['nothing']['alter']['path'] = 'node/[nid]';
 $handler->display->display_options['fields']['nothing']['alter']['alt'] = 'Read more';
-$handler->display->display_options['fields']['nothing']['alter']['link_class'] = 'btn btn-custom';
+$handler->display->display_options['fields']['nothing']['alter']['link_class'] = 'btn btn-primary-outline';
 $handler->display->display_options['fields']['nothing']['alter']['target'] = '_blank';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
 /* Sort criterion: Content: Post date */
@@ -145,7 +145,7 @@ $handler->display->display_options['fields']['nothing']['alter']['text'] = 'Read
 $handler->display->display_options['fields']['nothing']['alter']['make_link'] = TRUE;
 $handler->display->display_options['fields']['nothing']['alter']['path'] = 'hr_resources/nojs/resource/[nid]';
 $handler->display->display_options['fields']['nothing']['alter']['alt'] = 'Read more';
-$handler->display->display_options['fields']['nothing']['alter']['link_class'] = 'btn btn-custom ctools-use-modal ctools-modal-civihr-default-style';
+$handler->display->display_options['fields']['nothing']['alter']['link_class'] = 'btn btn btn-primary-outline ctools-use-modal ctools-modal-civihr-default-style';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
 
 /* Display: HR Resources page */
@@ -382,7 +382,7 @@ $handler->display->display_options['fields']['nothing']['alter']['text'] = '<div
 $handler->display->display_options['fields']['nothing']['alter']['make_link'] = TRUE;
 $handler->display->display_options['fields']['nothing']['alter']['path'] = 'node/[nid]';
 $handler->display->display_options['fields']['nothing']['alter']['alt'] = 'Read more';
-$handler->display->display_options['fields']['nothing']['alter']['link_class'] = 'btn btn-custom';
+$handler->display->display_options['fields']['nothing']['alter']['link_class'] = 'btn btn-primary-outline';
 $handler->display->display_options['fields']['nothing']['alter']['target'] = '_blank';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
 /* Field: Content: Post date */
