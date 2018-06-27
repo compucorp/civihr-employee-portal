@@ -51,7 +51,8 @@ function civihr_leave_absences_block_view($delta = '') {
  * Fetches the base URL of the angular app, to be stored in the Drupal.settings
  * global var.
  *
- * Adds the Leave and Absences permissions to the CRM.permissions global var.
+ * Adds the Leave and Absences permissions to the CRM.permissions global var
+ * for both civicrm and non civicrm pages.
  */
 function civihr_leave_absences_init() {
   if (!_isCiviCRM()) {
@@ -65,9 +66,9 @@ function civihr_leave_absences_init() {
       ]
     ];
     drupal_add_js($settings, 'setting');
-
-    _civihr_leave_absences_push_permissions();
   }
+
+  _civihr_leave_absences_push_permissions();
 }
 
 /**
@@ -82,5 +83,6 @@ function _civihr_leave_absences_push_permissions() {
     'administer leave and absences',
     'access leave and absences in ssp',
     'manage leave and absences in ssp',
+    'can administer calendar feeds'
   ]);
 }
