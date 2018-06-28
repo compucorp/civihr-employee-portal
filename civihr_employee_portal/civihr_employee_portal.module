@@ -552,6 +552,10 @@ function civihr_employee_portal_init() {
 function _civihr_employee_portal_set_up_google_analytics_data_layer() {
   global $user;
 
+  if (!function_exists('datalayer_add')) {
+    return;
+  }
+
   datalayer_add([
     // The list of roles of the current user
     'userRoles' => join(';', array_filter($user->roles, function ($role) {
