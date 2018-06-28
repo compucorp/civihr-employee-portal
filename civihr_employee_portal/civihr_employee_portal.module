@@ -5124,19 +5124,6 @@ function webform_client_form_ajax_callback($form, &$form_state) {
 }
 
 /**
- * Implement custom my details page, which loads the my details block, to edit the employee data
- */
-function civihr_employee_portal_my_details() {
-  ctools_include('modal');
-  ctools_modal_add_js();
-
-  // This will render the same block as on the dashboard page
-  $block = module_invoke('civihr_employee_portal', 'block_view', 'my_details');
-
-  return render($block['content']);
-}
-
-/**
  * CiviHR Report - Landing page
  */
 function civihr_employee_portal_hrreport_landing_page() {
@@ -6698,5 +6685,17 @@ function civihr_employee_portal_load_html_file($template = '', $moduleName) {
   }
   else {
     return '';
+  }
+}
+
+/**
+ * Implements hook_page_build()
+ */
+function civihr_employee_portal_page_build(&$page) {
+  switch (drupal_get_path_alias()) {
+    case 'hr-details':
+      ctools_include('modal');
+      ctools_modal_add_js();
+      break;
   }
 }
