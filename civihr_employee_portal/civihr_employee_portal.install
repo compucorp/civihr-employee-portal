@@ -434,6 +434,15 @@ function civihr_employee_portal_update_7033() {
 }
 
 /**
+ * Revert updated features components
+ * - Panel page which holds the My Details page
+ * - Output Filter to write pure HTML in views sections without filters
+ */
+function civihr_employee_portal_update_7034() {
+  features_revert(['civihr_employee_portal_features' => ['page_manager_pages']]);
+  features_revert(['civihr_employee_portal_features' => ['filter']]);
+}
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string $path
