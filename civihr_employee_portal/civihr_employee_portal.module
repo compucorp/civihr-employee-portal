@@ -1576,15 +1576,6 @@ function civihr_employee_portal_menu() {
     'type' => MENU_CALLBACK,
   ];
 
-  $items['hr-details'] = [
-    'title' => 'My Details',
-    'page callback' => 'civihr_employee_portal_my_details',
-    'access arguments' => ['view my details'],
-    'type' => MENU_NORMAL_ITEM,
-    'menu_name' => 'main-menu',
-    'weight' => 4
-  ];
-
   $items['reports'] = [
     'title' => 'Reports',
     'page callback' => 'civihr_employee_portal_hrreport_landing_page',
