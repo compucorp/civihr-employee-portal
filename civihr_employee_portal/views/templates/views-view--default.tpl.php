@@ -27,6 +27,24 @@
  * @ingroup views_templates
  */
 ?>
+
+<?php
+  // Logic to change template for specific views
+  // without increasing the number of files used
+  // templates
+  $views_with_generic_display_output = [
+    'MyDetails_MyAddress',
+    'MyDetails_PayrollInformation',
+    'MyDetails_Personal',
+    'Emergency Contacts',
+  ];
+
+  if ( in_array($view->get_human_name(), $views_with_generic_display_output) ) {
+    include('_views-view--generic-display-output.tpl.php');
+    return;
+  }
+?>
+
 <div class="<?php print $classes; ?>">
   <?php print render($title_prefix); ?>
   <?php if ($title): ?>
