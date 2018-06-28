@@ -1081,6 +1081,46 @@ function removeInactiveRoleDetails($results = []) {
 }
 
 /**
+ * Changes queries conditions of certain date fields which contains
+ * dates in "Y-m-d" format transforming those strings into timestamps
+ *
+ * @param view $view
+ * @param views_plugin_query_default $query
+ */
+function civihr_employee_portal_views_date_fields_to_timestamp(&$view, &$query, $dateFieldsToTimestamp) {
+  // replacement pattern
+  static $op = 'UNIX_TIMESTAMP ( STR_TO_DATE( [date_to_replace], \'%Y-%m-%d\') )';
+
+  // iterating groups of conditions
+  foreach ($query->where as &$groups) {
+    // iterating conditions
+    foreach ($groups as &$conditions) {
+      if (!is_array($conditions)) continue;
+
+      // iterating single conditon structure
+      foreach ($conditions as &$condition) {
+
+        $operatorEqualsFormula = isset($condition['operator']) && $condition['operator'] =='formula';
+        if ( !$operatorEqualsFormula ) continue;
+
+        // iterating over the fields that will be modified
+        foreach ($dateFieldsToTimestamp as $dateFieldToTimestamp) {
+
+          $conditionHasField = strpos( $condition['field'], $dateFieldToTimestamp ) !== false;
+          // to be sure of applying the replacement just once
+          $conditionHasTimestamp = strpos( 'TIMESTAMP', $dateFieldToTimestamp ) !== false;
+          if ( !$conditionHasField || $conditionHasTimestamp) continue;
+
+          // Modifying to convert date Y-m-d to timestamp
+          $opReplaced = str_replace( '[date_to_replace]', $dateFieldToTimestamp, $op );
+          $condition['field'] = str_replace( $dateFieldToTimestamp, $opReplaced, $condition['field'] );
+        }
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_views_query_alter().
  *
  * @param view $view
