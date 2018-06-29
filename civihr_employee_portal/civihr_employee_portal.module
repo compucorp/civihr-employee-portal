@@ -552,7 +552,7 @@ function civihr_employee_portal_init() {
 function _civihr_employee_portal_set_up_google_analytics_data_layer() {
   global $user;
 
-  if (!function_exists('datalayer_add')) {
+  if (!module_exists('datalayer')) {
     return;
   }
 
