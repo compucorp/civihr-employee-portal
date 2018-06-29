@@ -4621,8 +4621,7 @@ function isPublishStatusCheckBoxVisible () {
 // We can use this trick to make it generic for all webforms those have
 // No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
-
-    $customClasses = 'civihr_form civihr_form--reset form-horizontal';
+  $customClasses = 'civihr_form civihr_form--reset form-horizontal';
   $formNode = CRM_Utils_Array::value('#node', $form) ;
         $title = isset($formNode->title) ? $formNode->title : NULL;
   $formsWithCustomClasses = [
@@ -4630,10 +4629,14 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
     'My details - edit',
     'Create Dependant',
     'Create Emergency Contact',
+    'My Personal Details',
+    'My Contact Details',
+    'My Payroll',
+    'My Home Address',
   ];
   if (in_array($title, $formsWithCustomClasses)) {
-        $form['#attributes']['class'][] = $customClasses;
-    }
+    $form['#attributes']['class'][] = $customClasses;
+  }
 
   // Form become outdated fix
   if ($form_id == 'views_exposed_form') {
