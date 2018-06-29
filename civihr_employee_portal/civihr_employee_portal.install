@@ -437,10 +437,13 @@ function civihr_employee_portal_update_7033() {
  * Revert updated features components
  * - Panel page which holds the My Details page
  * - Output Filter to write pure HTML in views sections without filters
+ * Refresh the node files as onboarding form node was altered
  */
 function civihr_employee_portal_update_7034() {
   features_revert(['civihr_employee_portal_features' => ['page_manager_pages']]);
   features_revert(['civihr_employee_portal_features' => ['filter']]);
+  civicrm_initialize();
+  drush_civihr_employee_portal_refresh_node_export_files();
 }
 /**
  * Function to determine whether menu link exists or not.
