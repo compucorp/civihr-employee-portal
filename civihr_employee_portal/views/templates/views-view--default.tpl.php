@@ -29,6 +29,13 @@
 ?>
 
 <?php
+
+  // Markup generated from views was not integrating well with panels in the
+  // current styling. For views in $views_with_generic_display_output array
+  // is being provided a different template "_views-view--generic-display-output.tpl.php"
+  // to get rid of specifc views HTML structure and classes to take advantage
+  // of existing styles imitating panels blocks structure.
+
   // Logic to change template for specific views
   // without increasing the number of files used
   // templates

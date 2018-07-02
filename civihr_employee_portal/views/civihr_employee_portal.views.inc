@@ -1086,6 +1086,7 @@ function removeInactiveRoleDetails($results = []) {
  *
  * @param view $view
  * @param views_plugin_query_default $query
+ * @param array $dateFieldsToTimestamp array of names of fields that will be changed from Y-m-d to timestamp
  */
 function civihr_employee_portal_views_date_fields_to_timestamp(&$view, &$query, $dateFieldsToTimestamp) {
   // replacement pattern

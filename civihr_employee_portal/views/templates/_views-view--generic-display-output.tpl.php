@@ -30,19 +30,15 @@
   $classes = str_replace('view ','', $classes);
   $title = $view->get_title();
 ?>
-
 <div class="panel-panel <?php print $classes; ?>">
   <div class="panel-panel-inner">
     <div class="panel-pane pane-block">
-
       <?php if ($title): ?>
         <h2 class="pane-title">
           <?php print $title; ?>
         </h2>
       <?php endif; ?>
-
       <div class="pane-content">
-
         <?php if ($rows): ?>
           <div class="view-content">
             <?php print $rows; ?>
@@ -52,7 +48,6 @@
             <?php print $empty; ?>
           </div>
         <?php endif; ?>
-
         <?php if ($footer): ?>
           <div class="chr_panel__footer">
             <div class="chr_actions-wrapper">
@@ -60,8 +55,7 @@
             </div>
           </div>
         <?php endif; ?>
-
-      </div> <!-- end: pane-content -->
-    </div> <!-- end: panel-pane -->
-  </div> <!-- end: panel-panel-inner -->
-</div>  <!-- end: panel-panel -->
+      </div>
+    </div>
+  </div>
+</div>

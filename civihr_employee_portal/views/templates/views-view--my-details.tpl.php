@@ -1,4 +1,16 @@
 <?php
+
+  // This view contains 2 other views in its $footer section
+  // However these views which contains informations about phones and
+  // emails ( view-mydetails-myphones / view-mydetails-emails ) are not
+  // appropiate to be in the footer section of the contact details, that
+  // is why $rows variable is being appended with the $footer content,
+  // and after that footer content is set new markup, which is the
+  // "Edit contact details button"
+
+  // In the end _views-view--generic-display-output.tpl.php is called to
+  // integrate seamlessly in the panel page of "My Deatils" page
+
   $rows .= $footer;
   $footer = '
     <a href="/edit-my-contact-details/js/view" class="ctools-use-modal ctools-modal-civihr-custom-style  btn btn-primary">

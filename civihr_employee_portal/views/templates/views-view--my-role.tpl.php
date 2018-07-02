@@ -26,6 +26,16 @@
  *
  * @ingroup views_templates
  */
+
+ /*
+ * This view is for showing the roles of a contact in My Details page
+ * the structure of this view is designed as a container for each row
+ * that is why all markup is beign removed and inside the row the
+ * structure is built emulating a view container per row (this is done
+ * through the view UI)
+ * Design: https://projects.invisionapp.com/d/main#/console/13248050/297230123/preview
+ */
+
 ?>
 <?php if ($rows): ?>
   <?php $classes = str_replace('view ','', $classes); ?>
