@@ -4,6 +4,7 @@
 
 use Drupal\civihr_employee_portal\View\StaffDirectoryView;
 use Drupal\civihr_employee_portal\View\MyDetailsView;
+use Drupal\civihr_employee_portal\View\MyDetails_MyRoleView;
 
 /**
  * @file
@@ -1135,6 +1136,9 @@ function civihr_employee_portal_views_query_alter(&$view, &$query) {
       break;
     case MyDetailsView::getName():
       $viewClass = new MyDetailsView();
+      break;
+    case  MyDetails_MyRoleView::getName():
+      $viewClass = new MyDetails_MyRoleView();
       break;
     default:
       return;
