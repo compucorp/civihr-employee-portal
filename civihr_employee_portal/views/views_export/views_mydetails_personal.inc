@@ -12,7 +12,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 
 /* Display: Master */
 $handler = $view->new_display('default', 'Master', 'default');
-$handler->display->display_options['css_class'] = 'my-details-view-panel';
+$handler->display->display_options['css_class'] = 'chr_panel--my-details__view__panel';
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'perm';
 $handler->display->display_options['access']['perm'] = 'view my details';
@@ -59,7 +59,7 @@ $handler->display->display_options['fields']['id']['field'] = 'id';
 $handler->display->display_options['fields']['id']['label'] = '';
 $handler->display->display_options['fields']['id']['exclude'] = TRUE;
 $handler->display->display_options['fields']['id']['alter']['alter_text'] = TRUE;
-$handler->display->display_options['fields']['id']['alter']['text'] = '<div class="contact-id"><span>ID</span> [id]</div>';
+$handler->display->display_options['fields']['id']['alter']['text'] = '<div class="chr_panel--my-details__personal__contact_id"><span>ID</span> [id]</div>';
 $handler->display->display_options['fields']['id']['element_label_colon'] = FALSE;
 /* Field: CiviCRM Contacts: Display Name */
 $handler->display->display_options['fields']['display_name']['id'] = 'display_name';
@@ -75,12 +75,12 @@ $handler->display->display_options['fields']['ni_ssn_application_in_progress_71'
 $handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['label'] = '';
 $handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['exclude'] = TRUE;
 $handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['alter']['alter_text'] = TRUE;
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['alter']['text'] = '<div class="nsi-application-status [ni_ssn_application_in_progress_71]">
+$handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['alter']['text'] = '<div class="chr_panel--my-details__personal__application_status [ni_ssn_application_in_progress_71]">
 <span class="views-label">NI/SSN </span>
 <span class="value">Application in progress</span>
 </div>';
 $handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['empty'] = '<div class="nsi-application-status not-applying">Not applying</div>';
+$handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['empty'] = '<div class="chr_panel--my-details__personal__application_status--not-applying">Not applying</div>';
 /* Field: CiviCRM Contacts: Gender */
 $handler->display->display_options['fields']['gender']['id'] = 'gender';
 $handler->display->display_options['fields']['gender']['table'] = 'civicrm_contact';
@@ -88,7 +88,7 @@ $handler->display->display_options['fields']['gender']['field'] = 'gender';
 $handler->display->display_options['fields']['gender']['label'] = '';
 $handler->display->display_options['fields']['gender']['exclude'] = TRUE;
 $handler->display->display_options['fields']['gender']['alter']['alter_text'] = TRUE;
-$handler->display->display_options['fields']['gender']['alter']['text'] = '<div class="gender">[gender]</div>';
+$handler->display->display_options['fields']['gender']['alter']['text'] = '<div class="chr_panel--my-details__personal__gender">[gender]</div>';
 $handler->display->display_options['fields']['gender']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['gender']['hide_empty'] = TRUE;
 /* Field: CiviCRM Custom: Extended Demographics: Marital Status */
@@ -98,7 +98,7 @@ $handler->display->display_options['fields']['marital_status_58']['field'] = 'ma
 $handler->display->display_options['fields']['marital_status_58']['label'] = '';
 $handler->display->display_options['fields']['marital_status_58']['exclude'] = TRUE;
 $handler->display->display_options['fields']['marital_status_58']['alter']['alter_text'] = TRUE;
-$handler->display->display_options['fields']['marital_status_58']['alter']['text'] = '<div class="marital-status [marital_status_58]">[marital_status_58]</div>';
+$handler->display->display_options['fields']['marital_status_58']['alter']['text'] = '<div class="chr_panel--my-details__personal__marital_status [marital_status_58]">[marital_status_58]</div>';
 $handler->display->display_options['fields']['marital_status_58']['element_label_colon'] = FALSE;
 /* Field: Global: Custom text */
 $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
@@ -129,7 +129,7 @@ $handler->display->display_options['fields']['ni_ssn_application_in_progress_71_
 $handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['label'] = '';
 $handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['exclude'] = TRUE;
 $handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['alter']['alter_text'] = TRUE;
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['alter']['text'] = 'nsi-application-in-progress-[ni_ssn_application_in_progress_71_1]';
+$handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['alter']['text'] = 'chr_panel--my-details__personal__nsi_application_in_progress--[ni_ssn_application_in_progress_71_1]';
 $handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['civicrm_custom_formatter'] = 'value';
 /* Field: CiviCRM Custom: NI/SSN Number: NI / SSN */
@@ -138,7 +138,7 @@ $handler->display->display_options['fields']['ni_ssn_70']['table'] = 'civicrm_va
 $handler->display->display_options['fields']['ni_ssn_70']['field'] = 'ni_ssn_70';
 $handler->display->display_options['fields']['ni_ssn_70']['label'] = '';
 $handler->display->display_options['fields']['ni_ssn_70']['alter']['alter_text'] = TRUE;
-$handler->display->display_options['fields']['ni_ssn_70']['alter']['text'] = '<div class="nsi-exists [ni_ssn_application_in_progress_71_1]">
+$handler->display->display_options['fields']['ni_ssn_70']['alter']['text'] = '<div class="chr_panel--my-details__personal__nsi_exists [ni_ssn_application_in_progress_71_1]">
   <span class="views-label">NI/SSN </span>
   <span class="value">[ni_ssn_70]</span>
   [ni_ssn_application_in_progress_71]
@@ -186,22 +186,22 @@ $translatables['mydetails_personal'] = array(
 
 '),
   t('no image'),
-  t('<div class="contact-id"><span>ID</span> [id]</div>'),
+  t('<div class="chr_panel--my-details__personal__contact_id"><span>ID</span> [id]</div>'),
   t('.'),
   t(','),
   t('Name'),
-  t('<div class="nsi-application-status [ni_ssn_application_in_progress_71]">
+  t('<div class="chr_panel--my-details__personal__application_status [ni_ssn_application_in_progress_71]">
 <span class="views-label">NI/SSN </span>
 <span class="value">Application in progress</span>
 </div>'),
-  t('<div class="nsi-application-status not-applying">Not applying</div>'),
-  t('<div class="gender">[gender]</div>'),
-  t('<div class="marital-status [marital_status_58]">[marital_status_58]</div>'),
+  t('<div class="chr_panel--my-details__personal__application_status--not-applying">Not applying</div>'),
+  t('<div class="chr_panel--my-details__personal__gender">[gender]</div>'),
+  t('<div class="chr_panel--my-details__personal__marital_status [marital_status_58]">[marital_status_58]</div>'),
   t('[id] [gender] [marital_status_58]'),
   t('Date of Birth'),
   t('Nationality'),
-  t('nsi-application-in-progress-[ni_ssn_application_in_progress_71_1]'),
-  t('<div class="nsi-exists [ni_ssn_application_in_progress_71_1]">
+  t('chr_panel--my-details__personal__nsi_application_in_progress--[ni_ssn_application_in_progress_71_1]'),
+  t('<div class="chr_panel--my-details__personal__nsi_exists [ni_ssn_application_in_progress_71_1]">
   <span class="views-label">NI/SSN </span>
   <span class="value">[ni_ssn_70]</span>
   [ni_ssn_application_in_progress_71]

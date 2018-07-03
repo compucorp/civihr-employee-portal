@@ -53,7 +53,7 @@ $handler->display->display_options['fields']['nick_name']['table'] = 'civicrm_co
 $handler->display->display_options['fields']['nick_name']['field'] = 'nick_name';
 $handler->display->display_options['fields']['nick_name']['relationship'] = 'drupal_id';
 $handler->display->display_options['fields']['nick_name']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['nick_name']['element_wrapper_class'] = 'my-details-view-panel';
+$handler->display->display_options['fields']['nick_name']['element_wrapper_class'] = 'chr_panel--my-details__view__panel';
 /* Contextual filter: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['arguments']['id']['id'] = 'id';
 $handler->display->display_options['arguments']['id']['table'] = 'civicrm_contact';
