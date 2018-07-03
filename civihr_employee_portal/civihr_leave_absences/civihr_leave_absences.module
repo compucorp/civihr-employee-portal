@@ -82,5 +82,6 @@ function _civihr_leave_absences_push_permissions() {
     'administer leave and absences',
     'access leave and absences in ssp',
     'manage leave and absences in ssp',
+    'can administer calendar feeds'
   ]);
 }
