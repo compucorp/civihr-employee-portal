@@ -427,10 +427,23 @@ function civihr_employee_portal_update_7032() {
 }
 
 /**
+  ctools_object_cache_clear('view', $view->name);
  * Add default terms for HR Resource Type vocabulary
  */
 function civihr_employee_portal_update_7033() {
   TaxonomyHelper::createDefaultTerms();
+}
+
+/**
+ * Revert view "my_details_block" as it was altered
+ */
+function civihr_employee_portal_update_7034() {
+  // load the view
+  $view = views_get_view('my_details_block', true);
+  // Revert the view.
+  $view->delete();
+  // Clear its cache.
+  ctools_include('object-cache');
 }
 
 /**

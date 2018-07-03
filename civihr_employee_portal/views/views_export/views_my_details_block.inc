@@ -57,12 +57,50 @@ $handler->display->display_options['fields']['name_80']['table'] = 'civicrm_valu
 $handler->display->display_options['fields']['name_80']['field'] = 'name_80';
 $handler->display->display_options['fields']['name_80']['label'] = 'Emergency Contact';
 $handler->display->display_options['fields']['name_80']['alter']['strip_tags'] = TRUE;
+$handler->display->display_options['filter_groups']['groups'] = array(
+ 1 => 'AND',
+ 2 => 'OR',
+ 3 => 'OR',
+);
 /* Filter criterion: User: Current */
 $handler->display->display_options['filters']['uid_current']['id'] = 'uid_current';
 $handler->display->display_options['filters']['uid_current']['table'] = 'users';
 $handler->display->display_options['filters']['uid_current']['field'] = 'uid_current';
 $handler->display->display_options['filters']['uid_current']['relationship'] = 'drupal_id';
 $handler->display->display_options['filters']['uid_current']['value'] = '1';
+$handler->display->display_options['filters']['uid_current']['group'] = 1;
+/* Filter criterion: HRJobContract Role entity: Role start date */
+$handler->display->display_options['filters']['role_start_date_1']['id'] = 'role_start_date_1';
+$handler->display->display_options['filters']['role_start_date_1']['table'] = 'hrjc_role';
+$handler->display->display_options['filters']['role_start_date_1']['field'] = 'role_start_date';
+$handler->display->display_options['filters']['role_start_date_1']['relationship'] = 'role_jobcontract_id';
+$handler->display->display_options['filters']['role_start_date_1']['operator'] = 'empty';
+$handler->display->display_options['filters']['role_start_date_1']['group'] = 2;
+/* Filter criterion: HRJobContract Role entity: Role start date */
+$handler->display->display_options['filters']['role_start_date']['id'] = 'role_start_date';
+$handler->display->display_options['filters']['role_start_date']['table'] = 'hrjc_role';
+$handler->display->display_options['filters']['role_start_date']['field'] = 'role_start_date';
+$handler->display->display_options['filters']['role_start_date']['relationship'] = 'role_jobcontract_id';
+$handler->display->display_options['filters']['role_start_date']['operator'] = '<=';
+$handler->display->display_options['filters']['role_start_date']['value']['value'] = 'now';
+$handler->display->display_options['filters']['role_start_date']['value']['type'] = 'offset';
+$handler->display->display_options['filters']['role_start_date']['group'] = 2;
+/* Filter criterion: HRJobContract Role entity: Role end date */
+$handler->display->display_options['filters']['role_end_date_1']['id'] = 'role_end_date_1';
+$handler->display->display_options['filters']['role_end_date_1']['table'] = 'hrjc_role';
+$handler->display->display_options['filters']['role_end_date_1']['field'] = 'role_end_date';
+$handler->display->display_options['filters']['role_end_date_1']['relationship'] = 'role_jobcontract_id';
+$handler->display->display_options['filters']['role_end_date_1']['operator'] = 'empty';
+$handler->display->display_options['filters']['role_end_date_1']['group'] = 3;
+/* Filter criterion: HRJobContract Role entity: Role end date */
+$handler->display->display_options['filters']['role_end_date']['id'] = 'role_end_date';
+$handler->display->display_options['filters']['role_end_date']['table'] = 'hrjc_role';
+$handler->display->display_options['filters']['role_end_date']['field'] = 'role_end_date';
+$handler->display->display_options['filters']['role_end_date']['relationship'] = 'role_jobcontract_id';
+$handler->display->display_options['filters']['role_end_date']['operator'] = '>=';
+$handler->display->display_options['filters']['role_end_date']['value']['value'] = 'now';
+$handler->display->display_options['filters']['role_end_date']['value']['type'] = 'offset';
+$handler->display->display_options['filters']['role_end_date']['group'] = 3;
 
 /* Display: My details */
 $handler = $view->new_display('block', 'My details', 'my_details_block');
@@ -236,10 +274,9 @@ $translatables['my_details_block'] = array(
   t('Designation'),
   t('Role title'),
   t('Role Department'),
-  t('All'),
   t('Contact Information'),
   t('Contact Information Block'),
   t('Personal Phone'),
   t('Personal E-mail'),
-  t('Address'),
+  t('Home Address'),
 );
