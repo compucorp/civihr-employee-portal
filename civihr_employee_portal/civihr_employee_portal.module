@@ -6728,6 +6728,8 @@ function civihr_employee_portal_load_html_file($template = '', $moduleName) {
  */
 function civihr_employee_portal_page_build(&$page) {
   switch (drupal_get_path_alias()) {
+    // "My Details" page is a Panels Page, to inject the necessary functionality
+    // to manage webform popup we must use page build hook
     case 'hr-details':
       ctools_include('modal');
       ctools_modal_add_js();

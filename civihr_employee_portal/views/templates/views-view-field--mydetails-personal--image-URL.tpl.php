@@ -22,6 +22,10 @@
  * the view is modified.
  */
 
+ /**
+ * This template file prints the image of the user in "My Details" page
+ * using the HTML structures implemented in the dashboard
+ */
 ?>
 
 <div class="chr_profile-card hidden-xs hidden-sm">

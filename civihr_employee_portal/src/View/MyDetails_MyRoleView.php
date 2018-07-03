@@ -11,6 +11,9 @@ class MyDetails_MyRoleView extends AbstractView {
 
   /**
    * @inheritdoc
+   * To alter specific fields which store dates in format Y-m-d
+   * The dates are converted to Unix Timestamp so they can be used
+   * from the views interface as filters
    */
   public function alter($view, $query) {
     $dateFieldsToTimestamp = [
