@@ -2311,7 +2311,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['view the administration theme'] = array(
     'name' => 'view the administration theme',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'system',
