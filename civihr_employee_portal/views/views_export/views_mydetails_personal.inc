@@ -46,6 +46,7 @@ $handler->display->display_options['fields']['image_URL']['id'] = 'image_URL';
 $handler->display->display_options['fields']['image_URL']['table'] = 'civicrm_contact';
 $handler->display->display_options['fields']['image_URL']['field'] = 'image_URL';
 $handler->display->display_options['fields']['image_URL']['label'] = '';
+$handler->display->display_options['fields']['image_URL']['element_type'] = '0';
 $handler->display->display_options['fields']['image_URL']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['image_URL']['empty'] = 'no image';
 $handler->display->display_options['fields']['image_URL']['empty_zero'] = TRUE;
