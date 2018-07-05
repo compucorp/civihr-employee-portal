@@ -26,8 +26,11 @@
  *
  * @ingroup views_templates
  */
+  $display_options = $view->display['default']->display_options;
+  $view_class_comply_with_bem = isset($display_options['css_class']) ? ' ' . check_plain($display_options['css_class']) : '';
   // removes view class to avoid generic view style to interfere with styling
-  $classes = str_replace('view ','', $classes);
+  // also add view class that complies with BEM
+  $classes = str_replace('view ', '', $classes) . $view_class_comply_with_bem;
   $title = $view->get_title();
 ?>
 <div class="panel-panel <?php print $classes; ?>">
