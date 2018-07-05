@@ -1673,27 +1673,27 @@ function civihr_employee_portal_menu() {
 
   // Create Emergency Contact webform ajax popup
   $items['create-emergency-contact/js/view'] =
-    _civihr_employee_portal_webform_modal_menu_item('Create Emergency Contact');
+    _civihr_employee_portal_get_webform_modal_menu_item('Create Emergency Contact');
 
   // Create Dependant webform ajax popup
   $items['create-dependant/js/view'] =
-    _civihr_employee_portal_webform_modal_menu_item('Create Dependant');
+    _civihr_employee_portal_get_webform_modal_menu_item('Create Dependant');
 
   // My Details - My Home Address webform ajax popup
   $items['edit-my-home-address/js/view'] =
-    _civihr_employee_portal_webform_modal_menu_item('My Home Address');
+    _civihr_employee_portal_get_webform_modal_menu_item('My Home Address');
 
   // My Details - My Payroll webform ajax popup
   $items['edit-my-payroll/js/view'] =
-    _civihr_employee_portal_webform_modal_menu_item('My Payroll');
+    _civihr_employee_portal_get_webform_modal_menu_item('My Payroll');
 
   // My Details - Personal Details webform ajax popup
   $items['edit-my-personal-details/js/view'] =
-    _civihr_employee_portal_webform_modal_menu_item('My Personal Details');
+    _civihr_employee_portal_get_webform_modal_menu_item('My Personal Details');
 
   // My Details - Contact Info webform ajax popup
   $items['edit-my-contact-details/js/view'] =
-    _civihr_employee_portal_webform_modal_menu_item('My Contact Details');
+    _civihr_employee_portal_get_webform_modal_menu_item('My Contact Details');
 
   return $items;
 }
@@ -1705,7 +1705,7 @@ function civihr_employee_portal_menu() {
  *
  * @return array the structure of the menu item for webform popup
  */
-function _civihr_employee_portal_webform_modal_menu_item($name) {
+function _civihr_employee_portal_get_webform_modal_menu_item($name) {
   // Base structure for a menu item which renders a webform asynchronously
   return [
     'page arguments' => [$name],
