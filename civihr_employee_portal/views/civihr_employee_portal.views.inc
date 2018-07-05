@@ -1102,20 +1102,20 @@ function civihr_employee_portal_views_date_fields_to_timestamp(&$view, &$query, 
       // iterating single conditon structure
       foreach ($conditions as &$condition) {
 
-        $operatorEqualsFormula = isset($condition['operator']) && $condition['operator'] =='formula';
+        $operatorEqualsFormula = isset($condition['operator']) && $condition['operator'] == 'formula';
         if ( !$operatorEqualsFormula ) continue;
 
         // iterating over the fields that will be modified
         foreach ($dateFieldsToTimestamp as $dateFieldToTimestamp) {
 
-          $conditionHasField = strpos( $condition['field'], $dateFieldToTimestamp ) !== false;
+          $conditionHasField = strpos($condition['field'], $dateFieldToTimestamp) !== false;
           // to be sure of applying the replacement just once
-          $conditionHasTimestamp = strpos( 'TIMESTAMP', $dateFieldToTimestamp ) !== false;
+          $conditionHasTimestamp = strpos('TIMESTAMP', $dateFieldToTimestamp) !== false;
           if ( !$conditionHasField || $conditionHasTimestamp) continue;
 
           // Modifying to convert date Y-m-d to timestamp
-          $opReplaced = str_replace( '[date_to_replace]', $dateFieldToTimestamp, $op );
-          $condition['field'] = str_replace( $dateFieldToTimestamp, $opReplaced, $condition['field'] );
+          $opReplaced = str_replace('[date_to_replace]', $dateFieldToTimestamp, $op);
+          $condition['field'] = str_replace($dateFieldToTimestamp, $opReplaced, $condition['field']);
         }
       }
     }
