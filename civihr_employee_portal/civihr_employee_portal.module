@@ -1706,7 +1706,6 @@ function civihr_employee_portal_menu() {
  * @return array the structure of the menu item for webform popup
  */
 function _civihr_employee_portal_get_webform_modal_menu_item($name) {
-  // Base structure for a menu item which renders a webform asynchronously
   return [
     'page arguments' => [$name],
     'page callback' => 'civihr_employee_portal_webform_render_callback',
@@ -6727,12 +6726,10 @@ function civihr_employee_portal_load_html_file($template = '', $moduleName) {
  * Implements hook_page_build()
  */
 function civihr_employee_portal_page_build(&$page) {
-  switch (drupal_get_path_alias()) {
-    // "My Details" page is a Panels Page, to inject the necessary functionality
-    // to manage webform popup we must use page build hook
-    case 'hr-details':
+  // "My Details" page is a Panels Page, to inject the necessary functionality
+  // to manage webform popup we must use page build hook
+  if (drupal_get_path_alias() == 'hr-details') {
       ctools_include('modal');
       ctools_modal_add_js();
-      break;
   }
 }
