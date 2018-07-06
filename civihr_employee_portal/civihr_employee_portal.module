@@ -1701,9 +1701,10 @@ function civihr_employee_portal_menu() {
 /**
  * To create menu items for webform modals
  *
- * @param array $items menu items reference
+ * @param string $name
  *
- * @return array the structure of the menu item for webform popup
+ * @return array
+ *   the structure of the menu item for webform popup
  */
 function _civihr_employee_portal_get_webform_modal_menu_item($name) {
   return [
