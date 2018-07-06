@@ -2,7 +2,13 @@
 
 /**
  * @file
- * Main view template.
+ * This a common template which its name does not come from a template
+ * suggestion. The `_` was deliberate to point that this template is different,
+ * something like a helper for other templates.
+ * This template is called from the default views template only for certain
+ * views, and was built to mimic a panel block template, to integrate views
+ * transparently on panel pages, to re-use current styles for pages like the
+ * ones used on dashboard.
  *
  * Variables available:
  * - @var array $classes_array: An array of classes determined in
