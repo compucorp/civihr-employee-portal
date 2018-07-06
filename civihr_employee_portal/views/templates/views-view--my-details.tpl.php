@@ -10,7 +10,7 @@
   // "Edit contact details button"
 
   // In the end _views-view--generic-display-output.tpl.php is called to
-  // integrate seamlessly in the panel page of "My Deatils" page
+  // integrate seamlessly in the panel page of "My Details" page
 
   $rows .= $footer;
   $footer = '
