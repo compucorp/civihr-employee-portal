@@ -1117,7 +1117,7 @@ function civihr_employee_portal_views_date_fields_to_timestamp(&$view, &$query, 
           $conditionHasField = strpos($condition['field'], $dateFieldToTimestamp) !== FALSE;
           // to be sure of applying the replacement just once
           $conditionHasTimestamp = strpos('TIMESTAMP', $dateFieldToTimestamp) !== FALSE;
-          if ( !$conditionHasField || $conditionHasTimestamp) {
+          if (!$conditionHasField || $conditionHasTimestamp) {
             continue;
           }
 
