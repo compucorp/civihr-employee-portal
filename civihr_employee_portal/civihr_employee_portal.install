@@ -450,10 +450,7 @@ function civihr_employee_portal_update_7034() {
  * Revert emergency contacts view
  */
 function civihr_employee_portal_update_7035( ) {
-  $view = views_get_view('emergency_contacts');
-  $view->delete();
-  ctools_include('object-cache');
-  ctools_object_cache_clear('view', $view->name);
+  drush_invoke('vr','emergency_contacts');
 }
 
 /**
