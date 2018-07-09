@@ -1099,7 +1099,7 @@ function civihr_employee_portal_views_date_fields_to_timestamp(&$view, &$query, 
 
     // iterating conditions
     foreach ($groups as &$conditions) {
-      if ( !is_array($conditions) ) {
+      if (!is_array($conditions)) {
         continue;
       }
 
@@ -1107,7 +1107,7 @@ function civihr_employee_portal_views_date_fields_to_timestamp(&$view, &$query, 
       foreach ($conditions as &$condition) {
 
         $operatorEqualsFormula = isset($condition['operator']) && $condition['operator'] == 'formula';
-        if ( !$operatorEqualsFormula ) {
+        if (!$operatorEqualsFormula) {
           continue;
         }
 
