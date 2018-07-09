@@ -1092,7 +1092,7 @@ function removeInactiveRoleDetails($results = []) {
  */
 function civihr_employee_portal_views_date_fields_to_timestamp(&$view, &$query, $dateFieldsToTimestamp) {
   // replacement pattern
-  static $op = 'UNIX_TIMESTAMP ( STR_TO_DATE( [date_to_replace], \'%Y-%m-%d\') )';
+  $op = 'UNIX_TIMESTAMP ( STR_TO_DATE( [date_to_replace], \'%Y-%m-%d\') )';
 
   // iterating groups of conditions
   foreach ($query->where as &$groups) {
