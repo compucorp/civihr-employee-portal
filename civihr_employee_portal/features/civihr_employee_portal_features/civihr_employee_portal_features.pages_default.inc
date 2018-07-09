@@ -176,7 +176,7 @@ function civihr_employee_portal_features_default_page_manager_pages() {
   );
   $pane->css = array(
     'css_id' => '',
-    'css_class' => 'chr_panel chr_panel--my-details',
+    'css_class' => 'chr_panel chr_panel--my-details__view__panel',
   );
   $pane->extras = array();
   $pane->position = 0;

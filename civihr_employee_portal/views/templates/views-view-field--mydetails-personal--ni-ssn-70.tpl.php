@@ -29,7 +29,9 @@
 ?>
 
 <?php if (!$row->civicrm_value_inline_custom_data_14_ni_ssn_application_in_pr): ?>
-   <?php print $output; ?>
+  <?php if ($row->civicrm_value_inline_custom_data_14_ni_ssn_70): ?>
+    <?php print $output; ?>
+  <?php endif; ?>
 <?php else: ?>
   <div class="chr_panel--my-details__personal__application_status--in-progress">
     <span class="views-label">NI/SSN </span>

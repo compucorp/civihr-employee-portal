@@ -38,7 +38,7 @@
    *
    * @see civihr_default_theme_preprocess_views_view()
    */
-  if ( $view_uses_generic_display_output ) {
+  if ( !empty($view_uses_generic_display_output) ) {
     include('_views-view--generic-display-output.tpl.php');
     return;
   }

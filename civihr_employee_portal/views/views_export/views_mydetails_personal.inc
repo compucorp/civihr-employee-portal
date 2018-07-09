@@ -142,7 +142,6 @@ $handler->display->display_options['fields']['ni_ssn_70']['alter']['alter_text']
 $handler->display->display_options['fields']['ni_ssn_70']['alter']['text'] = '<div class="chr_panel--my-details__personal__nsi_exists [ni_ssn_application_in_progress_71_1]">
   <span class="views-label">NI/SSN </span>
   <span class="value">[ni_ssn_70]</span>
-  [ni_ssn_application_in_progress_71]
 </div>';
 $handler->display->display_options['fields']['ni_ssn_70']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['ni_ssn_70']['empty'] = '[ni_ssn_application_in_progress_71]';
@@ -205,7 +204,6 @@ $translatables['mydetails_personal'] = array(
   t('<div class="chr_panel--my-details__personal__nsi_exists [ni_ssn_application_in_progress_71_1]">
   <span class="views-label">NI/SSN </span>
   <span class="value">[ni_ssn_70]</span>
-  [ni_ssn_application_in_progress_71]
 </div>'),
   t('[ni_ssn_application_in_progress_71]'),
   t('All'),
