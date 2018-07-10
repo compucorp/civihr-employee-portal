@@ -78,7 +78,8 @@ if (!$user->uid) {
   </div>
   <div class="chr_panel__footer">
     <div class="chr_actions-wrapper">
-      <?php print l(t('Edit my details'), 'my_details/nojs/view', array('attributes' => array('class' => $actionsClasses))); ?>
+      <?php print l(t('Edit personal details'), 'edit-my-personal-details/js/view', array('attributes' => array('class' => $actionsClasses))); ?>
+      <?php print l(t('Edit contact details'), 'edit-my-contact-details/js/view', array('attributes' => array('class' => $actionsClasses))); ?>
     </div>
   </div>
 </div>
