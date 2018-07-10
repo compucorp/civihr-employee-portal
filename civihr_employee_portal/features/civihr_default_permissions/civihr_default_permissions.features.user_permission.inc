@@ -57,6 +57,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access CiviReport',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
@@ -96,6 +97,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access Report Criteria',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
@@ -140,7 +142,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access administration pages'] = array(
     'name' => 'access administration pages',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'system',
@@ -151,6 +152,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access all cases and activities',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
@@ -172,7 +174,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access all views'] = array(
     'name' => 'access all views',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'views',
@@ -182,7 +183,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access all webform results'] = array(
     'name' => 'access all webform results',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'webform',
@@ -266,6 +266,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access hrreports',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civihr_employee_portal',
@@ -277,6 +278,7 @@ function civihr_default_permissions_user_default_permissions() {
     'roles' => array(
       'HR Admin' => 'HR Admin',
       'Manager' => 'Manager',
+      'Regional HR Admin' => 'Regional HR Admin',
       'Staff' => 'Staff',
       'administrator' => 'administrator',
     ),
@@ -301,6 +303,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'access my cases and activities',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
@@ -321,7 +324,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access own webform results'] = array(
     'name' => 'access own webform results',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'webform',
@@ -331,7 +333,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access own webform submissions'] = array(
     'name' => 'access own webform submissions',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'webform',
@@ -350,7 +351,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access rules debug'] = array(
     'name' => 'access rules debug',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'rules',
@@ -371,7 +371,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access site reports'] = array(
     'name' => 'access site reports',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'system',
@@ -381,7 +380,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access subpermission form'] = array(
     'name' => 'access subpermission form',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'subpermissions',
@@ -391,7 +389,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access toolbar'] = array(
     'name' => 'access toolbar',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'toolbar',
@@ -414,7 +411,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access user profiles'] = array(
     'name' => 'access user profiles',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'user',
@@ -434,6 +430,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'add cases',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
@@ -465,7 +462,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer CiviCRM Entity'] = array(
     'name' => 'administer CiviCRM Entity',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm_entity',
@@ -476,6 +472,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer CiviCase',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
@@ -486,6 +483,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer Reports',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
@@ -517,7 +515,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer actions'] = array(
     'name' => 'administer actions',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'system',
@@ -527,7 +524,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer advanced pane settings'] = array(
     'name' => 'administer advanced pane settings',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'panels',
@@ -537,7 +533,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer blocks'] = array(
     'name' => 'administer blocks',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'block',
@@ -547,7 +542,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer browser class'] = array(
     'name' => 'administer browser class',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'browserclass',
@@ -557,7 +551,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer comments'] = array(
     'name' => 'administer comments',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'comment',
@@ -567,7 +560,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer content types'] = array(
     'name' => 'administer content types',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -588,7 +580,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer features'] = array(
     'name' => 'administer features',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'features',
@@ -598,7 +589,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer fields'] = array(
     'name' => 'administer fields',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'field',
@@ -608,7 +598,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer filters'] = array(
     'name' => 'administer filters',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'filter',
@@ -618,7 +607,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer image styles'] = array(
     'name' => 'administer image styles',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'image',
@@ -628,7 +616,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer languages'] = array(
     'name' => 'administer languages',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'locale',
@@ -639,6 +626,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'administer leave and absences',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
@@ -648,7 +636,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer mailsystem'] = array(
     'name' => 'administer mailsystem',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'mailsystem',
@@ -667,7 +654,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer modules'] = array(
     'name' => 'administer modules',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'system',
@@ -677,7 +663,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer nodes'] = array(
     'name' => 'administer nodes',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -687,7 +672,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer page manager'] = array(
     'name' => 'administer page manager',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'page_manager',
@@ -697,7 +681,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer pane access'] = array(
     'name' => 'administer pane access',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'panels',
@@ -707,7 +690,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer panels layouts'] = array(
     'name' => 'administer panels layouts',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'panels',
@@ -717,7 +699,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer panels styles'] = array(
     'name' => 'administer panels styles',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'panels',
@@ -786,7 +767,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer rules'] = array(
     'name' => 'administer rules',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'rules',
@@ -796,7 +776,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer search'] = array(
     'name' => 'administer search',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'search',
@@ -806,7 +785,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer site configuration'] = array(
     'name' => 'administer site configuration',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'system',
@@ -816,7 +794,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer software updates'] = array(
     'name' => 'administer software updates',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'system',
@@ -836,7 +813,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer subpermission'] = array(
     'name' => 'administer subpermission',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'subpermissions',
@@ -846,7 +822,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer taxonomy'] = array(
     'name' => 'administer taxonomy',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'taxonomy',
@@ -856,7 +831,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer themes'] = array(
     'name' => 'administer themes',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'system',
@@ -866,7 +840,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer tipsy'] = array(
     'name' => 'administer tipsy',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'tipsy',
@@ -876,7 +849,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer url aliases'] = array(
     'name' => 'administer url aliases',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'path',
@@ -886,7 +858,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer userprotect'] = array(
     'name' => 'administer userprotect',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'userprotect',
@@ -905,7 +876,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer uuid'] = array(
     'name' => 'administer uuid',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'uuid',
@@ -915,7 +885,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer views'] = array(
     'name' => 'administer views',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'views',
@@ -926,6 +895,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'assign HR Admin role',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'role_delegation',
@@ -966,7 +936,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['block IP addresses'] = array(
     'name' => 'block IP addresses',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'system',
@@ -976,7 +945,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['bypass node access'] = array(
     'name' => 'bypass node access',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -986,7 +954,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['bypass rules access'] = array(
     'name' => 'bypass rules access',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'rules',
@@ -996,7 +963,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['can create and edit tasks'] = array(
     'name' => 'can create and edit tasks',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civihr_employee_portal',
@@ -1006,7 +972,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['cancel account'] = array(
     'name' => 'cancel account',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'user',
@@ -1039,6 +1004,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'cancel users with role 55120974',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'administerusersbyrole',
@@ -1070,7 +1036,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['change layouts in place editing'] = array(
     'name' => 'change layouts in place editing',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'panels',
@@ -1080,7 +1045,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['change own e-mail'] = array(
     'name' => 'change own e-mail',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'userprotect',
@@ -1090,7 +1054,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['change own openid'] = array(
     'name' => 'change own openid',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'userprotect',
@@ -1126,7 +1089,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['civicrm_entity.rules.administer'] = array(
     'name' => 'civicrm_entity.rules.administer',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm_entity',
@@ -1136,7 +1098,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['create article content'] = array(
     'name' => 'create article content',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -1164,7 +1125,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['create page content'] = array(
     'name' => 'create page content',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -1174,7 +1134,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['create url aliases'] = array(
     'name' => 'create url aliases',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'path',
@@ -1253,7 +1212,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['delete all webform submissions'] = array(
     'name' => 'delete all webform submissions',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'webform',
@@ -1263,7 +1221,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['delete any article content'] = array(
     'name' => 'delete any article content',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -1284,7 +1241,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['delete any page content'] = array(
     'name' => 'delete any page content',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -1313,6 +1269,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'delete in CiviCase',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
@@ -1322,7 +1279,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['delete own article content'] = array(
     'name' => 'delete own article content',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -1350,7 +1306,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['delete own page content'] = array(
     'name' => 'delete own page content',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -1367,7 +1322,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['delete own webform submissions'] = array(
     'name' => 'delete own webform submissions',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'webform',
@@ -1377,7 +1331,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['delete revisions'] = array(
     'name' => 'delete revisions',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -1398,7 +1351,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['delete terms in tags'] = array(
     'name' => 'delete terms in tags',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'taxonomy',
@@ -1420,6 +1372,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit all contacts',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
@@ -1436,7 +1389,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['edit all webform submissions'] = array(
     'name' => 'edit all webform submissions',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'webform',
@@ -1446,7 +1398,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['edit any article content'] = array(
     'name' => 'edit any article content',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -1467,7 +1418,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['edit any page content'] = array(
     'name' => 'edit any page content',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -1484,7 +1434,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['edit api keys'] = array(
     'name' => 'edit api keys',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
@@ -1505,7 +1454,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['edit message templates'] = array(
     'name' => 'edit message templates',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
@@ -1546,7 +1494,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['edit own api keys'] = array(
     'name' => 'edit own api keys',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
@@ -1556,7 +1503,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['edit own article content'] = array(
     'name' => 'edit own article content',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -1566,7 +1512,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['edit own comments'] = array(
     'name' => 'edit own comments',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'comment',
@@ -1594,7 +1539,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['edit own page content'] = array(
     'name' => 'edit own page content',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -1611,7 +1555,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['edit own webform submissions'] = array(
     'name' => 'edit own webform submissions',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'webform',
@@ -1632,7 +1575,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['edit terms in tags'] = array(
     'name' => 'edit terms in tags',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'taxonomy',
@@ -1665,6 +1607,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit users with role 55120974',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'administerusersbyrole',
@@ -1685,7 +1628,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['edit webform components'] = array(
     'name' => 'edit webform components',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'webform',
@@ -1713,7 +1655,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['export nodes'] = array(
     'name' => 'export nodes',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node_export',
@@ -1730,7 +1671,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['export own nodes'] = array(
     'name' => 'export own nodes',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node_export',
@@ -1749,7 +1689,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['generate features'] = array(
     'name' => 'generate features',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'features',
@@ -1781,7 +1720,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['manage features'] = array(
     'name' => 'manage features',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'features',
@@ -1792,6 +1730,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'manage hrreports configuration',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civihr_employee_portal',
@@ -1802,6 +1741,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'manage hrreports settings',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civihr_employee_portal',
@@ -1902,7 +1842,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['rename features'] = array(
     'name' => 'rename features',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'features',
@@ -1912,7 +1851,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['revert revisions'] = array(
     'name' => 'revert revisions',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -1922,7 +1860,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['search content'] = array(
     'name' => 'search content',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'search',
@@ -1945,7 +1882,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['select account cancellation method'] = array(
     'name' => 'select account cancellation method',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'user',
@@ -1992,7 +1928,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['translate interface'] = array(
     'name' => 'translate interface',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'locale',
@@ -2002,7 +1937,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['use PHP to import nodes'] = array(
     'name' => 'use PHP to import nodes',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node_export',
@@ -2012,7 +1946,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['use advanced search'] = array(
     'name' => 'use advanced search',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'search',
@@ -2022,7 +1955,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['use ctools import'] = array(
     'name' => 'use ctools import',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'ctools',
@@ -2032,7 +1964,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['use ipe with page manager'] = array(
     'name' => 'use ipe with page manager',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'panels',
@@ -2042,7 +1973,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['use page manager'] = array(
     'name' => 'use page manager',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'page_manager',
@@ -2052,7 +1982,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['use panels caching features'] = array(
     'name' => 'use panels caching features',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'panels',
@@ -2062,7 +1991,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['use panels dashboard'] = array(
     'name' => 'use panels dashboard',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'panels',
@@ -2072,7 +2000,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['use panels in place editing'] = array(
     'name' => 'use panels in place editing',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'panels',
@@ -2082,7 +2009,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['use panels locks'] = array(
     'name' => 'use panels locks',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'panels',
@@ -2103,7 +2029,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['use text format full_html'] = array(
     'name' => 'use text format full_html',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'filter',
@@ -2138,6 +2063,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'view all contacts',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
@@ -2201,9 +2127,7 @@ function civihr_default_permissions_user_default_permissions() {
   // Exported permission: 'view my contact'.
   $permissions['view my contact'] = array(
     'name' => 'view my contact',
-    'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
-    ),
+    'roles' => array(),
     'module' => 'civicrm',
   );
 
@@ -2262,7 +2186,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['view pane admin links'] = array(
     'name' => 'view pane admin links',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'panels',
@@ -2279,7 +2202,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['view revisions'] = array(
     'name' => 'view revisions',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
