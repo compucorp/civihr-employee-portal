@@ -1,6 +1,6 @@
 array(
   (object) array(
-      'vid' => '16',
+      'vid' => '14',
       'uid' => '0',
       'title' => 'My Contact Details',
       'log' => '',
@@ -9,15 +9,15 @@ array(
       'promote' => '0',
       'sticky' => '0',
       'vuuid' => '532f3c75-7f6b-4aa2-b77f-daf149a39d31',
-      'nid' => '16',
+      'nid' => '14',
       'type' => 'webform',
       'language' => 'en',
-      'created' => '1531151531',
-      'changed' => '1531151531',
+      'created' => '1531244658',
+      'changed' => '1531244658',
       'tnid' => '0',
       'translate' => '0',
       'uuid' => '78f60039-9843-4751-879d-2a96ef487b37',
-      'revision_timestamp' => '1531151531',
+      'revision_timestamp' => '1531244658',
       'revision_uid' => '0',
       'rdf_mapping' => array(
         'rdftype' => array(
@@ -75,7 +75,7 @@ array(
         ),
       ),
       'webform' => array(
-        'nid' => '16',
+        'nid' => '14',
         'next_serial' => '31',
         'confirmation' => '',
         'confirmation_format' => 'filtered_html',
@@ -113,7 +113,7 @@ array(
         'emails' => array(),
         'components' => array(
           2 => array(
-            'nid' => 16,
+            'nid' => 14,
             'cid' => '2',
             'pid' => '0',
             'form_key' => 'civicrm_1_contact_1_contact_existing',
@@ -156,25 +156,8 @@ array(
             'weight' => '2',
             'page_num' => 1,
           ),
-          30 => array(
-            'nid' => 16,
-            'cid' => '30',
-            'pid' => '0',
-            'form_key' => 'civicrm_1_contact_1_contact_user_id',
-            'name' => 'User ID',
-            'type' => 'hidden',
-            'value' => '',
-            'extra' => array(
-              'private' => 0,
-              'hidden_type' => 'value',
-              'analysis' => FALSE,
-            ),
-            'required' => '0',
-            'weight' => '3',
-            'page_num' => 1,
-          ),
           18 => array(
-            'nid' => 16,
+            'nid' => 14,
             'cid' => '18',
             'pid' => '0',
             'form_key' => 'civicrm_1_contact_1_contact_nick_name',
@@ -203,7 +186,7 @@ array(
             'page_num' => 1,
           ),
           31 => array(
-            'nid' => 16,
+            'nid' => 14,
             'cid' => '31',
             'pid' => '0',
             'form_key' => 'civicrm_1_contact_1_phone_phone',
@@ -230,7 +213,7 @@ array(
             'page_num' => 1,
           ),
           16 => array(
-            'nid' => 16,
+            'nid' => 14,
             'cid' => '16',
             'pid' => '0',
             'form_key' => 'civicrm_1_contact_1_email_email',
@@ -261,15 +244,15 @@ array(
         'conditionals' => array(),
       ),
       'cid' => '0',
-      'last_comment_timestamp' => '1530064751',
+      'last_comment_timestamp' => '1531244658',
       'last_comment_name' => NULL,
-      'last_comment_uid' => '1',
+      'last_comment_uid' => '0',
       'comment_count' => '0',
       'name' => '',
       'picture' => '0',
       'data' => NULL,
       'webform_civicrm' => array(
-        'nid' => '16',
+        'nid' => '14',
         'data' => array(
           'contact' => array(
             1 => array(
