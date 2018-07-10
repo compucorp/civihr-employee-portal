@@ -1,7 +1,7 @@
 array(
   (object) array(
       'vid' => '16',
-      'uid' => '1',
+      'uid' => '0',
       'title' => 'My Contact Details',
       'log' => '',
       'status' => '1',
@@ -12,13 +12,13 @@ array(
       'nid' => '16',
       'type' => 'webform',
       'language' => 'en',
-      'created' => '1530064751',
-      'changed' => '1530071121',
+      'created' => '1531151531',
+      'changed' => '1531151531',
       'tnid' => '0',
       'translate' => '0',
       'uuid' => '78f60039-9843-4751-879d-2a96ef487b37',
-      'revision_timestamp' => '1530071121',
-      'revision_uid' => '1',
+      'revision_timestamp' => '1531151531',
+      'revision_uid' => '0',
       'rdf_mapping' => array(
         'rdftype' => array(
           'sioc:Item',
@@ -229,34 +229,6 @@ array(
             'weight' => '5',
             'page_num' => 1,
           ),
-          32 => array(
-            'nid' => 16,
-            'cid' => '32',
-            'pid' => '0',
-            'form_key' => 'civicrm_1_contact_1_phone_phone_type_id',
-            'name' => 'Phone Type',
-            'type' => 'select',
-            'value' => '',
-            'extra' => array(
-              'items' => "1|Phone\n2|Mobile\n3|Fax\n4|Pager\n5|Voicemail",
-              'aslist' => 1,
-              'private' => 0,
-              'multiple' => NULL,
-              'empty_option' => '',
-              'optrand' => 0,
-              'other_option' => NULL,
-              'other_text' => 'Other...',
-              'title_display' => 0,
-              'description' => '',
-              'description_above' => FALSE,
-              'custom_keys' => FALSE,
-              'options_source' => '',
-              'analysis' => TRUE,
-            ),
-            'required' => '0',
-            'weight' => '6',
-            'page_num' => 1,
-          ),
           16 => array(
             'nid' => 16,
             'cid' => '16',
@@ -293,9 +265,9 @@ array(
       'last_comment_name' => NULL,
       'last_comment_uid' => '1',
       'comment_count' => '0',
-      'name' => 'admin',
+      'name' => '',
       'picture' => '0',
-      'data' => 'a:1:{s:17:"mimemail_textonly";i:0;}',
+      'data' => NULL,
       'webform_civicrm' => array(
         'nid' => '16',
         'data' => array(
@@ -328,6 +300,7 @@ array(
               'number_of_cg99999' => '0',
               'phone' => array(
                 1 => array(
+                  'phone_type_id' => '1',
                   'location_type_id' => '6',
                 ),
               ),
