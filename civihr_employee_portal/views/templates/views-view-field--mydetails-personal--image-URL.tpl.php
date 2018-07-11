@@ -9,10 +9,14 @@
  * perfectly okay.
  *
  * Variables available:
- * -@var object $view: The view object
- * -@var object $field: The field handler object that can process the input
- * -@var object $row: The raw SQL result that can be used
- * -@var string $output: The processed output that will normally be used.
+ * -@var object $view
+ *        The view object
+ * -@var object $field
+ *        The field handler object that can process the input
+ * -@var object $row
+ *        The raw SQL result that can be used
+ * -@var string $output
+ *        The processed output that will normally be used.
  *
  * When fetching output from the $row, this construct should be used:
  * $data = $row->{$field->field_alias}
