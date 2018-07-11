@@ -140,7 +140,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access administration pages'] = array(
     'name' => 'access administration pages',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'system',
@@ -391,7 +390,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access toolbar'] = array(
     'name' => 'access toolbar',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'toolbar',
@@ -557,7 +555,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer comments'] = array(
     'name' => 'administer comments',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'comment',
@@ -677,7 +674,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer nodes'] = array(
     'name' => 'administer nodes',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -876,7 +872,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer url aliases'] = array(
     'name' => 'administer url aliases',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'path',
@@ -976,7 +971,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['bypass node access'] = array(
     'name' => 'bypass node access',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -1174,7 +1168,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['create url aliases'] = array(
     'name' => 'create url aliases',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'path',

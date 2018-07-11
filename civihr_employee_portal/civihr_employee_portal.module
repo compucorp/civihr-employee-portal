@@ -4581,7 +4581,7 @@ function civihr_employee_portal_node_presave($node) {
  * Checks if publish status checkbox is visible
  */
 function isPublishStatusCheckBoxVisible () {
-  return !user_access('administer-nodes') && _user_has_role(['HR Admin']);
+  return !user_access('administer-nodes') && _user_has_role(['HR Admin', 'Regional HR Admin']);
 }
 
 // Note: Under "Redirection location" NO redirect option should be select to get
