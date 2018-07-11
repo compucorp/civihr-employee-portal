@@ -447,13 +447,6 @@ function civihr_employee_portal_update_7034() {
 }
 
 /**
- * Revert emergency contacts view
- */
-function civihr_employee_portal_update_7035( ) {
-  drush_invoke('vr','emergency_contacts');
-}
-
-/**
  * Function to determine whether menu link exists or not.
  *
  * @param string $path
