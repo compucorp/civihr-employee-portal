@@ -214,7 +214,9 @@ $handler->display->display_options['fields']['emergency_contact_deletion']['tabl
 $handler->display->display_options['fields']['emergency_contact_deletion']['field'] = 'nothing';
 $handler->display->display_options['fields']['emergency_contact_deletion']['ui_name'] = 'Placeholder for Deletion Button (Button markup is provided by template)';
 $handler->display->display_options['fields']['emergency_contact_deletion']['label'] = '';
-$handler->display->display_options['fields']['emergency_contact_deletion']['alter']['text'] = '<!-- This field is totally empty, but uses markup from civihr-employee-portal-theme to display the button. See civihr_default_theme/templates/view/views-view-field--emergency-contacts--non-dependant-emergency-contact--emergency_contact_deletion.tpl.php -->';
+$handler->display->display_options['fields']['emergency_contact_deletion']['alter']['text'] = '<!-- This field is totally empty, but uses markup from civihr-employee-portal-theme to display the button. See
+civihr_default_theme/templates/view/views-view-field--emergency-contacts--dependant-emergency-contact--emergency-contact-deletion.tpl.php -->
+';
 $handler->display->display_options['fields']['emergency_contact_deletion']['element_label_colon'] = FALSE;
 /* Contextual filter: CiviCRM Custom: Emergency Contacts: Entity ID */
 $handler->display->display_options['arguments']['entity_id']['id'] = 'entity_id';
@@ -385,7 +387,9 @@ $translatables['emergency_contacts'] = array(
 
 '),
   t('Notes'),
-  t('<!-- This field is totally empty, but uses markup from civihr-employee-portal-theme to display the button. See civihr_default_theme/templates/view/views-view-field--emergency-contacts--non-dependant-emergency-contact--emergency_contact_deletion.tpl.php -->'),
+  t('<!-- This field is totally empty, but uses markup from civihr-employee-portal-theme to display the button. See
+civihr_default_theme/templates/view/views-view-field--emergency-contacts--dependant-emergency-contact--emergency-contact-deletion.tpl.php -->
+'),
   t('All'),
   t('Non Dependant Emergency Contacts'),
   t('Emergency contacts'),
@@ -394,7 +398,8 @@ $translatables['emergency_contacts'] = array(
   <i class="fa fa-user-plus" aria-hidden="true"></i> Add Emergency Contact
 </a>
 '),
-  t('No dependants listed!'),
+  t('No emergency contacts listed!'),
+  t('<!-- This field is totally empty, but uses markup from civihr-employee-portal-theme to display the button. See civihr_default_theme/templates/view/views-view-field--emergency-contacts--non-dependant-emergency-contact--emergency_contact_deletion.tpl.php -->'),
   t('Dependant Emergency Contacts'),
   t('Dependants'),
   t('A list of emergency contacts where the "dependant" flag is true'),
@@ -402,6 +407,6 @@ $translatables['emergency_contacts'] = array(
   <i class="fa fa-user-plus" aria-hidden="true"></i> Add Dependant
 </a>
 '),
-  t('No emergency contacts listed!'),
+  t('No dependants listed!'),
   t('dependant_emergency_contact'),
 );
