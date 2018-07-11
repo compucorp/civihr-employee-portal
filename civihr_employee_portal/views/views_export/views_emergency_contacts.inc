@@ -150,56 +150,7 @@ $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['table'] = 'views';
 $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = '';
-$handler->display->display_options['fields']['nothing']['alter']['text'] = '<div class="container">
-<div class="row">
-<div class="col-md-6" >
-[name_80]
-[mobile_number_91]
-[phone_number_81]
-</div>
-<div class="col-md-6 emergency-address" >
-<div class="views-field">
-<div class="views-label">Address</div>
-<div class="field-content">
-[street_address_93]
-[street_address_line_2_94]
-[province_97]
-<p>[country_98]</p>
-[postal_code_96]
-</div>
-</div>
-</div>
-</div>
-
-
-<div class="row">
-<div class="col-md-6" >
-
-<div class="views-field">
-<div class="views-label">Relationship</div>
-<div class="field-content">[relationship_with_employee_83]</div>
-</div>
-
-</div>
-<div class="col-md-6" >
-
-<div class="views-field">
-<div class="views-label">Primary email</div>
-<div class="field-content">[email_82]</div>
-</div>
-
-</div>
-</div>
-
-
-
-</div>
-
-
-
-
-
-';
+$handler->display->display_options['fields']['nothing']['alter']['text'] = 'See the output of this field on template: views-view-field--emergency-contacts--nothing.tpl.php';
 $handler->display->display_options['fields']['nothing']['element_type'] = '0';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['nothing']['element_wrapper_type'] = '0';
@@ -336,56 +287,7 @@ $translatables['emergency_contacts'] = array(
   t('<p>[province_97]</p>'),
   t('Relationship'),
   t('Primary Email'),
-  t('<div class="container">
-<div class="row">
-<div class="col-md-6" >
-[name_80]
-[mobile_number_91]
-[phone_number_81]
-</div>
-<div class="col-md-6 emergency-address" >
-<div class="views-field">
-<div class="views-label">Address</div>
-<div class="field-content">
-[street_address_93]
-[street_address_line_2_94]
-[province_97]
-<p>[country_98]</p>
-[postal_code_96]
-</div>
-</div>
-</div>
-</div>
-
-
-<div class="row">
-<div class="col-md-6" >
-
-<div class="views-field">
-<div class="views-label">Relationship</div>
-<div class="field-content">[relationship_with_employee_83]</div>
-</div>
-
-</div>
-<div class="col-md-6" >
-
-<div class="views-field">
-<div class="views-label">Primary email</div>
-<div class="field-content">[email_82]</div>
-</div>
-
-</div>
-</div>
-
-
-
-</div>
-
-
-
-
-
-'),
+  t('See the output of this field on template: views-view-field--emergency-contacts--nothing.tpl.php'),
   t('Notes'),
   t('<!-- This field is totally empty, but uses markup from civihr-employee-portal-theme to display the button. See
 civihr_default_theme/templates/view/views-view-field--emergency-contacts--dependant-emergency-contact--emergency-contact-deletion.tpl.php -->
@@ -399,7 +301,6 @@ civihr_default_theme/templates/view/views-view-field--emergency-contacts--depend
 </a>
 '),
   t('No emergency contacts listed!'),
-  t('<!-- This field is totally empty, but uses markup from civihr-employee-portal-theme to display the button. See civihr_default_theme/templates/view/views-view-field--emergency-contacts--non-dependant-emergency-contact--emergency_contact_deletion.tpl.php -->'),
   t('Dependant Emergency Contacts'),
   t('Dependants'),
   t('A list of emergency contacts where the "dependant" flag is true'),
