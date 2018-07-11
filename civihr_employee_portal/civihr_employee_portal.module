@@ -1459,6 +1459,7 @@ function get_civihr_contact_data($contact_id = NULL, $user_id = '') {
  */
 function civihr_employee_portal_menu() {
   $items = [];
+
   $items['request_new_account/%ctools_js'] = [
     'title' => 'Edit Document',
     'page callback' => 'civihr_employee_portal_request_new_account',
@@ -1575,21 +1576,13 @@ function civihr_employee_portal_menu() {
     'type' => MENU_CALLBACK,
   ];
 
-  $items['hr-details'] = [
-    'title' => 'My Details',
-    'page callback' => 'civihr_employee_portal_my_details',
-    'access arguments' => ['view my details'],
-    'type' => MENU_NORMAL_ITEM,
-    'menu_name' => 'main-menu',
-    'weight' => 4
-  ];
-
   $items['reports'] = [
     'title' => 'Reports',
     'page callback' => 'civihr_employee_portal_hrreport_landing_page',
     'access arguments' => ['access hrreports'],
     'type' => MENU_CALLBACK
   ];
+
   $items['reports/%'] = [
     'title' => 'CiviHR Custom Report',
     'page callback' => 'civihr_employee_portal_hrreport_custom',
@@ -1597,12 +1590,14 @@ function civihr_employee_portal_menu() {
     'access arguments' => ['access hrreports'],
     'type' => MENU_CALLBACK,
   ];
+
   $items['reports/%/json'] = [
     'page callback' => 'civihr_employee_portal_hrreport_get_json',
     'page arguments' => [1],
     'access arguments' => ['access hrreports'],
     'type' => MENU_CALLBACK,
   ];
+
   $items['reports/%/table'] = [
     'title' => 'CiviHR Custom Report',
     'page callback' => 'civihr_employee_portal_hrreport_custom_printtable',
@@ -1610,12 +1605,14 @@ function civihr_employee_portal_menu() {
     'access arguments' => ['access hrreports'],
     'type' => MENU_CALLBACK,
   ];
+
   $items['reports/settings/age_group'] = [
     'title' => 'Reports settings - Age group',
     'page callback' => 'civihr_employee_portal_hrreport_settings_age_group',
     'access arguments' => ['manage hrreports settings'],
     'type' => MENU_CALLBACK,
   ];
+
   $items['reports/settings/age_group/%ctools_js/create'] = [
     'title' => 'Create Age Group',
     'page callback' => 'civihr_employee_portal_hrreport_settings_age_group_create',
@@ -1623,6 +1620,7 @@ function civihr_employee_portal_menu() {
     'access arguments' => ['manage hrreports settings'],
     'type' => MENU_CALLBACK,
   ];
+
   $items['reports/settings/age_group/%ctools_js/edit/%'] = [
     'title' => 'Edit Age Group',
     'page callback' => 'civihr_employee_portal_hrreport_settings_age_group_create',
@@ -1630,6 +1628,7 @@ function civihr_employee_portal_menu() {
     'access arguments' => ['manage hrreports settings'],
     'type' => MENU_CALLBACK,
   ];
+
   $items['reports/settings/age_group/%ctools_js/delete/%'] = [
     'title' => 'Delete Age Group',
     'page callback' => 'civihr_employee_portal_hrreport_settings_age_group_delete',
@@ -1637,6 +1636,7 @@ function civihr_employee_portal_menu() {
     'access arguments' => ['manage hrreports settings'],
     'type' => MENU_CALLBACK,
   ];
+
   $items['reports/%/configuration/%'] = [
     'title' => 'Get Report configuration',
     'page callback' => 'civihr_employee_portal_get_report_configuration_json',
@@ -1644,6 +1644,7 @@ function civihr_employee_portal_menu() {
     'access arguments' => ['access hrreports'],
     'type' => MENU_CALLBACK,
   ];
+
   $items['reports/%/configuration/%/save'] = [
     'title' => 'Save Report configuration',
     'page callback' => 'civihr_employee_portal_save_report_configuration_json',
@@ -1651,6 +1652,7 @@ function civihr_employee_portal_menu() {
     'access arguments' => ['manage hrreports configuration'],
     'type' => MENU_CALLBACK,
   ];
+
   $items['reports/%/configuration/%/delete'] = [
     'title' => 'Delete Report configuration',
     'page callback' => 'civihr_employee_portal_delete_report_configuration_json',
@@ -1658,18 +1660,7 @@ function civihr_employee_portal_menu() {
     'access arguments' => ['manage hrreports configuration'],
     'type' => MENU_CALLBACK,
   ];
-  $items['create-emergency-contact/js/view'] = [
-    'page callback' => 'civihr_employee_portal_webform_render_callback',
-    'page arguments' => ['Create Emergency Contact'],
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-  ];
-  $items['create-dependant/js/view'] = [
-    'page callback' => 'civihr_employee_portal_webform_render_callback',
-    'page arguments' => ['Create Dependant'],
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-  ];
+
   $items['customize-onboarding-wizard'] = [
     'title' => 'Customize Welcome Wizard',
     'description' => 'Customize Welcome Wizard',
@@ -1680,7 +1671,48 @@ function civihr_employee_portal_menu() {
     'type' => MENU_NORMAL_ITEM,
   ];
 
+  // Create Emergency Contact webform ajax popup
+  $items['create-emergency-contact/js/view'] =
+    _civihr_employee_portal_get_webform_modal_menu_item('Create Emergency Contact');
+
+  // Create Dependant webform ajax popup
+  $items['create-dependant/js/view'] =
+    _civihr_employee_portal_get_webform_modal_menu_item('Create Dependant');
+
+  // My Details - My Home Address webform ajax popup
+  $items['edit-my-home-address/js/view'] =
+    _civihr_employee_portal_get_webform_modal_menu_item('My Home Address');
+
+  // My Details - My Payroll webform ajax popup
+  $items['edit-my-payroll/js/view'] =
+    _civihr_employee_portal_get_webform_modal_menu_item('My Payroll');
+
+  // My Details - Personal Details webform ajax popup
+  $items['edit-my-personal-details/js/view'] =
+    _civihr_employee_portal_get_webform_modal_menu_item('My Personal Details');
+
+  // My Details - Contact Info webform ajax popup
+  $items['edit-my-contact-details/js/view'] =
+    _civihr_employee_portal_get_webform_modal_menu_item('My Contact Details');
+
   return $items;
+}
+
+/**
+ * To create menu items for webform modals
+ *
+ * @param string $name
+ *
+ * @return array
+ *   the structure of the menu item for webform popup
+ */
+function _civihr_employee_portal_get_webform_modal_menu_item($name) {
+  return [
+    'page arguments' => [$name],
+    'page callback' => 'civihr_employee_portal_webform_render_callback',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  ];
 }
 
 /**
@@ -4589,8 +4621,7 @@ function isPublishStatusCheckBoxVisible () {
 // We can use this trick to make it generic for all webforms those have
 // No redirect settings enabled under "Redirection location" setting.
 function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
-
-    $customClasses = 'civihr_form civihr_form--reset form-horizontal';
+  $customClasses = 'civihr_form civihr_form--reset form-horizontal';
   $formNode = CRM_Utils_Array::value('#node', $form) ;
         $title = isset($formNode->title) ? $formNode->title : NULL;
   $formsWithCustomClasses = [
@@ -4598,10 +4629,14 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
     'My details - edit',
     'Create Dependant',
     'Create Emergency Contact',
+    'My Personal Details',
+    'My Contact Details',
+    'My Payroll',
+    'My Home Address',
   ];
   if (in_array($title, $formsWithCustomClasses)) {
-        $form['#attributes']['class'][] = $customClasses;
-    }
+    $form['#attributes']['class'][] = $customClasses;
+  }
 
   // Form become outdated fix
   if ($form_id == 'views_exposed_form') {
@@ -5121,19 +5156,6 @@ function webform_client_form_ajax_callback($form, &$form_state) {
         exit;
 
 
-}
-
-/**
- * Implement custom my details page, which loads the my details block, to edit the employee data
- */
-function civihr_employee_portal_my_details() {
-  ctools_include('modal');
-  ctools_modal_add_js();
-
-  // This will render the same block as on the dashboard page
-  $block = module_invoke('civihr_employee_portal', 'block_view', 'my_details');
-
-  return render($block['content']);
 }
 
 /**
@@ -6698,5 +6720,17 @@ function civihr_employee_portal_load_html_file($template = '', $moduleName) {
   }
   else {
     return '';
+  }
+}
+
+/**
+ * Implements hook_page_build()
+ */
+function civihr_employee_portal_page_build(&$page) {
+  // "My Details" page is a Panels Page, to inject the necessary functionality
+  // to manage webform popup we must use page build hook
+  if (drupal_get_path_alias() == 'hr-details') {
+      ctools_include('modal');
+      ctools_modal_add_js();
   }
 }
