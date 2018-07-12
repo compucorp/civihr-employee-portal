@@ -239,7 +239,7 @@ $handler->display->display_options['fields']['fieldset']['label'] = 'See Resourc
 $handler->display->display_options['fields']['fieldset']['children'] = array(
     0 => 'field_attachment',
 );
-$handler->display->display_options['fields']['fieldset']['fieldset']['classes'] = 'civihr_form__fieldset--transparent';
+$handler->display->display_options['fields']['fieldset']['fieldset']['classes'] = 'civihr_form__fieldset civihr_form__fieldset--transparent';
 $handler->display->display_options['fields']['fieldset']['fieldset']['id'] = '[nid]';
 $handler->display->display_options['fields']['fieldset']['fieldset']['collapsible'] = 1;
 $handler->display->display_options['fields']['fieldset']['fieldset']['collapsed'] = 1;
