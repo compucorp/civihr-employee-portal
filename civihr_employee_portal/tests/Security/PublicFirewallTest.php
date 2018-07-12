@@ -64,6 +64,7 @@ class PublicFirewallTest extends \PHPUnit_Framework_TestCase {
       ['yoti/anything'],
       ['yoti-connect'],
       ['yoti-connect/lorem-ipsum'],
+      ['civicrm/calendar-feed']
     ];
   }
 

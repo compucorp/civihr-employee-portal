@@ -21,7 +21,8 @@ class PublicFirewall {
     '@^user((?!\/register).)*$@', // user* except user/register
     'yoti', // yoti login plugin
     '@^yoti\/.*@', // anything under yoti
-    '@^yoti-connect*@' // also yoti login plugin, where the user is redirected after login
+    '@^yoti-connect*@', // also yoti login plugin, where the user is redirected after login
+    'civicrm/calendar-feed' //Leave request Calendar feed URL
   ];
 
   /**
