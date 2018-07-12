@@ -2387,13 +2387,23 @@ return date(\'Y-m-d\');';
   $handler->display->display_options['filters']['access']['id'] = 'access';
   $handler->display->display_options['filters']['access']['table'] = 'users';
   $handler->display->display_options['filters']['access']['field'] = 'access';
-  $handler->display->display_options['filters']['access']['operator'] = 'between';
+  $handler->display->display_options['filters']['access']['operator'] = '>=';
   $handler->display->display_options['filters']['access']['group'] = 1;
   $handler->display->display_options['filters']['access']['exposed'] = TRUE;
   $handler->display->display_options['filters']['access']['expose']['operator_id'] = 'access_op';
-  $handler->display->display_options['filters']['access']['expose']['label'] = 'Last access: Between';
+  $handler->display->display_options['filters']['access']['expose']['label'] = 'Last Accessed From';
   $handler->display->display_options['filters']['access']['expose']['operator'] = 'access_op';
-  $handler->display->display_options['filters']['access']['expose']['identifier'] = 'access';
+  $handler->display->display_options['filters']['access']['expose']['identifier'] = 'access_from';
+  /* Filter criterion: User: Last access */
+  $handler->display->display_options['filters']['access_1']['id'] = 'access_1';
+  $handler->display->display_options['filters']['access_1']['table'] = 'users';
+  $handler->display->display_options['filters']['access_1']['field'] = 'access';
+  $handler->display->display_options['filters']['access_1']['operator'] = '<=';
+  $handler->display->display_options['filters']['access_1']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['access_1']['expose']['operator_id'] = 'access_1_op';
+  $handler->display->display_options['filters']['access_1']['expose']['label'] = 'To';
+  $handler->display->display_options['filters']['access_1']['expose']['operator'] = 'access_1_op';
+  $handler->display->display_options['filters']['access_1']['expose']['identifier'] = 'access_to';
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
@@ -2431,7 +2441,8 @@ return date(\'Y-m-d\');';
     t('Operations'),
     t('<a href="/user/[uid]/edit">Edit User Account</a><span class="chr_divider"> | </span><a href="/civicrm/contact/view?reset=1&cid=[id]">View Staff Record</a>'),
     t('Active'),
-    t('Last access: Between'),
+    t('Last Accessed From'),
+    t('To'),
     t('Page'),
   );
   $export['users_list'] = $view;
