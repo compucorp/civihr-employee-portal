@@ -13,7 +13,6 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 /* Display: Master */
 $handler = $view->new_display('default', 'Master', 'default');
 $handler->display->display_options['title'] = 'My Roles';
-$handler->display->display_options['css_class'] = 'chr_panel--my-details__view__panel';
 $handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'perm';
 $handler->display->display_options['access']['perm'] = 'view my details';
@@ -119,7 +118,7 @@ $handler->display->display_options['fields']['nothing_1']['id'] = 'nothing_1';
 $handler->display->display_options['fields']['nothing_1']['table'] = 'views';
 $handler->display->display_options['fields']['nothing_1']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing_1']['label'] = '';
-$handler->display->display_options['fields']['nothing_1']['alter']['text'] = '<div class="panel-panel">
+$handler->display->display_options['fields']['nothing_1']['alter']['text'] = '<div class="panel-panel chr_panel--my-details__view__panel">
   <div class="panel-panel-inner">
     <div class="panel-pane pane-block">
       <h2 class="pane-title">
