@@ -499,6 +499,7 @@ function civihr_employee_portal_init() {
   // calling this inside hook_init so we could access
   // some drupal functions such as user_access
   _user_redirection();
+  _civihr_employee_portal_set_up_google_analytics_data_layer();
 
   $query = drupal_get_query_parameters();
   if (isset($query['source']) && $query['source'] == 'onboarding') {
@@ -548,6 +549,24 @@ function civihr_employee_portal_init() {
       _load_ta_settings();
     }
   }
+}
+
+/**
+ * Sets up the content of GA's data layer container
+ */
+function _civihr_employee_portal_set_up_google_analytics_data_layer() {
+  global $user;
+
+  if (!module_exists('datalayer')) {
+    return;
+  }
+
+  datalayer_add([
+    // The list of roles of the current user
+    'userRoles' => join(';', array_filter($user->roles, function ($role) {
+      return $role != 'authenticated user';
+    })),
+  ]);
 }
 
 /**

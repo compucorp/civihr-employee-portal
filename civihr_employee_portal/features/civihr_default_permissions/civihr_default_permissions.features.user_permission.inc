@@ -986,6 +986,16 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'rules',
   );
 
+  // Exported permission: 'can administer calendar feeds'.
+  $permissions['can administer calendar feeds'] = array(
+    'name' => 'can administer calendar feeds',
+    'roles' => array(
+      'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
+    ),
+    'module' => 'civicrm',
+  );
+
   // Exported permission: 'can create and edit tasks'.
   $permissions['can create and edit tasks'] = array(
     'name' => 'can create and edit tasks',
