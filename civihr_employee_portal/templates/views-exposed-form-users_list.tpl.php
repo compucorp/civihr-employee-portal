@@ -2,6 +2,8 @@
 
 /**
  * @file
+ * Applying Grid Structure to the Exposed Filter items, using bootstrap classes.
+ *
  * This template handles the layout of the views exposed filter form.
  *
  * Variables available:
@@ -26,10 +28,13 @@
   print $q;
   ?>
 <?php endif; ?>
+<!-- Added - Start -->
 <?php $lastAccessedFields = ['edit-access-from', 'edit-access-to']; ?>
+<!-- Added - End -->
 <div class="views-exposed-form">
   <div class="views-exposed-widgets clearfix">
     <?php foreach ($widgets as $id => $widget): ?>
+      <!-- Added - Start -->
       <div class="<?php in_array($widget->id, $lastAccessedFields) ? print 'col-sm-3' : print 'col-sm-6' ?>">
         <div id="<?php print $widget->id; ?>-wrapper" class="views-exposed-widget views-widget-<?php print $id; ?>">
             <?php if (!empty($widget->label)): ?>
@@ -52,6 +57,7 @@
             <?php endif; ?>
         </div>
       </div>
+      <!-- Added - End -->
     <?php endforeach; ?>
     <?php if (!empty($sort_by)): ?>
       <div class="views-exposed-widget views-widget-sort-by">
