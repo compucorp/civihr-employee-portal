@@ -434,6 +434,14 @@ function civihr_employee_portal_update_7033() {
 }
 
 /**
+ * Renames onboarding wizard payroll option from "Add Later" to "Skip this step"
+ */
+function civihr_employee_portal_update_7034() {
+  civicrm_initialize();
+  drush_civihr_employee_portal_refresh_node_export_files();
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string $path
