@@ -12,7 +12,7 @@
   // In the end _views-view--generic-display-output.tpl.php is called to
   // integrate seamlessly in the panel page of "My Details" page
 
-  $rows = '<h2 class="pane-title">Contact Details</h2>'.$rows.$footer;
+  $rows = '<h4>Contact Details</h4>'.$rows.$footer;
   $footer = '
     <a href="/edit-my-contact-details/js/view" class="ctools-use-modal ctools-modal-civihr-custom-style  btn btn-primary">
       <i class="fa fa-pencil" aria-hidden="true"></i> Edit Contact Details
