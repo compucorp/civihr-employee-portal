@@ -5705,9 +5705,6 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
       _civihr_employee_portal_form_view_exposed_form_alter_actions_wrapper($form, $form_state, $form_id);
       _civihr_employee_portal_form_view_exposed_form_alter_labels_as_placeholders($form, $form_state, $form_id);
       break;
-    case 'views-exposed-form-users-list-page':
-      _civihr_employee_portal_form_view_exposed_form_alter_users_list($form, $form_state, $form_id);
-      break;
     case 'views-exposed-form-manage-hr-resources-manage-hr-resources-page':
       _civihr_employee_portal_form_view_exposed_form_alter_manage_hr_resources($form, $form_state, $form_id);
       break;
@@ -5726,22 +5723,6 @@ function civihr_employee_portal_form_views_exposed_form_alter(&$form, &$form_sta
 function _civihr_employee_portal_form_view_exposed_form_alter_manage_hr_resources(&$form, $form_state, $form_id) {
   $form['status']['#options']['1'] = t('Published');
   $form['status']['#options']['0'] = t('Not Published');
-}
-
-/**
- * Alters the Users List Exposed Filter
- *
- * @param array $form
- * @param array $form_state
- * @param string $form_id
- */
-function _civihr_employee_portal_form_view_exposed_form_alter_users_list(&$form, &$form_state, $form_id) {
-  $accessField = &$form['access'];
-  $form['#info']['filter-access']['label'] = '';
-  $accessField['min']['#prefix'] = $accessField['max']['#prefix'] = '<div class="col-sm-6">';
-  $accessField['min']['#suffix'] = $accessField['max']['#suffix'] = '</div>';
-  $accessField['min']['#title'] = 'Last Accessed From';
-  $accessField['max']['#title'] = 'To';
 }
 
 /**
