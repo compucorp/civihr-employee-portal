@@ -874,7 +874,7 @@ array(
               'wrapper_classes' => '',
               'css_classes' => 'onboarding_wizard_payroll_skip_radio',
               'aslist' => 0,
-              'items' => "2|Add Now\n1|Add Later\n",
+              'items' => "2|Add Now\n1|Skip this step\n",
               'multiple' => 0,
               'custom_keys' => 0,
               'empty_option' => '',

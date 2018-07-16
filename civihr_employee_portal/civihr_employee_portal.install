@@ -434,12 +434,20 @@ function civihr_employee_portal_update_7033() {
 }
 
 /**
+ * Renames onboarding wizard payroll option from "Add Later" to "Skip this step"
+ */
+function civihr_employee_portal_update_7034() {
+  civicrm_initialize();
+  drush_civihr_employee_portal_refresh_node_export_files();
+}
+
+/**
  * Revert updated features components
  * - Panel page which holds the My Details page
  * - Output Filter to write pure HTML in views sections without filters
  * Refresh the node files as onboarding form node was altered
  */
-function civihr_employee_portal_update_7034() {
+function civihr_employee_portal_update_7035() {
   features_revert(['civihr_employee_portal_features' => ['page_manager_pages']]);
   features_revert(['civihr_employee_portal_features' => ['filter']]);
   civicrm_initialize();
