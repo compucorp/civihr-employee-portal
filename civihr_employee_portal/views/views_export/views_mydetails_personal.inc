@@ -69,19 +69,6 @@ $handler->display->display_options['fields']['display_name']['field'] = 'display
 $handler->display->display_options['fields']['display_name']['label'] = 'Name';
 $handler->display->display_options['fields']['display_name']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 0;
-/* Field: CiviCRM Custom: NI/SSN Number: NI/SSN application in progress */
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['id'] = 'ni_ssn_application_in_progress_71';
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['table'] = 'civicrm_value_inline_custom_data_14';
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['field'] = 'ni_ssn_application_in_progress_71';
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['label'] = '';
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['exclude'] = TRUE;
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['alter']['alter_text'] = TRUE;
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['alter']['text'] = '<div class="chr_panel--my-details__personal__application_status [ni_ssn_application_in_progress_71]">
-<span class="views-label">NI/SSN </span>
-<span class="value">Application in progress</span>
-</div>';
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71']['empty'] = '<div class="chr_panel--my-details__personal__application_status--not-applying">Not applying</div>';
 /* Field: CiviCRM Contacts: Gender */
 $handler->display->display_options['fields']['gender']['id'] = 'gender';
 $handler->display->display_options['fields']['gender']['table'] = 'civicrm_contact';
@@ -123,30 +110,6 @@ $handler->display->display_options['fields']['nationality_44']['table'] = 'civic
 $handler->display->display_options['fields']['nationality_44']['field'] = 'nationality_44';
 $handler->display->display_options['fields']['nationality_44']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['nationality_44']['hide_empty'] = TRUE;
-/* Field: CiviCRM Custom: NI/SSN Number: NI/SSN application in progress */
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['id'] = 'ni_ssn_application_in_progress_71_1';
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['table'] = 'civicrm_value_inline_custom_data_14';
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['field'] = 'ni_ssn_application_in_progress_71';
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['label'] = '';
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['exclude'] = TRUE;
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['alter']['alter_text'] = TRUE;
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['alter']['text'] = 'chr_panel--my-details__personal__nsi_application_in_progress--[ni_ssn_application_in_progress_71_1]';
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['ni_ssn_application_in_progress_71_1']['civicrm_custom_formatter'] = 'value';
-/* Field: CiviCRM Custom: NI/SSN Number: NI / SSN */
-$handler->display->display_options['fields']['ni_ssn_70']['id'] = 'ni_ssn_70';
-$handler->display->display_options['fields']['ni_ssn_70']['table'] = 'civicrm_value_inline_custom_data_14';
-$handler->display->display_options['fields']['ni_ssn_70']['field'] = 'ni_ssn_70';
-$handler->display->display_options['fields']['ni_ssn_70']['label'] = '';
-$handler->display->display_options['fields']['ni_ssn_70']['alter']['alter_text'] = TRUE;
-$handler->display->display_options['fields']['ni_ssn_70']['alter']['text'] = '<div class="chr_panel--my-details__personal__nsi_exists [ni_ssn_application_in_progress_71_1]">
-  <span class="views-label">NI/SSN </span>
-  <span class="value">[ni_ssn_70]</span>
-</div>';
-$handler->display->display_options['fields']['ni_ssn_70']['element_label_colon'] = FALSE;
-$handler->display->display_options['fields']['ni_ssn_70']['empty'] = '[ni_ssn_application_in_progress_71]';
-$handler->display->display_options['fields']['ni_ssn_70']['hide_empty'] = TRUE;
-$handler->display->display_options['fields']['ni_ssn_70']['empty_zero'] = TRUE;
 /* Contextual filter: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['arguments']['id']['id'] = 'id';
 $handler->display->display_options['arguments']['id']['table'] = 'civicrm_contact';
@@ -190,22 +153,11 @@ $translatables['mydetails_personal'] = array(
   t('.'),
   t(','),
   t('Name'),
-  t('<div class="chr_panel--my-details__personal__application_status [ni_ssn_application_in_progress_71]">
-<span class="views-label">NI/SSN </span>
-<span class="value">Application in progress</span>
-</div>'),
-  t('<div class="chr_panel--my-details__personal__application_status--not-applying">Not applying</div>'),
   t('<div class="chr_panel--my-details__personal__gender">[gender]</div>'),
   t('<div class="chr_panel--my-details__personal__marital_status [marital_status_58]">[marital_status_58]</div>'),
   t('[id] [gender] [marital_status_58]'),
   t('Date of Birth'),
   t('Nationality'),
-  t('chr_panel--my-details__personal__nsi_application_in_progress--[ni_ssn_application_in_progress_71_1]'),
-  t('<div class="chr_panel--my-details__personal__nsi_exists [ni_ssn_application_in_progress_71_1]">
-  <span class="views-label">NI/SSN </span>
-  <span class="value">[ni_ssn_70]</span>
-</div>'),
-  t('[ni_ssn_application_in_progress_71]'),
   t('All'),
   t('My Personal Details'),
 );
