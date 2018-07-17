@@ -120,12 +120,12 @@ class civihr_employee_portal_handler_aggregated_personal_address extends views_h
     </div>
     ';
 
-    $streetAddress = trim(filter_xss(ArrayHelper::value('street_address', $address)));
-    $supplementalAddress1 = trim(filter_xss(ArrayHelper::value('supplemental_address_1', $address)));
+    $streetAddress = trim(ArrayHelper::value('street_address', $address));
+    $supplementalAddress1 = trim(ArrayHelper::value('supplemental_address_1', $address));
 
     $streetAddress .= trim( $streetAddress ) ? '<br/>' : '';
     $supplementalAddress1 .= trim($supplementalAddress1) ? '<br/>' : '';
-    $city = trim(filter_xss(ArrayHelper::value('city', $address)));
+    $city = trim(ArrayHelper::value('city', $address));
 
     $line1html = $city || $streetAddress || $supplementalAddress1 ?
       sprintf(
@@ -135,12 +135,12 @@ class civihr_employee_portal_handler_aggregated_personal_address extends views_h
         $city
       ) : '';
 
-    $postcode = trim(filter_xss(ArrayHelper::value('postal_code', $address)));
+    $postcode = trim(ArrayHelper::value('postal_code', $address));
     $line2html = $postcode ? sprintf($formatPostcode, $postcode) : '';
 
-    $country = trim(filter_xss(ArrayHelper::value('country_id.name', $address)));
+    $country = trim(ArrayHelper::value('country_id.name', $address));
     $line3html = $country ? sprintf($formatCountry, $country) : '' ;
 
-    return $line1html . $line2html . $line3html;
+    return filter_xss($line1html . $line2html . $line3html,['div','span','br']);
   }
 }
