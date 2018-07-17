@@ -95,7 +95,7 @@ class civihr_employee_portal_handler_aggregated_personal_address extends views_h
    *   The formatted address
    */
   private function formatAddressWithLabels($address) {
-    $format_street_address = '
+    $formatStreetAddress = '
     <div class="views-field views-field-street-address">
       <span class="views-label views-label-street-address">Home Address</span>
       <span class="field-content">
@@ -106,41 +106,41 @@ class civihr_employee_portal_handler_aggregated_personal_address extends views_h
     </div>
     ';
 
-    $format_postcode = '
+    $formatPostcode = '
     <div class="views-field views-field-postal-code">
       <span class="views-label views-label-postal-code">Postcode</span>
       <span class="field-content">%s</span>
     </div>
     ';
 
-    $format_country = '
+    $formatCountry = '
     <div class="views-field views-field-country">
       <span class="views-label views-label-country">Country</span>
       <span class="field-content">%s</span>
     </div>
     ';
 
-    $street_address = filter_xss(ArrayHelper::value('street_address', $address));
-    $supplemental_address_1 = filter_xss(ArrayHelper::value('supplemental_address_1', $address));
+    $streetAddress = trim(filter_xss(ArrayHelper::value('street_address', $address)));
+    $supplementalAddress1 = trim(filter_xss(ArrayHelper::value('supplemental_address_1', $address)));
 
-    $street_address .= trim( $street_address ) ? '<br/>' : '';
-    $supplemental_address_1 .= trim($supplemental_address_1) ? '<br/>' : '';
+    $streetAddress .= trim( $streetAddress ) ? '<br/>' : '';
+    $supplementalAddress1 .= trim($supplementalAddress1) ? '<br/>' : '';
     $city = trim(filter_xss(ArrayHelper::value('city', $address)));
 
-    $line_1_html = $city || $street_address || $supplemental_address_1 ?
+    $line1html = $city || $streetAddress || $supplementalAddress1 ?
       sprintf(
-        $format_street_address,
-        $street_address,
-        $supplemental_address_1,
+        $formatStreetAddress,
+        $streetAddress,
+        $supplementalAddress1,
         $city
       ) : '';
 
     $postcode = trim(filter_xss(ArrayHelper::value('postal_code', $address)));
-    $line_2_html = $postcode ? sprintf($format_postcode, $postcode) : '';
+    $line2html = $postcode ? sprintf($formatPostcode, $postcode) : '';
 
     $country = trim(filter_xss(ArrayHelper::value('country_id.name', $address)));
-    $line_3_html = $country ? sprintf($format_country, $country) : '' ;
+    $line3html = $country ? sprintf($formatCountry, $country) : '' ;
 
-    return $line_1_html . $line_2_html . $line_3_html;
+    return $line1html . $line2html . $line3html;
   }
 }
