@@ -43,6 +43,15 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civicrm',
   );
 
+  // Exported permission: 'access CiviCRM developer menu and tools'.
+  $permissions['access CiviCRM developer menu and tools'] = array(
+    'name' => 'access CiviCRM developer menu and tools',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'civicrm',
+  );
+
   // Exported permission: 'access CiviReport'.
   $permissions['access CiviReport'] = array(
     'name' => 'access CiviReport',
@@ -131,7 +140,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access administration pages'] = array(
     'name' => 'access administration pages',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'system',
@@ -328,6 +336,15 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'webform',
   );
 
+  // Exported permission: 'access root menu items and configurations'.
+  $permissions['access root menu items and configurations'] = array(
+    'name' => 'access root menu items and configurations',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'civicrm',
+  );
+
   // Exported permission: 'access rules debug'.
   $permissions['access rules debug'] = array(
     'name' => 'access rules debug',
@@ -373,7 +390,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['access toolbar'] = array(
     'name' => 'access toolbar',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'toolbar',
@@ -539,7 +555,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer comments'] = array(
     'name' => 'administer comments',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'comment',
@@ -659,7 +674,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer nodes'] = array(
     'name' => 'administer nodes',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -858,7 +872,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['administer url aliases'] = array(
     'name' => 'administer url aliases',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'path',
@@ -903,15 +916,6 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'views',
   );
 
-  // Exported permission: 'assign all roles'.
-  $permissions['assign all roles'] = array(
-    'name' => 'assign all roles',
-    'roles' => array(
-      'administrator' => 'administrator',
-    ),
-    'module' => 'role_delegation',
-  );
-
   // Exported permission: 'assign HR Admin role'.
   $permissions['assign HR Admin role'] = array(
     'name' => 'assign HR Admin role',
@@ -944,6 +948,15 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'role_delegation',
   );
 
+  // Exported permission: 'assign all roles'.
+  $permissions['assign all roles'] = array(
+    'name' => 'assign all roles',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'role_delegation',
+  );
+
   // Exported permission: 'block IP addresses'.
   $permissions['block IP addresses'] = array(
     'name' => 'block IP addresses',
@@ -958,7 +971,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['bypass node access'] = array(
     'name' => 'bypass node access',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -972,6 +984,16 @@ function civihr_default_permissions_user_default_permissions() {
       'administrator' => 'administrator',
     ),
     'module' => 'rules',
+  );
+
+  // Exported permission: 'can administer calendar feeds'.
+  $permissions['can administer calendar feeds'] = array(
+    'name' => 'can administer calendar feeds',
+    'roles' => array(
+      'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
+    ),
+    'module' => 'civicrm',
   );
 
   // Exported permission: 'can create and edit tasks'.
@@ -1156,7 +1178,6 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['create url aliases'] = array(
     'name' => 'create url aliases',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'path',
@@ -1178,6 +1199,17 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'create webform content',
     'roles' => array(),
     'module' => 'node',
+  );
+
+  // Exported permission: 'customize welcome wizard'.
+  $permissions['customize welcome wizard'] = array(
+    'name' => 'customize welcome wizard',
+    'roles' => array(
+      'HR Admin' => 'HR Admin',
+      'Regional HR Admin' => 'Regional HR Admin',
+      'administrator' => 'administrator',
+    ),
+    'module' => 'civihr_employee_portal',
   );
 
   // Exported permission: 'delete HRJobs'.
@@ -2222,6 +2254,7 @@ function civihr_default_permissions_user_default_permissions() {
   $permissions['view own unpublished content'] = array(
     'name' => 'view own unpublished content',
     'roles' => array(
+      'HR Admin' => 'HR Admin',
       'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
@@ -2268,11 +2301,19 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civihr_employee_portal',
   );
 
+  // Exported permission: 'view system status on footer'.
+  $permissions['view system status on footer'] = array(
+    'name' => 'view system status on footer',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'civicrm',
+  );
+
   // Exported permission: 'view the administration theme'.
   $permissions['view the administration theme'] = array(
     'name' => 'view the administration theme',
     'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
     'module' => 'system',
@@ -2286,35 +2327,6 @@ function civihr_default_permissions_user_default_permissions() {
       'Manager' => 'Manager',
       'Regional HR Admin' => 'Regional HR Admin',
       'Staff' => 'Staff',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'civihr_employee_portal',
-  );
-
-  // Exported permission: 'customize welcome wizard'.
-  $permissions['customize welcome wizard'] = array(
-    'name' => 'customize welcome wizard',
-    'roles' => array(
-      'administrator' => 'administrator',
-      'HR Admin' => 'HR Admin',
-      'Regional HR Admin' => 'Regional HR Admin',
-    ),
-    'module' => 'civihr_employee_portal',
-  );
-
-  // Exported permission: 'access CiviCRM developer menu and tools'.
-  $permissions['access CiviCRM developer menu and tools'] = array(
-    'name' => 'access CiviCRM developer menu and tools',
-    'roles' => array(
-      'administrator' => 'administrator'
-    ),
-    'module' => 'civicrm',
-  );
-
-  // Exported permission: 'access root menu items and configurations'.
-  $permissions['access root menu items and configurations'] = array(
-    'name' => 'access root menu items and configurations',
-    'roles' => array(
       'administrator' => 'administrator',
     ),
     'module' => 'civihr_employee_portal',

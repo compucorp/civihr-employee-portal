@@ -27,6 +27,23 @@
  * @ingroup views_templates
  */
 ?>
+
+<?php
+
+  /*
+   * Markup generated from views was not integrating well with panels in the
+   * current styling. We needed to get rid of specifc views HTML structure
+   * and classes to take advantage of existing styles imitating panels blocks
+   * structure. See civihr_default_theme_preprocess_views_view
+   *
+   * @see civihr_default_theme_preprocess_views_view()
+   */
+  if ( !empty($view_uses_generic_display_output) ) {
+    include('_views-view--generic-display-output.tpl.php');
+    return;
+  }
+?>
+
 <div class="<?php print $classes; ?>">
   <?php print render($title_prefix); ?>
   <?php if ($title): ?>

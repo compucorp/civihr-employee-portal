@@ -1954,6 +1954,284 @@ return date(\'Y-m-d\');';
   $export['civihr_report_people'] = $view;
 
   $view = new view();
+  $view->name = 'manage_hr_resources';
+  $view->description = '';
+  $view->tag = 'default';
+  $view->base_table = 'node';
+  $view->human_name = 'Manage HR Resources';
+  $view->core = 7;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
+  $handler->display->display_options['title'] = 'Manage HR Resources';
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'perm';
+  $handler->display->display_options['access']['perm'] = 'create hr_documents content';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['pager']['type'] = 'full';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '20';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['quantity'] = '9';
+  $handler->display->display_options['pager']['options']['tags']['first'] = 'First';
+  $handler->display->display_options['pager']['options']['tags']['previous'] = 'Previous';
+  $handler->display->display_options['pager']['options']['tags']['next'] = 'Next';
+  $handler->display->display_options['pager']['options']['tags']['last'] = 'Last';
+  $handler->display->display_options['style_plugin'] = 'table';
+  $handler->display->display_options['style_options']['columns'] = array(
+    'nid' => 'nid',
+    'title' => 'title',
+    'field_resource_type' => 'field_resource_type',
+    'name' => 'name',
+    'status' => 'status',
+    'created' => 'created',
+    'changed' => 'changed',
+    'nothing' => 'nothing',
+  );
+  $handler->display->display_options['style_options']['default'] = '-1';
+  $handler->display->display_options['style_options']['info'] = array(
+    'nid' => array(
+      'sortable' => 0,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'title' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'field_resource_type' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'name' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'status' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'created' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'changed' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'nothing' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+  );
+  /* Header: Global: Unfiltered text */
+  $handler->display->display_options['header']['area_text_custom']['id'] = 'area_text_custom';
+  $handler->display->display_options['header']['area_text_custom']['table'] = 'views';
+  $handler->display->display_options['header']['area_text_custom']['field'] = 'area_text_custom';
+  $handler->display->display_options['header']['area_text_custom']['empty'] = TRUE;
+  $handler->display->display_options['header']['area_text_custom']['content'] = '<a href="/node/add/hr-documents" class="btn btn-primary btn-lg"><i class="fa fa-plus-circle"></i>&nbsp;Add HR Resource</a>';
+  /* Relationship: Content: Author */
+  $handler->display->display_options['relationships']['uid']['id'] = 'uid';
+  $handler->display->display_options['relationships']['uid']['table'] = 'node';
+  $handler->display->display_options['relationships']['uid']['field'] = 'uid';
+  /* Field: Content: Nid */
+  $handler->display->display_options['fields']['nid']['id'] = 'nid';
+  $handler->display->display_options['fields']['nid']['table'] = 'node';
+  $handler->display->display_options['fields']['nid']['field'] = 'nid';
+  $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['title']['alter']['path'] = '/node/[nid]/edit?destination=manage-hr-resources';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
+  /* Field: Content: Resource type */
+  $handler->display->display_options['fields']['field_resource_type']['id'] = 'field_resource_type';
+  $handler->display->display_options['fields']['field_resource_type']['table'] = 'field_data_field_resource_type';
+  $handler->display->display_options['fields']['field_resource_type']['field'] = 'field_resource_type';
+  $handler->display->display_options['fields']['field_resource_type']['type'] = 'taxonomy_term_reference_plain';
+  /* Field: User: Name */
+  $handler->display->display_options['fields']['name']['id'] = 'name';
+  $handler->display->display_options['fields']['name']['table'] = 'users';
+  $handler->display->display_options['fields']['name']['field'] = 'name';
+  $handler->display->display_options['fields']['name']['relationship'] = 'uid';
+  $handler->display->display_options['fields']['name']['label'] = 'Author';
+  $handler->display->display_options['fields']['name']['link_to_user'] = FALSE;
+  /* Field: Content: Published */
+  $handler->display->display_options['fields']['status']['id'] = 'status';
+  $handler->display->display_options['fields']['status']['table'] = 'node';
+  $handler->display->display_options['fields']['status']['field'] = 'status';
+  $handler->display->display_options['fields']['status']['label'] = 'Status';
+  $handler->display->display_options['fields']['status']['type'] = 'published-notpublished';
+  $handler->display->display_options['fields']['status']['not'] = 0;
+  /* Field: Content: Post date */
+  $handler->display->display_options['fields']['created']['id'] = 'created';
+  $handler->display->display_options['fields']['created']['table'] = 'node';
+  $handler->display->display_options['fields']['created']['field'] = 'created';
+  $handler->display->display_options['fields']['created']['label'] = 'Created';
+  $handler->display->display_options['fields']['created']['date_format'] = 'long';
+  $handler->display->display_options['fields']['created']['second_date_format'] = 'long';
+  /* Field: Content: Updated date */
+  $handler->display->display_options['fields']['changed']['id'] = 'changed';
+  $handler->display->display_options['fields']['changed']['table'] = 'node';
+  $handler->display->display_options['fields']['changed']['field'] = 'changed';
+  $handler->display->display_options['fields']['changed']['label'] = 'Updated';
+  $handler->display->display_options['fields']['changed']['date_format'] = 'long';
+  $handler->display->display_options['fields']['changed']['second_date_format'] = 'long';
+  /* Field: Global: Custom text */
+  $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
+  $handler->display->display_options['fields']['nothing']['table'] = 'views';
+  $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
+  $handler->display->display_options['fields']['nothing']['label'] = 'Operations';
+  $handler->display->display_options['fields']['nothing']['alter']['text'] = '<a href="/node/[nid]/edit?destination=manage-hr-resources">Edit</a><br>
+  <a href="/node/[nid]/delete?destination=manage-hr-resources">Delete</a>';
+  /* Sort criterion: Content: Post date */
+  $handler->display->display_options['sorts']['created']['id'] = 'created';
+  $handler->display->display_options['sorts']['created']['table'] = 'node';
+  $handler->display->display_options['sorts']['created']['field'] = 'created';
+  $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+  /* Filter criterion: Content: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'hr_documents' => 'hr_documents',
+  );
+  $handler->display->display_options['filters']['type']['expose']['operator_id'] = 'type_op';
+  $handler->display->display_options['filters']['type']['expose']['label'] = 'Type';
+  $handler->display->display_options['filters']['type']['expose']['operator'] = 'type_op';
+  $handler->display->display_options['filters']['type']['expose']['identifier'] = 'type';
+  /* Filter criterion: Content: Title */
+  $handler->display->display_options['filters']['title']['id'] = 'title';
+  $handler->display->display_options['filters']['title']['table'] = 'node';
+  $handler->display->display_options['filters']['title']['field'] = 'title';
+  $handler->display->display_options['filters']['title']['operator'] = 'contains';
+  $handler->display->display_options['filters']['title']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['title']['expose']['operator_id'] = 'title_op';
+  $handler->display->display_options['filters']['title']['expose']['label'] = 'Title';
+  $handler->display->display_options['filters']['title']['expose']['operator'] = 'title_op';
+  $handler->display->display_options['filters']['title']['expose']['identifier'] = 'title';
+  $handler->display->display_options['filters']['title']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    55120974 => 0,
+    17087012 => 0,
+    57573969 => 0,
+    37588037 => 0,
+  );
+  $handler->display->display_options['filters']['title']['expose']['autocomplete_items'] = '10';
+  $handler->display->display_options['filters']['title']['expose']['autocomplete_min_chars'] = '0';
+  $handler->display->display_options['filters']['title']['expose']['autocomplete_field'] = 'title';
+  $handler->display->display_options['filters']['title']['expose']['autocomplete_raw_suggestion'] = 1;
+  $handler->display->display_options['filters']['title']['expose']['autocomplete_raw_dropdown'] = 1;
+  $handler->display->display_options['filters']['title']['expose']['autocomplete_dependent'] = 0;
+  /* Filter criterion: Content: Resource type (field_resource_type) */
+  $handler->display->display_options['filters']['field_resource_type_tid']['id'] = 'field_resource_type_tid';
+  $handler->display->display_options['filters']['field_resource_type_tid']['table'] = 'field_data_field_resource_type';
+  $handler->display->display_options['filters']['field_resource_type_tid']['field'] = 'field_resource_type_tid';
+  $handler->display->display_options['filters']['field_resource_type_tid']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['field_resource_type_tid']['expose']['operator_id'] = 'field_resource_type_tid_op';
+  $handler->display->display_options['filters']['field_resource_type_tid']['expose']['label'] = 'Resource type';
+  $handler->display->display_options['filters']['field_resource_type_tid']['expose']['operator'] = 'field_resource_type_tid_op';
+  $handler->display->display_options['filters']['field_resource_type_tid']['expose']['identifier'] = 'field_resource_type_tid';
+  $handler->display->display_options['filters']['field_resource_type_tid']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    55120974 => 0,
+    17087012 => 0,
+    57573969 => 0,
+    37588037 => 0,
+  );
+  $handler->display->display_options['filters']['field_resource_type_tid']['type'] = 'select';
+  $handler->display->display_options['filters']['field_resource_type_tid']['vocabulary'] = 'hr_resource_type';
+  /* Filter criterion: Content: Published */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = 'All';
+  $handler->display->display_options['filters']['status']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['status']['expose']['operator_id'] = '';
+  $handler->display->display_options['filters']['status']['expose']['label'] = 'Published';
+  $handler->display->display_options['filters']['status']['expose']['operator'] = 'status_op';
+  $handler->display->display_options['filters']['status']['expose']['identifier'] = 'status';
+  $handler->display->display_options['filters']['status']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    55120974 => 0,
+    17087012 => 0,
+    57573969 => 0,
+    37588037 => 0,
+  );
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'manage_hr_resources_page');
+  $handler->display->display_options['path'] = 'manage-hr-resources';
+  $translatables['manage_hr_resources'] = array(
+    t('Master'),
+    t('Manage HR Resources'),
+    t('more'),
+    t('Apply'),
+    t('Reset'),
+    t('Sort by'),
+    t('Asc'),
+    t('Desc'),
+    t('Items per page'),
+    t('- All -'),
+    t('Offset'),
+    t('First'),
+    t('Previous'),
+    t('Next'),
+    t('Last'),
+    t('<a href="/node/add/hr-documents" class="btn btn-primary btn-lg"><i class="fa fa-plus-circle"></i>&nbsp;Add HR Resource</a>'),
+    t('author'),
+    t('Nid'),
+    t('Title'),
+    t('Resource type'),
+    t('Author'),
+    t('Status'),
+    t('Created'),
+    t('Updated'),
+    t('Operations'),
+    t('<a href="/node/[nid]/edit?destination=manage-hr-resources">Edit</a><br>
+  <a href="/node/[nid]/delete?destination=manage-hr-resources">Delete</a>'),
+    t('Type'),
+    t('Published'),
+    t('Page'),
+  );
+  $export['manage_hr_resources'] = $view;
+
+  $view = new view();
   $view->name = 'users_list';
   $view->description = '';
   $view->tag = 'default';
@@ -2109,13 +2387,23 @@ return date(\'Y-m-d\');';
   $handler->display->display_options['filters']['access']['id'] = 'access';
   $handler->display->display_options['filters']['access']['table'] = 'users';
   $handler->display->display_options['filters']['access']['field'] = 'access';
-  $handler->display->display_options['filters']['access']['operator'] = 'between';
+  $handler->display->display_options['filters']['access']['operator'] = '>=';
   $handler->display->display_options['filters']['access']['group'] = 1;
   $handler->display->display_options['filters']['access']['exposed'] = TRUE;
   $handler->display->display_options['filters']['access']['expose']['operator_id'] = 'access_op';
-  $handler->display->display_options['filters']['access']['expose']['label'] = 'Last access: Between';
+  $handler->display->display_options['filters']['access']['expose']['label'] = 'Last Accessed From';
   $handler->display->display_options['filters']['access']['expose']['operator'] = 'access_op';
-  $handler->display->display_options['filters']['access']['expose']['identifier'] = 'access';
+  $handler->display->display_options['filters']['access']['expose']['identifier'] = 'access_from';
+  /* Filter criterion: User: Last access */
+  $handler->display->display_options['filters']['access_1']['id'] = 'access_1';
+  $handler->display->display_options['filters']['access_1']['table'] = 'users';
+  $handler->display->display_options['filters']['access_1']['field'] = 'access';
+  $handler->display->display_options['filters']['access_1']['operator'] = '<=';
+  $handler->display->display_options['filters']['access_1']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['access_1']['expose']['operator_id'] = 'access_1_op';
+  $handler->display->display_options['filters']['access_1']['expose']['label'] = 'To';
+  $handler->display->display_options['filters']['access_1']['expose']['operator'] = 'access_1_op';
+  $handler->display->display_options['filters']['access_1']['expose']['identifier'] = 'access_to';
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
@@ -2153,7 +2441,8 @@ return date(\'Y-m-d\');';
     t('Operations'),
     t('<a href="/user/[uid]/edit">Edit User Account</a><span class="chr_divider"> | </span><a href="/civicrm/contact/view?reset=1&cid=[id]">View Staff Record</a>'),
     t('Active'),
-    t('Last access: Between'),
+    t('Last Accessed From'),
+    t('To'),
     t('Page'),
   );
   $export['users_list'] = $view;

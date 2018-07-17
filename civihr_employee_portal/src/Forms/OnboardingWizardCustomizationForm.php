@@ -8,6 +8,7 @@ class OnboardingWizardCustomizationForm {
   const WELCOME_TEXT_KEY = 'civihr_onboarding_welcome_text';
   const INTRODUCTION_TEXT_KEY = 'civihr_onboarding_intro_text';
   const CAROUSEL_OPTIONS_KEY = 'civihr_onboarding_carousel_options';
+  const TEST_BUTTON_VALUE = 'Save and test onboarding wizard';
 
   /**
    * Builds an array representation of the onboarding customization settings
@@ -22,6 +23,7 @@ class OnboardingWizardCustomizationForm {
     $form[self::INTRODUCTION_TEXT_KEY] = $this->getIntroElement();
     $form[self::CAROUSEL_OPTIONS_KEY] = $this->getCarouselElement();
     $form['actions']['cancel'] = $this->getCancelButton();
+    $form['actions']['save-and-test'] = $this->getSaveAndTestButton();
     $form['#submit'][] = [$this, 'onSubmit'];
 
     $form = system_settings_form($form);
@@ -45,6 +47,14 @@ class OnboardingWizardCustomizationForm {
 
     $this->saveLogo($formState);
     $this->updateCarouselContent($formState);
+
+    // sends user to the first step of the onboarding wizard
+    // which is just node edit page with custom theming
+    if ($this->clickedSaveAndTest($formState)) {
+      $userEditPath = '/user/' . user_uid_optional_load()->uid . '/edit';
+      $queryParams = ['query' => [ 'testing' => 1 ]];
+      drupal_goto($userEditPath, $queryParams);
+    }
   }
 
   /**
@@ -178,6 +188,19 @@ class OnboardingWizardCustomizationForm {
   }
 
   /**
+   * On form submission checks if the button pressed was "SaveAndTest"
+   *
+   * @param array $formState
+   *
+   * @return bool
+   */
+  private function clickedSaveAndTest($formState) {
+    $clickedButton = \CRM_Utils_Array::value('clicked_button', $formState);
+
+    return \CRM_Utils_Array::value('#value', $clickedButton) === t(self::TEST_BUTTON_VALUE);
+  }
+
+  /**
    * Sets the title and weight for the save button
    *
    * @param array $form
@@ -189,5 +212,18 @@ class OnboardingWizardCustomizationForm {
     $form['actions']['submit']['#weight'] = 0;
 
     return $form;
+  }
+
+  /**
+   * Returns the structure for the button which saves and go to test
+   *
+   * @return array
+   */
+  private function getSaveAndTestButton() {
+    return [
+      '#type' => 'submit',
+      '#value' => t(self::TEST_BUTTON_VALUE),
+      '#weight' => -10,
+    ];
   }
 }
