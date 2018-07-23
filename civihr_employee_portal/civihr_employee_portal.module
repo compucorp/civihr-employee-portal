@@ -47,6 +47,7 @@ function civihr_employee_portal_css_alter(&$css) {
     _remove_resources($css, $removeFiles);
   } else {
     _remove_extension_resources('org.civicrm.shoreditch', $css);
+    _remove_extension_resources('org.civicrm.bootstrapcivihr', $css);
   }
 }
 
