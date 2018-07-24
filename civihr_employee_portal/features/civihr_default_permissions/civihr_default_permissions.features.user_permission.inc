@@ -2301,9 +2301,9 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civihr_employee_portal',
   );
 
-  // Exported permission: 'view system status on footer'.
-  $permissions['view system status on footer'] = array(
-    'name' => 'view system status on footer',
+  // Exported permission: 'view system notifications'.
+  $permissions['view system notifications'] = array(
+    'name' => 'view system notifications',
     'roles' => array(
       'administrator' => 'administrator',
     ),
