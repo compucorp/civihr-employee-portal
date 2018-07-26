@@ -46,7 +46,8 @@ function civihr_employee_portal_css_alter(&$css) {
 
     _remove_resources($css, $removeFiles);
   } else {
-    _remove_shoreditch_resources($css);
+    _remove_extension_resources('org.civicrm.shoreditch', $css);
+    _remove_extension_resources('org.civicrm.bootstrapcivihr', $css);
   }
 }
 
@@ -81,7 +82,7 @@ function civihr_employee_portal_js_alter(&$javascript) {
 
     _remove_resources($javascript, $removeFiles);
   } else {
-    _remove_shoreditch_resources($javascript);
+    _remove_extension_resources('org.civicrm.shoreditch', $javascript);
   }
 }
 
@@ -105,15 +106,16 @@ function _remove_resources(&$resourcesList, $blacklist = []) {
 }
 
 /**
- * Removes any resource related to the shoreditch extension
+ * Removes any resource related to the specified extension
  *
+ * @param string $extension e.g. 'org.civicrm.shoreditch'
  * @param array
  *   &$resourcesList variable contains all the references to loaded
  *   js/css array from alter.
  */
-function _remove_shoreditch_resources(&$resourcesList) {
+function _remove_extension_resources($extension, &$resourcesList) {
   foreach ($resourcesList as $path => $resource) {
-    if (strpos($path, 'org.civicrm.shoreditch')) {
+    if (strpos($path, $extension)) {
       unset($resourcesList[$path]);
     }
   }
