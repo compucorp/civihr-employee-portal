@@ -15,6 +15,7 @@ use Drupal\civihr_employee_portal\Page\HRDetailsPage;
 use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
+use Drupal\civihr_employee_portal\View\CustomFieldsMappingFixer;
 
 /**
  * Implements hook_install().
@@ -864,6 +865,7 @@ function civihr_employee_portal_views_default_views() {
 
     if (isset($view)) {
       $views[$view->name] = $view;
+      CustomFieldsMappingFixer::fixMapping($view);
     }
   }
 
