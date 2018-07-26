@@ -6691,13 +6691,9 @@ function _civihr_employee_portal_create_default_reports_configuration() {
 function civihr_employee_portal_get_markup_for_extension($resource = '', $scriptExtensionKey, $markupModuleName) {
   $script = CRM_Core_Config::singleton()->debug ? "{$resource}.js" : "{$resource}.min.js";
 
-  // Adds RequireJS library only once
+  // Adds RequireJS + AngularJS dependencies only once
   if (!strpos(drupal_get_js('footer'), 'require.min.js')) {
     civicrm_resources_load('org.civicrm.reqangular', ['require.min.js']);
-  }
-
-  // Adds AngularJS dependencies only once
-  if (!strpos(drupal_get_js('footer'), 'reqangular.min.js')) {
     civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
   }
 
