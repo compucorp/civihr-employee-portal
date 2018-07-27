@@ -22,6 +22,7 @@ class OnboardingWizardCustomizationForm {
     $form[self::WELCOME_TEXT_KEY] = $this->getWelcomeTextElement();
     $form[self::INTRODUCTION_TEXT_KEY] = $this->getIntroElement();
     $form[self::CAROUSEL_OPTIONS_KEY] = $this->getCarouselElement();
+    $form['civihr_onboarding_updates_group'] = $this->getUpdatesGroupElement();
     $form['actions']['cancel'] = $this->getCancelButton();
     $form['actions']['save-and-test'] = $this->getSaveAndTestButton();
     $form['#submit'][] = [$this, 'onSubmit'];
@@ -248,5 +249,73 @@ class OnboardingWizardCustomizationForm {
         form_error($element, t('The entered email address which will receive the updates is not valid'));
       }
     }
+  }
+
+  /**
+   * Returns the elements for setting notifications on Onboarding Wizard Form
+   *
+   * @return array
+   */
+  private function getUpdatesGroupElement() {
+
+    // Variable names
+    $sendUpdatesKey = 'civihr_onboarding_send_updates';
+    $emailToSendUpdatesKey = 'civihr_onboarding_email_to_send_updates';
+
+    // Classes
+    $bemBlock = 'civihr_onboarding_form';
+    $toggleClass = $bemBlock.'--toggle';
+    $updatesGroupClass = $bemBlock.'--container';
+    $updatesGroupClassNoUpdates = $updatesGroupClass . '--no-updates';
+
+    $element = [
+      '#type' => 'container',
+      '#weight' => 5,
+      '#attributes' => [
+        'class' => [
+          $updatesGroupClass,
+          // set this class as initial state to avoid unnecessary animation
+          // when javascript runs and makes the email visible or not
+          variable_get($sendUpdatesKey) ? '' : $updatesGroupClassNoUpdates,
+        ]
+      ],
+      '#suffix' => '<hr/>',
+    ];
+
+    // snippet to add markup suport to style a toggle button
+    $addToggleButton = '$("[name=\'' . $sendUpdatesKey . '\']").after("<span class=\'' . $toggleClass . '\'>toggle</span>");';
+
+    // snippet to remove the initial state. At this point the email is already
+    // visible or hidden, and the initial state must be removed to allow
+    // styling changes on user interaction
+    $removeInitialState = 'setTimeout(function() { $(".' . $updatesGroupClass . '").removeClass("' . $updatesGroupClassNoUpdates . '") }, 0);';
+
+    $element['#attached']['js'][] = [
+      'data' => 'jQuery(document).ready(function($) { ' . $addToggleButton . $removeInitialState . ' });',
+      'type' => 'inline',
+    ];
+
+    $element[$sendUpdatesKey] = [
+      '#type' => 'checkbox',
+      '#title' => 'Send an email when someone updates their details',
+      '#default_value' => variable_get($sendUpdatesKey),
+    ];
+
+    $element[$emailToSendUpdatesKey] = [
+      '#type' => 'textfield',
+      '#description' => 'The email which will receive the updates',
+      '#default_value' => variable_get($emailToSendUpdatesKey),
+      '#element_validate' => [[$this, 'validateEmail']],
+      '#size' => 50,
+      '#maxlength' => 128,
+      '#attributes' => ['placeholder' => t('Please enter an email address')],
+      '#states' => [
+        'enabled' =>
+          ['input[name="civihr_onboarding_send_updates"]' => ['checked' => TRUE]
+        ],
+      ],
+    ];
+
+    return $element;
   }
 }
