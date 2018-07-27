@@ -226,4 +226,27 @@ class OnboardingWizardCustomizationForm {
       '#weight' => -10,
     ];
   }
+
+  /**
+   * To validate the email which will receive the updates
+   *
+   * @param array $element
+   *    The email input field
+   * @param array $form_state
+   *    the state of the onboarding form
+   */
+  public function validateEmail($element, &$form_state) {
+    $value = $element['#value'];
+    $send_updates = $form_state['input']['civihr_onboarding_send_updates'];
+    // only validate if admin has chosen to send updates
+    if ($send_updates) {
+      // no empty value
+      if ($value == '') {
+        form_error($element, t('If you choose to receive updates then email field is mandatory'));
+        // checking email address is valid
+      } else if (!valid_email_address($value)) {
+        form_error($element, t('The entered email address which will receive the updates is not valid'));
+      }
+    }
+  }
 }
