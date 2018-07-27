@@ -533,8 +533,8 @@ function civihr_employee_portal_init() {
       '/lib/sweetalert/sweetalert.min.js'
     ]);
 
-    _add_script_to_page(['reqangular.min.js'], 'org.civicrm.reqangular', 'dashboard');
-    _add_script_to_page(['reqangular.min.js'], 'org.civicrm.reqangular', 'tasks-and-documents');
+    _add_script_to_page(['require.min.js', 'reqangular.min.js'], 'org.civicrm.reqangular', 'dashboard');
+    _add_script_to_page(['require.min.js', 'reqangular.min.js'], 'org.civicrm.reqangular', 'tasks-and-documents');
     _add_script_to_page(['/js/tasks.js'], NULL, 'tasks-and-documents', 'header');
     _add_script_to_page(['/js/ta-documents-app.js'], NULL, 'tasks-and-documents');
     _add_script_to_page(['tasks-assignments.min.js'], 'uk.co.compucorp.civicrm.tasksassignments', 'tasks-and-documents');
@@ -5191,6 +5191,7 @@ function civihr_employee_portal_hrreport_landing_page() {
   $jsOptions = ['type' => 'file', 'scope' => 'footer'];
 
   if (_civihr_employee_portal_is_extension_enabled('org.civicrm.reqangular')) {
+    drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "js/src/common/vendor/require.min.js", $jsOptions);
     drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "js/dist/reqangular.min.js", $jsOptions);
   }
 
@@ -5556,6 +5557,7 @@ function _civihr_employee_portal_add_report_scripts() {
   drupal_add_js(drupal_get_path('module', 'civihr_employee_portal') . '/lib/moment/moment.min.js', $jsOptions);
 
   if (_civihr_employee_portal_is_extension_enabled('org.civicrm.reqangular')) {
+    drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "js/src/common/vendor/require.min.js", $jsOptions);
     drupal_add_js(CRM_Core_Resources::singleton()->getUrl('org.civicrm.reqangular') . "js/dist/reqangular.min.js", $jsOptions);
   }
 
@@ -6692,7 +6694,8 @@ function civihr_employee_portal_get_markup_for_extension($resource = '', $script
   $script = CRM_Core_Config::singleton()->debug ? "{$resource}.js" : "{$resource}.min.js";
 
   // Adds RequireJS + AngularJS dependencies only once
-  if (!strpos(drupal_get_js('footer'), 'reqangular.min.js')) {
+  if (!strpos(drupal_get_js('footer'), 'require.min.js')) {
+    civicrm_resources_load('org.civicrm.reqangular', ['require.min.js']);
     civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
   }
 
