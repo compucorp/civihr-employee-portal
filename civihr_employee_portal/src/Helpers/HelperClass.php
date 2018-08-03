@@ -69,4 +69,55 @@ class HelperClass {
         return $type_data['id'];
     }
 
+  /**
+   * Takes the first element of an array of stdClass instances,
+   * then convert this element to array only with its values
+   * and then returns the first element on the array of values.
+   *
+   * @param array $a
+   *     an array of stdClass instances
+   *
+   * @return string|integer|stdClass
+   *     the first value found in the first stdClass element
+   */
+  public static function getFirstValueFromFirstObjectInArray($a) {
+    return is_array($a) && $a ? array_values(get_object_vars($a[0]))[0] : FALSE;
+  }
+
+  /**
+   * Gets location by display name. This is used to avoid using IDs which
+   * could be different depending on how this values are generated
+   *
+   * @param string $display_name
+   *     the name of the location
+   *
+   * @return int
+   *     the ID of the location
+   */
+  public static function getLocationTypeIdByName($display_name) {
+    return civicrm_api3('LocationType', 'get', [
+      'sequential' => 1,
+      'return' => ['id'],
+      'display_name' => $display_name,
+    ])['values'][0]['id'];
+  }
+
+  /**
+   * Gets phone type by name. This is used to avoid using IDs which could
+   * be different depending on how this values are generated
+   *
+   * @param string $name
+   *     the name of the phone type
+   *
+   * @return int
+   *     the ID of the phone type
+   */
+  public static function getPhoneTypeByName($name) {
+    return civicrm_api3('OptionValue', 'get', [
+      'sequential' => 1,
+      'return' => ['value'],
+      'option_group_id' => 'phone_type',
+      'name' => $name,
+    ])['values'][0]['value'];
+  }
 }
