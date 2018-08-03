@@ -1,7 +1,6 @@
 <?php
 
 use Drupal\civihr_employee_portal\Helpers\WebformHelper;
-use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
 use Drupal\civihr_employee_portal\Helpers\UrlHelper;
 use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
 
