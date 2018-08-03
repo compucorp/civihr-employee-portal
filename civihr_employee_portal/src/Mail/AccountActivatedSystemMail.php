@@ -4,24 +4,28 @@ namespace Drupal\civihr_employee_portal\Mail;
 
 class AccountActivatedSystemMail extends AbstractDrupalSystemMail {
   /**
+   * Returns the name of the template for this mail
+   *
    * @return string
+   *     the name of the template
    */
-  public function getTemplateName() {
+  protected function getTemplateName() {
     return 'user_account_activated.tpl';
   }
 
   /**
-   * @param array $message
+   * Set variables that will be passed to the template
    *
-   * @return array
+   * @return AccountActivatedSystemMail
+   *     this, the instance of the the same Class
    */
-  public function getVariables($message) {
-    $recipient = user_load_by_mail($message['to']);
-
-    return [
-      'invitationLink' => user_pass_reset_url($recipient),
-      'currentDateTime' => new \DateTime(),
-    ];
+  public function buildVariables() {
+    $variables = [];
+    $recipient = user_load_by_mail($this->message['to']);
+    $variables['invitationLink'] = user_pass_reset_url($recipient);
+    $variables['currentDateTime'] = new \DateTime();
+    $variables['body'] = $this->message['body'][0];
+    $this->variables = $variables;
+    return $this;
   }
-
 }
