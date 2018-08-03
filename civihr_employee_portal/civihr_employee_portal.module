@@ -5182,6 +5182,13 @@ function civihr_employee_portal_webform_submission_insert($node, $submission) {
   if ($node->title === OnboardingWebForm::NAME) {
     $form = new OnboardingWebForm();
     $form->onSubmit($node, $submission);
+    // check if updates are active before comparing data or send updates
+    if (variable_get('civihr_onboarding_send_updates', FALSE)) {
+      // comparing new data and getting changes
+      $changes = $submission->ViewsResultDiff->storeNewData()->compareData()->changes;
+      // sending notifications
+      civihr_employee_portal_send_email_of_changes('The Onboarding Wizard', $changes);
+    }
   }
 }
 
