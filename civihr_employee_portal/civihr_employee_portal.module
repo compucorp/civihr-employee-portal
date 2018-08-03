@@ -6780,3 +6780,26 @@ function civihr_employee_portal_page_build(&$page) {
       ctools_modal_add_js();
   }
 }
+
+/**
+ * Send notification emails about changes to the email entered in
+ * the Onboarding Form Configuration
+ *
+ * @var string $informationVia
+ *    A string which indicates where the information is coming from. Ex: Onboarding Form
+ * @var array $changes
+ *    Keyed array with sections and field names and field values
+ */
+function civihr_employee_portal_send_email_of_changes($informationVia, $changes) {
+  $mailto = variable_get('civihr_onboarding_email_to_send_updates');
+  // if there are changes and an email to send the updates
+  if ($mailto && $changes) {
+    $params = [];
+    $params['informationVia'] = $informationVia;
+    $params['changes'] = $changes;
+    $params['subject'] = 'CiviHR Self Service Data Submission';
+    $params['contactData'] = views_get_view_result('notifications_contact_data')[0];
+    $params['key'] = 'details_update_mail_notification';
+    drupal_mail('civihr_employee_portal', $params['key'], $mailto, language_default(), $params);
+  }
+}
