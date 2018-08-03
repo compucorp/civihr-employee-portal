@@ -15,6 +15,8 @@ use Drupal\civihr_employee_portal\Page\HRDetailsPage;
 use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
+use Drupal\civihr_employee_portal\View\ViewsResultDiff;
+use Drupal\civihr_employee_portal\Mail\ContactDetailsChangesMail;
 use Drupal\civihr_employee_portal\View\CustomFieldsMappingFixer;
 
 /**
@@ -741,45 +743,22 @@ function civihr_employee_portal_permission() {
  * @param array $message
  */
 function civihr_employee_portal_mail_alter(&$message) {
-  $replacementMail = NULL;
-
   switch ($message['key']) {
     case 'status_activated':
     case 'register_admin_created':
-      $replacementMail = new AccountActivatedSystemMail();
+      (new AccountActivatedSystemMail($message))->processMessage();
       break;
     case 'password_reset':
-      $replacementMail = new PasswordResetSystemMail();
+      (new PasswordResetSystemMail($message))->processMessage();
       break;
   }
-
-  if (!$replacementMail) {
-    return;
-  }
-
-  $smarty = CRM_Core_Smarty::singleton();
-  $smarty->addTemplateDir(__DIR__ . '/templates/smarty');
-
-  $variables = $replacementMail->getVariables($message);
-  $headers = $replacementMail->getHeaders();
-  $templateName = $replacementMail->getTemplateName();
-
-  // allow use of original content
-  $variables['body'] = $message['body'][0];
-  $body = $smarty->fetchWith($templateName, $variables);
-
-  $message['headers'] = array_merge($message['headers'], $headers);
-  $message['body'] = [$body];
 }
 
 /**
  * Implements hook_theme().
  */
 function civihr_employee_portal_theme($existing, $type, $theme, $path) {
-  // This will hold any custom view display names where we need to override the template file
-  $theme_hooks = [];
-
-  return $theme_hooks + [
+  return [
     'user_login_block' => [
       'render element' => 'form',
       'template' => 'templates/civihr-employee-portal-user-login',
@@ -5131,6 +5110,70 @@ function _civihr_employee_portal_should_do_onboarding($account) {
 }
 
 /**
+ * Implements hook_webform_submission_presave()
+ *
+ * @param stdClass $node
+ * @param stdClass $submission
+ */
+function civihr_employee_portal_webform_submission_presave($node, &$submission) {
+
+  if ($node->title === OnboardingWebForm::NAME) {
+    // check if updates are active before storing data for diffs
+    if (variable_get('civihr_onboarding_send_updates', FALSE)) {
+
+      $locationTypeIdPersonal = HelperClass::getLocationTypeIdByName('Personal');
+      $locationTypeIdWork = HelperClass::getLocationTypeIdByName('Work');
+      $PhoneTypeIdPhone = HelperClass::getPhoneTypeByName('Phone');
+
+      $dependantsContacts = views_get_view_result('mydetails_notifications__emergency_contacts', 'emergency_contact_ids', 'Yes', '_');
+      $newestDependantContactId = (int) HelperClass::getFirstValueFromFirstObjectInArray($dependantsContacts);
+
+      $emergencyContacts = views_get_view_result('mydetails_notifications__emergency_contacts', 'emergency_contact_ids', 'No', '_');
+      $newestEmergencyContactId = (int) HelperClass::getFirstValueFromFirstObjectInArray($emergencyContacts);
+
+      // diff configuration for Onboarding form
+      $viewsResultDiff = new ViewsResultDiff([
+        [ 'view' => 'mydetails_notifications__my_personal_details'],
+        [ 'view' => 'mydetails_notifications__my_address',
+          'args' => [$locationTypeIdPersonal]],
+        [ 'group' => [
+            [ 'view' => 'mydetails_notifications__my_contact_info_other'],
+            [ 'view' => 'mydetails_notifications__my_contact_info_emails',
+              'args' => [$locationTypeIdPersonal, 'Personal']
+            ],
+            [ 'view' => 'mydetails_notifications__my_contact_info_emails',
+              'args' => [$locationTypeIdWork, 'Work']
+            ],
+            [ 'view' => 'mydetails_notifications__my_contact_info_phones',
+              'exposedFilters' => ['location_type'=> $locationTypeIdPersonal, 'phone_type' => $PhoneTypeIdPhone],
+            ],
+            [ 'view' => 'mydetails_notifications__my_contact_info_phones',
+              'exposedFilters' => ['location_type'=> $locationTypeIdWork, 'phone_type' => $PhoneTypeIdPhone],
+            ],
+          ],
+        ],
+        [ 'view' => 'mydetails_notifications__my_payroll'],
+        [ 'view' => 'mydetails_notifications__emergency_contacts',
+          'args' => ['No', 'Emergency Contacts'],
+          'fieldAsKeyForRows' => 'id',
+          'exposedFilters' => ['id' => $newestDependantContactId],
+        ],
+        [ 'view' => 'mydetails_notifications__emergency_contacts',
+          'args' => ['Yes', 'Dependants'],
+          'fieldAsKeyForRows' => 'id',
+          'exposedFilters' => ['id' => $newestEmergencyContactId],
+        ],
+      ]);
+
+      // Saving data just before saving the new results of the form and
+      // storing ViewsResultDiff instance on submission object to access it
+      // once the submission gets saved
+      $submission->ViewsResultDiff = $viewsResultDiff->storeOldData();
+    }
+  }
+}
+
+/**
  * Implements hook_webform_submission_insert().
  * Some post processing needs to be done on the form, such as cache clearing
  *
@@ -5138,13 +5181,16 @@ function _civihr_employee_portal_should_do_onboarding($account) {
  * @param \stdClass $submission
  */
 function civihr_employee_portal_webform_submission_insert($node, $submission) {
-  $nodeTitle = property_exists($node, 'title') ? $node->title : NULL;
-  $onboardingTitle = OnboardingWebForm::NAME;
-  $isOnboardingForm = $nodeTitle === $onboardingTitle;
-
-  if ($isOnboardingForm) {
+  if ($node->title === OnboardingWebForm::NAME) {
     $form = new OnboardingWebForm();
     $form->onSubmit($node, $submission);
+    // check if updates are active before comparing data or send updates
+    if (variable_get('civihr_onboarding_send_updates', FALSE)) {
+      // comparing new data and getting changes
+      $changes = $submission->ViewsResultDiff->storeNewData()->compareData()->changes;
+      // sending notifications
+      civihr_employee_portal_send_email_of_changes('The Onboarding Wizard', $changes);
+    }
   }
 }
 
@@ -6734,5 +6780,57 @@ function civihr_employee_portal_page_build(&$page) {
   if (drupal_get_path_alias() == 'hr-details') {
       ctools_include('modal');
       ctools_modal_add_js();
+  }
+}
+
+/**
+ * Send notification emails about changes to the email entered in
+ * the Onboarding Form Configuration
+ *
+ * @var string $informationVia
+ *    A string which indicates where the information is coming from. Ex: Onboarding Form
+ * @var array $changes
+ *    Keyed array with sections and field names and field values
+ */
+function civihr_employee_portal_send_email_of_changes($informationVia, $changes) {
+  $mailto = variable_get('civihr_onboarding_email_to_send_updates');
+  // if there are changes and an email to send the updates
+  if ($mailto && $changes) {
+    $params = [];
+    $params['informationVia'] = $informationVia;
+    $params['changes'] = $changes;
+    $params['subject'] = 'CiviHR Self Service Data Submission';
+    $params['contactData'] = views_get_view_result('notifications_contact_data')[0];
+    $params['key'] = 'details_update_mail_notification';
+    drupal_mail('civihr_employee_portal', $params['key'], $mailto, language_default(), $params);
+  }
+}
+
+/**
+ * Implements theme_preprocess_views_view_fields
+ *
+ * @param  array $vars
+ *     The variables on the template
+ */
+function civihr_employee_portal_preprocess_views_view_fields(&$vars) {
+  if (!isset($vars['view']->fieldsMarkup)) {
+    $vars['view']->fieldsMarkup = [];
+  }
+  $vars['view']->fieldsMarkup[] = $vars['fields'];
+}
+
+/**
+ * Implements hook_mail
+ *
+ * @param string $key
+ *     key that identifies the email
+ * @param array $message
+ *     configs to build the email
+ * @param array $params
+ *     parameters to modify $message
+ */
+function civihr_employee_portal_mail($key, &$message, $params) {
+  if ($key == 'details_update_mail_notification') {
+    (new ContactDetailsChangesMail($message, $params))->processMessage();
   }
 }
