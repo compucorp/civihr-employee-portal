@@ -6803,3 +6803,16 @@ function civihr_employee_portal_send_email_of_changes($informationVia, $changes)
     drupal_mail('civihr_employee_portal', $params['key'], $mailto, language_default(), $params);
   }
 }
+
+/**
+ * Implements theme_preprocess_views_view_fields
+ *
+ * @param  array $vars
+ *     The variables on the template
+ */
+function civihr_employee_portal_preprocess_views_view_fields(&$vars) {
+  if (!isset($vars['view']->fieldsMarkup)) {
+    $vars['view']->fieldsMarkup = [];
+  }
+  $vars['view']->fieldsMarkup[] = $vars['fields'];
+}
