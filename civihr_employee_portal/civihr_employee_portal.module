@@ -757,10 +757,7 @@ function civihr_employee_portal_mail_alter(&$message) {
  * Implements hook_theme().
  */
 function civihr_employee_portal_theme($existing, $type, $theme, $path) {
-  // This will hold any custom view display names where we need to override the template file
-  $theme_hooks = [];
-
-  return $theme_hooks + [
+  return [
     'user_login_block' => [
       'render element' => 'form',
       'template' => 'templates/civihr-employee-portal-user-login',
