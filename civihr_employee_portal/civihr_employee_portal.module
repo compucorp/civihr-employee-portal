@@ -5179,11 +5179,7 @@ function civihr_employee_portal_webform_submission_presave($node, &$submission) 
  * @param \stdClass $submission
  */
 function civihr_employee_portal_webform_submission_insert($node, $submission) {
-  $nodeTitle = property_exists($node, 'title') ? $node->title : NULL;
-  $onboardingTitle = OnboardingWebForm::NAME;
-  $isOnboardingForm = $nodeTitle === $onboardingTitle;
-
-  if ($isOnboardingForm) {
+  if ($node->title === OnboardingWebForm::NAME) {
     $form = new OnboardingWebForm();
     $form->onSubmit($node, $submission);
   }
