@@ -970,30 +970,6 @@ function civihr_employee_portal_views_post_render(&$view, &$output, &$cache) {
     }
   }
 
-  if ($view->name == 'hr_vacancies') {
-    _civihr_employee_portal_decode_vacancy_description_html($view, $output);
-  }
-}
-
-/**
- * Decodes html entities in description for each vacancy so HTML tags are sent
- * to the browser.
- *
- * @param object $view
- * @param string $output
- */
-function _civihr_employee_portal_decode_vacancy_description_html(&$view, &$output) {
-  $replacements = [];
-  $renderedFields = [];
-
-  if (isset($view->style_plugin->rendered_fields)) {
-    $renderedFields = $view->style_plugin->rendered_fields;
-  }
-  foreach ($renderedFields as $vacancy) {
-    $replacements[$vacancy['description']] = html_entity_decode($vacancy['description']);
-  }
-
-  $output = strtr($output, $replacements);
 }
 
 function removeAdditionalCommas($view) {

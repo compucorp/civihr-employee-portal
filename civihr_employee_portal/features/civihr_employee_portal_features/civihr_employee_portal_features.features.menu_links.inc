@@ -350,34 +350,6 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 4,
     'customized' => 1,
   );
-  // Exported menu link: main-menu_vacancies:hr-vacancies.
-  $menu_links['main-menu_vacancies:hr-vacancies'] = array(
-    'menu_name' => 'main-menu',
-    'link_path' => 'hr-vacancies',
-    'router_path' => 'hr-vacancies',
-    'link_title' => 'Vacancies',
-    'options' => array(
-      'attributes' => array(
-        'class' => array(
-          0 => 'fa',
-          1 => 'fa-user-plus',
-        ),
-      ),
-      'item_attributes' => array(
-        'id' => '',
-        'class' => '',
-        'style' => '',
-      ),
-      'identifier' => 'main-menu_vacancies:hr-vacancies',
-    ),
-    'module' => 'system',
-    'hidden' => 0,
-    'external' => 0,
-    'has_children' => 0,
-    'expanded' => 0,
-    'weight' => 7,
-    'customized' => 1,
-  );
 
   // Translatables
   // Included for use with string extractors like potx.
