@@ -22,7 +22,6 @@ use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 function civihr_employee_portal_install() {
   _civihr_employee_portal_create_default_reports_configuration();
 
-  //Add HR Resource Types vocabulary and default terms
   TaxonomyHelper::createHRResourceTypeVocabulary();
   TaxonomyHelper::createDefaultTerms();
 }
