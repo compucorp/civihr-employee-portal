@@ -5108,6 +5108,70 @@ function _civihr_employee_portal_should_do_onboarding($account) {
 }
 
 /**
+ * Implements hook_webform_submission_presave()
+ *
+ * @param stdClass $node
+ * @param stdClass $submission
+ */
+function civihr_employee_portal_webform_submission_presave($node, &$submission) {
+
+  if ($node->title === OnboardingWebForm::NAME) {
+    // check if updates are active before storing data for diffs
+    if (variable_get('civihr_onboarding_send_updates', FALSE)) {
+
+      $locationTypeIdPersonal = HelperClass::getLocationTypeIdByName('Personal');
+      $locationTypeIdWork = HelperClass::getLocationTypeIdByName('Work');
+      $PhoneTypeIdPhone = HelperClass::getPhoneTypeByName('Phone');
+
+      $dependantsContacts = views_get_view_result('mydetails_notifications__emergency_contacts', 'emergency_contact_ids', 'Yes', '_');
+      $newestDependantContactId = (int) HelperClass::getFirstValueFromFirstObjectInArray($dependantsContacts);
+
+      $emergencyContacts = views_get_view_result('mydetails_notifications__emergency_contacts', 'emergency_contact_ids', 'No', '_');
+      $newestEmergencyContactId = (int) HelperClass::getFirstValueFromFirstObjectInArray($emergencyContacts);
+
+      // diff configuration for Onboarding form
+      $viewsResultDiff = new ViewsResultDiff([
+        [ 'view' => 'mydetails_notifications__my_personal_details'],
+        [ 'view' => 'mydetails_notifications__my_address',
+          'args' => [$locationTypeIdPersonal]],
+        [ 'group' => [
+            [ 'view' => 'mydetails_notifications__my_contact_info_other'],
+            [ 'view' => 'mydetails_notifications__my_contact_info_emails',
+              'args' => [$locationTypeIdPersonal, 'Personal']
+            ],
+            [ 'view' => 'mydetails_notifications__my_contact_info_emails',
+              'args' => [$locationTypeIdWork, 'Work']
+            ],
+            [ 'view' => 'mydetails_notifications__my_contact_info_phones',
+              'exposedFilters' => ['location_type'=> $locationTypeIdPersonal, 'phone_type' => $PhoneTypeIdPhone],
+            ],
+            [ 'view' => 'mydetails_notifications__my_contact_info_phones',
+              'exposedFilters' => ['location_type'=> $locationTypeIdWork, 'phone_type' => $PhoneTypeIdPhone],
+            ],
+          ],
+        ],
+        [ 'view' => 'mydetails_notifications__my_payroll'],
+        [ 'view' => 'mydetails_notifications__emergency_contacts',
+          'args' => ['No', 'Emergency Contacts'],
+          'fieldAsKeyForRows' => 'id',
+          'exposedFilters' => ['id' => $newestDependantContactId],
+        ],
+        [ 'view' => 'mydetails_notifications__emergency_contacts',
+          'args' => ['Yes', 'Dependants'],
+          'fieldAsKeyForRows' => 'id',
+          'exposedFilters' => ['id' => $newestEmergencyContactId],
+        ],
+      ]);
+
+      // Saving data just before saving the new results of the form and
+      // storing ViewsResultDiff instance on submission object to access it
+      // once the submission gets saved
+      $submission->ViewsResultDiff = $viewsResultDiff->storeOldData();
+    }
+  }
+}
+
+/**
  * Implements hook_webform_submission_insert().
  * Some post processing needs to be done on the form, such as cache clearing
  *
