@@ -6816,3 +6816,19 @@ function civihr_employee_portal_preprocess_views_view_fields(&$vars) {
   }
   $vars['view']->fieldsMarkup[] = $vars['fields'];
 }
+
+/**
+ * Implements hook_mail
+ *
+ * @param string $key
+ *     key that identifies the email
+ * @param array $message
+ *     configs to build the email
+ * @param array $params
+ *     parameters to modify $message
+ */
+function civihr_employee_portal_mail($key, &$message, $params) {
+  if ($key == 'details_update_mail_notification') {
+    (new ContactDetailsChangesMail($message, $params))->processMessage();
+  }
+}
