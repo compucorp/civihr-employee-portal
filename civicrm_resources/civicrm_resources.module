@@ -22,8 +22,10 @@ function civicrm_resources_add_resources($extention_path, $req_files = []) {
 
   $js_list = [];
   $css_list = [];
+  $no = 1;
 
   foreach ($files as $key => $file) {
+    print("<pre>". ++$no .print_r($file, true)."</pre>");
     if (!empty($req_files)) {
       if (in_array('*.js', $req_files) && preg_match('/\.js$/', $file->filename)) {
         $js_list[] = $file->uri;
