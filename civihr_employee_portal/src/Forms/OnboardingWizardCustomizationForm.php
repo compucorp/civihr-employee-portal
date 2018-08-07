@@ -9,6 +9,10 @@ class OnboardingWizardCustomizationForm {
   const INTRODUCTION_TEXT_KEY = 'civihr_onboarding_intro_text';
   const CAROUSEL_OPTIONS_KEY = 'civihr_onboarding_carousel_options';
   const TEST_BUTTON_VALUE = 'Save and test onboarding wizard';
+  const ONBOARDING_UPDATES_GROUP = 'civihr_onboarding_updates_group';
+  const SEND_UPDATES_KEY = 'civihr_onboarding_send_updates';
+  const EMAIL_TO_SEND_UPDATES_KEY = 'civihr_onboarding_email_to_send_updates';
+  const CANCEL_OP = 'Cancel';
 
   /**
    * Builds an array representation of the onboarding customization settings
@@ -18,17 +22,18 @@ class OnboardingWizardCustomizationForm {
    */
   public function build() {
     $form = [];
+
     $form[self::LOGO_KEY] = $this->getLogoElement();
     $form[self::WELCOME_TEXT_KEY] = $this->getWelcomeTextElement();
     $form[self::INTRODUCTION_TEXT_KEY] = $this->getIntroElement();
     $form[self::CAROUSEL_OPTIONS_KEY] = $this->getCarouselElement();
-    $form['civihr_onboarding_updates_group'] = $this->getUpdatesGroupElement();
+    $form[self::ONBOARDING_UPDATES_GROUP] = $this->getUpdatesGroupElement();
+
     $form['actions']['cancel'] = $this->getCancelButton();
     $form['actions']['save-and-test'] = $this->getSaveAndTestButton();
     $form['#submit'][] = [$this, 'onSubmit'];
 
     $form = system_settings_form($form);
-
     $form = $this->adjustSaveButton($form);
 
     return $form;
@@ -134,7 +139,7 @@ class OnboardingWizardCustomizationForm {
   private function getCancelButton() {
     return [
       '#type' => 'submit',
-      '#value' => t('Cancel'),
+      '#value' => t(self::CANCEL_OP),
       '#weight' => 1,
     ];
   }
@@ -185,7 +190,7 @@ class OnboardingWizardCustomizationForm {
   private function clickedCancel($formState) {
     $clickedButton = \CRM_Utils_Array::value('clicked_button', $formState);
 
-    return \CRM_Utils_Array::value('#value', $clickedButton) === t('Cancel');
+    return \CRM_Utils_Array::value('#value', $clickedButton) === t(self::CANCEL_OP);
   }
 
   /**
@@ -232,20 +237,21 @@ class OnboardingWizardCustomizationForm {
    * To validate the email which will receive the updates
    *
    * @param array $element
-   *    The email input field
+   *   The email input field
    * @param array $form_state
-   *    the state of the onboarding form
+   *   the state of the onboarding form
    */
-  public function validateEmail($element, &$form_state) {
-    $value = $element['#value'];
-    $send_updates = $form_state['input']['civihr_onboarding_send_updates'];
+  public function validateSendUpdateSettings($element, &$form_state) {
+    $updateEmailAddress = $element['#value'];
+    $shouldSendUpdates = $form_state['input'][self::SEND_UPDATES_KEY];
+
     // only validate if admin has chosen to send updates
-    if ($send_updates) {
+    if (!$this->clickedCancel($form_state) && $shouldSendUpdates) {
       // no empty value
-      if ($value == '') {
+      if ($updateEmailAddress == '') {
         form_error($element, t('If you choose to receive updates then email field is mandatory'));
         // checking email address is valid
-      } else if (!valid_email_address($value)) {
+      } else if (!valid_email_address($updateEmailAddress)) {
         form_error($element, t('The entered email address which will receive the updates is not valid'));
       }
     }
@@ -258,60 +264,60 @@ class OnboardingWizardCustomizationForm {
    */
   private function getUpdatesGroupElement() {
 
-    // Variable names
-    $sendUpdatesKey = 'civihr_onboarding_send_updates';
-    $emailToSendUpdatesKey = 'civihr_onboarding_email_to_send_updates';
-
     // Classes
     $bemBlock = 'civihr_onboarding_form';
     $toggleClass = $bemBlock.'--toggle';
-    $updatesGroupClass = $bemBlock.'--container';
-    $updatesGroupClassNoUpdates = $updatesGroupClass . '--no-updates';
+    $groupClass = $bemBlock.'--container';
+    $groupClassNoUpdates = $groupClass . '--no-updates';
 
     $element = [
       '#type' => 'container',
       '#weight' => 5,
       '#attributes' => [
         'class' => [
-          $updatesGroupClass,
+          $groupClass,
           // set this class as initial state to avoid unnecessary animation
           // when javascript runs and makes the email visible or not
-          variable_get($sendUpdatesKey) ? '' : $updatesGroupClassNoUpdates,
+          variable_get(self::SEND_UPDATES_KEY) ? '' : $groupClassNoUpdates,
         ]
       ],
       '#suffix' => '<hr/>',
     ];
 
     // snippet to add markup suport to style a toggle button
-    $addToggleButton = '$("[name=\'' . $sendUpdatesKey . '\']").after("<span class=\'' . $toggleClass . '\'>toggle</span>");';
+    $sendUpdatesSelector = '"[name=\'' . self::SEND_UPDATES_KEY . '\']"';
+    $toggleButtonHTML = "\"<span class='$toggleClass'> toggle </span>\"";
+    $addToggleButton = "$($sendUpdatesSelector).after($toggleButtonHTML);";
 
     // snippet to remove the initial state. At this point the email is already
     // visible or hidden, and the initial state must be removed to allow
     // styling changes on user interaction
-    $removeInitialState = 'setTimeout(function() { $(".' . $updatesGroupClass . '").removeClass("' . $updatesGroupClassNoUpdates . '") }, 0);';
+    $removeInitialStateFn = "function() { $('.$groupClass').removeClass('$groupClassNoUpdates') }";
+    $removeInitialState = "setTimeout( $removeInitialStateFn, 0);";
 
+    $snippets = $addToggleButton . $removeInitialState;
     $element['#attached']['js'][] = [
-      'data' => 'jQuery(document).ready(function($) { ' . $addToggleButton . $removeInitialState . ' });',
+      'data' => "jQuery(document).ready(function($) { $snippets });",
       'type' => 'inline',
     ];
 
-    $element[$sendUpdatesKey] = [
+    $element[self::SEND_UPDATES_KEY] = [
       '#type' => 'checkbox',
       '#title' => 'Send an email when someone updates their details',
-      '#default_value' => variable_get($sendUpdatesKey),
+      '#default_value' => variable_get(self::SEND_UPDATES_KEY),
     ];
 
-    $element[$emailToSendUpdatesKey] = [
+    $element[self::EMAIL_TO_SEND_UPDATES_KEY] = [
       '#type' => 'textfield',
       '#description' => 'The email which will receive the updates',
-      '#default_value' => variable_get($emailToSendUpdatesKey),
-      '#element_validate' => [[$this, 'validateEmail']],
+      '#default_value' => variable_get(self::EMAIL_TO_SEND_UPDATES_KEY),
+      '#element_validate' => [[$this, 'validateSendUpdateSettings']],
       '#size' => 50,
       '#maxlength' => 128,
       '#attributes' => ['placeholder' => t('Please enter an email address')],
       '#states' => [
         'enabled' =>
-          ['input[name="civihr_onboarding_send_updates"]' => ['checked' => TRUE]
+          ['input[name="' . self::SEND_UPDATES_KEY . '"]' => ['checked' => TRUE]
         ],
       ],
     ];
