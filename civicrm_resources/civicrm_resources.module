@@ -51,6 +51,7 @@ function civicrm_resources_add_resources($extention_path, $req_files = []) {
       }
     }
   }
+  print("<pre>".print_r($js_list, true)."</pre>");
   foreach ($css_list as $key => $css_file) {
     drupal_add_css(ltrim(str_replace(DRUPAL_ROOT, '', $css_file), '/'));
   }
