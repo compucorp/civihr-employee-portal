@@ -4756,7 +4756,7 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
   }
 
   // Set up Emergency Contact webform ajax fields and callbacks.
-  if (!empty($form['#node']) && $form['#node']->nid === variable_get('emergency_contact_webform_nid')) {
+  if (!empty($form['#node']->nid) && $form['#node']->nid === variable_get('emergency_contact_webform_nid')) {
     $fieldset = _get_emergency_contact_fieldset_list();
 
     for ($contact = 1; $contact < 3; $contact++) {
