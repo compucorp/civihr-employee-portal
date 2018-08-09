@@ -23,23 +23,29 @@ function civicrm_resources_add_resources($extention_path, $req_files = []) {
   $js_list = [];
   $css_list = [];
 
+  $resourceFilenameUri = array_map(function ($file) {
+    return ['filename' => $file->filename, 'uri' => $file->uri];
+  }, $files);
+  $resourceFilenameUriValues = array_values($resourceFilenameUri);
+  $fileNames = array_column($resourceFilenameUri, 'filename');
+  foreach ($req_files as $req_file) {
+    $index = array_search($req_file, $fileNames);
+    if ($index && preg_match('/\.js$/', $req_file)) {
+      $js_list[] = $resourceFilenameUriValues[$index]['uri'];
+    }
+    elseif ($index && preg_match('/\.css$/', $req_file)) {
+      $css_list[] = $resourceFilenameUriValues[$index]['uri'];
+    }
+  }
+
   foreach ($files as $key => $file) {
     if (!empty($req_files)) {
       if (in_array('*.js', $req_files) && preg_match('/\.js$/', $file->filename)) {
         $js_list[] = $file->uri;
       }
-      else {
-        if (in_array($file->filename, $req_files) && preg_match('/\.js$/', $file->filename)) {
-          $js_list[] = $file->uri;
-        }
-      }
+
       if (in_array('*.css', $req_files) && preg_match('/\.css$/', $file->filename)) {
         $css_list[] = $file->uri;
-      }
-      else {
-        if (in_array($file->filename, $req_files) && preg_match('/\.css$/', $file->filename)) {
-          $css_list[] = $file->uri;
-        }
       }
     }
     else {
