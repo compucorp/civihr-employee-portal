@@ -148,7 +148,7 @@ if (!empty($documentIds)) {
               <?php if ($row['status_id'] === 'awaiting upload'): ?>
                 <button
                 ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', 'edit')"
-                class="btn btn-sm btn-default">
+                class="btn btn-sm btn-primary-outline">
                 <i class="fa fa-upload"></i>
                 Upload
                 </button>
@@ -156,12 +156,12 @@ if (!empty($documentIds)) {
                 <button
                   ng-show='!document.loadingModalData'
                   ng-click="document.modalDocument('<?php print $rowID ?>', 'staff', 'view')"
-                  class="btn btn-sm btn-default">
+                  class="btn btn-sm btn-primary-outline">
                   <i class="fa fa-eye"></i>
                   View
                 </button>
                 <?php $showDownload = CRM_Utils_Array::value($rowID, $documentFileCount, 0) > 0 ? 'true' : 'false'; ?>
-                <a class="btn btn-sm btn-default"
+                <a class="btn btn-sm btn-primary-outline"
                   <?php printf("ng-show='!document.loadingModalData && %s'", $showDownload); ?>
                    target="_blank"
                    ng-href="/civicrm/tasksassignments/file/zip?entityID=<?php print $rowID; ?>&entityTable=civicrm_activity">
