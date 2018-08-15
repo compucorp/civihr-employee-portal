@@ -455,6 +455,18 @@ function civihr_employee_portal_update_7035() {
 }
 
 /**
+ * Removes old 'Help' menu link from main menu
+ */
+function civihr_employee_portal_update_7036() {
+  db_delete('menu_links')
+      ->condition('link_title', 'help')
+      ->condition('menu_name', 'main-menu')
+      ->execute();
+
+    cache_clear_all();
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string $path
