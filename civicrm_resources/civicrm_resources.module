@@ -6,205 +6,43 @@
  */
 
 /**
- * Internal function to handle the logic of files to be filtered and included.
+ * Includes CSS/JS resources onto a page
  *
- * @param string $extention_path
- *   Machine path of civicrm extention.
- * @param array $req_files
- *   An array of file list to be included
- *
- * @return NULL
+ * @param string $extension_path
+ *   Machine path of civicrm extension.
+ * @param array $resources_uris
+ *   An array of resources URIs relative to extension paths to be included
  */
-function civicrm_resources_add_resources($extention_path, $req_files = []) {
-  global $base_url;
-
-  $files = civicrm_resources_file_scan_directory($extention_path, '/\.(css|js)$/i');
-  $js_list = [];
-  $css_list = [];
-  list($all_js, $all_css) = _civicrm_resources_filter_files($files);
-
-  if (empty($req_files)) {
-    $req_files = ['*.css', '*.js'];
-  }
-
-  if (in_array('*.js', $req_files)) {
-    $js_list = _civicrm_resources_get_uris($all_js);
-  }
-
-  if (in_array('*.css', $req_files)) {
-    $css_list = _civicrm_resources_get_uris($all_css);
-  }
-
-  if (!in_array('*.css', $req_files) || !in_array('*.js', $req_files)) {
-    $file_names = array_column($files, 'filename');
-
-    foreach ($req_files as $req_file) {
-      $index = array_search($req_file, $file_names);
-      if (($index !== FALSE) && preg_match('/\.js$/', $req_file)) {
-        $js_list[] = _civicrm_resources_get_file_uri($index, $all_js);
-        continue;
-      }
-
-      if (($index !== FALSE) && preg_match('/\.css$/', $req_file)) {
-        $css_list[] = _civicrm_resources_get_file_uri($index, $all_css);
-        continue;
-      }
-    }
-  }
-
-  foreach ($css_list as $key => $css_file) {
-    drupal_add_css(ltrim(str_replace(DRUPAL_ROOT, '', $css_file), '/'));
-  }
-  foreach ($js_list as $key => $js_file) {
-    drupal_add_js(ltrim(str_replace(DRUPAL_ROOT, '', $js_file), '/'),  array('scope' => 'footer'));
+function civicrm_resources_add_resources($extension_path, $resources_uris = []) {
+  foreach ($resources_uris as $resources_uri) {
+    _civicrm_resources_add_resource($extension_path, $resources_uri);
   }
 }
 
 /**
- * Filters files into css or js
+ * Loads resources from the given extension
  *
+ * @param string $extension_full_name
+ *   Machine name of civicrm extension.
  * @param array $files
- *
- * @return array
+ *   An array of resources URIs relative to extension paths to be included
  */
-function _civicrm_resources_filter_files($files) {
-  $filtered_js_file = array_filter($files, function ($file) {
-    return preg_match('/\.js$/', $file['filename']);
-  });
-
-  $filtered_css_file = array_filter($files, function ($file) {
-    return preg_match('/\.css$/', $file['filename']);
-  });
-
-  return [$filtered_js_file, $filtered_css_file];
-}
-
-/**
- * Retrieves uri for file list
- *
- * @param array $files
- *
- * @return array
- */
-function _civicrm_resources_get_uris($files) {
-  $resource_uri = array_map(function ($file) {
-    return  $file->uri;
-  }, $files);
-
-  return array_values($resource_uri);
-}
-
-/**
- * Retrieves uri for a specific file
- *
- * @param int $index
- * @param array $resource_list
- *
- * @return string
- */
-function _civicrm_resources_get_file_uri($index, $resource_list) {
-  $uri_values = array_values($resource_list);
-
-  return $uri_values[$index]['uri'];
-}
-/**
- * Finds all files that match a given mask in a given directory.
- *
- * Directories and files beginning with a period are excluded; this
- * prevents hidden files and directories (such as SVN working directories)
- * from being scanned.
- *
- * @param $dir
- *   The base directory or URI to scan, without trailing slash.
- * @param $mask
- *   The preg_match() regular expression of the files to find.
- * @param $options
- *   An associative array of additional options, with the following elements:
- *   - 'nomask': The preg_match() regular expression of the files to ignore.
- *     Defaults to '/(\.\.?|CVS)$/'.
- *   - 'callback': The callback function to call for each match. There is no
- *     default callback.
- *   - 'recurse': When TRUE, the directory scan will recurse the entire tree
- *     starting at the provided directory. Defaults to TRUE.
- *   - 'key': The key to be used for the returned associative array of files.
- *     Possible values are 'uri', for the file's URI; 'filename', for the
- *     basename of the file; and 'name' for the name of the file without the
- *     extension. Defaults to 'uri'.
- *   - 'min_depth': Minimum depth of directories to return files from. Defaults
- *     to 0.
- * @param $depth
- *   Current depth of recursion. This parameter is only used internally and
- *   should not be passed in.
- *
- * @return
- *   An associative array (keyed on the chosen key) of objects with 'uri',
- *   'filename', and 'name' members corresponding to the matching files.
- */
-function civicrm_resources_file_scan_directory($dir, $mask, $options = [], $depth = 0) {
-  // Merge in defaults.
-  $options += [
-    'nomask' => '/(\.\.?|CVS)$/',
-    'callback' => 0,
-    'recurse' => TRUE,
-    'key' => 'uri',
-    'min_depth' => 0,
-  ];
-
-  $options['key'] = in_array($options['key'], [
-    'uri',
-    'filename',
-    'name',
-  ]) ? $options['key'] : 'uri';
-  $files = [];
-  if (is_dir($dir) && $handle = opendir($dir)) {
-    while (FALSE !== ($filename = readdir($handle))) {
-      if (!preg_match($options['nomask'], $filename) && $filename[0] != '.') {
-        $uri = "$dir/$filename";
-        $uri = file_stream_wrapper_uri_normalize($uri);
-        if (is_dir($uri) && $options['recurse']) {
-          $files = array_merge(civicrm_resources_file_scan_directory($uri, $mask, $options, $depth + 1), $files);
-        }
-        elseif ($depth >= $options['min_depth'] && preg_match($mask, $filename)) {
-          $file['uri'] = $uri;
-          $file['filename'] = $filename;
-          $file['name'] = pathinfo($filename, PATHINFO_FILENAME);
-          $key = $options['key'];
-          $files[$file[$key]] = $file;
-          if ($options['callback']) {
-            $options['callback']($uri);
-          }
-        }
-      }
-    }
-    closedir($handle);
-  }
-  return $files;
-}
-
-/**
- * API function to be used across drupal site to load resources.
- *
- * @param string $extention_full_name
- *   Machine name of civicrm extention.
- * @param array $files
- *   An array of file list to be included
- *
- * @return NULL
- */
-function civicrm_resources_load($extention_full_name, $files = []) {
-  if (cache_get($extention_full_name, 'cache_civicrm_resources')) {
-    $ext_path_cache = cache_get($extention_full_name, 'cache_civicrm_resources');
+function civicrm_resources_load($extension_full_name, $resources_uris = []) {
+  if (cache_get($extension_full_name, 'cache_civicrm_resources')) {
+    $ext_path_cache = cache_get($extension_full_name, 'cache_civicrm_resources');
     $ext_path = $ext_path_cache->data;
   }
   else {
     civicrm_initialize();
+
     $ext_path = CRM_Extension_System::singleton()
       ->getMapper()
-      ->keyToBasePath($extention_full_name);
-    cache_set($extention_full_name, $ext_path, 'cache_civicrm_resources');
+      ->keyToBasePath($extension_full_name);
+
+    cache_set($extension_full_name, $ext_path, 'cache_civicrm_resources');
   }
-  //civicrm_resources_add_resources($ext_path, array('gulpfile.js', 'hrjc.css', 'contact.js'));
-  civicrm_resources_add_resources($ext_path, $files);
+
+  civicrm_resources_add_resources($ext_path, $resources_uris);
 }
 
 /**
@@ -212,4 +50,26 @@ function civicrm_resources_load($extention_full_name, $files = []) {
  */
 function civicrm_resources_flush_caches() {
   return ['cache_civicrm_resources'];
+}
+
+/**
+ * Includes CSS/JS resources onto a page
+ *
+ * @param string $extension_path
+ *   Machine path of civicrm extension.
+ * @param array $resources_uris
+ *   Resource URI relative to extension paths to be included
+ */
+function _civicrm_resources_add_resource($extension_path, $resource_uri) {
+  $resource_type = pathinfo($resource_uri)['extension'];
+  $relative_to_drupal_extension_path = str_replace(DRUPAL_ROOT, '', $extension_path);
+  $relative_to_drupal_resource_path = $relative_to_drupal_extension_path . '/' . $resource_uri;
+
+  if ($resource_type === 'js') {
+    drupal_add_js($relative_to_drupal_resource_path,  array('scope' => 'footer'));
+  } else if ($resource_type === 'css') {
+    drupal_add_css($relative_to_drupal_resource_path);
+  } else {
+    throw 'The resource type "' . $resource_type . '" is not supported';
+  }
 }
