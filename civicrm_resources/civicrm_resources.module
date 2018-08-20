@@ -19,38 +19,39 @@ function civicrm_resources_add_resources($extention_path, $req_files = []) {
   global $base_url;
 
   $files = civicrm_resources_file_scan_directory($extention_path, '/\.(css|js)$/i');
-
   $js_list = [];
   $css_list = [];
+  list($all_js, $all_css) = _civicrm_resources_filter_files($files);
 
-  foreach ($files as $key => $file) {
-    if (!empty($req_files)) {
-      if (in_array('*.js', $req_files) && preg_match('/\.js$/', $file->filename)) {
-        $js_list[] = $file->uri;
+  if (empty($req_files)) {
+    $req_files = ['*.css', '*.js'];
+  }
+
+  if (in_array('*.js', $req_files)) {
+    $js_list = _civicrm_resources_get_uris($all_js);
+  }
+
+  if (in_array('*.css', $req_files)) {
+    $css_list = _civicrm_resources_get_uris($all_css);
+  }
+
+  if (!in_array('*.css', $req_files) || !in_array('*.js', $req_files)) {
+    $file_names = array_column($files, 'filename');
+
+    foreach ($req_files as $req_file) {
+      $index = array_search($req_file, $file_names);
+      if (($index !== FALSE) && preg_match('/\.js$/', $req_file)) {
+        $js_list[] = _civicrm_resources_get_file_uri($index, $all_js);
+        continue;
       }
-      else {
-        if (in_array($file->filename, $req_files) && preg_match('/\.js$/', $file->filename)) {
-          $js_list[] = $file->uri;
-        }
-      }
-      if (in_array('*.css', $req_files) && preg_match('/\.css$/', $file->filename)) {
-        $css_list[] = $file->uri;
-      }
-      else {
-        if (in_array($file->filename, $req_files) && preg_match('/\.css$/', $file->filename)) {
-          $css_list[] = $file->uri;
-        }
-      }
-    }
-    else {
-      if (preg_match('/\.css$/', $file->filename)) {
-        $css_list[] = $file->uri;
-      }
-      elseif (preg_match('/\.js$/', $file->filename)) {
-        $js_list[] = $file->uri;
+
+      if (($index !== FALSE) && preg_match('/\.css$/', $req_file)) {
+        $css_list[] = _civicrm_resources_get_file_uri($index, $all_css);
+        continue;
       }
     }
   }
+
   foreach ($css_list as $key => $css_file) {
     drupal_add_css(ltrim(str_replace(DRUPAL_ROOT, '', $css_file), '/'));
   }
@@ -59,6 +60,53 @@ function civicrm_resources_add_resources($extention_path, $req_files = []) {
   }
 }
 
+/**
+ * Filters files into css or js
+ *
+ * @param array $files
+ *
+ * @return array
+ */
+function _civicrm_resources_filter_files($files) {
+  $filtered_js_file = array_filter($files, function ($file) {
+    return preg_match('/\.js$/', $file['filename']);
+  });
+
+  $filtered_css_file = array_filter($files, function ($file) {
+    return preg_match('/\.css$/', $file['filename']);
+  });
+
+  return [$filtered_js_file, $filtered_css_file];
+}
+
+/**
+ * Retrieves uri for file list
+ *
+ * @param array $files
+ *
+ * @return array
+ */
+function _civicrm_resources_get_uris($files) {
+  $resource_uri = array_map(function ($file) {
+    return  $file->uri;
+  }, $files);
+
+  return array_values($resource_uri);
+}
+
+/**
+ * Retrieves uri for a specific file
+ *
+ * @param int $index
+ * @param array $resource_list
+ *
+ * @return string
+ */
+function _civicrm_resources_get_file_uri($index, $resource_list) {
+  $uri_values = array_values($resource_list);
+
+  return $uri_values[$index]['uri'];
+}
 /**
  * Finds all files that match a given mask in a given directory.
  *
@@ -117,12 +165,11 @@ function civicrm_resources_file_scan_directory($dir, $mask, $options = [], $dept
           $files = array_merge(civicrm_resources_file_scan_directory($uri, $mask, $options, $depth + 1), $files);
         }
         elseif ($depth >= $options['min_depth'] && preg_match($mask, $filename)) {
-          $file = new stdClass();
-          $file->uri = $uri;
-          $file->filename = $filename;
-          $file->name = pathinfo($filename, PATHINFO_FILENAME);
+          $file['uri'] = $uri;
+          $file['filename'] = $filename;
+          $file['name'] = pathinfo($filename, PATHINFO_FILENAME);
           $key = $options['key'];
-          $files[$file->$key] = $file;
+          $files[$file[$key]] = $file;
           if ($options['callback']) {
             $options['callback']($uri);
           }

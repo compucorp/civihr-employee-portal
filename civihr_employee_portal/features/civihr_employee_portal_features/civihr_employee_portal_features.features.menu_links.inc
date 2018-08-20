@@ -86,14 +86,14 @@ function civihr_employee_portal_features_menu_default_menu_links() {
     'weight' => 0,
     'customized' => 1,
   );
-  // Exported menu link: main-menu_help://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/.
-  $menu_links['main-menu_help://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/'] = array(
+  // Exported menu link: main-menu_help://userguide.civihr.org/.
+  $menu_links['main-menu_help://userguide.civihr.org/'] = array(
     'menu_name' => 'main-menu',
-    'link_path' => '//civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/',
+    'link_path' => '//userguide.civihr.org/',
     'router_path' => '',
     'link_title' => 'Help',
     'options' => array(
-      'identifier' => 'main-menu_help://civihr-documentation.readthedocs.io/en/latest/self-service-portal/login-screen/',
+      'identifier' => 'main-menu_help://userguide.civihr.org/',
       'alter' => TRUE,
       'roles_for_menu' => array(
         'show' => array(),
