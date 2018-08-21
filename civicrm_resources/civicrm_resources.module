@@ -9,7 +9,7 @@
  * Includes CSS/JS resources onto a page
  *
  * @param string $extension_path
- *   Machine path of civicrm extension.
+ *   Absolute path to civicrm extension.
  * @param array $resources_uris
  *   An array of resources URIs relative to extension paths to be included
  */
@@ -22,53 +22,35 @@ function civicrm_resources_add_resources($extension_path, $resources_uris = []) 
 /**
  * Loads resources from the given extension
  *
- * @param string $extension_full_name
- *   Machine name of civicrm extension.
+ * @param string $extension_key
  * @param array $files
  *   An array of resources URIs relative to extension paths to be included
  */
-function civicrm_resources_load($extension_full_name, $resources_uris = []) {
-  if (cache_get($extension_full_name, 'cache_civicrm_resources')) {
-    $ext_path_cache = cache_get($extension_full_name, 'cache_civicrm_resources');
-    $ext_path = $ext_path_cache->data;
-  }
-  else {
-    civicrm_initialize();
-
-    $ext_path = CRM_Extension_System::singleton()
-      ->getMapper()
-      ->keyToBasePath($extension_full_name);
-
-    cache_set($extension_full_name, $ext_path, 'cache_civicrm_resources');
-  }
+function civicrm_resources_load($extension_key, $resources_uris = []) {
+  $ext_path = CRM_Extension_System::singleton()
+    ->getMapper()
+    ->keyToBasePath($extension_key);
 
   civicrm_resources_add_resources($ext_path, $resources_uris);
-}
-
-/**
- * Implements hook_flush_caches().
- */
-function civicrm_resources_flush_caches() {
-  return ['cache_civicrm_resources'];
 }
 
 /**
  * Includes CSS/JS resources onto a page
  *
  * @param string $extension_path
- *   Machine path of civicrm extension.
+ *   Absolute path to civicrm extension.
  * @param array $resources_uris
  *   Resource URI relative to extension paths to be included
  */
 function _civicrm_resources_add_resource($extension_path, $resource_uri) {
-  $resource_type = pathinfo($resource_uri)['extension'];
-  $relative_to_drupal_extension_path = str_replace(DRUPAL_ROOT, '', $extension_path);
-  $relative_to_drupal_resource_path = $relative_to_drupal_extension_path . '/' . $resource_uri;
+  $resource_type = pathinfo($resource_uri, PATHINFO_EXTENSION);
+  $extension_path_relative_to_drupal = str_replace(DRUPAL_ROOT, '', $extension_path);
+  $resource_path_relative_to_drupal = $extension_path_relative_to_drupal . '/' . $resource_uri;
 
   if ($resource_type === 'js') {
-    drupal_add_js($relative_to_drupal_resource_path,  array('scope' => 'footer'));
+    drupal_add_js($resource_path_relative_to_drupal,  ['scope' => 'footer']);
   } else if ($resource_type === 'css') {
-    drupal_add_css($relative_to_drupal_resource_path);
+    drupal_add_css($resource_path_relative_to_drupal);
   } else {
     throw 'The resource type "' . $resource_type . '" is not supported';
   }

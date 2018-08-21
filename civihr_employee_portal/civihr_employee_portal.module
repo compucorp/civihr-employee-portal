@@ -6699,8 +6699,7 @@ function _civihr_employee_portal_create_default_reports_configuration() {
  *    Custom markup from template file.
  */
 function civihr_employee_portal_get_markup_for_extension($resource = '', $scriptExtensionKey, $markupModuleName) {
-  $script = CRM_Core_Config::singleton()->debug ? "{$resource}.js" : "{$resource}.min.js";
-  $script_path_related_to_extension = 'js/dist/' . $script;
+  $script_path_relative_to_extension = "js/dist/{$resource}.min.js";
 
   // Adds RequireJS + AngularJS dependencies only once
   if (!strpos(drupal_get_js('footer'), 'require.min.js')) {
@@ -6710,7 +6709,7 @@ function civihr_employee_portal_get_markup_for_extension($resource = '', $script
     ]);
   }
 
-  civicrm_resources_load($scriptExtensionKey, [$script_path_related_to_extension]);
+  civicrm_resources_load($scriptExtensionKey, [$script_path_relative_to_extension]);
 
   return civihr_employee_portal_load_html_file(str_replace('-', '_', $resource), $markupModuleName);
 }
