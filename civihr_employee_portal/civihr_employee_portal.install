@@ -458,9 +458,20 @@ function civihr_employee_portal_update_7035() {
  * Disables the HR Vacancies View
  */
 function civihr_employee_portal_update_7036() {
-  $status = variable_get('views_defaults', array());
+  $status = variable_get('views_defaults', []);
   $status['hr-vacancies'] = TRUE;
   variable_set('views_defaults', $status);
+}
+/**
+ * Removes old 'Help' menu link from main menu
+ */
+function civihr_employee_portal_update_7037() {
+  db_delete('menu_links')
+      ->condition('link_title', 'help')
+      ->condition('menu_name', 'main-menu')
+      ->execute();
+
+    cache_clear_all();
 }
 
 /**

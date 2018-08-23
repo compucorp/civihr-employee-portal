@@ -533,11 +533,19 @@ function civihr_employee_portal_init() {
       '/lib/sweetalert/sweetalert.min.js'
     ]);
 
-    _add_script_to_page(['require.min.js', 'reqangular.min.js'], 'org.civicrm.reqangular', 'dashboard');
-    _add_script_to_page(['require.min.js', 'reqangular.min.js'], 'org.civicrm.reqangular', 'tasks-and-documents');
+    _add_script_to_page([
+      'js/src/common/vendor/require.min.js',
+      'js/dist/reqangular.min.js'
+    ], 'org.civicrm.reqangular', 'dashboard');
+    _add_script_to_page([
+      'js/src/common/vendor/require.min.js',
+      'js/dist/reqangular.min.js'
+    ], 'org.civicrm.reqangular', 'tasks-and-documents');
     _add_script_to_page(['/js/tasks.js'], NULL, 'tasks-and-documents', 'header');
     _add_script_to_page(['/js/ta-documents-app.js'], NULL, 'tasks-and-documents');
-    _add_script_to_page(['tasks-assignments.min.js'], 'uk.co.compucorp.civicrm.tasksassignments', 'tasks-and-documents');
+    _add_script_to_page([
+      'js/dist/tasks-assignments.min.js'
+    ], 'uk.co.compucorp.civicrm.tasksassignments', 'tasks-and-documents');
 
     _rebuild_view('length_of_service');
     _rebuild_view('absence_activity');
@@ -6691,15 +6699,17 @@ function _civihr_employee_portal_create_default_reports_configuration() {
  *    Custom markup from template file.
  */
 function civihr_employee_portal_get_markup_for_extension($resource = '', $scriptExtensionKey, $markupModuleName) {
-  $script = CRM_Core_Config::singleton()->debug ? "{$resource}.js" : "{$resource}.min.js";
+  $script_path_relative_to_extension = "js/dist/{$resource}.min.js";
 
   // Adds RequireJS + AngularJS dependencies only once
   if (!strpos(drupal_get_js('footer'), 'require.min.js')) {
-    civicrm_resources_load('org.civicrm.reqangular', ['require.min.js']);
-    civicrm_resources_load('org.civicrm.reqangular', ['reqangular.min.js']);
+    civicrm_resources_load('org.civicrm.reqangular', [
+      'js/src/common/vendor/require.min.js',
+      'js/dist/reqangular.min.js'
+    ]);
   }
 
-  civicrm_resources_load($scriptExtensionKey, [$script]);
+  civicrm_resources_load($scriptExtensionKey, [$script_path_relative_to_extension]);
 
   return civihr_employee_portal_load_html_file(str_replace('-', '_', $resource), $markupModuleName);
 }
