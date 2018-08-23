@@ -211,26 +211,13 @@ class OnboardingWebForm {
   }
 
   /**
-   * Gets the help text to show the user at the beginning of the onboarding
-   * form. Differs depending on whether they've been created before the
-   * onboarding feature was released.
+   * Gets the help text to show the user at the beginning of the onboarding form.
    *
    * @return string
    */
   private function getHelpText() {
-    if ($this->userCreatedAfterOnboardingReleased()) {
-      return 'Please complete your details using the onboarding wizard.<br/>'
-        . 'The data is saved directly onto your profile. You can always update '
-        . 'your details at a later date using the self service portal.'
-        . '<br/><br/>You can optionally skip this wizard and be reminded next '
-        . 'time you login.';
-    } else {
-      return 'CiviHR users can now complete a quick and easy'
-        . ' wizard to enter their details into the system.<br/>Any information '
-        . 'that you have already provided to the system will be shown in the '
-        . 'wizard and can be updated.<br/><br/>You can optionally skip this '
-        . 'wizard and be reminded next time you login.';
-    }
+    return 'Please start by entering your details below.'
+      . '<br/><br/> You can always update these details later.';
   }
 
   /**
