@@ -529,7 +529,6 @@ function civihr_employee_portal_init() {
 
     _rebuild_view('length_of_service');
     _rebuild_view('absence_activity');
-    _rebuild_view('hrvacancy');
     _rebuild_view('appraisal');
     _rebuild_view('tasks');
     _rebuild_view('documents');
@@ -636,7 +635,6 @@ function _run_civihr_tasks() {
   variable_set('rebuild_length_of_service_view', 'TRUE');
   variable_set('rebuild_absence_activity_view', 'TRUE');
   variable_set('rebuild_appraisal_view', 'TRUE');
-  variable_set('rebuild_hrvacancy_view', 'TRUE');
   variable_set('rebuild_tasks_view', 'TRUE');
   variable_set('rebuild_documents_view', 'TRUE');
   variable_set('rebuild_hrjobcontract_entities_view', 'TRUE');
@@ -700,10 +698,6 @@ function civihr_employee_portal_permission() {
     'change document status' => [
       'title' => t('Change Document Status'),
       'description' => t('Availability for the user to change document status')
-    ],
-    'view vacancies' => [
-      'title' => t('View Vacancies'),
-      'description' => t('Availability for the user to view vacancies block and page')
     ],
     'customize welcome wizard' => array(
       'title' => t('Customize Welcome Wizard'),
@@ -4042,57 +4036,6 @@ function civihr_employee_portal_schema_alter(&$schema) {
     'description' => 'Grade',
   ];
 
-  // hrvacancy view:
-  $schema['hrvacancy']['description'] = 'Views data representation of HRVacancy';
-  $schema['hrvacancy']['fields']['id'] = [
-    'type' => 'serial',
-    'unsigned' => TRUE,
-    'not null' => FALSE,
-    'description' => 'Vacancy ID',
-  ];
-  $schema['hrvacancy']['fields']['start_date'] = [
-    'type' => 'varchar',
-    'length' => 10,
-    'mysql_type' => 'DATE',
-    'not null' => FALSE,
-    'description' => 'Vacancy start date',
-  ];
-  $schema['hrvacancy']['fields']['end_date'] = [
-    'type' => 'varchar',
-    'length' => 10,
-    'mysql_type' => 'DATE',
-    'not null' => FALSE,
-    'description' => 'Vacancy end date',
-  ];
-  $schema['hrvacancy']['fields']['status_id'] = [
-    'type' => 'int',
-    'not null' => TRUE,
-    'description' => 'Vacancy status ID',
-  ];
-  $schema['hrvacancy']['fields']['description'] = [
-    'type' => 'text',
-    'not null' => TRUE,
-    'description' => 'Vacancy description',
-  ];
-  $schema['hrvacancy']['fields']['position'] = [
-    'type' => 'varchar',
-    'length' => 127,
-    'not null' => TRUE,
-    'description' => 'Vacancy position',
-  ];
-  $schema['hrvacancy']['fields']['salary'] = [
-    'type' => 'varchar',
-    'length' => 127,
-    'not null' => TRUE,
-    'description' => 'Vacancy salary',
-  ];
-  $schema['hrvacancy']['fields']['location'] = [
-    'type' => 'varchar',
-    'length' => 254,
-    'not null' => TRUE,
-    'description' => 'Vacancy location',
-  ];
-
   // tasks view:
   $schema['tasks']['description'] = 'Views data representation of CiviHR Tasks';
   $schema['tasks']['fields']['id'] = [
@@ -4333,26 +4276,6 @@ function civihr_employee_portal_entity_info() {
     'label callback' => 'entity_class_label',
     'uri callback' => 'entity_class_uri',
         // Entity API needs to know about your module for the views integration to work
-    'module' => 'civihr_employee_portal',
-  ];
-
-    // hrvacancy entity:
-  $info['civihr_hrvacancy'] = [
-    'label' => t('HRVacancy entity'),
-    'plural label' => t('HRVacancy entity'),
-    'description' => t('HRVacancy'),
-    'entity class' => 'Entity',
-    'controller class' => 'EntityAPIController',
-    'views controller class' => 'EntityDefaultViewsController',
-    'base table' => 'hrvacancy',
-    'fieldable' => TRUE,
-    'entity keys' => [
-      'id' => 'id',
-      'label' => 'Vacancy ID',
-    ],
-    'bundles' => [],
-    'label callback' => 'entity_class_label',
-    'uri callback' => 'entity_class_uri',
     'module' => 'civihr_employee_portal',
   ];
 
