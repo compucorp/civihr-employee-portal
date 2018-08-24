@@ -270,26 +270,6 @@ function _rebuild_appraisal_view() {
 }
 
 /**
- * Rebuilds hrvacancy view.
- */
-function _rebuild_hrvacancy_view() {
-  $extensions = CRM_Core_PseudoConstant::getExtensions();
-
-  if (!empty($extensions['org.civicrm.hrrecruitment'])) {
-    $civi_settings = parse_url(CIVICRM_DSN);
-    $civi_db_name = trim($civi_settings['path'], '/');
-
-    db_query('DROP VIEW IF EXISTS hrvacancy');
-    db_query("CREATE VIEW hrvacancy AS
-              SELECT id, start_date, end_date, status_id, description, position, salary, location
-              FROM {$civi_db_name}.civicrm_hrvacancy
-              WHERE status_id = 2");
-
-    variable_set('rebuild_hrvacancy_view', 'FALSE');
-  }
-}
-
-/**
  * Rebuilds Tasks view.
  */
 function _rebuild_tasks_view() {
