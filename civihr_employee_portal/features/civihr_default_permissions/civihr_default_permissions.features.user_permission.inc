@@ -1623,7 +1623,9 @@ function civihr_default_permissions_user_default_permissions() {
   // Exported permission: 'edit system workflow message templates'.
   $permissions['edit system workflow message templates'] = array(
     'name' => 'edit system workflow message templates',
-    'roles' => array(),
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
     'module' => 'civicrm',
   );
 
@@ -1653,6 +1655,7 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit user-driven message templates',
     'roles' => array(
       'HR Admin' => 'HR Admin',
+      'administrator' => 'administrator',
     ),
     'module' => 'civicrm',
   );
