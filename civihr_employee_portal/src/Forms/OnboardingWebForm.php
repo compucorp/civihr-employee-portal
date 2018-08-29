@@ -238,18 +238,4 @@ class OnboardingWebForm {
     return sprintf('<a href="%s">%s</a>', $link, $buttonMarkup);
   }
 
-  /**
-   * Checks if the current logged in user was created after the onboarding
-   * feature was released.
-   *
-   * @return bool
-   */
-  private function userCreatedAfterOnboardingReleased() {
-    global $user;
-    $onboardingForm = WebformHelper::findOneByTitle(self::NAME);
-    $onboardingRelease = $onboardingForm->created;
-
-    return $user->created > $onboardingRelease;
-  }
-
 }
