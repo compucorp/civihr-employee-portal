@@ -1620,6 +1620,15 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'webform',
   );
 
+  // Exported permission: 'edit system workflow message templates'.
+  $permissions['edit system workflow message templates'] = array(
+    'name' => 'edit system workflow message templates',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'civicrm',
+  );
+
   // Exported permission: 'edit terms in hr_resource_type'.
   $permissions['edit terms in hr_resource_type'] = array(
     'name' => 'edit terms in hr_resource_type',
@@ -1639,6 +1648,16 @@ function civihr_default_permissions_user_default_permissions() {
       'administrator' => 'administrator',
     ),
     'module' => 'taxonomy',
+  );
+
+  // Exported permission: 'edit user-driven message templates'.
+  $permissions['edit user-driven message templates'] = array(
+    'name' => 'edit user-driven message templates',
+    'roles' => array(
+      'HR Admin' => 'HR Admin',
+      'administrator' => 'administrator',
+    ),
+    'module' => 'civicrm',
   );
 
   // Exported permission: 'edit users with role 17087012'.

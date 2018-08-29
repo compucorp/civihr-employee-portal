@@ -467,6 +467,13 @@ function civihr_employee_portal_update_7036() {
 }
 
 /**
+ * Reverts the default CiviHR user permissions because they were modified
+ */
+function civihr_employee_portal_update_7037() {
+  features_revert(['civihr_default_permissions' => ['user_permission']]);
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string $path
