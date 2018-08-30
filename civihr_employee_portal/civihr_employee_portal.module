@@ -15,6 +15,8 @@ use Drupal\civihr_employee_portal\Page\HRDetailsPage;
 use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
+use Drupal\civihr_employee_portal\Helpers\LoggingStreamSwitcher;
+use Drupal\civihr_employee_portal\Hook\ModuleImplementsAlter\ViewsDataAlterImplementationReorderer;
 
 /**
  * Implements hook_install().
@@ -6019,36 +6021,15 @@ function civihr_employee_portal_tokens($type, $tokens, array $data = [], array $
  * Implements hook_module_implements_alter()
  */
 function civihr_employee_portal_module_implements_alter(&$implementations, $hook) {
+  $alterers = [
+    new ViewsDataAlterImplementationReorderer(),
+  ];
 
-    if ($hook != 'views_data_alter') {
-        return;
+  foreach ($alterers as $alterer) {
+    if ($alterer->shouldAlter($hook)) {
+      $alterer->alter($implementations);
     }
-
-  watchdog('alter default order', print_r($implementations, TRUE));
-
-  $group = [];
-
-  // Check if the module exists and it's installed
-  if (module_exists('views_autocomplete_filters')) {
-    // Put the views autocomplete filters after civicrm
-    $module = 'views_autocomplete_filters';
-    $group += [$module => $implementations[$module]];
-    unset($implementations[$module]);
   }
-
-    /**
-   * Put the civihr employee portal module after civicrm module . The civicrm
-   * module will ruthlessly replace all changes from views_data_alter hook
-   * @see civicrm_views_data_alter
-   */
-     $module = 'civihr_employee_portal';
-     $group += array($module => $implementations[$module]);
-     unset($implementations[$module]);
-
-  // Make sure some modules are after civicrm to avoid error with autocomplete search or drush cc all
-  $implementations = $implementations + $group;
-
-  watchdog('alter modified order', print_r($implementations, TRUE));
 }
 
 function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$objectRef) {
