@@ -6023,6 +6023,7 @@ function civihr_employee_portal_tokens($type, $tokens, array $data = [], array $
 function civihr_employee_portal_module_implements_alter(&$implementations, $hook) {
   $alterers = [
     new ViewsDataAlterImplementationReorderer(),
+    new WebformSubmissionPreSaveReorderer(),
   ];
 
   foreach ($alterers as $alterer) {
