@@ -5154,6 +5154,8 @@ function civihr_employee_portal_webform_submission_insert($node, $submission) {
   $onboardingTitle = OnboardingWebForm::NAME;
   $isOnboardingForm = $nodeTitle === $onboardingTitle;
 
+  LoggingStreamSwitcher::disableLogging($nodeTitle);
+
   if ($isOnboardingForm) {
     $form = new OnboardingWebForm();
     $form->onSubmit($node, $submission);
@@ -6732,5 +6734,16 @@ function civihr_employee_portal_page_build(&$page) {
   if (drupal_get_path_alias() == 'hr-details') {
       ctools_include('modal');
       ctools_modal_add_js();
+  }
+}
+
+function civihr_employee_portal_webform_submission_presave($node, &$submission) {
+  $webformsToLog = [
+    'My details - edit',
+  ];
+
+  $title = $node->title;
+  if (in_array($title, $webformsToLog)) {
+    LoggingStreamSwitcher::enableLogging($title);
   }
 }
