@@ -2,7 +2,7 @@
 
 namespace Drupal\civihr_employee_portal\Hook\ModuleImplementsAlter;
 
-interface ImplementationAlterer {
+abstract class ImplementationAlterer {
 
   /**
    * Check whether this class should act on the implementation array
@@ -11,7 +11,7 @@ interface ImplementationAlterer {
    *
    * @return bool
    */
-  public function shouldAlter($hookName);
+  abstract public function shouldAlter($hookName);
 
   /**
    * Make changes to the implementations
@@ -20,6 +20,22 @@ interface ImplementationAlterer {
    *
    * @return void
    */
-  public function alter(array &$implementations);
+  abstract public function alter(array &$implementations);
 
+  /**
+   * @param array $implementations
+   * @param string $moduleName
+   */
+  protected function moveToEnd(array &$implementations, $moduleName) {
+    if (!isset($implementations[$moduleName])) {
+      $serr = sprintf('Cannot re-order as module "%s" is not set', $moduleName);
+      throw new \RuntimeException($serr);
+    }
+
+    $tmp = [$moduleName => $implementations[$moduleName]];
+    unset($implementations[$moduleName]);
+    $implementations += $tmp;
+  }
 }
+
+

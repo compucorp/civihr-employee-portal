@@ -2,7 +2,7 @@
 
 namespace Drupal\civihr_employee_portal\Hook\ModuleImplementsAlter;
 
-class ViewsDataAlterImplementationReorderer implements ImplementationAlterer {
+class ViewsDataAlterImplementationReorderer extends ImplementationAlterer {
 
   /**
    * @inheritdoc
