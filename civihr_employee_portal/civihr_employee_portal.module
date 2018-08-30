@@ -17,6 +17,8 @@ use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
 use Drupal\civihr_employee_portal\Helpers\LoggingStreamSwitcher;
 use Drupal\civihr_employee_portal\Hook\ModuleImplementsAlter\ViewsDataAlterImplementationReorderer;
+use Drupal\civihr_employee_portal\Hook\ModuleImplementsAlter\WebformSubmissionPreSaveReorderer;
+use Drupal\civihr_employee_portal\Hook\ModuleImplementsAlter\WebformSubmissionInsertReorderer;
 
 /**
  * Implements hook_install().
@@ -6024,6 +6026,7 @@ function civihr_employee_portal_module_implements_alter(&$implementations, $hook
   $alterers = [
     new ViewsDataAlterImplementationReorderer(),
     new WebformSubmissionPreSaveReorderer(),
+    new WebformSubmissionInsertReorderer(),
   ];
 
   foreach ($alterers as $alterer) {
