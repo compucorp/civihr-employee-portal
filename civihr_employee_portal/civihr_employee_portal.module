@@ -15,6 +15,10 @@ use Drupal\civihr_employee_portal\Page\HRDetailsPage;
 use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
+use Drupal\civihr_employee_portal\Helpers\LoggingStreamSwitcher;
+use Drupal\civihr_employee_portal\Hook\ModuleImplementsAlter\ViewsDataAlterImplementationReorderer;
+use Drupal\civihr_employee_portal\Hook\ModuleImplementsAlter\WebformSubmissionPreSaveReorderer;
+use Drupal\civihr_employee_portal\Hook\ModuleImplementsAlter\WebformSubmissionInsertReorderer;
 
 /**
  * Implements hook_install().
@@ -5150,6 +5154,8 @@ function civihr_employee_portal_webform_submission_insert($node, $submission) {
   $onboardingTitle = OnboardingWebForm::NAME;
   $isOnboardingForm = $nodeTitle === $onboardingTitle;
 
+  LoggingStreamSwitcher::disableLogging($nodeTitle);
+
   if ($isOnboardingForm) {
     $form = new OnboardingWebForm();
     $form->onSubmit($node, $submission);
@@ -6019,36 +6025,17 @@ function civihr_employee_portal_tokens($type, $tokens, array $data = [], array $
  * Implements hook_module_implements_alter()
  */
 function civihr_employee_portal_module_implements_alter(&$implementations, $hook) {
+  $alterers = [
+    new ViewsDataAlterImplementationReorderer(),
+    new WebformSubmissionPreSaveReorderer(),
+    new WebformSubmissionInsertReorderer(),
+  ];
 
-    if ($hook != 'views_data_alter') {
-        return;
+  foreach ($alterers as $alterer) {
+    if ($alterer->shouldAlter($hook)) {
+      $alterer->alter($implementations);
     }
-
-  watchdog('alter default order', print_r($implementations, TRUE));
-
-  $group = [];
-
-  // Check if the module exists and it's installed
-  if (module_exists('views_autocomplete_filters')) {
-    // Put the views autocomplete filters after civicrm
-    $module = 'views_autocomplete_filters';
-    $group += [$module => $implementations[$module]];
-    unset($implementations[$module]);
   }
-
-    /**
-   * Put the civihr employee portal module after civicrm module . The civicrm
-   * module will ruthlessly replace all changes from views_data_alter hook
-   * @see civicrm_views_data_alter
-   */
-     $module = 'civihr_employee_portal';
-     $group += array($module => $implementations[$module]);
-     unset($implementations[$module]);
-
-  // Make sure some modules are after civicrm to avoid error with autocomplete search or drush cc all
-  $implementations = $implementations + $group;
-
-  watchdog('alter modified order', print_r($implementations, TRUE));
 }
 
 function civihr_employee_portal_civicrm_post($op, $objectName, $objectId, &$objectRef) {
@@ -6747,5 +6734,25 @@ function civihr_employee_portal_page_build(&$page) {
   if (drupal_get_path_alias() == 'hr-details') {
       ctools_include('modal');
       ctools_modal_add_js();
+  }
+}
+
+/**
+ * Implements hook_webform_submission_presave().
+ *
+ * Switches logging on for certain webform changes. The logging will be done
+ * in CiviHR and used to trigger an email to notify admins of changes.
+ *
+ * @param \stdClass $node
+ * @param array $submission
+ */
+function civihr_employee_portal_webform_submission_presave($node, &$submission) {
+  $webformsToLog = [
+    'My details - edit',
+  ];
+
+  $title = $node->title;
+  if (in_array($title, $webformsToLog)) {
+    LoggingStreamSwitcher::enableLogging($title);
   }
 }
