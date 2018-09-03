@@ -6737,6 +6737,15 @@ function civihr_employee_portal_page_build(&$page) {
   }
 }
 
+/**
+ * Implements hook_webform_submission_presave().
+ *
+ * Switches logging on for certain webform changes. The logging will be done
+ * in CiviHR and used to trigger an email to notify admins of changes.
+ *
+ * @param \stdClass $node
+ * @param array $submission
+ */
 function civihr_employee_portal_webform_submission_presave($node, &$submission) {
   $webformsToLog = [
     'My details - edit',

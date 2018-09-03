@@ -23,6 +23,9 @@ abstract class ImplementationAlterer {
   abstract public function alter(array &$implementations);
 
   /**
+   * Moves the specified module name to the end of the implementations array.
+   * Will fail if the specified name is not present.
+   *
    * @param array $implementations
    * @param string $moduleName
    */

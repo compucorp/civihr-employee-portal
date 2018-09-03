@@ -37,4 +37,5 @@ class ViewsDataAlterImplementationReorderer extends ImplementationAlterer {
   public function shouldAlter($hookName) {
     return $hookName === 'views_data_alter';
   }
+
 }
