@@ -4,25 +4,22 @@ use Drupal\civihr_employee_portal\Helpers\LoggingStreamSwitcher;
 
 class LoggingStreamSwitcherTest extends \PHPUnit_Framework_TestCase {
 
-  public function testSwitchingOnWillChangeGlobalVariable() {
+  public function testEnabling() {
     LoggingStreamSwitcher::enableLogging('foo');
-    global $civihrChangeLogStreams;
 
-    $this->assertTrue($civihrChangeLogStreams['foo']);
+    $this->assertTrue(LoggingStreamSwitcher::isEnabled('foo'));
   }
 
-  public function testDisablingWillSetGlobalVariableToFalse() {
+  public function testDisabling() {
     LoggingStreamSwitcher::disableLogging('foo');
-    global $civihrChangeLogStreams;
 
-    $this->assertFalse($civihrChangeLogStreams['foo']);
+    $this->assertFalse(LoggingStreamSwitcher::isEnabled('foo'));
   }
 
-  public function testSwitchingWillChangeGlobalVariable() {
+  public function testSwitching() {
     LoggingStreamSwitcher::enableLogging('foo');
     LoggingStreamSwitcher::disableLogging('foo');
-    global $civihrChangeLogStreams;
 
-    $this->assertFalse($civihrChangeLogStreams['foo']);
+    $this->assertFalse(LoggingStreamSwitcher::isEnabled('foo'));
   }
 }
