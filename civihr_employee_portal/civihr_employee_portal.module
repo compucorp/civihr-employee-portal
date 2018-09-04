@@ -768,18 +768,8 @@ function civihr_employee_portal_mail_alter(&$message) {
   }
 
   $smarty = CRM_Core_Smarty::singleton();
-  $smarty->addTemplateDir(__DIR__ . '/templates/smarty');
-
-  $variables = $replacementMail->getVariables($message);
-  $headers = $replacementMail->getHeaders();
-  $templateName = $replacementMail->getTemplateName();
-
-  // allow use of original content
-  $variables['body'] = $message['body'][0];
-  $body = $smarty->fetchWith($templateName, $variables);
-
-  $message['headers'] = array_merge($message['headers'], $headers);
-  $message['body'] = [$body];
+  $replacer = new MailContentReplacer($smarty);
+  $replacer->replaceContent($message, $replacementMail);
 }
 
 /**
