@@ -15,6 +15,10 @@ use Drupal\civihr_employee_portal\Page\HRDetailsPage;
 use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
+use Drupal\civihr_employee_portal\Mail\MailContentReplacer;
+use Drupal\civihr_employee_portal\Mail\WebformSubmissionNotificationMail;
+use Drupal\civihr_employee_portal\Mail\WebformSubmissionNotifier;
+use Drupal\civihr_employee_portal\Mail\OnboardingFormEditNotificationMail;
 use Drupal\civihr_employee_portal\View\CustomFieldsMappingFixer;
 
 /**
@@ -5141,10 +5145,39 @@ function civihr_employee_portal_webform_submission_insert($node, $submission) {
   $nodeTitle = property_exists($node, 'title') ? $node->title : NULL;
   $onboardingTitle = OnboardingWebForm::NAME;
   $isOnboardingForm = $nodeTitle === $onboardingTitle;
+  $notifier = new WebformSubmissionNotifier();
 
   if ($isOnboardingForm) {
     $form = new OnboardingWebForm();
     $form->onSubmit($node, $submission);
+  }
+
+  $notifier->sendNotification($node, $submission);
+}
+
+/**
+ * Implements hook_mail().
+ *
+ * @param string $key
+ * @param array $message
+ * @param array $params
+ */
+function civihr_employee_portal_mail($key, &$message, $params) {
+  $smarty = CRM_Core_Smarty::singleton();
+  $replacer = new MailContentReplacer($smarty);
+  $mail = NULL;
+
+  switch ($key) {
+    case 'civihr_webform_submission':
+      $mail = new WebformSubmissionNotificationMail();
+      break;
+    case 'civihr_onboarding_form_submission':
+      $mail = new OnboardingFormEditNotificationMail();
+      break;
+  }
+
+  if ($mail) {
+    $replacer->replaceContent($message, $mail);
   }
 }
 
