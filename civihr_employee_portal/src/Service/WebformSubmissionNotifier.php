@@ -1,9 +1,8 @@
 <?php
 
-namespace Drupal\civihr_employee_portal\Mail;
+namespace Drupal\civihr_employee_portal\Service;
 
 use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
-use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
 
 class WebformSubmissionNotifier {
 
@@ -44,7 +43,7 @@ class WebformSubmissionNotifier {
     $params['submission'] = $submission;
     $key = $this->getMailKey($node);
     $module = 'civihr_employee_portal';
-    $email = $this->getTargetEmail();
+    $email = WebformSubmissionSettingsService::getTargetEmail();
 
     drupal_mail($module, $key, $email, language_default(), $params);
   }
@@ -61,23 +60,9 @@ class WebformSubmissionNotifier {
       return FALSE;
     }
 
-    $targetEmail = $this->getTargetEmail();
-    $shouldSendKey = OnboardingWizardCustomizationForm::SEND_UPDATES_KEY;
-    $shouldSend = variable_get($shouldSendKey);
-
-    return $shouldSend && !empty($targetEmail);
+    return WebformSubmissionSettingsService::shouldSendMail();
   }
 
-  /**
-   * Gets the email that notifications should be sent to
-   *
-   * @return string
-   */
-  private function getTargetEmail() {
-    return variable_get(
-      OnboardingWizardCustomizationForm::EMAIL_TO_SEND_UPDATES_KEY
-    );
-  }
 
   /**
    * Gets the key to be used when mailing. This key will affect which mail

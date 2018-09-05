@@ -17,9 +17,10 @@ use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
 use Drupal\civihr_employee_portal\Mail\MailContentReplacer;
 use Drupal\civihr_employee_portal\Mail\WebformSubmissionNotificationMail;
-use Drupal\civihr_employee_portal\Mail\WebformSubmissionNotifier;
+use Drupal\civihr_employee_portal\Service\WebformSubmissionNotifier;
 use Drupal\civihr_employee_portal\Mail\OnboardingFormEditNotificationMail;
 use Drupal\civihr_employee_portal\View\CustomFieldsMappingFixer;
+use Drupal\civihr_employee_portal\RequestListener\SspEmergecyContactDeletionListener;
 
 /**
  * Implements hook_install().
@@ -562,6 +563,16 @@ function civihr_employee_portal_init() {
     $taskAssignmentsKey = 'uk.co.compucorp.civicrm.tasksassignments';
     if (_civihr_employee_portal_is_extension_enabled($taskAssignmentsKey)) {
       _load_ta_settings();
+    }
+  }
+
+  $requestListeners = [
+    new SspEmergecyContactDeletionListener(),
+  ];
+
+  foreach ($requestListeners as $listener) {
+    if ($listener->applies()) {
+      $listener->apply();
     }
   }
 }
