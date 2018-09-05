@@ -16,9 +16,19 @@ class SspEmergecyContactDeletionListener {
     $params = json_decode($json, TRUE);
 
     $service = new EmergencyContactService();
-    $contact = $service->find($params['id']);
-    $params['emergencyContactName'] = $contact['Name'];
+    $emergencyContact = $service->find($params['id']);
 
+    if (!$emergencyContact) {
+      return;
+    }
+
+    // Only send the mail for self-made changes
+    $currentContactId = \CRM_Core_Session::getLoggedInContactID();
+    if ($currentContactId != $emergencyContact['entity_id']) {
+      return;
+    }
+
+    $params = ['emergencyContact' => $emergencyContact];
     $mail = WebformSubmissionSettingsService::getTargetEmail();
     $module = 'civihr_employee_portal';
     $lang = language_default();
@@ -35,10 +45,17 @@ class SspEmergecyContactDeletionListener {
       return FALSE;
     }
 
-    $entity = \CRM_Utils_Array::value('entity', $_REQUEST);
-    $action = \CRM_Utils_Array::value('action', $_REQUEST);
+    $entity = strtolower(\CRM_Utils_Array::value('entity', $_REQUEST, ''));
+    if ($entity !== 'contact') {
+      return FALSE;
+    }
 
-    return $entity === 'contact' && $action === 'deleteemergencycontact';
+    $action = \CRM_Utils_Array::value('action', $_REQUEST);
+    $referer = \CRM_Utils_Array::value('HTTP_REFERER', $_SERVER, '');
+    $refererPath = parse_url($referer, PHP_URL_PATH);
+    $isFromDashboard = $refererPath === '/hr-details';
+
+    return $action === 'deleteemergencycontact' && $isFromDashboard;
   }
 
 }

@@ -12,7 +12,6 @@ class WebformSubmissionSettingsService {
    * @return bool
    */
   public static function shouldSendMail() {
-
     $targetEmail = self::getTargetEmail();
     $shouldSendKey = OnboardingWizardCustomizationForm::SEND_UPDATES_KEY;
     $shouldSend = variable_get($shouldSendKey);

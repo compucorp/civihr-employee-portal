@@ -2,7 +2,9 @@
 
 namespace Drupal\civihr_employee_portal\Mail;
 
-class EmergencyContactDeletionNotificationMail extends WebformSubmissionNotificationMail {
+use Drupal\civihr_employee_portal\Service\ContactService;
+
+class EmergencyContactDeletionNotificationMail extends AbstractDrupalSystemMail {
 
   /**
    * @inheritdoc
@@ -10,15 +12,16 @@ class EmergencyContactDeletionNotificationMail extends WebformSubmissionNotifica
   public function getVariables($message) {
     $contactId = \CRM_Core_Session::singleton()->getLoggedInContactID();
     $contact = civicrm_api3('Contact', 'getsingle', ['id' => $contactId]);
-    $contactEmail = $this->getContactWorkEmail($contactId);
-    $profileLink = $this->getLinkToContractProfile($contactId);
+    $contactEmail = ContactService::getContactWorkEmail($contactId);
+    $profileLink = ContactService::getLinkToContactProfile($contactId);
+    $emergencyContact = $message['params']['emergencyContact'];
 
     return [
       'workEmail' => $contactEmail,
       'profileLink' => $profileLink,
       'displayName' => $contact['display_name'],
       'submissionDate' => date('Y-m-d H:i'),
-      'emergencyContactName' => $message['params']['emergencyContactName']
+      'emergencyContactName' => $emergencyContact['Name']
     ];
   }
 
