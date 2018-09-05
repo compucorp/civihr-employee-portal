@@ -12,7 +12,7 @@ class OnboardingFormEditNotificationMail extends WebformSubmissionNotificationMa
    * @return array
    */
   public function getVariables($message) {
-    $variables =  parent::getVariables($message);
+    $variables = parent::getVariables($message);
     // Replace the title
     $variables['webformTitle'] = 'the onboarding form';
 
@@ -79,6 +79,7 @@ class OnboardingFormEditNotificationMail extends WebformSubmissionNotificationMa
     $firstContactKey = 'Emergency Contact';
     $secondContactKey = 'Second Emergency Contact';
 
+    // Remove hidden fields
     unset($emergencyContacts[$firstContactKey]['Is a dependant?']);
     unset($emergencyContacts[$secondContactKey]['Is a dependant?']);
 
@@ -98,12 +99,15 @@ class OnboardingFormEditNotificationMail extends WebformSubmissionNotificationMa
   private function formatDependants(&$submittedValues) {
     $dependants = &$submittedValues['Dependants'];
     $skipStepOption = 'Add Now (Dependants)';
+
     if ($this->skippedStep($dependants, $skipStepOption)) {
       $this->formatSkippedStep($dependants);
       return;
     }
-    // Unset unused data
+
+    // Unset unused values such as "Add Now" question
     unset($dependants[0]);
+
     // Remove unused dependant entries
     $dependantsKeys = ['Fifth', 'Fourth', 'Third', 'Second', 'First'];
     foreach ($dependantsKeys as $index => $dependantKey) {
@@ -111,15 +115,16 @@ class OnboardingFormEditNotificationMail extends WebformSubmissionNotificationMa
         continue;
       }
 
-      // Get the answer to the question "Add a dependant" for previous element
+      // Get the answer to the question "Add a dependant?" for previous element
       $key = $dependantKey . ' Dependant';
       $previousElementKey = $dependantsKeys[$index + 1] . ' Dependant';
       $previousElementValues = &$dependants[$previousElementKey];
       $addNextKey = 'Add a ' . strtolower($dependantKey) . ' dependant?';
-      $nextDependentAdded = $previousElementValues[$addNextKey];
+      $nextDependentWasAdded = $previousElementValues[$addNextKey];
 
-      // If no, then unset the current dependant
-      if (empty($nextDependentAdded) || $nextDependentAdded === 'No') {
+      // If no, then unset the current dependant, i.e. if answer was no for
+      // "Fourth Dependant" then unset "Fifth Dependant"
+      if (empty($nextDependentWasAdded) || $nextDependentWasAdded === 'No') {
         unset($dependants[$key]);
       }
 
@@ -139,7 +144,7 @@ class OnboardingFormEditNotificationMail extends WebformSubmissionNotificationMa
    * @param array $stepValues
    */
   private function formatSkippedStep(&$stepValues) {
-    $stepValues = [0 => ['Skipped' => 'The user skipped this step']];
+    $stepValues = [0 => ['Skipped:' => 'The user skipped this step']];
   }
 
   /**
