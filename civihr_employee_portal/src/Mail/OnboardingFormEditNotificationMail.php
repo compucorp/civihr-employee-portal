@@ -51,7 +51,7 @@ class OnboardingFormEditNotificationMail extends WebformSubmissionNotificationMa
   }
 
   /**
-   * @param $submittedValues
+   * @param array $submittedValues
    */
   protected function formatPayroll(&$submittedValues) {
     $payroll = &$submittedValues['Payroll'];
@@ -63,7 +63,7 @@ class OnboardingFormEditNotificationMail extends WebformSubmissionNotificationMa
   }
 
   /**
-   * @param $submittedValues
+   * @param array $submittedValues
    */
   private function formatEmergencyContacts(&$submittedValues) {
     $emergencyContacts = &$submittedValues['Emergency Contact'];
@@ -109,15 +109,19 @@ class OnboardingFormEditNotificationMail extends WebformSubmissionNotificationMa
     unset($dependants[0]);
 
     // Remove unused dependant entries
-    $dependantsKeys = ['Fifth', 'Fourth', 'Third', 'Second', 'First'];
-    foreach ($dependantsKeys as $index => $dependantKey) {
-      if (!isset($dependantKey[$index + 1])) {
+    $dependantKeys = ['Fifth', 'Fourth', 'Third', 'Second', 'First'];
+    foreach ($dependantKeys as $index => $dependantKey) {
+
+      // We check in reverse order if the previous dependant ticked the "Add
+      // another" box so we only go as far as the "Second" dependant since
+      // there is no possibility to hide the first dependant input
+      if (!isset($dependantKeys[$index + 1])) {
         continue;
       }
 
       // Get the answer to the question "Add a dependant?" for previous element
       $key = $dependantKey . ' Dependant';
-      $previousElementKey = $dependantsKeys[$index + 1] . ' Dependant';
+      $previousElementKey = $dependantKeys[$index + 1] . ' Dependant';
       $previousElementValues = &$dependants[$previousElementKey];
       $addNextKey = 'Add a ' . strtolower($dependantKey) . ' dependant?';
       $nextDependentWasAdded = $previousElementValues[$addNextKey];
