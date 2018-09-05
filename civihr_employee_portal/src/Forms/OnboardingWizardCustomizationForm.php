@@ -284,7 +284,7 @@ class OnboardingWizardCustomizationForm {
       '#suffix' => '<hr/>',
     ];
 
-    // snippet to add markup suport to style a toggle button
+    // snippet to add markup support to style a toggle button
     $sendUpdatesSelector = '"[name=\'' . self::SEND_UPDATES_KEY . '\']"';
     $toggleButtonHTML = "\"<span class='$toggleClass'> toggle </span>\"";
     $addToggleButton = "$($sendUpdatesSelector).after($toggleButtonHTML);";
