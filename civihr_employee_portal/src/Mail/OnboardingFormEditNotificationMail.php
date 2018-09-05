@@ -144,7 +144,7 @@ class OnboardingFormEditNotificationMail extends WebformSubmissionNotificationMa
    * @param array $stepValues
    */
   private function formatSkippedStep(&$stepValues) {
-    $stepValues = [0 => ['Skipped:' => 'The user skipped this step']];
+    $stepValues = [0 => ['Skipped' => 'The user skipped this step']];
   }
 
   /**
