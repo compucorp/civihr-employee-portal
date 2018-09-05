@@ -21,6 +21,7 @@ use Drupal\civihr_employee_portal\Service\WebformSubmissionNotifier;
 use Drupal\civihr_employee_portal\Mail\OnboardingFormEditNotificationMail;
 use Drupal\civihr_employee_portal\View\CustomFieldsMappingFixer;
 use Drupal\civihr_employee_portal\RequestListener\SspEmergecyContactDeletionListener;
+use Drupal\civihr_employee_portal\Mail\EmergencyContactDeletionNotificationMail;
 
 /**
  * Implements hook_install().
@@ -5184,6 +5185,9 @@ function civihr_employee_portal_mail($key, &$message, $params) {
       break;
     case 'civihr_onboarding_form_submission':
       $mail = new OnboardingFormEditNotificationMail();
+      break;
+    case 'emergency_contact_deletion':
+      $mail = new EmergencyContactDeletionNotificationMail();
       break;
   }
 
