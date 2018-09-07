@@ -266,7 +266,6 @@ class OnboardingWizardCustomizationForm {
 
     // Classes
     $bemBlock = 'civihr_onboarding_form';
-    $toggleClass = $bemBlock.'--toggle';
     $groupClass = $bemBlock.'--container';
     $groupClassNoUpdates = $groupClass . '--no-updates';
 
@@ -286,7 +285,7 @@ class OnboardingWizardCustomizationForm {
 
     // snippet to add markup suport to style a toggle button
     $sendUpdatesSelector = '"[name=\'' . self::SEND_UPDATES_KEY . '\']"';
-    $toggleButtonHTML = "\"<span class='$toggleClass'> toggle </span>\"";
+    $toggleButtonHTML = "\"<span class='chr_switch__toggle'></span>\"";
     $addToggleButton = "$($sendUpdatesSelector).after($toggleButtonHTML);";
 
     // snippet to remove the initial state. At this point the email is already
@@ -305,6 +304,7 @@ class OnboardingWizardCustomizationForm {
       '#type' => 'checkbox',
       '#title' => 'Send an email when someone updates their details',
       '#default_value' => variable_get(self::SEND_UPDATES_KEY),
+      '#attributes' => ['class' => ['chr_switch']]
     ];
 
     $element[self::EMAIL_TO_SEND_UPDATES_KEY] = [
