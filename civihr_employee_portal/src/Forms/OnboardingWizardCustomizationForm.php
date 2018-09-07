@@ -141,6 +141,7 @@ class OnboardingWizardCustomizationForm {
       '#type' => 'submit',
       '#value' => t(self::CANCEL_OP),
       '#weight' => 1,
+      '#attributes' => ['class' => ['btn-secondary']]
     ];
   }
 
