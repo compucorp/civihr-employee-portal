@@ -1,18 +1,23 @@
 /* globals angular */
 
 (function (angular) {
-  angular.module('taDocuments', ['tasks-assignments.documents', 'tasks-assignments.directives'])
+  angular.module('taDocuments', [
+    'tasks-assignments.documents',
+    'tasks-assignments.directives'
+  ])
     .config(function ($urlRouterProvider, $locationProvider) {
       $locationProvider.html5Mode(true); // This is required to remove # for the URL
       $urlRouterProvider.otherwise('/tasks-and-documents');
     })
     .controller('ModalController', ModalController);
 
-  ModalController.$inject = ['$scope', '$rootScope', '$window', '$rootElement', '$log', '$uibModal',
-    'documentService', 'fileServiceTA', 'config', 'settings', 'DateFormat'];
+  ModalController.$inject = [
+    '$rootScope', '$window', '$rootElement', '$uibModal',
+    'documentService', 'fileServiceTA', 'config', 'DateFormat'
+  ];
 
-  function ModalController ($scope, $rootScope, $window, $rootElement, $log, $modal, documentService, fileService, config,
-    settings, DateFormat) {
+  function ModalController ($rootScope, $window, $rootElement, $modal, documentService,
+    fileService, config, DateFormat) {
     var vm = this;
 
     vm.modalDocument = modalDocument;
@@ -98,7 +103,7 @@
       });
     }
 
-   /**
+    /**
     * All event subscribers
     */
     function subscribeForEvents () {
