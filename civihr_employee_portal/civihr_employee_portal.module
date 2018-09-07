@@ -542,11 +542,11 @@ function civihr_employee_portal_init() {
       'js/dist/reqangular.min.js'
     ], 'org.civicrm.reqangular', 'tasks-and-documents');
     _add_script_to_page(['/js/tasks.js'], NULL, 'tasks-and-documents', 'header');
-    _add_script_to_page(['/js/ta-documents-app.js'], NULL, 'tasks-and-documents');
     _add_script_to_page([
-      'js/dist/tasks-assignments.min.js'
+      'js/dist/tasks-assignments.min.js',
+      'js/dist/ssp-upload-document.min.js'
     ], 'uk.co.compucorp.civicrm.tasksassignments', 'tasks-and-documents');
-
+    
     _rebuild_view('length_of_service');
     _rebuild_view('absence_activity');
     _rebuild_view('hrvacancy');
