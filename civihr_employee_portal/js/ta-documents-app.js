@@ -75,9 +75,9 @@
     function openModalDocument (data, role, mode) {
       var modalInstance = $modal.open({
         appendTo: $rootElement,
-        templateUrl: config.path.TPL + 'modal/document.html?v=3',
         controller: 'ModalDocumentController',
         controllerAs: 'documentModal',
+        templateUrl: config.path.EXT + 'js/src/tasks-assignments/controllers/modal/modal-document.html',
         resolve: {
           modalMode: function () {
             return mode;
