@@ -57,7 +57,7 @@ if (!empty($documentIds)) {
 ?>
 
 <base href="/"> <!-- This is required to remove # for the URL-->
-<div data-ta-documents ng-controller="ModalController as document" class="chr_table-w-filters chr_table-w-filters--documents row">
+<div data-ssp-upload-document ng-controller="ModalController as document" class="chr_table-w-filters chr_table-w-filters--documents row">
   <div class="chr_table-w-filters__filters col-md-3">
     <ul class="chr_table-w-filters__filters__nav">
       <?php foreach ($statuses as $key => $value): ?>
@@ -228,7 +228,6 @@ if (!empty($documentIds)) {
     // Listen for ready event when T&A finishes loading all modules
     document.addEventListener('taReady', function () {
       var selectedFilter = window.location.hash.substring(1);
-      angular.bootstrap(angular.element("[data-ta-documents]"), ['taDocuments']);
       if (!selectedFilter) {
         selectedFilter = 'awaiting-upload'; // default
       }
