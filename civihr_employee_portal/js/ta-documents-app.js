@@ -77,7 +77,7 @@
         appendTo: $rootElement,
         controller: 'ModalDocumentController',
         controllerAs: 'documentModal',
-        templateUrl: config.path.EXT + 'js/src/tasks-assignments/controllers/modal/modal-document.html',
+        templateUrl: config.baseUrl + 'js/src/tasks-assignments/controllers/modal/modal-document.html',
         resolve: {
           modalMode: function () {
             return mode;
