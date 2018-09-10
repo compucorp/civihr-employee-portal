@@ -21,7 +21,8 @@ class EmergencyContactDeletionNotificationMail extends AbstractDrupalSystemMail 
       'profileLink' => $profileLink,
       'displayName' => $contact['display_name'],
       'submissionDate' => date('Y-m-d H:i'),
-      'emergencyContactName' => $emergencyContact['Name']
+      'emergencyContactName' => $emergencyContact['Name'],
+      'emergencyContactType' => $this->getEmergencyContactType($message),
     ];
   }
 
@@ -36,7 +37,24 @@ class EmergencyContactDeletionNotificationMail extends AbstractDrupalSystemMail 
    * @inheritdoc
    */
   public function getSubject($message) {
-    return 'CiviHR Self Service Data Submission - Emergency Contact Deleted';
+    $format = 'CiviHR Self Service Data Submission - %s Deleted';
+
+    return sprintf($format, ucwords($this->getEmergencyContactType($message)));
+  }
+
+  /**
+   * Gets the emergency contact from the message and determines if it is a
+   * 'dependant' or 'emergency contact'
+   *
+   * @param array $message
+   *
+   * @return string
+   */
+  private function getEmergencyContactType($message) {
+    $emergencyContact = $message['params']['emergencyContact'];
+    $isDependant = $emergencyContact['Dependant_s_'] === 'yes';
+
+    return $isDependant ? 'dependant' : 'emergency contact';
   }
 
 }

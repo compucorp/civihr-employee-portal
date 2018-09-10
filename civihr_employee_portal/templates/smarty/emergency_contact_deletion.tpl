@@ -1,6 +1,8 @@
 <p>
   <a href="{$profileLink}">{$displayName} - {$workEmail}</a><br/>
-  Submitted on: {$submissionDate}<br/>
-  The following emergency contact was deleted:<br/>
-  {$emergencyContactName}
+  Submitted on: {$submissionDate}
+</p>
+<p>
+  The following {$emergencyContactType} was deleted:<br/>
+  <strong>{$emergencyContactName}</strong>
 </p>
