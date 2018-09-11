@@ -20,7 +20,7 @@ use Drupal\civihr_employee_portal\Mail\WebformSubmissionNotificationMail;
 use Drupal\civihr_employee_portal\Service\WebformSubmissionNotifier;
 use Drupal\civihr_employee_portal\Mail\OnboardingFormEditNotificationMail;
 use Drupal\civihr_employee_portal\View\CustomFieldsMappingFixer;
-use Drupal\civihr_employee_portal\RequestListener\SspEmergecyContactDeletionListener;
+use Drupal\civihr_employee_portal\Service\EmergencyContactDeletionService;
 use Drupal\civihr_employee_portal\Mail\EmergencyContactDeletionNotificationMail;
 
 /**
@@ -564,16 +564,6 @@ function civihr_employee_portal_init() {
     $taskAssignmentsKey = 'uk.co.compucorp.civicrm.tasksassignments';
     if (_civihr_employee_portal_is_extension_enabled($taskAssignmentsKey)) {
       _load_ta_settings();
-    }
-  }
-
-  $requestListeners = [
-    new SspEmergecyContactDeletionListener(),
-  ];
-
-  foreach ($requestListeners as $listener) {
-    if ($listener->applies()) {
-      $listener->apply();
     }
   }
 }
@@ -1613,6 +1603,12 @@ function civihr_employee_portal_menu() {
     'type' => MENU_CALLBACK,
   ];
 
+  $items['emergency_contacts/%/delete'] = [
+    'page callback' => 'civihr_employee_portal_emergency_contact_delete',
+    'page arguments' => [1],
+    'access callback' => TRUE,
+  ];
+
   $items['reports'] = [
     'title' => 'Reports',
     'page callback' => 'civihr_employee_portal_hrreport_landing_page',
@@ -1733,6 +1729,17 @@ function civihr_employee_portal_menu() {
     _civihr_employee_portal_get_webform_modal_menu_item('My Contact Details');
 
   return $items;
+}
+
+/**
+ * Callback function for 'emergency_contacts/{id}/delete
+ *
+ * @param string $id
+ *   The emergency contact ID
+ */
+function civihr_employee_portal_emergency_contact_delete($id) {
+  $service = new EmergencyContactDeletionService();
+  $service->delete($id);
 }
 
 /**
