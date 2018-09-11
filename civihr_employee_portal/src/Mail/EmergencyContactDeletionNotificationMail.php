@@ -22,7 +22,7 @@ class EmergencyContactDeletionNotificationMail extends AbstractDrupalSystemMail 
       'displayName' => $contact['display_name'],
       'submissionDate' => date('Y-m-d H:i'),
       'emergencyContactName' => $emergencyContact['Name'],
-      'emergencyContactType' => $this->getEmergencyContactType($message),
+      'emergencyContactType' => $this->getEmergencyContactType($emergencyContact),
     ];
   }
 
@@ -46,12 +46,11 @@ class EmergencyContactDeletionNotificationMail extends AbstractDrupalSystemMail 
    * Gets the emergency contact from the message and determines if it is a
    * 'dependant' or 'emergency contact'
    *
-   * @param array $message
+   * @param array $emergencyContact
    *
    * @return string
    */
-  private function getEmergencyContactType($message) {
-    $emergencyContact = $message['params']['emergencyContact'];
+  private function getEmergencyContactType($emergencyContact) {
     $isDependant = $emergencyContact['Dependant_s_'] === 'yes';
 
     return $isDependant ? 'dependant' : 'emergency contact';
