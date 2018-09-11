@@ -12,7 +12,7 @@ class EmergencyContactDeletionNotifier {
    * @param int $emergencyContactId
    */
   public function notifyDeletion($emergencyContactId) {
-    if (!WebformSubmissionSettingsService::shouldSendMail()) {
+    if (!ContactUpdateNotificationSettingsHelper::shouldSendMail()) {
       return;
     }
 
@@ -20,7 +20,7 @@ class EmergencyContactDeletionNotifier {
     $emergencyContact = $service->find($emergencyContactId);
 
     $params = ['emergencyContact' => $emergencyContact];
-    $mail = WebformSubmissionSettingsService::getTargetEmail();
+    $mail = ContactUpdateNotificationSettingsHelper::getTargetEmail();
     $module = 'civihr_employee_portal';
     $lang = language_default();
     drupal_mail($module, 'emergency_contact_deletion', $mail, $lang, $params);

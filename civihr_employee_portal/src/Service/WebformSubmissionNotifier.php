@@ -43,7 +43,7 @@ class WebformSubmissionNotifier {
     $params['submission'] = $submission;
     $key = $this->getMailKey($node);
     $module = 'civihr_employee_portal';
-    $email = WebformSubmissionSettingsService::getTargetEmail();
+    $email = ContactUpdateNotificationSettingsHelper::getTargetEmail();
 
     drupal_mail($module, $key, $email, language_default(), $params);
   }
@@ -60,7 +60,7 @@ class WebformSubmissionNotifier {
       return FALSE;
     }
 
-    return WebformSubmissionSettingsService::shouldSendMail();
+    return ContactUpdateNotificationSettingsHelper::shouldSendMail();
   }
 
 

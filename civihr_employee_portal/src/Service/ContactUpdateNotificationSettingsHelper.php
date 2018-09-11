@@ -4,7 +4,7 @@ namespace Drupal\civihr_employee_portal\Service;
 
 use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
 
-class WebformSubmissionSettingsService {
+class ContactUpdateNotificationSettingsHelper {
 
   /**
    * Checks settings to determine whether emails should be sent
