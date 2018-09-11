@@ -18,7 +18,7 @@ use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
 use Drupal\civihr_employee_portal\Mail\WebformSubmissionNotificationMail;
 use Drupal\civihr_employee_portal\Page\HRDetailsPage;
 use Drupal\civihr_employee_portal\Security\PublicFirewall;
-use Drupal\civihr_employee_portal\Service\EmergencyContactDeletionService;
+use Drupal\civihr_employee_portal\Service\EmergencyContactDeletionNotifier;
 use Drupal\civihr_employee_portal\Service\WebformSubmissionNotifier;
 use Drupal\civihr_employee_portal\View\CustomFieldsMappingFixer;
 use Drupal\civihr_employee_portal\Webform\WebformTransferService;
@@ -1738,8 +1738,23 @@ function civihr_employee_portal_menu() {
  *   The emergency contact ID
  */
 function civihr_employee_portal_emergency_contact_delete($id) {
-  $service = new EmergencyContactDeletionService();
-  $service->delete($id);
+  $service = new EmergencyContactDeletionNotifier();
+  $result = ['status' => 200];
+
+  try {
+    civicrm_api3('Contact', 'deleteemergencycontact', ['id' => $id]);
+    $service->notifyDeletion($id);
+  } catch (\Exception $exception) {
+    $result = [
+      'status' => 500,
+      'error' => $exception->getMessage(),
+    ];
+  }
+
+  drupal_add_http_header('Content-Type', 'application/json');
+  http_response_code($result['status']);
+  echo json_encode($result);
+  exit();
 }
 
 /**
