@@ -38,8 +38,12 @@ class EmergencyContactDeletionNotificationMail extends AbstractDrupalSystemMail 
    */
   public function getSubject($message) {
     $format = 'CiviHR Self Service Data Submission - %s Deleted';
+    $emergencyContact = $message['params']['emergencyContact'];
 
-    return sprintf($format, ucwords($this->getEmergencyContactType($message)));
+    return sprintf(
+      $format,
+      ucwords($this->getEmergencyContactType($emergencyContact))
+    );
   }
 
   /**
