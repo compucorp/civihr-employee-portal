@@ -258,7 +258,6 @@ features[user_permission][] = view all activities
 features[user_permission][] = view all contacts
 features[user_permission][] = view all manual batches
 features[user_permission][] = view all notes
-features[user_permission][] = view appraisals
 features[user_permission][] = view debug output
 features[user_permission][] = view hr resources
 features[user_permission][] = view my contact

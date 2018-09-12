@@ -2183,19 +2183,6 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civicrm',
   );
 
-  // Exported permission: 'view appraisals'.
-  $permissions['view appraisals'] = array(
-    'name' => 'view appraisals',
-    'roles' => array(
-      'HR Admin' => 'HR Admin',
-      'Manager' => 'Manager',
-      'Regional HR Admin' => 'Regional HR Admin',
-      'Staff' => 'Staff',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'civihr_employee_portal',
-  );
-
   // Exported permission: 'view debug output'.
   $permissions['view debug output'] = array(
     'name' => 'view debug output',

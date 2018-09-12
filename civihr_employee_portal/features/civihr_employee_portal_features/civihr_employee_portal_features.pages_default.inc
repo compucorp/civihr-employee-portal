@@ -185,29 +185,6 @@ function civihr_employee_portal_features_default_page_manager_pages() {
   $display->content['new-48897dc2-d49e-4e72-b86a-7ec70b28da04'] = $pane;
   $display->panels['header'][0] = 'new-48897dc2-d49e-4e72-b86a-7ec70b28da04';
   $pane = new stdClass();
-  $pane->pid = 'new-80f12630-09c3-4ce3-8d65-f766db9a08a9';
-  $pane->panel = 'header';
-  $pane->type = 'block';
-  $pane->subtype = 'views-appraisals-appraisals_employee';
-  $pane->shown = TRUE;
-  $pane->access = array();
-  $pane->configuration = array(
-    'override_title' => 0,
-    'override_title_text' => '',
-    'override_title_heading' => 'h2',
-  );
-  $pane->cache = array();
-  $pane->style = array(
-    'settings' => NULL,
-  );
-  $pane->css = array();
-  $pane->extras = array();
-  $pane->position = 1;
-  $pane->locks = array();
-  $pane->uuid = '80f12630-09c3-4ce3-8d65-f766db9a08a9';
-  $display->content['new-80f12630-09c3-4ce3-8d65-f766db9a08a9'] = $pane;
-  $display->panels['header'][1] = 'new-80f12630-09c3-4ce3-8d65-f766db9a08a9';
-  $pane = new stdClass();
   $pane->pid = 'new-91c23893-858f-4a81-9708-e143fa11724b';
   $pane->panel = 'middle';
   $pane->type = 'block';
