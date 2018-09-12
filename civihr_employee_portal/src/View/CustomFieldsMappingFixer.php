@@ -16,7 +16,7 @@ class CustomFieldsMappingFixer {
   /**
    * To fix mapping on Views import of CiviCRM custom fields
    *
-   * @param view $view
+   * @param \view $view
    *     the view that is being imported / recreated
    */
   public static function fixMapping($view) {
@@ -65,8 +65,8 @@ class CustomFieldsMappingFixer {
   private static function processOption(&$option) {
     // checking if this table is part of the civicrm views integration
     $tableName = self::getCiviCRMtableName($option['table']);
-    $prefix = $tableName ? self::getPrefix($tableName) : false;
-    if ( $prefix ) {
+    $prefix = $tableName ? self::getPrefix($tableName) : FALSE;
+    if ($prefix) {
       $option['table'] = $tableName;
       $columns = self::getColumnsFromTable($prefix . $tableName);
       // if the table where the current field belongs exists does not have it
@@ -79,23 +79,6 @@ class CustomFieldsMappingFixer {
         }
       }
     }
-  }
-
-  /**
-   * Removes the number in end of a string
-   * In this context that number is always separated by an underscore
-   *
-   * @param  string $string
-   *     the string which could have underscores or not
-   *
-   * @return string
-   *     the string without the number at the end,
-   *     if no number found at the end returns the same string
-   */
-  private static function removeLastNumberOfString($string) {
-    $pieces = explode('_', $string);
-    $lastIndex = count($pieces) - 1;
-    return $lastIndex > 0 && intval(array_pop($pieces)) ? implode('_', $pieces) : $string;
   }
 
   /**
@@ -122,7 +105,26 @@ class CustomFieldsMappingFixer {
 
     $exportedTableBaseName = self::removeLastNumberOfString($tableName);
     $tableFound = isset($tableNamesMap[$exportedTableBaseName]);
+
     return $tableFound ? $tableNamesMap[$exportedTableBaseName] : '';
+  }
+
+  /**
+   * Removes the number in end of a string
+   * In this context that number is always separated by an underscore
+   *
+   * @param  string $string
+   *     the string which could have underscores or not
+   *
+   * @return string
+   *     the string without the number at the end,
+   *     if no number found at the end returns the same string
+   */
+  private static function removeLastNumberOfString($string) {
+    $pieces = explode('_', $string);
+    $lastIndex = count($pieces) - 1;
+
+    return $lastIndex > 0 && intval(array_pop($pieces)) ? implode('_', $pieces) : $string;
   }
 
   /**
@@ -136,6 +138,7 @@ class CustomFieldsMappingFixer {
    */
   private static function getPrefix($tableName) {
     global $databases;
+
     return $databases['default']['default']['prefix'][$tableName];
   }
 
@@ -151,7 +154,7 @@ class CustomFieldsMappingFixer {
    */
   private static function getColumnsFromTable($table) {
     static $columns = [];
-    if (!isset( $columns[$table])) {
+    if (!isset($columns[$table])) {
       $columns[$table] = [];
       $res = db_query('SHOW COLUMNS FROM ' . $table)->fetchAll();
       foreach ($res as $field) {
@@ -161,4 +164,5 @@ class CustomFieldsMappingFixer {
 
     return $columns[$table];
   }
+
 }

@@ -163,6 +163,17 @@ $handler->display->display_options['fields']['role_department']['table'] = 'hrjc
 $handler->display->display_options['fields']['role_department']['field'] = 'role_department';
 $handler->display->display_options['fields']['role_department']['relationship'] = 'role_jobcontract_id';
 $handler->display->display_options['fields']['role_department']['label'] = 'Role Department';
+/* Field: CiviCRM Custom: NI/SSN Number: NI / SSN */
+$handler->display->display_options['fields']['ni_ssn_60']['id'] = 'ni_ssn_60';
+$handler->display->display_options['fields']['ni_ssn_60']['table'] = 'civicrm_value_inline_custom_10';
+$handler->display->display_options['fields']['ni_ssn_60']['field'] = 'ni_ssn_60';
+$handler->display->display_options['fields']['ni_ssn_60']['alter']['trim_whitespace'] = TRUE;
+$handler->display->display_options['fields']['ni_ssn_60']['alter']['strip_tags'] = TRUE;
+/* Field: CiviCRM Custom: NI/SSN Number: NI/SSN application in progress */
+$handler->display->display_options['fields']['ni_ssn_application_in_progress_61']['id'] = 'ni_ssn_application_in_progress_61';
+$handler->display->display_options['fields']['ni_ssn_application_in_progress_61']['table'] = 'civicrm_value_inline_custom_10';
+$handler->display->display_options['fields']['ni_ssn_application_in_progress_61']['field'] = 'ni_ssn_application_in_progress_61';
+$handler->display->display_options['fields']['ni_ssn_application_in_progress_61']['empty'] = 'No';
 $handler->display->display_options['defaults']['arguments'] = FALSE;
 
 /* Display: Contact Information */
@@ -236,10 +247,12 @@ $translatables['my_details_block'] = array(
   t('Designation'),
   t('Role title'),
   t('Role Department'),
-  t('All'),
+  t('NI / SSN'),
+  t('NI/SSN application in progress'),
+  t('No'),
   t('Contact Information'),
   t('Contact Information Block'),
   t('Personal Phone'),
   t('Personal E-mail'),
-  t('Address'),
+  t('Home Address'),
 );
