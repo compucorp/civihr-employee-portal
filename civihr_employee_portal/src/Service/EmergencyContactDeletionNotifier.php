@@ -2,22 +2,17 @@
 
 namespace Drupal\civihr_employee_portal\Service;
 
-use CRM_Hremergency_Service_EmergencyContactService as EmergencyContactService;
-
 class EmergencyContactDeletionNotifier {
 
   /**
    * Sends the notification mail about emergency contact deletion
    *
-   * @param int $emergencyContactId
+   * @param array $emergencyContact
    */
-  public function notifyDeletion($emergencyContactId) {
+  public function notifyDeletion($emergencyContact) {
     if (!ContactUpdateNotificationSettingsHelper::shouldSendMail()) {
       return;
     }
-
-    $service = new EmergencyContactService();
-    $emergencyContact = $service->find($emergencyContactId);
 
     $params = ['emergencyContact' => $emergencyContact];
     $mail = ContactUpdateNotificationSettingsHelper::getTargetEmail();

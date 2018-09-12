@@ -22,6 +22,7 @@ use Drupal\civihr_employee_portal\Service\EmergencyContactDeletionNotifier;
 use Drupal\civihr_employee_portal\Service\WebformSubmissionNotifier;
 use Drupal\civihr_employee_portal\View\CustomFieldsMappingFixer;
 use Drupal\civihr_employee_portal\Webform\WebformTransferService;
+use CRM_Hremergency_Service_EmergencyContactService as EmergencyContactService;
 
 /**
  * Implements hook_install().
@@ -1738,12 +1739,14 @@ function civihr_employee_portal_menu() {
  *   The emergency contact ID
  */
 function civihr_employee_portal_emergency_contact_delete($id) {
-  $service = new EmergencyContactDeletionNotifier();
+  $notifier = new EmergencyContactDeletionNotifier();
+  $service = new EmergencyContactService();
   $result = ['status' => 200];
 
   try {
+    $emergencyContact = $service->find($id);
     civicrm_api3('Contact', 'deleteemergencycontact', ['id' => $id]);
-    $service->notifyDeletion($id);
+    $notifier->notifyDeletion($emergencyContact);
   } catch (\Exception $exception) {
     $result = [
       'status' => 500,
