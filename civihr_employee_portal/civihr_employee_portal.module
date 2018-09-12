@@ -1735,7 +1735,7 @@ function civihr_employee_portal_menu() {
 /**
  * Callback function for 'emergency_contacts/{id}/delete
  *
- * @param string $id
+ * @param int $id
  *   The emergency contact ID
  */
 function civihr_employee_portal_emergency_contact_delete($id) {
