@@ -167,6 +167,8 @@ $handler->display->display_options['fields']['role_department']['label'] = 'Role
 $handler->display->display_options['fields']['ni_ssn_60']['id'] = 'ni_ssn_60';
 $handler->display->display_options['fields']['ni_ssn_60']['table'] = 'civicrm_value_inline_custom_10';
 $handler->display->display_options['fields']['ni_ssn_60']['field'] = 'ni_ssn_60';
+$handler->display->display_options['fields']['ni_ssn_60']['alter']['trim_whitespace'] = TRUE;
+$handler->display->display_options['fields']['ni_ssn_60']['alter']['strip_tags'] = TRUE;
 /* Field: CiviCRM Custom: NI/SSN Number: NI/SSN application in progress */
 $handler->display->display_options['fields']['ni_ssn_application_in_progress_61']['id'] = 'ni_ssn_application_in_progress_61';
 $handler->display->display_options['fields']['ni_ssn_application_in_progress_61']['table'] = 'civicrm_value_inline_custom_10';
