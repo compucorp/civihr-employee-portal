@@ -105,6 +105,10 @@ $handler->display->display_options['fields']['display_name']['table'] = 'civicrm
 $handler->display->display_options['fields']['display_name']['field'] = 'display_name';
 $handler->display->display_options['fields']['display_name']['label'] = 'Name';
 $handler->display->display_options['fields']['display_name']['link_to_civicrm_contact'] = 0;
+/* Field: CiviCRM Contacts: External Identifier */
+$handler->display->display_options['fields']['external_identifier']['id'] = 'external_identifier';
+$handler->display->display_options['fields']['external_identifier']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['external_identifier']['field'] = 'external_identifier';
 /* Field: HRJobContract Contact Work/Home Phone and E-mail Entity: Work_phone */
 $handler->display->display_options['fields']['work_phone']['id'] = 'work_phone';
 $handler->display->display_options['fields']['work_phone']['table'] = 'hrjc_contact_details';
