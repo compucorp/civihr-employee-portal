@@ -1,20 +1,20 @@
 <?php
 
+use CRM_HRLeaveAndAbsences_BAO_AbsenceType as AbsenceType;
 use Drupal\civihr_employee_portal\Blocks\Base;
-use Drupal\civihr_employee_portal\Mail\AccountActivatedSystemMail;
-use Drupal\civihr_employee_portal\Helpers\WebformHelper;
-use Drupal\civihr_employee_portal\Helpers\HelperClass;
-use Drupal\civihr_employee_portal\Security\PublicFirewall;
+use Drupal\civihr_employee_portal\Forms\ContactForm;
 use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
 use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
-use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
+use Drupal\civihr_employee_portal\Helpers\HelperClass;
 use Drupal\civihr_employee_portal\Helpers\ImageResizer;
-use Drupal\civihr_employee_portal\Forms\ContactForm;
-use CRM_HRLeaveAndAbsences_BAO_AbsenceType as AbsenceType;
-use Drupal\civihr_employee_portal\Page\HRDetailsPage;
-use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
+use Drupal\civihr_employee_portal\Helpers\WebformHelper;
+use Drupal\civihr_employee_portal\Mail\AccountActivatedSystemMail;
+use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
+use Drupal\civihr_employee_portal\Page\HRDetailsPage;
+use Drupal\civihr_employee_portal\Security\PublicFirewall;
+use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 
 /**
  * Implements hook_install().
@@ -22,7 +22,6 @@ use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
 function civihr_employee_portal_install() {
   _civihr_employee_portal_create_default_reports_configuration();
 
-  //Add HR Resource Types vocabulary and default terms
   TaxonomyHelper::createHRResourceTypeVocabulary();
   TaxonomyHelper::createDefaultTerms();
 }
@@ -4757,7 +4756,7 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
   }
 
   // Set up Emergency Contact webform ajax fields and callbacks.
-  if (!empty($form['#node']) && $form['#node']->nid === variable_get('emergency_contact_webform_nid')) {
+  if (!empty($form['#node']->nid) && $form['#node']->nid === variable_get('emergency_contact_webform_nid')) {
     $fieldset = _get_emergency_contact_fieldset_list();
 
     for ($contact = 1; $contact < 3; $contact++) {
@@ -6339,9 +6338,11 @@ function _user_redirection() {
   $publicFirewall = new PublicFirewall();
   global $user, $base_url;
 
-  // This function should only be executed in a non-cli environment.
-  // It calls exit() function, which causes errors when running drush commands
-  if (drupal_is_cli()) {
+  // This function should only be executed in a non-cli fully-installed environment,
+  // It calls exit() function, which causes errors when running drush commands.
+  // If the redirection is called during the installation, it makes the process
+  // to stop before it finishes
+  if (drupal_is_cli() || drupal_installation_attempted()) {
     return;
   }
 

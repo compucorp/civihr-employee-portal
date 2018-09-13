@@ -36,6 +36,12 @@ dependencies[] = views_bulk_operations
 dependencies[] = browserclass
 dependencies[] = conditional_styles
 dependencies[] = civicrm_resources
+dependencies[] = masquerade
+dependencies[] = smtp
+dependencies[] = logintoboggan
+dependencies[] = yoti
+dependencies[] = menu_attributes
+dependencies[] = roles_for_menu
 
 ; Views Handlers
 files[] = views/includes/civihr_employee_portal_argument_date_range.inc

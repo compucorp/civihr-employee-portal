@@ -1136,16 +1136,6 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civicrm_entity',
   );
 
-  // Exported permission: 'create article content'.
-  $permissions['create article content'] = array(
-    'name' => 'create article content',
-    'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'node',
-  );
-
   // Exported permission: 'create hr_documents content'.
   $permissions['create hr_documents content'] = array(
     'name' => 'create hr_documents content',
@@ -1162,16 +1152,6 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'create manual batch',
     'roles' => array(),
     'module' => 'civicrm',
-  );
-
-  // Exported permission: 'create page content'.
-  $permissions['create page content'] = array(
-    'name' => 'create page content',
-    'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'node',
   );
 
   // Exported permission: 'create url aliases'.
@@ -1262,31 +1242,11 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'webform',
   );
 
-  // Exported permission: 'delete any article content'.
-  $permissions['delete any article content'] = array(
-    'name' => 'delete any article content',
-    'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'node',
-  );
-
   // Exported permission: 'delete any hr_documents content'.
   $permissions['delete any hr_documents content'] = array(
     'name' => 'delete any hr_documents content',
     'roles' => array(
       'HR Admin' => 'HR Admin',
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'node',
-  );
-
-  // Exported permission: 'delete any page content'.
-  $permissions['delete any page content'] = array(
-    'name' => 'delete any page content',
-    'roles' => array(
       'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
@@ -1321,16 +1281,6 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civicrm',
   );
 
-  // Exported permission: 'delete own article content'.
-  $permissions['delete own article content'] = array(
-    'name' => 'delete own article content',
-    'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'node',
-  );
-
   // Exported permission: 'delete own hr_documents content'.
   $permissions['delete own hr_documents content'] = array(
     'name' => 'delete own hr_documents content',
@@ -1347,16 +1297,6 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'delete own manual batches',
     'roles' => array(),
     'module' => 'civicrm',
-  );
-
-  // Exported permission: 'delete own page content'.
-  $permissions['delete own page content'] = array(
-    'name' => 'delete own page content',
-    'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'node',
   );
 
   // Exported permission: 'delete own webform content'.
@@ -1391,16 +1331,6 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'delete terms in hr_resource_type',
     'roles' => array(
       'HR Admin' => 'HR Admin',
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'taxonomy',
-  );
-
-  // Exported permission: 'delete terms in tags'.
-  $permissions['delete terms in tags'] = array(
-    'name' => 'delete terms in tags',
-    'roles' => array(
       'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
@@ -1445,31 +1375,11 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'webform',
   );
 
-  // Exported permission: 'edit any article content'.
-  $permissions['edit any article content'] = array(
-    'name' => 'edit any article content',
-    'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'node',
-  );
-
   // Exported permission: 'edit any hr_documents content'.
   $permissions['edit any hr_documents content'] = array(
     'name' => 'edit any hr_documents content',
     'roles' => array(
       'HR Admin' => 'HR Admin',
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'node',
-  );
-
-  // Exported permission: 'edit any page content'.
-  $permissions['edit any page content'] = array(
-    'name' => 'edit any page content',
-    'roles' => array(
       'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
@@ -1555,16 +1465,6 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civicrm',
   );
 
-  // Exported permission: 'edit own article content'.
-  $permissions['edit own article content'] = array(
-    'name' => 'edit own article content',
-    'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'node',
-  );
-
   // Exported permission: 'edit own comments'.
   $permissions['edit own comments'] = array(
     'name' => 'edit own comments',
@@ -1591,16 +1491,6 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit own manual batches',
     'roles' => array(),
     'module' => 'civicrm',
-  );
-
-  // Exported permission: 'edit own page content'.
-  $permissions['edit own page content'] = array(
-    'name' => 'edit own page content',
-    'roles' => array(
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'node',
   );
 
   // Exported permission: 'edit own webform content'.
@@ -1634,16 +1524,6 @@ function civihr_default_permissions_user_default_permissions() {
     'name' => 'edit terms in hr_resource_type',
     'roles' => array(
       'HR Admin' => 'HR Admin',
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'taxonomy',
-  );
-
-  // Exported permission: 'edit terms in tags'.
-  $permissions['edit terms in tags'] = array(
-    'name' => 'edit terms in tags',
-    'roles' => array(
       'Regional HR Admin' => 'Regional HR Admin',
       'administrator' => 'administrator',
     ),
