@@ -1,25 +1,28 @@
 <?php
 
+use CRM_Hremergency_Service_EmergencyContactService as EmergencyContactService;
+use CRM_HRLeaveAndAbsences_BAO_AbsenceType as AbsenceType;
 use Drupal\civihr_employee_portal\Blocks\Base;
-use Drupal\civihr_employee_portal\Mail\AccountActivatedSystemMail;
-use Drupal\civihr_employee_portal\Helpers\WebformHelper;
-use Drupal\civihr_employee_portal\Helpers\HelperClass;
-use Drupal\civihr_employee_portal\Security\PublicFirewall;
+use Drupal\civihr_employee_portal\Forms\ContactForm;
 use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
 use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
-use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
+use Drupal\civihr_employee_portal\Helpers\HelperClass;
 use Drupal\civihr_employee_portal\Helpers\ImageResizer;
-use Drupal\civihr_employee_portal\Forms\ContactForm;
-use CRM_HRLeaveAndAbsences_BAO_AbsenceType as AbsenceType;
-use Drupal\civihr_employee_portal\Page\HRDetailsPage;
-use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
+use Drupal\civihr_employee_portal\Helpers\WebformHelper;
+use Drupal\civihr_employee_portal\Mail\AccountActivatedSystemMail;
+use Drupal\civihr_employee_portal\Mail\EmergencyContactDeletionNotificationMail;
 use Drupal\civihr_employee_portal\Mail\MailContentReplacer;
-use Drupal\civihr_employee_portal\Mail\WebformSubmissionNotificationMail;
-use Drupal\civihr_employee_portal\Mail\WebformSubmissionNotifier;
 use Drupal\civihr_employee_portal\Mail\OnboardingFormEditNotificationMail;
+use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
+use Drupal\civihr_employee_portal\Mail\WebformSubmissionNotificationMail;
+use Drupal\civihr_employee_portal\Page\HRDetailsPage;
+use Drupal\civihr_employee_portal\Security\PublicFirewall;
+use Drupal\civihr_employee_portal\Service\EmergencyContactDeletionNotifier;
+use Drupal\civihr_employee_portal\Service\WebformSubmissionNotifier;
 use Drupal\civihr_employee_portal\View\CustomFieldsMappingFixer;
+use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 
 /**
  * Implements hook_install().
@@ -1601,6 +1604,12 @@ function civihr_employee_portal_menu() {
     'type' => MENU_CALLBACK,
   ];
 
+  $items['emergency_contacts/%/delete'] = [
+    'page callback' => 'civihr_employee_portal_emergency_contact_delete',
+    'page arguments' => [1],
+    'access callback' => TRUE,
+  ];
+
   $items['reports'] = [
     'title' => 'Reports',
     'page callback' => 'civihr_employee_portal_hrreport_landing_page',
@@ -1721,6 +1730,21 @@ function civihr_employee_portal_menu() {
     _civihr_employee_portal_get_webform_modal_menu_item('My Contact Details');
 
   return $items;
+}
+
+/**
+ * Callback function for 'emergency_contacts/{id}/delete
+ *
+ * @param int $id
+ *   The emergency contact ID
+ */
+function civihr_employee_portal_emergency_contact_delete($id) {
+  $notifier = new EmergencyContactDeletionNotifier();
+  $service = new EmergencyContactService();
+
+  $emergencyContact = $service->find($id);
+  civicrm_api3('Contact', 'deleteemergencycontact', ['id' => $id]);
+  $notifier->notifyDeletion($emergencyContact);
 }
 
 /**
@@ -5173,6 +5197,9 @@ function civihr_employee_portal_mail($key, &$message, $params) {
       break;
     case 'civihr_onboarding_form_submission':
       $mail = new OnboardingFormEditNotificationMail();
+      break;
+    case 'emergency_contact_deletion':
+      $mail = new EmergencyContactDeletionNotificationMail();
       break;
   }
 

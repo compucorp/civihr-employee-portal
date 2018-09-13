@@ -3,6 +3,7 @@
 namespace Drupal\civihr_employee_portal\Mail;
 
 use Drupal\civihr_employee_portal\Helpers\WebformHelper;
+use Drupal\civihr_employee_portal\Service\ContactService;
 
 class WebformSubmissionNotificationMail extends AbstractDrupalSystemMail {
 
@@ -16,8 +17,8 @@ class WebformSubmissionNotificationMail extends AbstractDrupalSystemMail {
     $contactId = WebformHelper::getValueByTitle($node, $submission, 'Existing Contact');
     $contact = civicrm_api3('Contact', 'getsingle', ['id' => $contactId]);
 
-    $contactEmail = $this->getContactWorkEmail($contactId);
-    $profileLink = $this->getLinkToContractProfile($contactId);
+    $contactEmail = ContactService::getContactWorkEmail($contactId);
+    $profileLink = ContactService::getLinkToContactProfile($contactId);
     $submittedValues = $this->formatSubmittedValues($node, $submission);
 
     return [
@@ -42,43 +43,6 @@ class WebformSubmissionNotificationMail extends AbstractDrupalSystemMail {
    */
   public function getSubject($message) {
     return 'CiviHR Self Service Data Submission';
-  }
-
-  /**
-   * Fetch the provided contact's work email
-   *
-   * @param int $contactId
-   *
-   * @return string
-   */
-  protected function getContactWorkEmail($contactId) {
-    $contactEmailRes = civicrm_api3('Email', 'get', [
-      'contact_id' => $contactId,
-      'location_type_id' => 'Work',
-      'options' => ['limit' => 1],
-      'sequential' => 1,
-    ]);
-
-    if ($contactEmailRes['count'] == 1) {
-      return $contactEmailRes['values'][0]['email'];
-    }
-
-    return '';
-  }
-
-  /**
-   * Fetch an absolute link to the contact's profile page
-   *
-   * @param int $contactId
-   *
-   * @return string
-   */
-  protected function getLinkToContractProfile($contactId) {
-    $profilePath = 'civicrm/contact/view';
-    $queryParams = ['cid' => $contactId];
-    $profileLink = \CRM_Utils_System::url($profilePath, $queryParams, TRUE);
-
-    return $profileLink;
   }
 
   /**
