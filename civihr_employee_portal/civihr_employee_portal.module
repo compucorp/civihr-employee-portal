@@ -1,21 +1,28 @@
 <?php
 
+use CRM_Hremergency_Service_EmergencyContactService as EmergencyContactService;
+use CRM_HRLeaveAndAbsences_BAO_AbsenceType as AbsenceType;
 use Drupal\civihr_employee_portal\Blocks\Base;
-use Drupal\civihr_employee_portal\Mail\AccountActivatedSystemMail;
-use Drupal\civihr_employee_portal\Helpers\WebformHelper;
-use Drupal\civihr_employee_portal\Helpers\HelperClass;
-use Drupal\civihr_employee_portal\Security\PublicFirewall;
+use Drupal\civihr_employee_portal\Forms\ContactForm;
 use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
 use Drupal\civihr_employee_portal\Forms\OnboardingWizardCustomizationForm;
-use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
+use Drupal\civihr_employee_portal\Helpers\HelperClass;
 use Drupal\civihr_employee_portal\Helpers\ImageResizer;
-use Drupal\civihr_employee_portal\Forms\ContactForm;
-use CRM_HRLeaveAndAbsences_BAO_AbsenceType as AbsenceType;
-use Drupal\civihr_employee_portal\Page\HRDetailsPage;
-use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 use Drupal\civihr_employee_portal\Helpers\LinkProvider;
 use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
+use Drupal\civihr_employee_portal\Helpers\WebformHelper;
+use Drupal\civihr_employee_portal\Mail\AccountActivatedSystemMail;
+use Drupal\civihr_employee_portal\Mail\EmergencyContactDeletionNotificationMail;
+use Drupal\civihr_employee_portal\Mail\MailContentReplacer;
+use Drupal\civihr_employee_portal\Mail\OnboardingFormEditNotificationMail;
+use Drupal\civihr_employee_portal\Mail\PasswordResetSystemMail;
+use Drupal\civihr_employee_portal\Mail\WebformSubmissionNotificationMail;
+use Drupal\civihr_employee_portal\Page\HRDetailsPage;
+use Drupal\civihr_employee_portal\Security\PublicFirewall;
+use Drupal\civihr_employee_portal\Service\EmergencyContactDeletionNotifier;
+use Drupal\civihr_employee_portal\Service\WebformSubmissionNotifier;
 use Drupal\civihr_employee_portal\View\CustomFieldsMappingFixer;
+use Drupal\civihr_employee_portal\Webform\WebformTransferService;
 
 /**
  * Implements hook_install().
@@ -768,18 +775,8 @@ function civihr_employee_portal_mail_alter(&$message) {
   }
 
   $smarty = CRM_Core_Smarty::singleton();
-  $smarty->addTemplateDir(__DIR__ . '/templates/smarty');
-
-  $variables = $replacementMail->getVariables($message);
-  $headers = $replacementMail->getHeaders();
-  $templateName = $replacementMail->getTemplateName();
-
-  // allow use of original content
-  $variables['body'] = $message['body'][0];
-  $body = $smarty->fetchWith($templateName, $variables);
-
-  $message['headers'] = array_merge($message['headers'], $headers);
-  $message['body'] = [$body];
+  $replacer = new MailContentReplacer($smarty);
+  $replacer->replaceContent($message, $replacementMail);
 }
 
 /**
@@ -1607,6 +1604,12 @@ function civihr_employee_portal_menu() {
     'type' => MENU_CALLBACK,
   ];
 
+  $items['emergency_contacts/%/delete'] = [
+    'page callback' => 'civihr_employee_portal_emergency_contact_delete',
+    'page arguments' => [1],
+    'access callback' => TRUE,
+  ];
+
   $items['reports'] = [
     'title' => 'Reports',
     'page callback' => 'civihr_employee_portal_hrreport_landing_page',
@@ -1727,6 +1730,21 @@ function civihr_employee_portal_menu() {
     _civihr_employee_portal_get_webform_modal_menu_item('My Contact Details');
 
   return $items;
+}
+
+/**
+ * Callback function for 'emergency_contacts/{id}/delete
+ *
+ * @param int $id
+ *   The emergency contact ID
+ */
+function civihr_employee_portal_emergency_contact_delete($id) {
+  $notifier = new EmergencyContactDeletionNotifier();
+  $service = new EmergencyContactService();
+
+  $emergencyContact = $service->find($id);
+  civicrm_api3('Contact', 'deleteemergencycontact', ['id' => $id]);
+  $notifier->notifyDeletion($emergencyContact);
 }
 
 /**
@@ -5151,10 +5169,42 @@ function civihr_employee_portal_webform_submission_insert($node, $submission) {
   $nodeTitle = property_exists($node, 'title') ? $node->title : NULL;
   $onboardingTitle = OnboardingWebForm::NAME;
   $isOnboardingForm = $nodeTitle === $onboardingTitle;
+  $notifier = new WebformSubmissionNotifier();
 
   if ($isOnboardingForm) {
     $form = new OnboardingWebForm();
     $form->onSubmit($node, $submission);
+  }
+
+  $notifier->sendNotification($node, $submission);
+}
+
+/**
+ * Implements hook_mail().
+ *
+ * @param string $key
+ * @param array $message
+ * @param array $params
+ */
+function civihr_employee_portal_mail($key, &$message, $params) {
+  $smarty = CRM_Core_Smarty::singleton();
+  $replacer = new MailContentReplacer($smarty);
+  $mail = NULL;
+
+  switch ($key) {
+    case 'civihr_webform_submission':
+      $mail = new WebformSubmissionNotificationMail();
+      break;
+    case 'civihr_onboarding_form_submission':
+      $mail = new OnboardingFormEditNotificationMail();
+      break;
+    case 'emergency_contact_deletion':
+      $mail = new EmergencyContactDeletionNotificationMail();
+      break;
+  }
+
+  if ($mail) {
+    $replacer->replaceContent($message, $mail);
   }
 }
 
