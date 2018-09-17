@@ -3,6 +3,7 @@
 namespace Drupal\civihr_employee_portal\Service;
 
 class ContactService {
+
   /**
    * @param string $role
    *   The name of the target role
@@ -64,4 +65,42 @@ class ContactService {
 
     return array_column($relationships['values'], 'contact_id_b');
   }
+
+  /**
+   * Fetch the provided contact's work email
+   *
+   * @param int $contactId
+   *
+   * @return string
+   */
+  public static function getContactWorkEmail($contactId) {
+    $contactEmailRes = civicrm_api3('Email', 'get', [
+      'contact_id' => $contactId,
+      'location_type_id' => 'Work',
+      'options' => ['limit' => 1],
+      'sequential' => 1,
+    ]);
+
+    if ($contactEmailRes['count'] == 1) {
+      return $contactEmailRes['values'][0]['email'];
+    }
+
+    return '';
+  }
+
+  /**
+   * Fetch an absolute link to the contact's profile page
+   *
+   * @param int $contactId
+   *
+   * @return string
+   */
+  public static function getLinkToContactProfile($contactId) {
+    $profilePath = 'civicrm/contact/view';
+    $queryParams = ['cid' => $contactId];
+    $profileLink = \CRM_Utils_System::url($profilePath, $queryParams, TRUE);
+
+    return $profileLink;
+  }
+
 }
