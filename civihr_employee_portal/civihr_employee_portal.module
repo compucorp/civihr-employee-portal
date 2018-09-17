@@ -862,7 +862,6 @@ function civihr_employee_portal_views_default_views() {
 
     if (isset($view)) {
       $views[$view->name] = $view;
-      CustomFieldsMappingFixer::fixMapping($view);
     }
   }
 
