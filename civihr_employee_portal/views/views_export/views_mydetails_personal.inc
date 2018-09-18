@@ -95,6 +95,12 @@ $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = '';
 $handler->display->display_options['fields']['nothing']['alter']['text'] = '[id] [gender] [marital_status_58]';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
+/* Field: CiviCRM Contacts: External Identifier */
+$handler->display->display_options['fields']['external_identifier']['id'] = 'external_identifier';
+$handler->display->display_options['fields']['external_identifier']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['external_identifier']['field'] = 'external_identifier';
+$handler->display->display_options['fields']['external_identifier']['label'] = 'External ID';
+$handler->display->display_options['fields']['external_identifier']['element_label_colon'] = FALSE;
 /* Field: CiviCRM Contacts: Birth Date */
 $handler->display->display_options['fields']['birth_date']['id'] = 'birth_date';
 $handler->display->display_options['fields']['birth_date']['table'] = 'civicrm_contact';
@@ -156,6 +162,7 @@ $translatables['mydetails_personal'] = array(
   t('<div class="chr_panel--my-details__personal__gender">[gender]</div>'),
   t('<div class="chr_panel--my-details__personal__marital_status [marital_status_58]">[marital_status_58]</div>'),
   t('[id] [gender] [marital_status_58]'),
+  t('External ID'),
   t('Date of Birth'),
   t('Nationality'),
   t('All'),
