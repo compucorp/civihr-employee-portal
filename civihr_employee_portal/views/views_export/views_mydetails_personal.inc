@@ -116,6 +116,12 @@ $handler->display->display_options['fields']['nationality_44']['table'] = 'civic
 $handler->display->display_options['fields']['nationality_44']['field'] = 'nationality_44';
 $handler->display->display_options['fields']['nationality_44']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['nationality_44']['hide_empty'] = TRUE;
+/* Field: CiviCRM Contacts: NI/SSN Or Application Status */
+$handler->display->display_options['fields']['ni_ssn_or_in_progress']['id'] = 'ni_ssn_or_in_progress';
+$handler->display->display_options['fields']['ni_ssn_or_in_progress']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['ni_ssn_or_in_progress']['field'] = 'ni_ssn_or_in_progress';
+$handler->display->display_options['fields']['ni_ssn_or_in_progress']['label'] = 'NI/SSN';
+$handler->display->display_options['fields']['ni_ssn_or_in_progress']['element_label_colon'] = FALSE;
 /* Contextual filter: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['arguments']['id']['id'] = 'id';
 $handler->display->display_options['arguments']['id']['table'] = 'civicrm_contact';
@@ -165,6 +171,7 @@ $translatables['mydetails_personal'] = array(
   t('External ID'),
   t('Date of Birth'),
   t('Nationality'),
+  t('NI/SSN'),
   t('All'),
   t('My Personal Details'),
 );
