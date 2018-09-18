@@ -455,17 +455,9 @@ function civihr_employee_portal_update_7035() {
 }
 
 /**
- * Disables the HR Vacancies View
- */
-function civihr_employee_portal_update_7036() {
-  $status = variable_get('views_defaults', []);
-  $status['hr-vacancies'] = TRUE;
-  variable_set('views_defaults', $status);
-}
-/**
  * Removes old 'Help' menu link from main menu
  */
-function civihr_employee_portal_update_7037() {
+function civihr_employee_portal_update_7036() {
   db_delete('menu_links')
       ->condition('link_title', 'help')
       ->condition('menu_name', 'main-menu')
@@ -479,6 +471,15 @@ function civihr_employee_portal_update_7037() {
  */
 function civihr_employee_portal_update_7037() {
   features_revert(['civihr_default_permissions' => ['user_permission']]);
+}
+
+/**
+ * Disables the HR Vacancies View
+ */
+function civihr_employee_portal_update_7038() {
+  $status = variable_get('views_defaults', []);
+  $status['hr-vacancies'] = TRUE;
+  variable_set('views_defaults', $status);
 }
 
 /**
