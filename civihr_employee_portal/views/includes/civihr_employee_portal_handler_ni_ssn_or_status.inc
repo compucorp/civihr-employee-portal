@@ -3,7 +3,8 @@
 use Drupal\civihr_employee_portal\Service\CustomValueService;
 
 /**
- * Handles aggregation of a contacts different home address fields
+ * Handles displaying the NI/SSN number for a contact, or "pending" if
+ * application is in progress
  */
 class civihr_employee_portal_handler_ni_ssn_or_status extends views_handler_field {
 

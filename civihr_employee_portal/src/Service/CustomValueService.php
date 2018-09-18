@@ -22,7 +22,7 @@ class CustomValueService {
    * @param string $fieldName
    *
    * @return mixed
-   *   The custom value
+   *   The custom value, will be an array if the value is from multi-value group
    */
   public function getValueForEntity($entityId, $groupName, $fieldName) {
     $customField = $this->getCustomField($groupName, $fieldName);
