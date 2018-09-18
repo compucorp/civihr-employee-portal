@@ -24,7 +24,7 @@ class civihr_employee_portal_handler_ni_ssn_or_status extends views_handler_fiel
     $isApplying = $service->getValueForEntity($contactID, $group, $statusField);
 
     if ($isApplying) {
-      return 'Pending';
+      return '<em>Pending</em>';
     }
 
     return $service->getValueForEntity($contactID, $group, $ssnField);
