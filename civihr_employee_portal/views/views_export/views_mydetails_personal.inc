@@ -117,11 +117,11 @@ $handler->display->display_options['fields']['nationality_44']['field'] = 'natio
 $handler->display->display_options['fields']['nationality_44']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['nationality_44']['hide_empty'] = TRUE;
 /* Field: CiviCRM Contacts: NI/SSN Or Application Status */
-$handler->display->display_options['fields']['ni_ssn_or_in_progress']['id'] = 'ni_ssn_or_in_progress';
-$handler->display->display_options['fields']['ni_ssn_or_in_progress']['table'] = 'civicrm_contact';
-$handler->display->display_options['fields']['ni_ssn_or_in_progress']['field'] = 'ni_ssn_or_in_progress';
-$handler->display->display_options['fields']['ni_ssn_or_in_progress']['label'] = 'NI/SSN';
-$handler->display->display_options['fields']['ni_ssn_or_in_progress']['element_label_colon'] = FALSE;
+$handler->display->display_options['fields']['ni_ssn_or_application_status']['id'] = 'ni_ssn_or_application_status';
+$handler->display->display_options['fields']['ni_ssn_or_application_status']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['ni_ssn_or_application_status']['field'] = 'ni_ssn_or_application_status';
+$handler->display->display_options['fields']['ni_ssn_or_application_status']['label'] = 'NI/SSN';
+$handler->display->display_options['fields']['ni_ssn_or_application_status']['element_label_colon'] = FALSE;
 /* Contextual filter: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['arguments']['id']['id'] = 'id';
 $handler->display->display_options['arguments']['id']['table'] = 'civicrm_contact';
