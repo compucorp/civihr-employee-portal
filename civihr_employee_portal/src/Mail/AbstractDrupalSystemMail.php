@@ -3,6 +3,7 @@
 namespace Drupal\civihr_employee_portal\Mail;
 
 abstract class AbstractDrupalSystemMail {
+
   /**
    * @return string
    */
@@ -15,6 +16,15 @@ abstract class AbstractDrupalSystemMail {
    */
   public function getVariables($message) {
     return [];
+  }
+
+  /**
+   * @param array $message
+   *
+   * @return string
+   */
+  public function getSubject($message) {
+    return $message['subject'];
   }
 
   /**
