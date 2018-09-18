@@ -100,6 +100,7 @@ $handler->display->display_options['fields']['external_identifier']['id'] = 'ext
 $handler->display->display_options['fields']['external_identifier']['table'] = 'civicrm_contact';
 $handler->display->display_options['fields']['external_identifier']['field'] = 'external_identifier';
 $handler->display->display_options['fields']['external_identifier']['label'] = 'External ID';
+$handler->display->display_options['fields']['external_identifier']['element_label_colon'] = FALSE;
 /* Field: CiviCRM Contacts: Birth Date */
 $handler->display->display_options['fields']['birth_date']['id'] = 'birth_date';
 $handler->display->display_options['fields']['birth_date']['table'] = 'civicrm_contact';
