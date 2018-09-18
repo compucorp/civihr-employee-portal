@@ -474,6 +474,15 @@ function civihr_employee_portal_update_7037() {
 }
 
 /**
+ * Disables the HR Vacancies View
+ */
+function civihr_employee_portal_update_7038() {
+  $status = variable_get('views_defaults', []);
+  $status['hr-vacancies'] = TRUE;
+  variable_set('views_defaults', $status);
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string $path
