@@ -60,6 +60,7 @@ files[] = views/includes/civihr_employee_portal_handler_appraisal_line_manager.i
 files[] = views/includes/civihr_employee_portal_handler_appraisal_due_date.inc
 files[] = views/includes/civihr_employee_portal_handler_tasks_date.inc
 files[] = views/includes/civihr_employee_portal_handler_documents_date.inc
+files[] = views/includes/civihr_employee_portal_handler_ni_ssn_or_status.inc
 files[] = views/includes/views_between_dates_filter_handler.inc
 files[] = views/includes/views_between_operation_dates_filter_handler.inc
 

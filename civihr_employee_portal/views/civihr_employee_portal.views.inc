@@ -47,6 +47,14 @@ function civihr_employee_portal_views_data_alter(&$data) {
     ],
   ];
 
+  $data['civicrm_contact']['ni_ssn_or_application_status'] = [
+    'title' => t('NI/SSN Or Application Status'),
+    'help' => t('Displays the NI/SSN for this contact or a message if application is in progress'),
+    'field' => [
+      'handler' => 'civihr_employee_portal_handler_ni_ssn_or_status',
+    ],
+  ];
+
   /**
    * Custom field handler which will create age group based on the contact birth date
    */
