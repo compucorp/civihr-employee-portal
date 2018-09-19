@@ -483,6 +483,29 @@ function civihr_employee_portal_update_7038() {
 }
 
 /**
+ * Revokes the 'view appraisals'
+ * permissions from the HR Admin, Manager, Regional HR Admin Role,
+ * Staff and Administrator
+ */
+function civihr_employee_portal_update_7039() {
+  $permissionsToRevoke = ['view appraisals'];
+  $roleNames = ['HR Admin', 'Manager', 'Regional HR Admin', 'Staff', 'administrator'];
+  $roles = user_roles();
+  $rolesToCheck  = array_intersect($roles, $roleNames);
+
+  foreach($rolesToCheck as $rid => $role) {
+    user_role_revoke_permissions($rid, $permissionsToRevoke);
+  }
+}
+
+/**
+ * Reverts the default CiviHR user permissions after deleting appraisal permissions
+ */
+function civihr_employee_portal_update_7040() {
+  features_revert(['civihr_default_permissions' => ['user_permission']]);
+}
+
+/**
  * Function to determine whether menu link exists or not.
  *
  * @param string $path
