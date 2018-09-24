@@ -125,17 +125,6 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'civicrm',
   );
 
-  // Exported permission: 'access Vacancy'.
-  $permissions['access Vacancy'] = array(
-    'name' => 'access Vacancy',
-    'roles' => array(
-      'HR Admin' => 'HR Admin',
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'civicrm',
-  );
-
   // Exported permission: 'access administration pages'.
   $permissions['access administration pages'] = array(
     'name' => 'access administration pages',
@@ -492,17 +481,6 @@ function civihr_default_permissions_user_default_permissions() {
   // Exported permission: 'administer Tagsets'.
   $permissions['administer Tagsets'] = array(
     'name' => 'administer Tagsets',
-    'roles' => array(
-      'HR Admin' => 'HR Admin',
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'civicrm',
-  );
-
-  // Exported permission: 'administer Vacancy'.
-  $permissions['administer Vacancy'] = array(
-    'name' => 'administer Vacancy',
     'roles' => array(
       'HR Admin' => 'HR Admin',
       'Regional HR Admin' => 'Regional HR Admin',
@@ -1713,17 +1691,6 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'webform',
   );
 
-  // Exported permission: 'evaluate Applicants'.
-  $permissions['evaluate Applicants'] = array(
-    'name' => 'evaluate Applicants',
-    'roles' => array(
-      'HR Admin' => 'HR Admin',
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'civicrm',
-  );
-
   // Exported permission: 'export all manual batches'.
   $permissions['export all manual batches'] = array(
     'name' => 'export all manual batches',
@@ -1780,17 +1747,6 @@ function civihr_default_permissions_user_default_permissions() {
   // Exported permission: 'import contacts'.
   $permissions['import contacts'] = array(
     'name' => 'import contacts',
-    'roles' => array(
-      'HR Admin' => 'HR Admin',
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'civicrm',
-  );
-
-  // Exported permission: 'manage Applicants'.
-  $permissions['manage Applicants'] = array(
-    'name' => 'manage Applicants',
     'roles' => array(
       'HR Admin' => 'HR Admin',
       'Regional HR Admin' => 'Regional HR Admin',
@@ -2129,17 +2085,6 @@ function civihr_default_permissions_user_default_permissions() {
       'administrator' => 'administrator',
     ),
     'module' => 'filter',
-  );
-
-  // Exported permission: 'view Applicants'.
-  $permissions['view Applicants'] = array(
-    'name' => 'view Applicants',
-    'roles' => array(
-      'HR Admin' => 'HR Admin',
-      'Regional HR Admin' => 'Regional HR Admin',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'civicrm',
   );
 
   // Exported permission: 'view all activities'.

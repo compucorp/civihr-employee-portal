@@ -489,11 +489,9 @@ function civihr_employee_portal_update_7038() {
  */
 function civihr_employee_portal_update_7039() {
   $permissionsToRevoke = ['view appraisals'];
-  $roleNames = ['HR Admin', 'Manager', 'Regional HR Admin', 'Staff', 'administrator'];
   $roles = user_roles();
-  $rolesToCheck  = array_intersect($roles, $roleNames);
 
-  foreach($rolesToCheck as $rid => $role) {
+  foreach($roles as $rid => $role) {
     user_role_revoke_permissions($rid, $permissionsToRevoke);
   }
 }
@@ -503,6 +501,7 @@ function civihr_employee_portal_update_7039() {
  */
 function civihr_employee_portal_update_7040() {
   features_revert(['civihr_default_permissions' => ['user_permission']]);
+  features_revert(['civihr_employee_portal_features']);
 }
 
 /**
