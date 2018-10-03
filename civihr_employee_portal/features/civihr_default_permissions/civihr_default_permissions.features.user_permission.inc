@@ -935,6 +935,15 @@ function civihr_default_permissions_user_default_permissions() {
     'module' => 'role_delegation',
   );
 
+  // Exported permission: 'assign regional hr admin role'.
+  $permissions['assign Regional HR Admin role'] = array(
+    'name' => 'assign Regional HR Admin role',
+    'roles' => array(
+      'HR Admin' => 'HR Admin',
+    ),
+    'module' => 'role_delegation',
+  );
+
   // Exported permission: 'block IP addresses'.
   $permissions['block IP addresses'] = array(
     'name' => 'block IP addresses',

@@ -134,6 +134,7 @@ features[user_permission][] = assign HR Admin role
 features[user_permission][] = assign Manager role
 features[user_permission][] = assign Staff role
 features[user_permission][] = assign all roles
+features[user_permission][] = assign Regional HR Admin role
 features[user_permission][] = block IP addresses
 features[user_permission][] = bypass node access
 features[user_permission][] = bypass rules access
