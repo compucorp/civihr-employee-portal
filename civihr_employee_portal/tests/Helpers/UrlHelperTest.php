@@ -63,6 +63,11 @@ class UrlHelperTest extends \PHPUnit_Framework_TestCase {
         'photo',
         'http://civihr.local/sites/default/files/webform/500.jpg',
       ],
+      [
+        'http://example.com?a=1#foo',
+        'a',
+        'http://example.com#foo',
+      ],
     ];
   }
 
