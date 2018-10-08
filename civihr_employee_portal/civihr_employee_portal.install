@@ -1,9 +1,15 @@
 <?php
 
 use Drupal\civihr_employee_portal\Helpers\WebformHelper;
-use Drupal\civihr_employee_portal\Forms\OnboardingWebForm;
 use Drupal\civihr_employee_portal\Helpers\UrlHelper;
 use Drupal\civihr_employee_portal\Helpers\TaxonomyHelper;
+
+/**
+ * Include all the update files
+ */
+foreach (glob(__DIR__ . '/updates/*.php') as $updateFile) {
+  require_once $updateFile;
+}
 
 /**
  * Create Report Pages and Report Age Settings menu links.
@@ -510,6 +516,15 @@ function civihr_employee_portal_update_7040() {
 function civihr_employee_portal_update_7041() {
   features_revert(['civihr_default_permissions' => ['user_permission']]);
 }
+
+/**
+ *
+ * Hey, don't add any new upgrader functions here. Put any new upgrader
+ * functions in a separate file in the /updates directory.
+ *
+ * @see https://compucorp.atlassian.net/wiki/spaces/PCHR/pages/676823043/Add+a+Drupal+Upgrader
+ *
+*/
 
 /**
  * Function to determine whether menu link exists or not.
