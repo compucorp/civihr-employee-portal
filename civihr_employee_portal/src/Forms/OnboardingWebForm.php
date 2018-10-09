@@ -31,7 +31,6 @@ class OnboardingWebForm {
     }
 
     $this->setWorkEmailAsPrimary($node, $values, $contactID);
-    $this->hackyFixForImageURL($contactID);
   }
 
   /**
@@ -178,39 +177,6 @@ class OnboardingWebForm {
   }
 
   /**
-   * Unfortunately for us the contact profile page will expect an image URL
-   * using the civicrm/file?photo=foo.jpg style. Since our contact images are
-   * created using webform they won't match this so to avoid the warnings about
-   * 'Undefined index: photo' we append photo=0 here.
-   *
-   * @see CRM_Utils_File::getImageURL
-   *
-   * @param int $contactID
-   */
-  private function hackyFixForImageURL($contactID) {
-    $params = ['return' => 'image_URL', 'id' => $contactID];
-    /** @var string $current */
-    $current = civicrm_api3('Contact', 'getvalue', $params);
-
-    if (empty($current)) {
-      return;
-    }
-
-    // don't append to url if photo is already set
-    parse_str(parse_url($current, PHP_URL_QUERY), $queryParts);
-    if (isset($queryParts['photo'])) {
-      return;
-    }
-
-    $operator = FALSE === strpos($current, '?') ? '?' : '&';
-    $current .= $operator . 'photo=0';
-
-    unset($params['return']);
-    $params['image_URL']  = $current;
-    civicrm_api3('Contact', 'create', $params);
-  }
-
-  /**
    * Gets the help text to show the user at the beginning of the onboarding form.
    *
    * @return string
@@ -236,20 +202,6 @@ class OnboardingWebForm {
     $link = LinkProvider::getLandingPageLink($user);
 
     return sprintf('<a href="%s">%s</a>', $link, $buttonMarkup);
-  }
-
-  /**
-   * Checks if the current logged in user was created after the onboarding
-   * feature was released.
-   *
-   * @return bool
-   */
-  private function userCreatedAfterOnboardingReleased() {
-    global $user;
-    $onboardingForm = WebformHelper::findOneByTitle(self::NAME);
-    $onboardingRelease = $onboardingForm->created;
-
-    return $user->created > $onboardingRelease;
   }
 
 }

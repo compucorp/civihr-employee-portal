@@ -15,6 +15,63 @@ class UrlHelperTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * @dataProvider urlWithQueryProvider
+   *
+   * @param string $url
+   * @param string $key
+   * @param string $expected
+   */
+  public function testExpectedUrlValuesWillBeRemoved($url, $key, $expected) {
+    $result = UrlHelper::removeQueryValueFromUrl($url, $key);
+    $this->assertEquals($expected, $result);
+  }
+
+  public function urlWithQueryProvider() {
+    return [
+      [
+        'http://example.com?foo=bar',
+        '',
+        'http://example.com?foo=bar',
+      ],
+      [
+        'http://example.com?foo=bar',
+        'foo',
+        'http://example.com',
+      ],
+      [
+        'http://example.com?a=1&b=2',
+        'a',
+        'http://example.com?b=2',
+      ],
+      [
+        'http://example.com?a=1&b=2',
+        'b',
+        'http://example.com?a=1',
+      ],
+      [
+        'http://example.com?a[]=1&a[]=2&b=3',
+        'a',
+        'http://example.com?b=3',
+      ],
+      [
+        'http://example.com?a=1&b[]=2&b[]=3',
+        'b',
+        'http://example.com?a=1',
+      ],
+      [
+        'http://civihr.local/sites/default/files/webform/500.jpg?photo=0',
+        'photo',
+        'http://civihr.local/sites/default/files/webform/500.jpg',
+      ],
+      [
+        'http://example.com?a=1#foo',
+        'a',
+        'http://example.com#foo',
+      ],
+    ];
+  }
+
+  /**
    * @return array
    */
   public function duplicateQueryUrlProvider() {

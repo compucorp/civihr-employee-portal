@@ -52,7 +52,6 @@ $handler->display->display_options['fields']['image_URL']['empty'] = 'no image';
 $handler->display->display_options['fields']['image_URL']['empty_zero'] = TRUE;
 $handler->display->display_options['fields']['image_URL']['hide_alter_empty'] = FALSE;
 $handler->display->display_options['fields']['image_URL']['url_only'] = 0;
-$handler->display->display_options['fields']['image_URL']['image_style'] = 'thumbnail';
 /* Field: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'civicrm_contact';
