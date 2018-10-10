@@ -5,6 +5,13 @@ use Drupal\civihr_employee_portal\Helpers\UrlHelper;
 use Drupal\civihr_employee_portal\Helpers\WebformHelper;
 
 /**
+ * Include all the update files
+ */
+foreach (glob(__DIR__ . '/updates/*.php') as $updateFile) {
+  require_once $updateFile;
+}
+
+/**
  * Create Report Pages and Report Age Settings menu links.
  */
 function civihr_employee_portal_update_7001() {
@@ -471,6 +478,53 @@ function civihr_employee_portal_update_7036() {
 function civihr_employee_portal_update_7037() {
   features_revert(['civihr_default_permissions' => ['user_permission']]);
 }
+
+/**
+ * Disables the HR Vacancies View
+ */
+function civihr_employee_portal_update_7038() {
+  $status = variable_get('views_defaults', []);
+  $status['hr-vacancies'] = TRUE;
+  variable_set('views_defaults', $status);
+}
+
+/**
+ * Revokes the 'view appraisals'
+ * permissions from the HR Admin, Manager, Regional HR Admin Role,
+ * Staff and Administrator
+ */
+function civihr_employee_portal_update_7039() {
+  $permissionsToRevoke = ['view appraisals'];
+  $roles = user_roles();
+
+  foreach($roles as $rid => $role) {
+    user_role_revoke_permissions($rid, $permissionsToRevoke);
+  }
+}
+
+/**
+ * Reverts the default CiviHR user permissions after deleting appraisal permissions
+ */
+function civihr_employee_portal_update_7040() {
+  features_revert(['civihr_default_permissions' => ['user_permission']]);
+  features_revert(['civihr_employee_portal_features']);
+}
+
+/**
+ * Reverts the default CiviHR user permission
+ */
+function civihr_employee_portal_update_7041() {
+  features_revert(['civihr_default_permissions' => ['user_permission']]);
+}
+
+/**
+ *
+ * Hey, don't add any new upgrader functions here. Put any new upgrader
+ * functions in a separate file in the /updates directory.
+ *
+ * @see https://compucorp.atlassian.net/wiki/spaces/PCHR/pages/676823043/Add+a+Drupal+Upgrader
+ *
+*/
 
 /**
  * Function to determine whether menu link exists or not.

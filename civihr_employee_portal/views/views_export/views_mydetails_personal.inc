@@ -52,7 +52,6 @@ $handler->display->display_options['fields']['image_URL']['empty'] = 'no image';
 $handler->display->display_options['fields']['image_URL']['empty_zero'] = TRUE;
 $handler->display->display_options['fields']['image_URL']['hide_alter_empty'] = FALSE;
 $handler->display->display_options['fields']['image_URL']['url_only'] = 0;
-$handler->display->display_options['fields']['image_URL']['image_style'] = 'thumbnail';
 /* Field: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['fields']['id']['id'] = 'id';
 $handler->display->display_options['fields']['id']['table'] = 'civicrm_contact';
@@ -95,6 +94,12 @@ $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
 $handler->display->display_options['fields']['nothing']['label'] = '';
 $handler->display->display_options['fields']['nothing']['alter']['text'] = '[id] [gender] [marital_status_58]';
 $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
+/* Field: CiviCRM Contacts: External Identifier */
+$handler->display->display_options['fields']['external_identifier']['id'] = 'external_identifier';
+$handler->display->display_options['fields']['external_identifier']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['external_identifier']['field'] = 'external_identifier';
+$handler->display->display_options['fields']['external_identifier']['label'] = 'External ID';
+$handler->display->display_options['fields']['external_identifier']['element_label_colon'] = FALSE;
 /* Field: CiviCRM Contacts: Birth Date */
 $handler->display->display_options['fields']['birth_date']['id'] = 'birth_date';
 $handler->display->display_options['fields']['birth_date']['table'] = 'civicrm_contact';
@@ -110,6 +115,12 @@ $handler->display->display_options['fields']['nationality_44']['table'] = 'civic
 $handler->display->display_options['fields']['nationality_44']['field'] = 'nationality_44';
 $handler->display->display_options['fields']['nationality_44']['element_label_colon'] = FALSE;
 $handler->display->display_options['fields']['nationality_44']['hide_empty'] = TRUE;
+/* Field: CiviCRM Contacts: NI/SSN Or Application Status */
+$handler->display->display_options['fields']['ni_ssn_or_application_status']['id'] = 'ni_ssn_or_application_status';
+$handler->display->display_options['fields']['ni_ssn_or_application_status']['table'] = 'civicrm_contact';
+$handler->display->display_options['fields']['ni_ssn_or_application_status']['field'] = 'ni_ssn_or_application_status';
+$handler->display->display_options['fields']['ni_ssn_or_application_status']['label'] = 'NI/SSN';
+$handler->display->display_options['fields']['ni_ssn_or_application_status']['element_label_colon'] = FALSE;
 /* Contextual filter: CiviCRM Contacts: Contact ID */
 $handler->display->display_options['arguments']['id']['id'] = 'id';
 $handler->display->display_options['arguments']['id']['table'] = 'civicrm_contact';
@@ -156,8 +167,10 @@ $translatables['mydetails_personal'] = array(
   t('<div class="chr_panel--my-details__personal__gender">[gender]</div>'),
   t('<div class="chr_panel--my-details__personal__marital_status [marital_status_58]">[marital_status_58]</div>'),
   t('[id] [gender] [marital_status_58]'),
+  t('External ID'),
   t('Date of Birth'),
   t('Nationality'),
+  t('NI/SSN'),
   t('All'),
   t('My Personal Details'),
 );
