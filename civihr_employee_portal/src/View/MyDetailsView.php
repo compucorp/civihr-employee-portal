@@ -51,15 +51,12 @@ class MyDetailsView extends AbstractView {
       'contact_id' => $contactID,
     ]);
 
-    // God knows why but this result is a stdClass
-    if (!isset($contract['values']->contract_id)) {
+    if (empty($contract['values']['contract_id'])) {
       return NULL;
     }
 
-    $contractID = $contract['values']->contract_id;
-
     return civicrm_api3('HRJobContractRevision', 'getcurrentrevision', [
-      'jobcontract_id' => $contractID,
+      'jobcontract_id' => $contract['values']['contract_id'],
     ])['values'];
   }
 
