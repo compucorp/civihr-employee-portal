@@ -4,7 +4,9 @@
  */
 function civihr_employee_portal_update_7043() {
   $vacanciesNodeTitle = 'Vacancies';
-  $vacanciesNodeId = db_query("SELECT nid FROM node WHERE title = '{$vacanciesNodeTitle}'")
+  $vacanciesNodeId = db_query("SELECT nid FROM node WHERE
+    title = '{$vacanciesNodeTitle}' AND
+    type = 'welcome_slideshow'")
     ->fetchField();
 
   $vacanciesNodeId && node_delete($vacanciesNodeId);
