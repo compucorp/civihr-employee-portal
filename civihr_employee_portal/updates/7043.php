@@ -9,5 +9,7 @@ function civihr_employee_portal_update_7043() {
     type = 'welcome_slideshow'")
     ->fetchField();
 
-  $vacanciesNodeId && node_delete($vacanciesNodeId);
+  if ($vacanciesNodeId) {
+    node_delete($vacanciesNodeId);
+  }
 }
