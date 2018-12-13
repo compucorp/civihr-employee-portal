@@ -5562,15 +5562,15 @@ function _user_redirection() {
 
   $current_path = request_path();
   $requestURI = rawurlencode(request_uri());
+  $pathExists = in_array($current_path, ['', 'civicrm', 'civicrm/dashboard']);
+  $isLoggedInUser = !user_is_anonymous();
+  $isWelcomePage = drupal_get_destination()['destination'] == 'welcome-page';
 
   if (!$publicFirewall->canAccess($user, $current_path)) {
     $query = $current_path ? sprintf('?destination=%s', $requestURI) : '';
     $redirect_path = 'welcome-page' . $query;
   }
-  elseif (in_array($current_path, ['', 'civicrm', 'civicrm/dashboard']) ||
-    !user_is_anonymous() &&
-    drupal_get_destination()['destination'] == 'welcome-page')
-  {
+  elseif ($pathExists || ($isLoggedInUser && $isWelcomePage)) {
     $redirect_path = LinkProvider::getLandingPageLink($user);
   }
 
