@@ -24,8 +24,12 @@ function civihr_employee_portal_update_7044() {
     $contactAddresses = array_values($result['values']);
     $primaryIndex = array_search('1', array_column($contactAddresses, 'is_primary'));
     if ($primaryIndex === FALSE) {
-      $contactAddresses[0]['is_primary'] = 1;
-      civicrm_api3('Address', 'create', $contactAddresses[0]);
+      $isWorkPrimary = _check_contact_work_address_is_primary($address['contact_id']);
+      if (!$isWorkPrimary) {
+        $contactAddresses[0]['is_primary'] = 1;
+        civicrm_api3('Address', 'create', $contactAddresses[0]);
+      }
+
       $primaryIndex = 0;
     }
 
@@ -66,4 +70,25 @@ function _get_personal_address_count() {
   $result = CRM_Core_DAO::executeQuery($query);
 
   return $result->fetchAll();
+}
+
+/**
+ * Checks if contact has a primary work address type
+ *
+ * @param int $contactId
+ * @return bool
+ * @throws CiviCRM_API3_Exception
+ */
+function _check_contact_work_address_is_primary($contactId) {
+  $result = civicrm_api3('Address', 'get', [
+    'location_type_id' => 'Work',
+    'is_primary' => 1,
+    'contact_id' => $contactId
+  ]);
+
+  if ($result['count']) {
+    return TRUE;
+  }
+
+  return FALSE;
 }
