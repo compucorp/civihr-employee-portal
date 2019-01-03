@@ -12,7 +12,7 @@ function civihr_employee_portal_update_7044() {
 
   $addresses = _get_personal_address_count();
   foreach ($addresses as $address) {
-    if ($address['total'] != 2) {
+    if ($address['total'] < 2) {
       continue;
     }
 
@@ -20,19 +20,32 @@ function civihr_employee_portal_update_7044() {
       'location_type_id' => 'Personal',
       'contact_id' => $address['contact_id']
     ]);
-    $processed = 0;
-    foreach ($result['values'] as $contactAddress) {
-      $updateAnyAddress = $contactAddress['is_primary'] == 0 && $address['primary_count'] == 1;
-      $updateSecondAddress = $address['primary_count'] != 1 && $processed == 1;
 
-      if ($updateAnyAddress || $updateSecondAddress) {
-        $contactAddress['location_type_id'] = $locationType['id'];
-        $contactAddress['is_primary'] = 0;
-        civicrm_api3('Address', 'create', $contactAddress);
-      }
-
-      $processed++;
+    $addresses = array_values($result['values']);
+    $primaryIndex = array_search('1', array_column($addresses, 'is_primary'));
+    if ($primaryIndex === FALSE) {
+      $addresses[0]['is_primary'] = 1;
+      civicrm_api3('Address', 'create', $addresses[0]);
+      $primaryIndex = 0;
     }
+
+    unset($addresses[$primaryIndex]);
+    _update_address_to_works($addresses, $locationType['id']);
+  }
+}
+
+/**
+ * Updates addresses to work location type
+ *
+ * @param array $addresses
+ * @param int $locationTypeId
+ * @throws CiviCRM_API3_Exception
+ */
+function _update_address_to_works($addresses, $locationTypeId) {
+  foreach ($addresses as $address) {
+    $address['location_type_id'] = $locationTypeId;
+    $address['is_primary'] = 0;
+    civicrm_api3('Address', 'create', $address);
   }
 }
 
