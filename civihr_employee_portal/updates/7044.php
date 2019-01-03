@@ -21,28 +21,28 @@ function civihr_employee_portal_update_7044() {
       'contact_id' => $address['contact_id']
     ]);
 
-    $addresses = array_values($result['values']);
-    $primaryIndex = array_search('1', array_column($addresses, 'is_primary'));
+    $contactAddresses = array_values($result['values']);
+    $primaryIndex = array_search('1', array_column($contactAddresses, 'is_primary'));
     if ($primaryIndex === FALSE) {
-      $addresses[0]['is_primary'] = 1;
-      civicrm_api3('Address', 'create', $addresses[0]);
+      $contactAddresses[0]['is_primary'] = 1;
+      civicrm_api3('Address', 'create', $contactAddresses[0]);
       $primaryIndex = 0;
     }
 
-    unset($addresses[$primaryIndex]);
-    _update_address_to_works($addresses, $locationType['id']);
+    unset($contactAddresses[$primaryIndex]);
+    _update_address_to_works($contactAddresses, $locationType['id']);
   }
 }
 
 /**
  * Updates addresses to work location type
  *
- * @param array $addresses
+ * @param array $contactAddresses
  * @param int $locationTypeId
  * @throws CiviCRM_API3_Exception
  */
-function _update_address_to_works($addresses, $locationTypeId) {
-  foreach ($addresses as $address) {
+function _update_address_to_works($contactAddresses, $locationTypeId) {
+  foreach ($contactAddresses as $address) {
     $address['location_type_id'] = $locationTypeId;
     $address['is_primary'] = 0;
     civicrm_api3('Address', 'create', $address);
