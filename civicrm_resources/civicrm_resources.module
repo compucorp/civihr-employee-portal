@@ -46,6 +46,9 @@ function _civicrm_resources_add_resource($extension_path, $resource_uri) {
   $resource_type = pathinfo($resource_uri, PATHINFO_EXTENSION);
   $extension_path_relative_to_drupal = str_replace(DRUPAL_ROOT, '', $extension_path);
   $resource_path_relative_to_drupal = $extension_path_relative_to_drupal . '/' . $resource_uri;
+  if (substr($resource_path_relative_to_drupal, 0, 1) === '/') {
+    $resource_path_relative_to_drupal = substr($resource_path_relative_to_drupal, 1);
+  }
 
   if ($resource_type === 'js') {
     drupal_add_js($resource_path_relative_to_drupal,  ['scope' => 'footer']);
