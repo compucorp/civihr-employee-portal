@@ -27,8 +27,8 @@ class MyDetailsView extends AbstractView {
 
     // If no current contract then add an impossible join condition
     $contractID = $revision ? $revision['jobcontract_id'] : 0;
-    $roleRevisionID = $revision ? $revision['role_revision_id'] : 0;
-    $detailsRevisionID = $revision ? $revision['details_revision_id'] : 0;
+    $roleRevisionID = !empty($revision['role_revision_id']) ? $revision['role_revision_id'] : 0;
+    $detailsRevisionID = !empty($revision['details_revision_id']) ? $revision['details_revision_id'] : 0;
 
     $revisionAlias = 'hrjc_revision_civicrm_contact';
 
