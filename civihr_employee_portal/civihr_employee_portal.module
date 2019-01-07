@@ -3877,6 +3877,35 @@ function isPublishStatusCheckBoxVisible () {
   return !user_access('administer-nodes') && _user_has_role(['HR Admin', 'Regional HR Admin']);
 }
 
+/**
+ * This function is a submit handler for the theme settings form.
+ *
+ * It checks the site logo uploaded at /admin/appearance/settings
+ * and checks if the logo file is private. If it is, it makes the file path
+ * public and makes a copy of the logo and saves it in the public folder.
+ *
+ * The reason for this function is for sites where the default file system is
+ * set as private by default and a logo is uploaded, the logo does not show up
+ * on the site welcome page because the anonymous user is unable to view, therefore
+ * this function makes sure that the file is accessible for all users.
+ *
+ */
+function make_logo_file_public() {
+  $settingsName = 'theme_settings';
+  $themeSettings = variable_get($settingsName, []);
+
+  if (empty($themeSettings['logo_path']) || file_default_scheme() == 'public') {
+    return;
+  }
+
+  if (substr($themeSettings['logo_path'], 0, 7) == 'private') {
+    $publicPath = substr_replace($themeSettings['logo_path'], 'public', 0, 7);
+    file_unmanaged_copy($themeSettings['logo_path'], $publicPath, FILE_EXISTS_REPLACE);
+    $themeSettings['logo_path'] = $publicPath;
+    variable_set($settingsName, $themeSettings);
+  }
+}
+
 // Note: Under "Redirection location" NO redirect option should be select to get
 // the confirmation message with ajax.
 // We can use this trick to make it generic for all webforms those have
@@ -3916,6 +3945,10 @@ function civihr_employee_portal_form_alter(&$form, &$form_state, $form_id) {
     );
     // Make the fields hidden -> https://compucorp.atlassian.net/browse/PCHR-358
     $form['field_download']['#attributes'] = ['style' => 'display:none'];
+  }
+
+  if ($form_id == 'system_theme_settings') {
+    $form['#submit'][] = 'make_logo_file_public';
   }
 
   // Alter system settings form and add CiviHR specific settings
