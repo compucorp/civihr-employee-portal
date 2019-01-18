@@ -391,12 +391,10 @@ function _rebuild_absence_activity_view() {
   $civi_db_name = trim($civi_settings['path'], '/');
   $calculationUnitOptions = array_flip(AbsenceType::buildOptions('calculation_unit', 'validate'));
   $hoursUnit = $calculationUnitOptions['hours'];
-
-  db_query('DROP VIEW IF EXISTS absence_activity');
-  db_query("CREATE VIEW absence_activity AS
-            SELECT lr.contact_id AS absence_contact_id,
+  $leaveQuery = "SELECT lr.contact_id AS absence_contact_id,
               lr.id AS absence_activity_id,
               at.title as absence_type,
+              lr.request_type as request_type,
               lr.sickness_reason as sickness_reason,
               lrd.date AS absence_date,
               DATE_FORMAT(DATE(lrd.date), '%Y-%m') AS absence_month,
@@ -416,7 +414,11 @@ function _rebuild_absence_activity_view() {
             INNER JOIN {$civi_db_name}.civicrm_hrleaveandabsences_leave_request_date lrd ON lr.id = lrd.leave_request_id
             INNER JOIN {$civi_db_name}.civicrm_hrleaveandabsences_absence_type at ON at.id = lr.type_id
             INNER JOIN {$civi_db_name}.civicrm_hrleaveandabsences_leave_balance_change bc ON bc.source_id = lrd.id and bc.source_type = 'leave_request_day'
-            WHERE lr.is_deleted = 0");
+            WHERE lr.is_deleted = 0
+            GROUP BY lr.contact_id, lr.request_type, lrd.date";
+
+  db_query('DROP VIEW IF EXISTS absence_activity');
+  db_query("CREATE VIEW absence_activity AS {$leaveQuery}");
 
   variable_set('rebuild_absence_activity', 'FALSE');
 
