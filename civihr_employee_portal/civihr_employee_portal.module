@@ -485,6 +485,19 @@ function civihr_employee_portal_init() {
   if (!_isCiviCRM()) {
     // Civi init + load the singleton needed for the AJAX calls
     civicrm_initialize();
+
+    // Some of the roles with access to the SSP also have access to the
+    // CiviCRM admin (i.e. they have the  "access CiviCRM" permission).
+    // Due to that, the CiviCRM navigation menu is displayed on the
+    // SSP. To avoid this, we set the `userFrameworkFrontend` config
+    // to true. This basically tells civi that this is a frontend page
+    // and it won't render the menu.
+    // Note that it's important to do this before calling something
+    // like CRM_Core_Resources::singleton()->addCoreResources(),
+    // otherwise the resources to render the menu will be included
+    // before config is set.
+    CRM_Core_Config::singleton()->userFrameworkFrontend = true;
+
     CRM_Core_Resources::singleton()->addCoreResources();
 
     // Add our additional css libraries
